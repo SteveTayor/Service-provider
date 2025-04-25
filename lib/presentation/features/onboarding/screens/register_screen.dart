@@ -1,22 +1,25 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   // TextEditingController controller = TextEditingController();
    final _emailController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
@@ -39,8 +42,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return   BundlegramScaffold(
-      // footerPadding:  EdgeInsets.symmetric(vertical: 20.,),
-      sidePadding:   EdgeInsets.symmetric(horizontal: 20.w,),
+ 
+      sidePadding:     EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
       appBar: const BundlegramAppbar(
         
       ),
@@ -65,11 +68,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ],
               ),
+                 
                      40.verticalSpace,
                          Expanded(
                    child: AppForm(
                     isActive: _isFormValid,
-                    onPressed: (){}, buttonText: 'Continue', formKey: _formKey,
+                    onPressed: (){
+                      context.go(RouteConstants.chooseUsername);
+                    }, buttonText: 'Continue', formKey: _formKey,
                     children:   [
                     AppTextField(
                       hintText: 'First name',
@@ -99,12 +105,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                       AppTextField(
                       hintText: 'Confirm Password',
-                       validateFunction:Validators.confirmPass('Pass123@', 'Pass123@'),
+                       validateFunction:Validators.confirmPass('Pass123@',
+                        'Pass123@',),
                     ),
 
                    ],),
                  ),
                  40.verticalSpace,
+                RichText(text: 
+                TextSpan(
+                  text: 'By continuing, you agree to the ',
+                  style: context.textTheme.bodySmall,
+children:   [
+    TextSpan(text: 'Terms and Conditions ↗',
+   recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    context.push(RouteConstants.termsCondition);
+                  },
+    style: const TextStyle(
+    decoration: TextDecoration.underline,
+        decorationColor: AppColors.primaryColor,
+    color: AppColors.primaryColor,),),
+const TextSpan(text: ' and'),
+    TextSpan(text: ' Privacy Policy↗',
+  recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    context.push(RouteConstants.privacyPolicy);
+                  },
+  style: const TextStyle(
+    decoration: TextDecoration.underline,
+        decorationColor: AppColors.primaryColor,
+    color: AppColors.primaryColor,),),
+],
+                ),
+                ),
+            
         ],
       ),);
   }

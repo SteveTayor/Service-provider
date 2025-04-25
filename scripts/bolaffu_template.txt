@@ -1,0 +1,290 @@
+BolaFFU (Flutter Framework Universal) Template
+Version: 1.0.0
+Author: Adeboye Adeyemi
+Last Saved: 2024-03-08
+
+PROJECT OVERVIEW
+===============
+BolaFFU is a standardized Flutter project template that implements clean architecture principles with a focus on scalability, maintainability, and code organization.
+
+FOLDER STRUCTURE AND CODE TEMPLATES
+=================================
+1. Core Layer (lib/core/)
+-------------------------
+Purpose: Contains application-wide utilities and configurations
+
+Required Components:
+- config/
+  * app_config.dart:
+    ```dart
+    class AppConfig {
+      static final AppConfig _instance = AppConfig._internal();
+      factory AppConfig() => _instance;
+      AppConfig._internal();
+
+      String get apiBaseUrl => const String.fromEnvironment(
+        'API_BASE_URL',
+        defaultValue: 'https://api.example.com',
+      );
+
+      bool get isProduction => const bool.fromEnvironment(
+        'IS_PRODUCTION',
+        defaultValue: false,
+      );
+    }
+    ```
+  
+  * theme.dart:
+    ```dart
+    import 'package:flutter/material.dart';
+
+    class AppTheme {
+      static ThemeData get lightTheme => ThemeData(
+        primarySwatch: Colors.blue,
+        brightness: Brightness.light,
+        // Add your theme customization
+      );
+
+      static ThemeData get darkTheme => ThemeData(
+        primarySwatch: Colors.blue,
+        brightness: Brightness.dark,
+        // Add your dark theme customization
+      );
+    }
+    ```
+
+  * constants.dart:
+    ```dart
+    class AppConstants {
+      // API Endpoints
+      static const String baseUrl = 'https://api.example.com';
+      
+      // Storage Keys
+      static const String authTokenKey = 'auth_token';
+      static const String userDataKey = 'user_data';
+      
+      // Timeouts
+      static const int connectionTimeout = 30000;
+      static const int receiveTimeout = 30000;
+    }
+    ```
+
+- extensions/
+  * string_extensions.dart:
+    ```dart
+    extension StringExtension on String {
+      bool get isValidEmail => RegExp(
+        r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+',
+      ).hasMatch(this);
+
+      bool get isValidPassword => length >= 8;
+
+      String capitalize() {
+        if (isEmpty) return this;
+        return '${this[0].toUpperCase()}${substring(1)}';
+      }
+    }
+    ```
+
+  * context_extensions.dart:
+    ```dart
+    import 'package:flutter/material.dart';
+
+    extension BuildContextExtension on BuildContext {
+      ThemeData get theme => Theme.of(this);
+      TextTheme get textTheme => Theme.of(this).textTheme;
+      Size get screenSize => MediaQuery.of(this).size;
+      bool get isDarkMode => Theme.of(this).brightness == Brightness.dark;
+    }
+    ```
+
+- router/
+  * app_router.dart:
+    ```dart
+    import 'package:go_router/go_router.dart';
+
+    class AppRouter {
+      static final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: '/login',
+            builder: (context, state) => const LoginScreen(),
+          ),
+          // Add more routes
+        ],
+      );
+    }
+    ```
+
+2. Data Layer (lib/data/)
+-------------------------
+Purpose: Handles data operations and business logic
+
+Required Components:
+- models/base/
+  * base_model.dart:
+    ```dart
+    abstract class BaseModel<T> {
+      Map<String, dynamic> toJson();
+      T fromJson(Map<String, dynamic> json);
+    }
+    ```
+
+- repositories/base/
+  * base_repository.dart:
+    ```dart
+    abstract class BaseRepository {
+      final ApiClient apiClient;
+      
+      BaseRepository(this.apiClient);
+      
+      Future<T> handleResponse<T>(Future<Response> Function() apiCall) async {
+        try {
+          final response = await apiCall();
+          return response.data;
+        } catch (e) {
+          throw handleError(e);
+        }
+      }
+    }
+    ```
+
+- datasources/
+  * local/shared_preferences_helper.dart:
+    ```dart
+    class SharedPreferencesHelper {
+      static late SharedPreferences _prefs;
+      
+      static Future<void> init() async {
+        _prefs = await SharedPreferences.getInstance();
+      }
+      
+      static Future<bool> setString(String key, String value) async {
+        return await _prefs.setString(key, value);
+      }
+      
+      static String? getString(String key) {
+        return _prefs.getString(key);
+      }
+    }
+    ```
+
+3. Presentation Layer (lib/presentation/)
+---------------------------------------
+Purpose: Handles UI components and state management
+
+Required Components:
+- features/auth/
+  * bloc/auth_bloc.dart:
+    ```dart
+    class AuthBloc extends Bloc<AuthEvent, AuthState> {
+      final AuthRepository _authRepository;
+
+      AuthBloc(this._authRepository) : super(AuthInitial()) {
+        on<LoginRequested>(_onLoginRequested);
+      }
+
+      Future<void> _onLoginRequested(
+        LoginRequested event,
+        Emitter<AuthState> emit,
+      ) async {
+        emit(AuthLoading());
+        try {
+          final user = await _authRepository.login(
+            event.email,
+            event.password,
+          );
+          emit(AuthSuccess(user));
+        } catch (e) {
+          emit(AuthFailure(e.toString()));
+        }
+      }
+    }
+    ```
+
+- general_widget/
+  * buttons/primary_button.dart:
+    ```dart
+    class PrimaryButton extends StatelessWidget {
+      final String text;
+      final VoidCallback onPressed;
+      final bool isLoading;
+
+      const PrimaryButton({
+        required this.text,
+        required this.onPressed,
+        this.isLoading = false,
+      });
+
+      @override
+      Widget build(BuildContext context) {
+        return ElevatedButton(
+          onPressed: isLoading ? null : onPressed,
+          child: isLoading
+              ? const CircularProgressIndicator()
+              : Text(text),
+        );
+      }
+    }
+    ```
+
+4. Domain Layer (lib/domain/)
+----------------------------
+Purpose: Contains business logic and use cases
+
+Required Components:
+- entities/
+  * user_entity.dart:
+    ```dart
+    class UserEntity {
+      final String id;
+      final String email;
+      final String name;
+      
+      const UserEntity({
+        required this.id,
+        required this.email,
+        required this.name,
+      });
+    }
+    ```
+
+- usecases/
+  * auth/login_usecase.dart:
+    ```dart
+    class LoginUseCase {
+      final AuthRepository repository;
+
+      LoginUseCase(this.repository);
+
+      Future<UserEntity> execute(String email, String password) {
+        return repository.login(email, password);
+      }
+    }
+    ```
+
+USAGE INSTRUCTIONS
+=================
+To use this template, call the following command in chat:
+
+```
+bolaffu generate [project_name] [output_path]
+```
+
+Example:
+```
+bolaffu generate my_app /path/to/project
+```
+
+This will:
+1. Create the folder structure
+2. Generate all template files with base implementations
+3. Set up pubspec.yaml with required dependencies
+4. Initialize git repository
+5. Create README.md with project setup instructions
+
+The generator will maintain all code properties and create a fully functional Flutter project structure following clean architecture principles. 

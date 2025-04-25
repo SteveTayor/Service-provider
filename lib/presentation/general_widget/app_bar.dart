@@ -1,13 +1,14 @@
 
  // ignore_for_file: inference_failure_on_function_invocation
  
-import 'package:bundlegram/Core/extensions/navigation_extensions.dart';
+// import 'package:bundlegram/Core/extensions/navigation_extensions.dart';
 import 'package:bundlegram/Core/utils/colors.dart';
-
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/customizable.row.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class BundlegramAppbar extends StatelessWidget implements 
 PreferredSizeWidget {
@@ -15,6 +16,7 @@ PreferredSizeWidget {
     this.showBackButton = true,
     this.title,
     this.trailing,
+    this.titleText,
     this.onTap,
     this.leading,
     this.color,
@@ -25,6 +27,7 @@ PreferredSizeWidget {
   final Widget? title;
   final Widget? trailing;
   final String? leading;
+  final String? titleText;
 
   final Color? color;
   final VoidCallback? onTap;
@@ -58,7 +61,9 @@ PreferredSizeWidget {
                   _ => const SizedBox()
                 },
                 Center(
-                  child: title ?? const SizedBox(),
+                  child: title ??
+                  (titleText !=null?Text(titleText!,style: context.textTheme.titleMedium,):
+                   const SizedBox()),
                 ),
                 trailing ?? const SizedBox(),
               ],

@@ -160,8 +160,10 @@ class _AppTextFieldState extends State<AppTextField> {
                   constraints: BoxConstraints(
                     minHeight: 67.h,
                   ),
+                  
                   fillColor: widget.backgroundColor ?? AppColors.white,
                   prefixIcon: widget.prefixIcon,
+                  suffixIconConstraints: BoxConstraints(minWidth: 50.w,minHeight: 20.h),
                   suffixIcon: widget.suffixIcon,
                   enabled: false,
                   errorStyle: context.textTheme.bodySmall!.copyWith(

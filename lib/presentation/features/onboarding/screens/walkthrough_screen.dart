@@ -1,14 +1,16 @@
 
 import 'package:bundlegram/Presentation/Features/Onboarding/Notifier/onboard_notifier.dart';
-import 'package:bundlegram/core/extensions/navigation_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
-import 'package:bundlegram/core/router/router.dart';
+import 'package:bundlegram/core/router/app_router.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
+// import 'package:bundlegram/core/router/router.dart';
 import 'package:bundlegram/data/onboarding/onboarding_data.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 
 
@@ -74,10 +76,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
                    ),
                    30.verticalSpace,
                    BundlegramButton(text: 'Create account',
-                    onPressed: ()=>context.pushReplacementNamed(AppRouter.signUp),),
+                    onPressed: ()=>context.go(
+                      RouteConstants.register,),),
               34.verticalSpace,
-              Text('I already have an account',
-              style: context.textTheme.bodyMedium,
+              InkWell(
+                onTap: (){
+                  context.push(RouteConstants.login);
+                },
+                child: Text('I already have an account',
+                style: context.textTheme.bodyMedium,
+                ),
               ),
                  ],
               ),
