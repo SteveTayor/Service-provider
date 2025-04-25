@@ -1,0 +1,308 @@
+Bundlegram Mobile Application
+Version: 1.0.0
+Author: Adeboye Adeyemi
+Last Updated: 2024-03-21
+
+PROJECT OVERVIEW
+===============
+Bundlegram Mobile is a Flutter application built using the BolaFFU (Flutter Framework Universal) template, implementing clean architecture principles. The application includes authentication, marketplace, wallet, and agent systems.
+
+CURRENT IMPLEMENTATION STATUS
+===========================
+1. Project Foundation [70% Complete]
+   - ✅ Basic project structure implemented
+   - ✅ Environment configurations (dev, staging, prod) set up
+   - ✅ Core directory structure established
+   - 🔄 Navigation system partially implemented
+   - ⏳ Core utilities pending completion
+
+2. Authentication System [25% Complete]
+   - ✅ Initial UI screens created (signup, walkthrough)
+   - 🔄 Basic routing implemented
+   - ⏳ Authentication data layer pending
+   - ⏳ Authentication domain layer pending
+   - ⏳ State management implementation pending
+
+3. Product Marketplace [Not Started]
+4. Wallet System [Not Started]
+5. Agent System [Not Started]
+
+TECHNICAL REQUIREMENTS
+=====================
+1. Architecture
+   - Clean Architecture with distinct layers:
+     * Core Layer (utilities, configs)
+     * Data Layer (repositories, models)
+     * Domain Layer (entities, use cases)
+     * Presentation Layer (UI, state management)
+
+2. Core Features
+   - Authentication System
+     * User registration
+     * Login/Logout
+     * Password recovery
+     * Email verification
+     * Profile management
+
+   - Product Marketplace
+     * Product listing
+     * Search and filters
+     * Product details
+     * Shopping cart
+     * Checkout process
+
+   - Wallet System
+     * Balance management
+     * Transaction history
+     * Payment processing
+     * Fund transfers
+
+   - Agent System
+     * Agent profiles
+     * Agent marketplace
+     * Communication system
+     * Rating system
+
+3. Technical Stack
+   - Flutter for cross-platform development
+   - Riverpod with Notifier for state management
+   - GoRouter for navigation
+   - Dio for API integration
+   - Hive for local storage
+   - GetIt for dependency injection
+
+IMPLEMENTATION PRIORITIES
+=======================
+1. High Priority
+   - Complete core utilities and configurations
+   - Finish authentication system implementation
+   - Implement basic marketplace functionality
+
+2. Medium Priority
+   - Wallet system implementation
+   - Enhanced marketplace features
+   - Basic agent system
+
+3. Low Priority
+   - Advanced agent features
+   - Analytics integration
+   - Performance optimizations
+
+TESTING REQUIREMENTS
+===================
+1. Unit Tests
+   - Business logic
+   - Data transformations
+   - Utility functions
+
+2. Widget Tests
+   - UI components
+   - Screen layouts
+   - Navigation flows
+
+3. Integration Tests
+   - End-to-end flows
+   - API integration
+   - State management
+
+DEPLOYMENT STRATEGY
+==================
+1. Development
+   - Regular builds for testing
+   - Feature branch workflow
+   - CI/CD integration
+
+2. Staging
+   - Beta testing environment
+   - User acceptance testing
+   - Performance monitoring
+
+3. Production
+   - Phased rollout
+   - Monitoring and analytics
+   - Backup and recovery plans
+
+FOLDER STRUCTURE
+===============
+1. Core Layer (lib/core/)
+-------------------------
+Purpose: Contains application-wide utilities and configurations
+Required Components:
+- config/
+  * app_config.dart (Environment configurations)
+  * theme.dart (App theming)
+  * constants.dart (Global constants)
+  * env.dart (Environment variables)
+
+- extensions/
+  * string_extensions.dart
+  * context_extensions.dart
+  * datetime_extensions.dart
+  * widget_extensions.dart
+
+- router/
+  * app_router.dart (Route definitions)
+  * route_guards.dart (Navigation guards)
+  * route_constants.dart (Named routes)
+
+- utils/
+  * validators.dart (Input validation)
+  * formatters.dart (Data formatting)
+  * helpers.dart (Helper functions)
+  * logger.dart (Logging utility)
+
+2. Data Layer (lib/data/)
+-------------------------
+Purpose: Handles data operations and business logic
+Required Components:
+- models/
+  * base/
+    - base_model.dart
+    - base_response.dart
+  * user/
+    - user_model.dart
+    - user_response.dart
+  * auth/
+    - auth_model.dart
+    - auth_response.dart
+
+- repositories/
+  * base/
+    - base_repository.dart
+  * auth/
+    - auth_repository.dart
+  * user/
+    - user_repository.dart
+
+- datasources/
+  * local/
+    - shared_preferences_helper.dart
+    - secure_storage_helper.dart
+    - hive_helper.dart
+  * remote/
+    - api_client.dart
+    - endpoints.dart
+    - interceptors.dart
+
+- services/
+  * auth_service.dart
+  * user_service.dart
+  * api_service.dart
+
+3. Presentation Layer (lib/presentation/)
+---------------------------------------
+Purpose: Handles UI components and state management
+Required Components:
+- features/
+  * auth/
+    - screens/
+      * login_screen.dart
+      * register_screen.dart
+    - widgets/
+      * auth_form.dart
+    - providers/
+      * auth_provider.dart
+      * auth_state.dart
+      * auth_notifier.dart
+  * home/
+    - screens/
+    - widgets/
+    - providers/
+
+- general_widget/
+  * buttons/
+    - primary_button.dart
+    - secondary_button.dart
+  * inputs/
+    - custom_text_field.dart
+    - custom_dropdown.dart
+  * cards/
+    - info_card.dart
+  * dialogs/
+    - alert_dialog.dart
+    - loading_dialog.dart
+
+4. Domain Layer (lib/domain/)
+----------------------------
+Purpose: Contains business logic and use cases
+Required Components:
+- entities/
+  * user_entity.dart
+  * auth_entity.dart
+
+- repositories/
+  * i_auth_repository.dart
+  * i_user_repository.dart
+
+- usecases/
+  * auth/
+    - login_usecase.dart
+    - register_usecase.dart
+  * user/
+    - get_user_usecase.dart
+    - update_user_usecase.dart
+
+5. Additional Directories
+------------------------
+- lib/gen/ (Generated code)
+- lib/l10n/ (Localization)
+- lib/assets/ (Asset management)
+- test/ (Unit and widget tests)
+  * unit/
+  * widget/
+  * integration/
+
+IMPLEMENTATION REQUIREMENTS
+=========================
+1. State Management
+   - Riverpod for dependency injection and state management
+   - Notifier pattern for complex features
+   - StateNotifier for immutable state management
+   - AsyncNotifier for async operations
+
+2. Dependency Injection
+   - Get_it for service locator
+   - Injectable for code generation
+
+3. API Integration
+   - Dio for HTTP client
+   - Retrofit for API client generation
+   - JSON serialization
+
+4. Local Storage
+   - Shared Preferences for simple data
+   - Hive for complex data
+   - Secure Storage for sensitive data
+
+5. Testing
+   - Unit tests for business logic
+   - Widget tests for UI components
+   - Integration tests for features
+
+6. Code Generation
+   - Build Runner setup
+   - JSON serialization
+   - Route generation
+   - Dependency injection
+
+CODING STANDARDS
+===============
+1. File Naming
+   - snake_case for files
+   - camelCase for variables
+   - PascalCase for classes
+
+2. Architecture Patterns
+   - Repository pattern
+   - BLoC pattern
+   - Clean Architecture principles
+
+3. Error Handling
+   - Custom exception handling
+   - Error reporting
+   - User-friendly error messages
+
+4. Documentation
+   - Documentation for public APIs
+   - README.md for each feature
+   - Code comments for complex logic 

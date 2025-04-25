@@ -1,0 +1,188 @@
+lib/
+├── main.dart
+├── app.dart
+├── bootstrap.dart
+│
+├── core/
+│   ├── config/
+│   │   ├── app_config.dart
+│   │   ├── theme.dart
+│   │   ├── constants.dart
+│   │   └── env.dart
+│   │
+│   ├── extensions/
+│   │   ├── string_extensions.dart
+│   │   ├── context_extensions.dart
+│   │   ├── datetime_extensions.dart
+│   │   └── widget_extensions.dart
+│   │
+│   ├── router/
+│   │   ├── app_router.dart
+│   │   ├── route_guards.dart
+│   │   └── route_constants.dart
+│   │
+│   └── utils/
+│       ├── validators.dart
+│       ├── formatters.dart
+│       ├── helpers.dart
+│       └── logger.dart
+│
+├── data/
+│   ├── models/
+│   │   ├── base/
+│   │   │   ├── base_model.dart
+│   │   │   └── base_response.dart
+│   │   ├── user/
+│   │   │   ├── user_model.dart
+│   │   │   └── user_response.dart
+│   │   └── auth/
+│   │       ├── auth_model.dart
+│   │       └── auth_response.dart
+│   │
+│   ├── repositories/
+│   │   ├── base/
+│   │   │   └── base_repository.dart
+│   │   ├── auth/
+│   │   │   └── auth_repository.dart
+│   │   └── user/
+│   │       └── user_repository.dart
+│   │
+│   ├── datasources/
+│   │   ├── local/
+│   │   │   ├── shared_preferences_helper.dart
+│   │   │   ├── secure_storage_helper.dart
+│   │   │   └── hive_helper.dart
+│   │   └── remote/
+│   │       ├── api_client.dart
+│   │       ├── endpoints.dart
+│   │       └── interceptors.dart
+│   │
+│   └── services/
+│       ├── auth_service.dart
+│       ├── user_service.dart
+│       └── api_service.dart
+│
+├── domain/
+│   ├── entities/
+│   │   ├── user_entity.dart
+│   │   └── auth_entity.dart
+│   │
+│   ├── repositories/
+│   │   ├── i_auth_repository.dart
+│   │   └── i_user_repository.dart
+│   │
+│   └── usecases/
+│       ├── auth/
+│       │   ├── login_usecase.dart
+│       │   └── register_usecase.dart
+│       └── user/
+│           ├── get_user_usecase.dart
+│           └── update_user_usecase.dart
+│
+├── presentation/
+│   ├── features/
+│   │   ├── auth/
+│   │   │   ├── screens/
+│   │   │   │   ├── login_screen.dart
+│   │   │   │   └── register_screen.dart
+│   │   │   ├── widgets/
+│   │   │   │   └── auth_form.dart
+│   │   │   └── bloc/
+│   │   │       ├── auth_bloc.dart
+│   │   │       ├── auth_event.dart
+│   │   │       └── auth_state.dart
+│   │   └── home/
+│   │       ├── screens/
+│   │       │   └── home_screen.dart
+│   │       ├── widgets/
+│   │       │   └── home_widgets.dart
+│   │       └── bloc/
+│   │           ├── home_bloc.dart
+│   │           ├── home_event.dart
+│   │           └── home_state.dart
+│   │
+│   └── general_widget/
+│       ├── buttons/
+│       │   ├── primary_button.dart
+│       │   └── secondary_button.dart
+│       ├── inputs/
+│       │   ├── custom_text_field.dart
+│       │   └── custom_dropdown.dart
+│       ├── cards/
+│       │   └── info_card.dart
+│       └── dialogs/
+│           ├── alert_dialog.dart
+│           └── loading_dialog.dart
+│
+├── gen/
+│   ├── assets.gen.dart
+│   └── colors.gen.dart
+│
+└── l10n/
+    ├── app_en.arb
+    └── app_localizations.dart
+
+Additional Project Files:
+├── pubspec.yaml
+├── analysis_options.yaml
+├── .gitignore
+└── README.md
+
+Test Structure:
+test/
+├── unit/
+│   ├── core/
+│   ├── data/
+│   └── domain/
+├── widget/
+│   └── presentation/
+└── integration/
+    └── features/
+
+Each component follows these naming conventions:
+1. Directories: lowercase_with_underscores
+2. Dart files: lowercase_with_underscores.dart
+3. Classes: PascalCase
+4. Variables and functions: camelCase
+5. Constants: SCREAMING_SNAKE_CASE
+
+Dependencies to be included in pubspec.yaml:
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  # State Management
+  flutter_bloc: ^8.1.3
+  provider: ^6.1.1
+  get: ^4.6.6
+
+  # Routing
+  go_router: ^13.1.0
+
+  # Network
+  dio: ^5.4.0
+  retrofit: ^4.0.3
+
+  # Local Storage
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # Utilities
+  get_it: ^7.6.7
+  injectable: ^2.3.2
+  json_annotation: ^4.8.1
+  freezed_annotation: ^2.4.1
+  logger: ^2.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.8
+  json_serializable: ^6.7.1
+  retrofit_generator: ^8.0.6
+  injectable_generator: ^2.4.1
+  freezed: ^2.4.7
+  flutter_gen_runner: ^5.4.0
+``` 

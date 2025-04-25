@@ -1,16 +1,21 @@
 
-import 'package:bundlegram/core/router/router.dart';
+ 
+import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/utils/themes.dart';
-import 'package:bundlegram/presentation/features/onboarding/screens/splash_screen.dart';
+// import 'package:bundlegram/presentation/routes/app_router.dart';
+// import 'package:bundlegram/presentation/features/onboarding/screens/splash_screen.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class App extends StatelessWidget {
+class App extends ConsumerWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+    
+
     return 
        ScreenUtilInit(
         designSize: const Size(360, 800),
@@ -25,14 +30,14 @@ class App extends StatelessWidget {
                   onTap: () {
                     FocusScope.of(context).requestFocus(FocusNode());
                   },
-                  child:  MaterialApp(
+                  child:  MaterialApp.router(
                       themeMode: ThemeMode.light,
                       theme: AppTheme.darkTheme,
                       darkTheme: AppTheme.darkTheme,
  
-                      home: const SplashScreen(),
+                            routerConfig: AppRouter.router,
                        
-                      routes: AppRouter.routes,
+                       
                       debugShowCheckedModeBanner: false,
                     ),
                 );

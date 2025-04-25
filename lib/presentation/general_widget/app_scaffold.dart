@@ -49,7 +49,7 @@ class BundlegramScaffold extends StatelessWidget {
           backgroundColor: backgroundColor,
           resizeToAvoidBottomInset: resizeToAvoidBottomInset,
           body: Padding(
-            padding:sidePadding?? const EdgeInsets.all(1),
+            padding:sidePadding?? const EdgeInsets.all(16),
             child: SizedBox(
               height: context.height,
               child: Stack(

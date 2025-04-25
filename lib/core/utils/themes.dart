@@ -76,9 +76,14 @@ class AppTheme {
         bodySmall: TextStyle(
           fontSize: 18.sp,
           fontWeight: FontWeight.w400,
-           color: AppColors.black,
+           color: AppColors.grey33,
           fontFamily: FontFamily.mabryPro,
         ),
-       
+       headlineLarge: TextStyle(
+          fontSize: 28.sp,
+          fontWeight: FontWeight.w500,
+           color: AppColors.grey19,
+          fontFamily: FontFamily.mabryPro,
+        ),
       );
 }

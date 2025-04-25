@@ -28,22 +28,45 @@ class $AssetsImagesGen {
       const AssetGenImage('assets/images/walkthrough3.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [
-    logo,
-    walkthrough1,
-    walkthrough2,
-    walkthrough3,
-  ];
+  List<AssetGenImage> get values =>
+      [logo, walkthrough1, walkthrough2, walkthrough3];
 }
 
 class $AssetsSvgsGen {
   const $AssetsSvgsGen();
 
+  /// File path: assets/svgs/Successful illustration.svg
+  String get successfulIllustration =>
+      'assets/svgs/Successful illustration.svg';
+
   /// File path: assets/svgs/arrow-left.svg
   String get arrowLeft => 'assets/svgs/arrow-left.svg';
 
+  /// File path: assets/svgs/close-circle.svg
+  String get closeCircle => 'assets/svgs/close-circle.svg';
+
+  /// File path: assets/svgs/eye.svg
+  String get eye => 'assets/svgs/eye.svg';
+
+  /// File path: assets/svgs/finger-cricle.svg
+  String get fingerCricle => 'assets/svgs/finger-cricle.svg';
+
+  /// File path: assets/svgs/mailresent.svg
+  String get mailresent => 'assets/svgs/mailresent.svg';
+
+  /// File path: assets/svgs/tick-circle.svg
+  String get tickCircle => 'assets/svgs/tick-circle.svg';
+
   /// List of all assets
-  List<String> get values => [arrowLeft];
+  List<String> get values => [
+        successfulIllustration,
+        arrowLeft,
+        closeCircle,
+        eye,
+        fingerCricle,
+        mailresent,
+        tickCircle
+      ];
 }
 
 class Assets {
@@ -54,7 +77,11 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName, {this.size, this.flavors = const {}});
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+  });
 
   final String _assetName;
 
@@ -114,8 +141,15 @@ class AssetGenImage {
     );
   }
 
-  ImageProvider provider({AssetBundle? bundle, String? package}) {
-    return AssetImage(_assetName, bundle: bundle, package: package);
+  ImageProvider provider({
+    AssetBundle? bundle,
+    String? package,
+  }) {
+    return AssetImage(
+      _assetName,
+      bundle: bundle,
+      package: package,
+    );
   }
 
   String get path => _assetName;
