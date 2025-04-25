@@ -63,9 +63,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: context.textTheme.bodySmall!.copyWith(
                     color: AppColors.grey33,
                     fontSize: 16.sp,),),
-                  Text('Sign up.',
-                  style: context.textTheme.bodySmall!.copyWith(fontSize: 16.sp,
-                  color:AppColors.primaryColor, ),),
+                  InkWell(
+                    onTap: (){
+                      context.push('/register');
+                    },
+                    child: Text('Sign up.',
+                    style: context.textTheme.bodySmall!.copyWith(fontSize: 16.sp,
+                    color:AppColors.primaryColor, ),),
+                  ),
 
                 ],
               ),

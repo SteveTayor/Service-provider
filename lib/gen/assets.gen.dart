@@ -51,6 +51,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/finger-cricle.svg
   String get fingerCricle => 'assets/svgs/finger-cricle.svg';
 
+  /// File path: assets/svgs/mailresent.svg
+  String get mailresent => 'assets/svgs/mailresent.svg';
+
   /// File path: assets/svgs/tick-circle.svg
   String get tickCircle => 'assets/svgs/tick-circle.svg';
 
@@ -61,6 +64,7 @@ class $AssetsSvgsGen {
         closeCircle,
         eye,
         fingerCricle,
+        mailresent,
         tickCircle
       ];
 }

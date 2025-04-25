@@ -48,7 +48,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           isExpanded: false,
                     isActive: _isFormValid,
                     onPressed: (){
-                      context.go(RouteConstants.onboardResult);
+                      context.go(RouteConstants.resetPassword);
                     }, buttonText: 'Continue', formKey: _formKey,
                     children:         [
 AppTextField(

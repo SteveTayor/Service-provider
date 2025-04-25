@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 
 class ResultWidget extends StatelessWidget {
   const ResultWidget({required this.title,
-   required this.subText, required this.buttonText, required this.onPressed, super.key,});
+   required this.subText, required this.buttonText,
+    required this.onPressed, super.key,   this.iconPath,});
   final String title;
   final String subText;
+  final String? iconPath;
   final String buttonText;
     final VoidCallback onPressed;
 
@@ -20,7 +22,11 @@ class ResultWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AppSvgIcon(path: Assets.svgs.successfulIllustration),
+              AppSvgIcon(path: 
+              
+           iconPath??  Assets.svgs.successfulIllustration,
+              
+              ),
               Text(title,style: context.textTheme.headlineLarge,),
               Text(subText,
               textAlign: TextAlign.center,

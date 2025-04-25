@@ -4,6 +4,7 @@ import 'package:bundlegram/presentation/features/onboarding/screens/login_screen
 import 'package:bundlegram/presentation/features/onboarding/screens/onboardresult_screen.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/privacypolicy_screen.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/register_screen.dart';
+import 'package:bundlegram/presentation/features/onboarding/screens/resetpasswordlink_screen.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/splash_screen.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/termcondition_screen.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/walkthrough_screen.dart';
@@ -62,6 +63,10 @@ class AppRouter {
       GoRoute(
         path: RouteConstants.forgetPassword,
         builder: (context, state) => const ForgetPasswordScreen(),
+      ),
+      GoRoute(
+        path: RouteConstants.resetPassword,
+        builder: (context, state) => const ResetPasswordLinkScreen(),
       ),
 
 

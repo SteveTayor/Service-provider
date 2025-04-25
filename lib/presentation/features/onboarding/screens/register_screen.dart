@@ -60,9 +60,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: context.textTheme.bodySmall!.copyWith(
                     color: AppColors.grey33,
                     fontSize: 16.sp,),),
-                  Text('Sign in.',
-                  style: context.textTheme.bodySmall!.copyWith(fontSize: 16.sp,
-                  color:AppColors.primaryColor, ),),
+                  InkWell(
+                    onTap: (){
+                      context.push('/login');
+                    },
+                    child: Text('Sign in.',
+                    style: context.textTheme.bodySmall!.copyWith(fontSize: 16.sp,
+                    color:AppColors.primaryColor, ),),
+                  ),
 
                 ],
               ),
