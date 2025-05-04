@@ -7,9 +7,12 @@ import 'package:flutter/material.dart';
 class ResultWidget extends StatelessWidget {
   const ResultWidget({required this.title,
    required this.subText, required this.buttonText,
-    required this.onPressed, super.key,   this.iconPath,});
+    required this.onPressed, super.key, 
+    this.isLinkSent=false,
+      this.iconPath,});
   final String title;
   final String subText;
+  final bool? isLinkSent;
   final String? iconPath;
   final String buttonText;
     final VoidCallback onPressed;
@@ -24,7 +27,7 @@ class ResultWidget extends StatelessWidget {
             children: [
               AppSvgIcon(path: 
               
-           iconPath??  Assets.svgs.successfulIllustration,
+           isLinkSent!?Assets.svgs.mailresent:  Assets.svgs.successfulIllustration,
               
               ),
               Text(title,style: context.textTheme.headlineLarge,),

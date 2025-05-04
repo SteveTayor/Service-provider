@@ -50,22 +50,24 @@ class BundlegramScaffold extends StatelessWidget {
           resizeToAvoidBottomInset: resizeToAvoidBottomInset,
           body: Padding(
             padding:sidePadding?? const EdgeInsets.all(16),
-            child: SizedBox(
-              height: context.height,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  if (showBackImage)
-                    // Positioned.fill(
-                    //   child: Image(
-                    //     image:
-                    //         backgroundImage ?? Assets.images.pattern.provider()
-                    //     fit: BoxFit.cover,
-                    //     repeat: ImageRepeat.repeat,
-                    //   ),
-                    // ),
-                  body,
-                ],
+            child: SafeArea(
+              child: SizedBox(
+                height: context.height,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (showBackImage)
+                      // Positioned.fill(
+                      //   child: Image(
+                      //     image:
+                      //         backgroundImage ?? Assets.images.pattern.provider()
+                      //     fit: BoxFit.cover,
+                      //     repeat: ImageRepeat.repeat,
+                      //   ),
+                      // ),
+                    body,
+                  ],
+                ),
               ),
             ),
           ),

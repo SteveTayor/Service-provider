@@ -4,7 +4,7 @@ import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 // import 'package:bundlegram/core/router/router.dart';
-import 'package:bundlegram/data/onboarding/onboarding_data.dart';
+import 'package:bundlegram/presentation/features/onboarding/notifier/onboarding_data.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:flutter/material.dart';

@@ -14,7 +14,7 @@ class ResetPasswordLinkScreen extends StatelessWidget {
       sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
       body: 
     ResultWidget(title: 'Reset link sent!', 
-    iconPath: Assets.svgs.mailresent,
+    isLinkSent: true,
     
     subText:
      'A password reset link has been sent to your email, roseowen@gmail.com. Check your inbox and click the link to reset your password.',

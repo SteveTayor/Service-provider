@@ -1,0 +1,166 @@
+import 'package:bundlegram/Core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/general_widget/app_bar.dart';
+import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
+import 'package:bundlegram/presentation/general_widget/app_svg.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+ 
+
+class EnterPinScreen extends StatefulWidget { 
+  const EnterPinScreen({super.key,this.onTap});
+  final VoidCallback? onTap;
+
+  @override
+  State<EnterPinScreen> createState() => _EnterPinScreenState();
+}
+
+class _EnterPinScreenState extends State<EnterPinScreen> {
+  final List<String> _pin = ['', '', '', ''];
+  int _currentIndex = 0;
+  bool _isFormValid = false;
+
+  void _updatePin(String value) {
+    if (_currentIndex < 4) {
+      setState(() {
+        _pin[_currentIndex] = value;
+        _currentIndex++;
+        _validatePin();
+      });
+    }
+    else{
+      
+       widget.onTap;
+    }
+  }
+
+  void _deletePin() {
+    if (_currentIndex > 0) {
+      setState(() {
+        _currentIndex--;
+        _pin[_currentIndex] = '';
+        _validatePin();
+      });
+    }
+  }
+
+  void _validatePin() {
+    setState(() {
+      _isFormValid = !_pin.contains('');
+    });
+
+  }
+
+  Widget _buildPinDot(int index) {
+    return Container(
+      width: 24.w,
+      height: 24.w,
+      margin: EdgeInsets.symmetric(horizontal: 8.w),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: _pin[index].isNotEmpty ? AppColors.primaryColor : Colors.transparent,
+        border: Border.all(
+          color: AppColors.primaryColor,
+          width: 1.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNumberButton(String number) {
+    return TextButton(
+      onPressed: () => _updatePin(number),
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.all(20.w),
+      ),
+      child: Text(
+        number,
+        style: context.textTheme.titleLarge!.copyWith(
+          fontSize: 24.sp,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BundlegramScaffold(
+      appBar:   const BundlegramAppbar(titleText: 'Enter current pin',),
+      sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Column(
+              children: [
+                Column(
+                  children: [
+                   
+                    Text(
+                      "We need to confirm it's you.",
+                      textAlign: TextAlign.center,
+                      style: context.textTheme.bodySmall!.copyWith(
+                        color: AppColors.grey33,
+                        fontSize: 18.sp,
+                      ),
+                    ),
+                  ],
+                ),
+                40.verticalSpace,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(4, _buildPinDot),
+                ),
+                40.verticalSpace,
+              
+             
+              ],
+            ),
+          ),
+                  Expanded(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: GridView.count(
+                crossAxisCount: 3,
+                childAspectRatio: 1.5,
+                children: [
+                  ...List.generate(9, (index) => _buildNumberButton('${index + 1}')),
+                  SizedBox(
+                    width: 24,height: 24,
+                    child: AppSvgIcon(path: Assets.svgs.fingerCricle1,
+                    fit: BoxFit.scaleDown,
+                    width: 24,height: 24,),
+                  ), // Empty space for layout
+                  _buildNumberButton('0'),
+                  IconButton(
+                    onPressed: _deletePin,
+                    icon: Icon(
+                      Icons.backspace_outlined,
+                      size: 24.sp,
+                      color: AppColors.grey83,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => context.push(RouteConstants.forgetPassword),
+            child: Text(
+              'Forgot PIN?',
+              style: context.textTheme.bodyMedium!.copyWith(
+                fontSize: 16.sp,
+                color: AppColors.black,
+              ),
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+}

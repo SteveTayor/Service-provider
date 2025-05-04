@@ -25,9 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
   // TextEditingController controller = TextEditingController();
    final _emailController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
+  bool _isFormValid = false;
   bool rememberMe = false;
   bool showPassword = true;
-  bool _isFormValid = false;
     @override
   void initState() {
     super.initState();
@@ -78,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
                  
                      40.verticalSpace,
+                    
                          Flexible(
                    child: AppForm(
                     isExpanded: false,
@@ -99,7 +100,8 @@ color: AppColors.grey83,
                           ),),
                           const Spacer(),
                           InkWell(
-                            onTap: ()=>context.push(RouteConstants.forgetPassword),
+                            onTap: ()=>context.push(
+                              RouteConstants.forgetPassword,),
                             child: Text('Forget Password?',
                             style: context.textTheme.bodyMedium!.copyWith(
                             fontSize: 16.sp,
@@ -110,7 +112,7 @@ color: AppColors.grey83,
                     ),
                     isActive: _isFormValid,
                     onPressed: (){
-                      context.go(RouteConstants.chooseUsername);
+                      context.go(RouteConstants.dashboard);
                     }, buttonText: 'Sign In', formKey: _formKey,
                     children:   [
                    
