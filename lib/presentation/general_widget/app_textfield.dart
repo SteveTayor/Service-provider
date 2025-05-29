@@ -1,54 +1,55 @@
-import 'package:bundlegram/Core/extensions/context_extensions.dart';
-import 'package:bundlegram/Core/extensions/texttheme_extensions.dart';
-import 'package:bundlegram/Core/utils/colors.dart';
+import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppTextField extends StatefulWidget {
-  const AppTextField(
-      {super.key,
-      this.textStyle,
-      this.width,
-      this.height = 62,
-      this.labelSpace = 8,
-      this.textCapitalization = TextCapitalization.sentences,
-      this.onTap,
-      this.decoration,
-      this.hintStyle,
-      this.backgroundColor,
-      this.isLoading = false,
-      this.readOnly = false,
-      this.customLabel,
-      this.hintText,
-      this.controller,
-      this.minLines = 1,
-      this.obscureText = false,
-      this.enabled = true,
-      this.validateFunction,
-      this.borderSide,
-      this.onSaved,
-      this.onChange,
-      this.keyboardType,
-      this.textInputAction,
-      this.focusNode,
-      this.nextFocusNode,
-      this.submitAction,
-      this.enableErrorMessage = true,
-      this.maxLines = 1,
-      this.onFieldSubmitted,
-      this.suffixIcon,
-      this.prefixIcon,
-      this.bordercolor,
-      this.autofocus,
-      this.label,
-      this.inputFormatters,
-      this.borderRadius = 8,
-      this.initialValue,
-      this.labelSize,
-      this.labelColor,
-      this.cursorColor,
-      this.textAlign,});
+  const AppTextField({
+    super.key,
+    this.textStyle,
+    this.width,
+    this.height = 62,
+    this.labelSpace = 8,
+    this.textCapitalization = TextCapitalization.sentences,
+    this.onTap,
+    this.decoration,
+    this.hintStyle,
+    this.backgroundColor,
+    this.isLoading = false,
+    this.readOnly = false,
+    this.customLabel,
+    this.hintText,
+    this.controller,
+    this.minLines = 1,
+    this.obscureText = false,
+    this.enabled = true,
+    this.validateFunction,
+    this.borderSide,
+    this.onSaved,
+    this.onChange,
+    this.keyboardType,
+    this.textInputAction,
+    this.focusNode,
+    this.nextFocusNode,
+    this.submitAction,
+    this.enableErrorMessage = true,
+    this.maxLines = 1,
+    this.onFieldSubmitted,
+    this.suffixIcon,
+    this.prefixIcon,
+    this.bordercolor,
+    this.autofocus,
+    this.label,
+    this.inputFormatters,
+    this.borderRadius = 8,
+    this.initialValue,
+    this.labelSize,
+    this.labelColor,
+    this.cursorColor,
+    this.textAlign,
+  });
   final double? width;
   final double? height;
   final double? labelSize;
@@ -104,9 +105,8 @@ class _AppTextFieldState extends State<AppTextField> {
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
-          width: widget.width??context.width,
+          width: widget.width ?? context.width,
           child: TextFormField(
-            
             textCapitalization: widget.textCapitalization,
             onTap: widget.onTap,
             readOnly: widget.readOnly,
@@ -139,11 +139,9 @@ class _AppTextFieldState extends State<AppTextField> {
             style: widget.textStyle ??
                 context.textTheme.bodySmall?.copyWith(
                   fontSize: 14.sp,
-                  color: widget.cursorColor ?? 
-                  AppColors.grey80,
+                  color: widget.cursorColor ?? AppColors.grey80,
                 ),
-            cursorColor: widget.cursorColor ??
-             AppColors.grey80,
+            cursorColor: widget.cursorColor ?? AppColors.grey80,
             key: widget.key,
             maxLines: widget.maxLines,
             controller: widget.controller,
@@ -154,8 +152,8 @@ class _AppTextFieldState extends State<AppTextField> {
             onFieldSubmitted: widget.onFieldSubmitted,
             decoration: widget.decoration ??
                 InputDecoration(
-                  contentPadding: 
-                    EdgeInsets.symmetric(horizontal: 24.w,vertical: 22.h),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 24.w, vertical: 22.h),
                   // filled: true,
                   constraints: BoxConstraints(
                     minHeight: 67.h,
@@ -166,7 +164,8 @@ class _AppTextFieldState extends State<AppTextField> {
                   enabled: false,
                   errorStyle: context.textTheme.bodySmall!.copyWith(
                     fontSize: 0,
-                    color: AppColors.errorText,),
+                    color: AppColors.errorText,
+                  ),
                   hintText: widget.hintText,
                   errorMaxLines: 1,
                   hintStyle: widget.hintStyle ??
@@ -177,7 +176,6 @@ class _AppTextFieldState extends State<AppTextField> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6.r),
                     borderSide: BorderSide(
-                      
                       color: widget.bordercolor ?? AppColors.greyD0,
                     ),
                   ),

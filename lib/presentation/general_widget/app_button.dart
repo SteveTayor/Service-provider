@@ -1,7 +1,6 @@
-
 // ignore_for_file: lines_longer_than_80_chars, use_if_null_to_convert_nulls_to_bools, avoid_bool_literals_in_conditional_expressions
 
-import 'package:bundlegram/Core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/styles.dart';
@@ -31,8 +30,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BundlegramButton extends StatefulWidget {
   const BundlegramButton({
-    required this.text, required this.onPressed,
-     this.height = BundlegramButtonStyle.buttonDefaultHeight,
+    required this.text,
+    required this.onPressed,
+    this.height = BundlegramButtonStyle.buttonDefaultHeight,
     this.width = BundlegramButtonStyle.buttonDefaultWidth,
     this.isLoading = BundlegramButtonStyle.buttonIsLoading,
     this.isEnabled = BundlegramButtonStyle.buttonIsEnable,
@@ -85,50 +85,52 @@ class _BundlegramButton extends State<BundlegramButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: isActive() ? widget.onPressed : null,
-        child: Container(
-          alignment: Alignment.center,
-          height: widget.height,
-          width: widget.width,
-          decoration: BoxDecoration(
-            border: (widget.isOutline == true)
-                ? BundlegramButtonStyle.outline().border
-                : Border.all(color: Colors.transparent),
-            
-            borderRadius: BorderRadius.circular(widget.cornerRadius),
-            color: widget.color ?? _buttonStyle.background,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (!widget.isLoading)
-                FittedBox(
-                    child: Row(
+      onTap: isActive() ? widget.onPressed : null,
+      child: Container(
+        alignment: Alignment.center,
+        height: widget.height,
+        width: widget.width,
+        decoration: BoxDecoration(
+          border: (widget.isOutline == true)
+              ? BundlegramButtonStyle.outline().border
+              : Border.all(color: Colors.transparent),
+          borderRadius: BorderRadius.circular(widget.cornerRadius),
+          color: widget.color ?? _buttonStyle.background,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (!widget.isLoading)
+              FittedBox(
+                child: Row(
                   children: [
                     if (widget.leading != null) ...[
                       AppSvgIcon(
                         path: widget.leading!,
                         fit: BoxFit.scaleDown,
                       ).withContainer(
-                          width: 32.w,
-                          height: 32.h,
-                          color: AppColors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            width: 1.86,
-                            color: AppColors.primaryColor,
-                          ),),
+                        width: 32.w,
+                        height: 32.h,
+                        color: AppColors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          width: 1.86,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
                       5.horizontalSpace,
                     ],
-                    Text(widget.text,
-                        style: widget.textStyle ??
-                            _buttonStyle.textStyle ??
-                            context.textTheme.bodyMedium?.copyWith(
-                              color: _buttonStyle.textColor,
-                              fontFamily: FontFamily.mabryPro,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w500,
-                            ),),
+                    Text(
+                      widget.text,
+                      style: widget.textStyle ??
+                          _buttonStyle.textStyle ??
+                          context.textTheme.bodyMedium?.copyWith(
+                            color: _buttonStyle.textColor,
+                            fontFamily: FontFamily.mabryPro,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
                     if (widget.trailing != null) ...[
                       10.horizontalSpace,
                       AppSvgIcon(
@@ -137,13 +139,15 @@ class _BundlegramButton extends State<BundlegramButton> {
                       ),
                     ],
                   ],
-                ),),
-              if (widget.isLoading) ...[
-                const CircularProgressIndicator.adaptive(),
-              ],
+                ),
+              ),
+            if (widget.isLoading) ...[
+              const CircularProgressIndicator.adaptive(),
             ],
-          ),
-        ),);
+          ],
+        ),
+      ),
+    );
   }
 
   bool isActive() => widget.isEnabled

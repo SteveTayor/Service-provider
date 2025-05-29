@@ -1,5 +1,5 @@
 
-import 'package:bundlegram/Presentation/Features/Onboarding/Notifier/onboard_notifier.dart';
+import 'package:bundlegram/presentation/features/onboarding/notifier/onboard_notifier.dart';
 import 'package:bundlegram/core/extensions/navigation_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/router.dart';

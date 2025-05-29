@@ -1,10 +1,13 @@
-import 'package:bundlegram/Core/utils/colors.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class AppLoader extends StatefulWidget {
-  const AppLoader(
-      {super.key, this.color = AppColors.primaryColor, this.size = 30,});
+  const AppLoader({
+    super.key,
+    this.color = AppColors.primaryColor,
+    this.size = 30,
+  });
   final Color color;
   final double size;
 

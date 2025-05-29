@@ -1,16 +1,14 @@
+// ignore_for_file: inference_failure_on_function_invocation
 
- // ignore_for_file: inference_failure_on_function_invocation
- 
-import 'package:bundlegram/Core/extensions/navigation_extensions.dart';
-import 'package:bundlegram/Core/utils/colors.dart';
+import 'package:bundlegram/core/extensions/navigation_extensions.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/customizable.row.dart';
 import 'package:flutter/material.dart';
 
-class BundlegramAppbar extends StatelessWidget implements 
-PreferredSizeWidget {
+class BundlegramAppbar extends StatelessWidget implements PreferredSizeWidget {
   const BundlegramAppbar({
     this.showBackButton = true,
     this.title,
@@ -36,11 +34,13 @@ PreferredSizeWidget {
         top: MediaQuery.of(context).padding.top,
         bottom: 20,
       ),
-      decoration:   BoxDecoration(color: Colors.transparent,
-      border: Border(
-        bottom:
-        title==null? BorderSide.none:
-         const BorderSide(color: AppColors.greyEE),),
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        border: Border(
+          bottom: title == null
+              ? BorderSide.none
+              : const BorderSide(color: AppColors.greyEE),
+        ),
       ),
       width: MediaQuery.sizeOf(context).width,
       child: Row(

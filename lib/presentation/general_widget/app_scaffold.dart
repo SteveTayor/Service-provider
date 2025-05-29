@@ -1,4 +1,4 @@
-import 'package:bundlegram/Core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:flutter/material.dart';
@@ -45,11 +45,14 @@ class BundlegramScaffold extends StatelessWidget {
           dividerTheme: const DividerThemeData(color: Colors.transparent),
         ),
         child: Scaffold(
-          appBar:appBar??const BundlegramAppbar(showBackButton: false,),
+          appBar: appBar ??
+              const BundlegramAppbar(
+                showBackButton: false,
+              ),
           backgroundColor: backgroundColor,
           resizeToAvoidBottomInset: resizeToAvoidBottomInset,
           body: Padding(
-            padding:sidePadding?? const EdgeInsets.all(1),
+            padding: sidePadding ?? const EdgeInsets.all(1),
             child: SizedBox(
               height: context.height,
               child: Stack(
@@ -64,7 +67,7 @@ class BundlegramScaffold extends StatelessWidget {
                     //     repeat: ImageRepeat.repeat,
                     //   ),
                     // ),
-                  body,
+                    body,
                 ],
               ),
             ),
