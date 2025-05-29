@@ -109,15 +109,7 @@ class _BundlegramButton extends State<BundlegramButton> {
                       AppSvgIcon(
                         path: widget.leading!,
                         fit: BoxFit.scaleDown,
-                      ).withContainer(
-                          width: 32.w,
-                          height: 32.h,
-                          color: AppColors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            width: 1.86,
-                            color: AppColors.primaryColor,
-                          ),),
+                      ),
                       5.horizontalSpace,
                     ],
                     Text(widget.text,

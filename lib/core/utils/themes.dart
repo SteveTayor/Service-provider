@@ -42,6 +42,24 @@ class AppTheme {
       IconThemeData(color: colorScheme.onPrimary);
 
   static TextTheme _textTheme(ColorScheme colorScheme) => TextTheme(
+        displayLarge: TextStyle(
+          fontSize: 24.sp,
+          fontWeight: FontWeight.w500,
+          color: AppColors.grey19,
+          fontFamily: FontFamily.mabryProBold,
+        ),
+        displaySmall: TextStyle(
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w700,
+          color: AppColors.black,
+          fontFamily: FontFamily.mabryPro,
+        ),
+        labelMedium: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w400,
+          color: AppColors.grey33,
+          fontFamily: FontFamily.mabryPro,
+        ),
         titleLarge: TextStyle(
           fontSize: 40.sp,
           fontWeight: FontWeight.w900,
@@ -49,6 +67,7 @@ class AppTheme {
           letterSpacing: -1.sp,
           fontFamily: FontFamily.mabryProBold,
         ),
+
         titleSmall: TextStyle(
           fontSize: 24.sp,
           fontWeight: FontWeight.w500,
@@ -76,9 +95,20 @@ class AppTheme {
         bodySmall: TextStyle(
           fontSize: 18.sp,
           fontWeight: FontWeight.w400,
-           color: AppColors.black,
+           color: AppColors.grey33,
           fontFamily: FontFamily.mabryPro,
         ),
-       
+       headlineLarge: TextStyle(
+          fontSize: 28.sp,
+          fontWeight: FontWeight.w500,
+           color: AppColors.grey19,
+          fontFamily: FontFamily.mabryPro,
+        ),
+       headlineMedium: TextStyle(
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w700,
+           color: AppColors.white,
+          fontFamily: FontFamily.mabryProBold,
+        ),
       );
 }

@@ -60,13 +60,14 @@ class BundlegramButtonOutline extends BundlegramButtonStyle {
   BundlegramButtonOutline()
       : super(
         
-          background: AppColors.primaryColor,
-          textColor: AppColors.primaryColor,
-          borderColor: AppColors.primaryColor,
-           border: Border.all(width: 2.sp,color: AppColors.primaryColor),
+          background: Colors.transparent,
+          textColor: AppColors.greyD0,
+          borderColor: AppColors.greyD0,
+           border: Border.all(width: 1.sp,color: AppColors.greyD0),
           textStyle: TextStyle(
-            color: AppColors.primaryColor,
-            fontSize: 16.sp,
+            color: AppColors.grey19,
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w500,
             fontFamily: FontFamily.mabryPro,
           ),
         );
