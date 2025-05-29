@@ -1,4 +1,7 @@
+import 'package:bundlegram/Core/utils/colors.dart';
+import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 extension WidgetExtension on Widget {
   Widget withContainer({
@@ -11,6 +14,7 @@ extension WidgetExtension on Widget {
     double? width,
     double? height,
     AlignmentGeometry? alignment,
+    List<BoxShadow>? boxShadow,
   }) {
     return Container(
       alignment: alignment,
@@ -23,6 +27,7 @@ extension WidgetExtension on Widget {
         color: color,
         shape: shape,
         borderRadius: borderRadius,
+        boxShadow: boxShadow,
       ),
       child: this,
     );
@@ -76,5 +81,50 @@ extension WidgetExtension on Widget {
             },
           )
         : this;
+  }
+}
+
+
+extension AppTextFieldDecorationExtension on InputDecoration{
+InputDecoration  search(){
+    return InputDecoration(
+      fillColor: const Color(0xffEEEEEC),
+      filled: true,
+    prefixIcon: const Icon(Icons.search,color: AppColors.black,),
+      hintText: hintText,
+      hintStyle: TextStyle(fontSize: 14.sp,color: AppColors.grey8E,),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide.none,
+        // gapPadding: 14,
+borderRadius: BorderRadius.circular(80.r),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide.none,
+        
+borderRadius: BorderRadius.circular(80.r),
+      ),
+    ) ;
+  }
+InputDecoration  disable(){
+    return InputDecoration(
+      fillColor: AppColors.greyD0.withOpacity(0.3),
+      filled: true,
+     
+      hintText: hintText,
+      hintStyle: TextStyle(fontSize: 18.sp,
+      fontWeight: FontWeight.w400,
+      color: AppColors.black,),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: AppColors.greyD0),
+        // gapPadding: 14,
+borderRadius: BorderRadius.circular(6.r),
+      ),
+      enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: AppColors.greyD0),
+        
+        
+borderRadius: BorderRadius.circular(6.r),
+      ),
+    ) ;
   }
 }

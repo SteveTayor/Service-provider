@@ -1,0 +1,2262 @@
+{
+	"info": {
+		"_postman_id": "940370b3-1f9b-4e7d-9b5f-ab0c368adc61",
+		"name": "Bundlegram",
+		"description": "API URL: [https://api.bundlegram.com/api/](https://api.bundlegram.com)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21350894"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Forget Password",
+					"item": [
+						{
+							"name": "Forget Password",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"morshudlhgmo@gmail.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/forget-password",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"forget-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Verify OTP",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"morshudlhgmo@gmail.com\",\n    \"otp\": \"402106\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/verify-otp",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"verify-otp"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "New Password",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"morshudlhgmo@gmail.com\",\n    \"password\": \"Gooday@24\",\n    \"password_confirm\": \"Gooday@24\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/new-password",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"new-password"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Error response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "AccessToken",
+												"value": "{{Access_Token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"email\": \"morshudlhgmo@gmail.com\",\n    \"password\": \"Gooday@24\",\n    \"password_confirm\": \"Gooday@23\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/new-password",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"new-password"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "Text",
+									"header": null,
+									"cookie": [],
+									"body": "{\n    \"success\": false,\n    \"message\": \"Validation Error.\",\n    \"data\": {\n        \"password_confirm\": [\n            \"The password confirm field must match password.\"\n        ]\n    }\n}"
+								},
+								{
+									"name": "Success response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "AccessToken",
+												"value": "{{Access_Token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"email\": \"morshudlhgmo@gmail.com\",\n    \"password\": \"Gooday@24\",\n    \"password_confirm\": \"Gooday@24\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/new-password",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"new-password"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "Text",
+									"header": null,
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"data\": \"success\",\n    \"message\": \"Password has been successfully changed\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Registration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"lotushub@gmail.com\",\n    \"phone\": \"+2348134211059\",\n    \"first_name\": \"Moshood\",\n    \"last_name\": \"Gbadamosi\",\n    \"password\": \"Gooday@24\",\n    \"password_confirm\": \"Gooday@24\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"register"
+							]
+						},
+						"description": "Gets information about the authenticated user."
+					},
+					"response": [
+						{
+							"name": "Successful Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.getpostman.com/me",
+									"protocol": "https",
+									"host": [
+										"api",
+										"getpostman",
+										"com"
+									],
+									"path": [
+										"me"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": {
+										"content": "",
+										"type": "text/plain"
+									}
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user\": {\n        \"id\": 12345678,\n        \"username\": \"taylor-lee\",\n        \"email\": \"taylor.lee@example.com\",\n        \"fullName\": \"Taylor Lee\",\n        \"avatar\": \"https://example.com/user/r5u9qpvmujfjf6lbqmga.jpg\",\n        \"isPublic\": true\n    },\n    \"operations\": [\n        {\n            \"name\": \"mock_usage\",\n            \"limit\": 1000000,\n            \"usage\": 110276,\n            \"overage\": 0\n        },\n        {\n            \"name\": \"monitor_request_runs\",\n            \"limit\": 10000000,\n            \"usage\": 1141750,\n            \"overage\": 0\n        },\n        {\n            \"name\": \"api_usage\",\n            \"limit\": 1000000,\n            \"usage\": 16240,\n            \"overage\": 0\n        },\n        {\n            \"name\": \"custom_domains\",\n            \"limit\": 25,\n            \"usage\": 25,\n            \"overage\": 0\n        },\n        {\n            \"name\": \"serverless_requests\",\n            \"limit\": 10000,\n            \"usage\": 0,\n            \"overage\": 0\n        },\n        {\n            \"name\": \"integrations\",\n            \"limit\": 5000,\n            \"usage\": 1018,\n            \"overage\": 0\n        },\n        {\n            \"name\": \"cloud_agent_requests\",\n            \"limit\": 1000000,\n            \"usage\": 1615,\n            \"overage\": 0\n        }\n    ]\n}"
+						},
+						{
+							"name": "Rate Limit Exceeded",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.getpostman.com/me",
+									"protocol": "https",
+									"host": [
+										"api",
+										"getpostman",
+										"com"
+									],
+									"path": [
+										"me"
+									]
+								}
+							},
+							"status": "Too Many Requests",
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": {
+										"content": "",
+										"type": "text/plain"
+									}
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"rateLimited\",\n    \"message\": \"Rate limit exceeded. Please retry after 1669048687\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Add Username",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiYzA5ZTNmMGEyYTJjMDAyZWZlZmNjM2U5NzFjNWRkNmI2ZWMwODEzZGU1N2RiYjYxMDI5MjM2MTQzODgyNWI2MGVmY2JhYjRiMDU4YmEzMjQiLCJpYXQiOjE3MjA0MjM0OTkuMzI2NDY2MDgzNTI2NjExMzI4MTI1LCJuYmYiOjE3MjA0MjM0OTkuMzI2NDY4OTQ0NTQ5NTYwNTQ2ODc1LCJleHAiOjE3NTE5NTk0OTkuMzEzNDg3MDUyOTE3NDgwNDY4NzUsInN1YiI6IjgzIiwic2NvcGVzIjpbXX0.cE44KZrWv-NoqbWtZIO3dW8DbG998Ae4BTc-QKUFVvL1t_kUIOrna7bXWpjRSHg9iaqKdIxgzQcqhjH7ia5LMPy6nYbpt-pWnN9bG4V0UpYF_ccqeLt3eRyBMzyiRkK-qV1YBkW1oyEjVmwA3Ao52QF7M4opSmwrCpFvnWXruHFUDNYy_XLV2OCKWGmYSV8Ltydjvy1iGny6ofyM_8B-A1l6snkL5dWfwXYOu0juCV3c1jssTETIMIirw51qVARJGxJbUlSjgVyBi45y9WCtiGK4fJ0VOQnPq7KHIBacMfNrnF8XH7mm2VPWe9ecyVOKeHILoF0C2UQX2I52_ynSLN2i5mcLndOSHSgAWDJRPepG-XQ9spXNsdhl2GWiiO24wX60d_g7RUJiow8q92utiF8YN-1rPKJF4TBBSAmIOSE0Oz1yltJKXAW3MIYVQUwTHlluogTtPuUBl_RAkrHZkWftRG__-80ZM2u0kISDfvY--KtPJmkFiMx4T2AoIHYAn_J2TgC5o2tGjLXp-5hR0x0Gj92gHpX-nhrnp0e_PBJ_VLGKx3GOs7C7GZEESNrXfcrvRal77o-RP4SVVAran16NYggLRgMxO_ROsDfjkAOWQ7cH4WtlwqIRKOqGIWcOWpeOK_wI1w0npTk4QxpeWby_J4FIJ1E2888npATSzwE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"lotushgg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/add_username",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"add_username"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "328|6ZfmnSsNcD94o8C1lIIeo0l7JNumJvjE0xRrYkrYe0720e46",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"gbadamosimoshood3@gmail.com\",\n    \"password\": \"Gooday@23lhgmo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Username",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"Lipeunim\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/check-username",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"check-username"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The `/me` endpoints let you manage information about the authenticated user."
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Email Verification",
+					"item": [
+						{
+							"name": "Request Verification OTP",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{live_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/email-verification",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"email-verification"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Verify Email",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{live_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"otp\": \"341500\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/verify-email",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"verify-email"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User Wallet Balance",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/wallet",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"wallet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"oldPassword\": \"Gooday@24\",\n    \"newPassword\": \"Gooday@23\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/change-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZjBmMjc0MWU0NzMxODI3MzVkMzc1ZTY3NzU2YTM3MTRmMmZjZDc0ZWNjMzA0YzNlNzQ2MDBhMDRmYjA5ZWY0M2U2NTllNDY3NTM2MzI1NGIiLCJpYXQiOjE3MjIwMDcxOTEuNTEzNjg1OTQxNjk2MTY2OTkyMTg3NSwibmJmIjoxNzIyMDA3MTkxLjUxMzY4ODA4NzQ2MzM3ODkwNjI1LCJleHAiOjE3NTM1NDMxOTEuNTA1Njk3MDExOTQ3NjMxODM1OTM3NSwic3ViIjoiODciLCJzY29wZXMiOltdfQ.X-WhSu0w_St12AxxvVOiExM4IVKt0NrY1zZ2DG7Mu-oSZBrP9KtJ3V57siKPhr5_urOP6FCOlhowqJ9erQ_nxKJpI7PNCzfQIRey7OsYpwYOcVJ2QwBv_IUSf5OnRRmjX-8yj_7kqUW6cdIIJMWIGwqE9xjC3z9eIhHYZyqidIJHYclw4J9VYLLfJ9ZBCMai1Ooli58McAdHycXU0fuMOopUFos6JR4kbYe58QxRFPNQOruXRMugqol15_ZkQaPdXP1NUsGy8Mfq6mSTaYmnDcMI5cXU4tVjkykMV6uDW693Pg8Ec7qcEoiXXvuRqR5liWBUFpTBxt56QvYeHtRjWFV5jE3b5-H1qMRBzwogdGvg3cd99SFGLwPsh-L_IyOs_0v2bkgLA_YACJYGq4Q2KQ7Ujw2U6jrZxDqhUjPZUIdI53f96_YDFTDeO1imo8NknA41-ob1qVL63zRYB9bEt8vXCNDNtnAfNl8pejAQ3j88M28Uyvi5q1YV_l2mqz9M389DnMcR2Va4A-Q8YbfiDOY9DpH1g8UKptpj67tWZX7ntb15vX6Yv8spiSpWgKB-hm_fMv5xz4ByoSR1sSUX6cblLJXOApKSmCqTBmAYD7IqvQ5FUUbeSjSB7brKfdwa9-Uk16KPY_uA5H8LtWHKfDerSRiPwEdERFud8Iw3TK0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "User Profile",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/user",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": null,
+							"cookie": [],
+							"body": "{\"status\":\"success\",\"data\":{\"id\":87,\"first_name\":\"Moshood\",\"last_name\":\"Gbadamosi\",\"name\":\"Gbadamosi Moshood\",\"username\":\"Lotushub\",\"email\":\"morshudlhgmo@gmail.com\",\"phone\":\"08134211037\",\"user_type\":\"user\",\"email_verified_at\":\"2024-07-19T09:29:59.000000Z\",\"pin\":null,\"address\":null,\"otp\":\"\",\"gender\":null,\"dob\":\"01/11/1990\",\"bvn\":22360134913,\"nin\":null,\"bank_name\":\"Zenith Bank International\",\"account_number\":\"MOSHOOD OLAWALE GBADAMOSI\",\"account_name\":\"2177545179\",\"v_account_num_1\":\"5041836994\",\"v_account_name_1\":\"Gba\",\"v_account_bank_1\":\"Sterling bank\",\"v_account_num_2\":\"8839063568\",\"v_account_num_3\":null,\"v_account_name_2\":\"Gba\",\"v_account_name_3\":null,\"v_account_bank_2\":\"Wema bank\",\"v_account_bank_3\":null,\"status\":\"active\",\"created_at\":\"2024-07-19T09:28:12.000000Z\",\"updated_at\":\"2024-07-26T16:09:54.000000Z\"},\"message\":\"User Data\"}"
+						}
+					]
+				},
+				{
+					"name": "Change Pin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"oldPin\": \"2233\",\n    \"newPin\": \"2244\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/change-pin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"change-pin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Pin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"Gooday@23\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/reset-pin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reset-pin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Pin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZjBmMjc0MWU0NzMxODI3MzVkMzc1ZTY3NzU2YTM3MTRmMmZjZDc0ZWNjMzA0YzNlNzQ2MDBhMDRmYjA5ZWY0M2U2NTllNDY3NTM2MzI1NGIiLCJpYXQiOjE3MjIwMDcxOTEuNTEzNjg1OTQxNjk2MTY2OTkyMTg3NSwibmJmIjoxNzIyMDA3MTkxLjUxMzY4ODA4NzQ2MzM3ODkwNjI1LCJleHAiOjE3NTM1NDMxOTEuNTA1Njk3MDExOTQ3NjMxODM1OTM3NSwic3ViIjoiODciLCJzY29wZXMiOltdfQ.X-WhSu0w_St12AxxvVOiExM4IVKt0NrY1zZ2DG7Mu-oSZBrP9KtJ3V57siKPhr5_urOP6FCOlhowqJ9erQ_nxKJpI7PNCzfQIRey7OsYpwYOcVJ2QwBv_IUSf5OnRRmjX-8yj_7kqUW6cdIIJMWIGwqE9xjC3z9eIhHYZyqidIJHYclw4J9VYLLfJ9ZBCMai1Ooli58McAdHycXU0fuMOopUFos6JR4kbYe58QxRFPNQOruXRMugqol15_ZkQaPdXP1NUsGy8Mfq6mSTaYmnDcMI5cXU4tVjkykMV6uDW693Pg8Ec7qcEoiXXvuRqR5liWBUFpTBxt56QvYeHtRjWFV5jE3b5-H1qMRBzwogdGvg3cd99SFGLwPsh-L_IyOs_0v2bkgLA_YACJYGq4Q2KQ7Ujw2U6jrZxDqhUjPZUIdI53f96_YDFTDeO1imo8NknA41-ob1qVL63zRYB9bEt8vXCNDNtnAfNl8pejAQ3j88M28Uyvi5q1YV_l2mqz9M389DnMcR2Va4A-Q8YbfiDOY9DpH1g8UKptpj67tWZX7ntb15vX6Yv8spiSpWgKB-hm_fMv5xz4ByoSR1sSUX6cblLJXOApKSmCqTBmAYD7IqvQ5FUUbeSjSB7brKfdwa9-Uk16KPY_uA5H8LtWHKfDerSRiPwEdERFud8Iw3TK0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pin\": \"2233\",\n    \"pin_confirmation\": \"2233\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/create-pin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"create-pin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Become a Merchant",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "328|6ZfmnSsNcD94o8C1lIIeo0l7JNumJvjE0xRrYkrYe0720e46",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mac_address\": \"ejjw-eyete-rrtr\",\n    \"ip_address\": \"192.168.23.1\",\n    \"latitude\": \"0.34555\",\n    \"longitude\": \"5.6555\",\n    \"platform\": \"WEB\" //WEB/APP\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/become-a-merchant",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"become-a-merchant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Profile Setup",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"address\": \"No 4, idi-oro street\",\n    \"date_of_birth\": \"01-11-1993\",\n    \"gender\": \"Male\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/profile-setup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"profile-setup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Link BVN",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "379|3vw2zOpv9K3ifHtpkexTLiYjUEMjiTBnDzWOicUD1f1796d7",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bvn\": \"22360134913\",\n    \"phone_number\": \"08134211657\",\n    \"date_of_birth\": \"01/11/1990\", // Format dd/mm/yyyy\n    \"bank_code\": \"057\",\n    \"account_number\": \"2177545179\",\n    \"account_name\": \"MOSHOOD OLAWALE GBADAMOSI\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/link-bvn",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"link-bvn"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Link BVN",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"bvn\": \"22360134913\",\n    \"phone_number\": \"08134211037\",\n    \"date_of_birth\": \"01/11/1990\", // Format dd/mm/yyyy\n    \"bank_code\": \"057\",\n    \"account_number\": \"2177545179\",\n    \"account_name\": \"MOSHOOD OLAWALE GBADAMOSI\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{local_url}}/link-bvn",
+									"host": [
+										"{{local_url}}"
+									],
+									"path": [
+										"link-bvn"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": null,
+							"cookie": [],
+							"body": "{\"status\":\"success\",\"data\":true,\"message\":\"BVN linked and phone number updated successfully.\"}"
+						}
+					]
+				},
+				{
+					"name": "Fetch Account Name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "56|DTuPrPjTVIrVHbQJ6r6M13gnnzSCEoQauCpTb4Wu578dc39c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"account_number\": \"0011223344\",\n    \"bank_code\": \"032\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/fetch-account-name",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"fetch-account-name"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Fetch Account Name",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"account_number\": \"2177545179\",\n    \"bank_code\": \"057\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{local_url}}/fetch-account-name",
+									"host": [
+										"{{local_url}}"
+									],
+									"path": [
+										"fetch-account-name"
+									]
+								}
+							},
+							"_postman_previewlanguage": "Text",
+							"header": null,
+							"cookie": [],
+							"body": "{\"status\":\"success\",\"data\":{\"accountNumber\":\"2177545179\",\"accountName\":\"MOSHOOD OLAWALE GBADAMOSI\",\"bankCode\":\"057\"},\"message\":\"Account name fetched successfully\"}"
+						}
+					]
+				},
+				{
+					"name": "Get Virtual Accounts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZjBmMjc0MWU0NzMxODI3MzVkMzc1ZTY3NzU2YTM3MTRmMmZjZDc0ZWNjMzA0YzNlNzQ2MDBhMDRmYjA5ZWY0M2U2NTllNDY3NTM2MzI1NGIiLCJpYXQiOjE3MjIwMDcxOTEuNTEzNjg1OTQxNjk2MTY2OTkyMTg3NSwibmJmIjoxNzIyMDA3MTkxLjUxMzY4ODA4NzQ2MzM3ODkwNjI1LCJleHAiOjE3NTM1NDMxOTEuNTA1Njk3MDExOTQ3NjMxODM1OTM3NSwic3ViIjoiODciLCJzY29wZXMiOltdfQ.X-WhSu0w_St12AxxvVOiExM4IVKt0NrY1zZ2DG7Mu-oSZBrP9KtJ3V57siKPhr5_urOP6FCOlhowqJ9erQ_nxKJpI7PNCzfQIRey7OsYpwYOcVJ2QwBv_IUSf5OnRRmjX-8yj_7kqUW6cdIIJMWIGwqE9xjC3z9eIhHYZyqidIJHYclw4J9VYLLfJ9ZBCMai1Ooli58McAdHycXU0fuMOopUFos6JR4kbYe58QxRFPNQOruXRMugqol15_ZkQaPdXP1NUsGy8Mfq6mSTaYmnDcMI5cXU4tVjkykMV6uDW693Pg8Ec7qcEoiXXvuRqR5liWBUFpTBxt56QvYeHtRjWFV5jE3b5-H1qMRBzwogdGvg3cd99SFGLwPsh-L_IyOs_0v2bkgLA_YACJYGq4Q2KQ7Ujw2U6jrZxDqhUjPZUIdI53f96_YDFTDeO1imo8NknA41-ob1qVL63zRYB9bEt8vXCNDNtnAfNl8pejAQ3j88M28Uyvi5q1YV_l2mqz9M389DnMcR2Va4A-Q8YbfiDOY9DpH1g8UKptpj67tWZX7ntb15vX6Yv8spiSpWgKB-hm_fMv5xz4ByoSR1sSUX6cblLJXOApKSmCqTBmAYD7IqvQ5FUUbeSjSB7brKfdwa9-Uk16KPY_uA5H8LtWHKfDerSRiPwEdERFud8Iw3TK0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/get-virtual-account",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"get-virtual-account"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Virtual Accounts",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{local_url}}/get-virtual-account",
+									"host": [
+										"{{local_url}}"
+									],
+									"path": [
+										"get-virtual-account"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": null,
+							"cookie": [],
+							"body": "{\"status\":\"success\",\"data\":{\"Sterling\":{\"AccountNum\":\"5041836994\",\"AccountName\":\"Gba\",\"BankName\":\"Sterling bank\"},\"Wema\":{\"AccountNum\":\"8839063568\",\"AccountName\":\"Gba\",\"BankName\":\"Wema bank\"}},\"message\":\"All Active Virtual Account\"}"
+						}
+					]
+				},
+				{
+					"name": "Add Bank",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "312|YxAF61Y0TKIKU9NKnOqR5b72ULtF9SsjO87jJE7U30bd13a0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bank_code\": \"057\",\n    \"account_number\": \"2177545179\",\n    \"account_name\": \"Moshood Gbadamosi\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/add-bank",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"add-bank"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Add Bank",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"bank_code\": \"032\",\n    \"account_number\": \"0103809231\",\n    \"account_name\": \"Moshood Gbadamosi\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/add-bank",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"add-bank"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"attributes\": {},\n        \"request\": {},\n        \"query\": {},\n        \"server\": {},\n        \"files\": {},\n        \"cookies\": {},\n        \"headers\": {}\n    },\n    \"message\": \"Bank added successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get User Banks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "56|DTuPrPjTVIrVHbQJ6r6M13gnnzSCEoQauCpTb4Wu578dc39c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/get-user-bank",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"get-user-bank"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get User Banks",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/get-user-bank",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"get-user-bank"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"user_id\": 87,\n            \"bank_name\": \"Zenith Bank International\",\n            \"account_name\": \"MOSHOOD OLAWALE GBADAMOSI\",\n            \"account_number\": \"2177545179\",\n            \"primary\": 1,\n            \"created_at\": \"2024-08-08T21:05:01.000000Z\",\n            \"updated_at\": \"2024-08-08T21:05:01.000000Z\"\n        },\n        {\n            \"id\": 2,\n            \"user_id\": 87,\n            \"bank_name\": \"Union Bank Nigeria Plc\",\n            \"account_name\": \"GBADAMOSI OLAWALE MOSHOOD\",\n            \"account_number\": \"0103809231\",\n            \"primary\": 0,\n            \"created_at\": \"2024-08-08T20:31:57.000000Z\",\n            \"updated_at\": \"2024-08-08T20:31:57.000000Z\"\n        }\n    ],\n    \"message\": \"All Bank Accounts\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Make Bank Default/Primary",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "56|DTuPrPjTVIrVHbQJ6r6M13gnnzSCEoQauCpTb4Wu578dc39c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/make-bank-default/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"make-bank-default",
+								"2"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Make Bank Default/Primary",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/make-bank-default/2",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"make-bank-default",
+										"2"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"id\": 2,\n        \"user_id\": 87,\n        \"bank_name\": \"Union Bank Nigeria Plc\",\n        \"account_name\": \"GBADAMOSI OLAWALE MOSHOOD\",\n        \"account_number\": \"0103809231\",\n        \"primary\": true,\n        \"created_at\": \"2024-08-08T20:31:57.000000Z\",\n        \"updated_at\": \"2024-08-08T20:36:36.000000Z\"\n    },\n    \"message\": \"Account made primary successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Bank",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "56|DTuPrPjTVIrVHbQJ6r6M13gnnzSCEoQauCpTb4Wu578dc39c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/delete-bank/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"delete-bank",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete Bank",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/delete-bank/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"delete-bank",
+										"1"
+									]
+								}
+							},
+							"status": "Accepted",
+							"code": 202,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": \"success\",\n    \"message\": \"Bank Account deleted successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Account",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "15|XrHnG1cz0fDgfqtqMlcvpAlgaChpuFOtXpZy4csQfc861a30",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pin\": \"2244\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{local_url}}/delete-account",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"delete-account"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dashboard Data",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "359|L8iTE8nH5AbWftUEzmSockpKOnlabQh5hxnjEZzJee3ad912",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"month\": 8,\n  \"year\": 2024\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/dashboard-data",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dashboard-data"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get All Products",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/getProductByService/BUY_AIRTIME_001",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"getProductByService",
+								"BUY_AIRTIME_001"
+							]
+						},
+						"description": "Service ID: 'BILL_PAYMENT_001', 'BUY_AIRTIME_001', 'DATA_PUR_01'"
+					},
+					"response": [
+						{
+							"name": "Get All Products",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8000/api/getProductByService/BUY_AIRTIME_001",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"getProductByService",
+										"BUY_AIRTIME_001"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": [\n        {\n            \"id\": 23,\n            \"type\": \"airtime\",\n            \"product_name\": \"Mtn Airtime Topup\",\n            \"product_description\": \"Mtn Airtime Topup\",\n            \"product_icon\": \"images/upload/mtn.png\",\n            \"service_id\": \"BUY_AIRTIME_001\",\n            \"network\": \"0\",\n            \"instruct_1\": null,\n            \"instruct_2\": null,\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"MTN\",\n            \"auto_type\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-07-19T08:52:42.000000Z\",\n            \"updated_at\": \"2024-07-19T08:52:42.000000Z\",\n            \"trans_desc\": \"\"\n        },\n        {\n            \"id\": 24,\n            \"type\": \"airtime\",\n            \"product_name\": \"Airtel Airtime Topup\",\n            \"product_description\": \"Airtel Airtime Topup\",\n            \"product_icon\": \"images/upload/airtel.png\",\n            \"service_id\": \"BUY_AIRTIME_001\",\n            \"network\": \"0\",\n            \"instruct_1\": null,\n            \"instruct_2\": null,\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"AIRTEL\",\n            \"auto_type\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-07-19T08:52:42.000000Z\",\n            \"updated_at\": \"2024-07-19T08:52:42.000000Z\",\n            \"trans_desc\": \"\"\n        },\n        {\n            \"id\": 25,\n            \"type\": \"airtime\",\n            \"product_name\": \"Glo Airtime Topup\",\n            \"product_description\": \"Glo Airtime Topup\",\n            \"product_icon\": \"images/upload/glo.png\",\n            \"service_id\": \"BUY_AIRTIME_001\",\n            \"network\": \"0\",\n            \"instruct_1\": null,\n            \"instruct_2\": null,\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"GLO\",\n            \"auto_type\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-07-19T08:52:42.000000Z\",\n            \"updated_at\": \"2024-07-19T08:52:42.000000Z\",\n            \"trans_desc\": \"\"\n        },\n        {\n            \"id\": 26,\n            \"type\": \"airtime\",\n            \"product_name\": \"9Mobile Airtime Topup\",\n            \"product_description\": \"9Mobile Airtime Topup\",\n            \"product_icon\": \"images/upload/9Mobile.png\",\n            \"service_id\": \"BUY_AIRTIME_001\",\n            \"network\": \"0\",\n            \"instruct_1\": null,\n            \"instruct_2\": null,\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ETISALAT\",\n            \"auto_type\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-07-19T08:52:42.000000Z\",\n            \"updated_at\": \"2024-07-19T08:52:42.000000Z\",\n            \"trans_desc\": \"\"\n        }\n    ],\n    \"message\": \"Products\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Products By Type",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/getProductByType/data",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"getProductByType",
+								"data"
+							]
+						},
+						"description": "Types: cable_tv, data, airtime, electricity, education, internet, betting, epin"
+					},
+					"response": [
+						{
+							"name": "Get Products By Type",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/getProductByType/electricity",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"getProductByType",
+										"electricity"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": [\n        {\n            \"id\": 2,\n            \"type\": \"electricity\",\n            \"product_name\": \"Eko PHCN\",\n            \"product_description\": \"Pay Eko PHCN bills\",\n            \"product_icon\": \"images/upload/20200323110807.png\",\n            \"service_id\": \"BILL_PAYMENT_001\",\n            \"network\": \"0\",\n            \"instruct_1\": \"Meter Number\",\n            \"instruct_2\": \"UTILITY_BILLS\",\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ELECT\",\n            \"auto_type\": \"EKEDC\",\n            \"status\": \"1\",\n            \"created_at\": null,\n            \"updated_at\": null,\n            \"trans_desc\": \"Electricity Token Purchase\"\n        },\n        {\n            \"id\": 3,\n            \"type\": \"electricity\",\n            \"product_name\": \"Enugu PHCN\",\n            \"product_description\": \"Pay Enugu Electricity Bill\",\n            \"product_icon\": \"images/upload/20200323111044.png\",\n            \"service_id\": \"BILL_PAYMENT_001\",\n            \"network\": \"0\",\n            \"instruct_1\": \"Meter Number\",\n            \"instruct_2\": \"UTILITY_BILLS\",\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ELECT\",\n            \"auto_type\": \"EEDC\",\n            \"status\": \"1\",\n            \"created_at\": null,\n            \"updated_at\": null,\n            \"trans_desc\": \"Electricity Token Purchase\"\n        },\n        {\n            \"id\": 5,\n            \"type\": \"electricity\",\n            \"product_name\": \"Ibadan Electricity\",\n            \"product_description\": \"Pay Ibadan Electricity bills\",\n            \"product_icon\": \"images/upload/20200323111332.jpeg\",\n            \"service_id\": \"BILL_PAYMENT_001\",\n            \"network\": \"0\",\n            \"instruct_1\": \"Meter Number\",\n            \"instruct_2\": \"UTILITY_BILLS\",\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ELECT\",\n            \"auto_type\": \"BEDC\",\n            \"status\": \"1\",\n            \"created_at\": null,\n            \"updated_at\": null,\n            \"trans_desc\": \"Electricity Token Purchase\"\n        },\n        {\n            \"id\": 6,\n            \"type\": \"electricity\",\n            \"product_name\": \"Ikeja Electricity\",\n            \"product_description\": \"Pay Ikeja Electricity bills\",\n            \"product_icon\": \"images/upload/20200323111521.jpeg\",\n            \"service_id\": \"BILL_PAYMENT_001\",\n            \"network\": \"0\",\n            \"instruct_1\": \"Meter Number\",\n            \"instruct_2\": \"UTILITY_BILLS\",\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ELECT\",\n            \"auto_type\": \"IKEDC\",\n            \"status\": \"1\",\n            \"created_at\": null,\n            \"updated_at\": null,\n            \"trans_desc\": \"Electricity Token Purchase\"\n        },\n        {\n            \"id\": 7,\n            \"type\": \"electricity\",\n            \"product_name\": \"Portharcourt Electricity\",\n            \"product_description\": \"Pay Port Harcourt Electricity bills\",\n            \"product_icon\": \"images/upload/20200323111926.jpeg\",\n            \"service_id\": \"BILL_PAYMENT_001\",\n            \"network\": \"0\",\n            \"instruct_1\": \"Meter Number\",\n            \"instruct_2\": \"UTILITY_BILLS\",\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ELECT\",\n            \"auto_type\": \"PHEDC\",\n            \"status\": \"1\",\n            \"created_at\": null,\n            \"updated_at\": null,\n            \"trans_desc\": \"Electricity Token Purchase\"\n        },\n        {\n            \"id\": 11,\n            \"type\": \"electricity\",\n            \"product_name\": \"Kaduna Eletricity\",\n            \"product_description\": \"Pay Kaduna Eletricity\",\n            \"product_icon\": \"images/upload/20200609051516808.jpeg\",\n            \"service_id\": \"BILL_PAYMENT_001\",\n            \"network\": \"0\",\n            \"instruct_1\": \"Meter Number\",\n            \"instruct_2\": \"UTILITY_BILLS\",\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ELECT\",\n            \"auto_type\": \"KEDC\",\n            \"status\": \"1\",\n            \"created_at\": null,\n            \"updated_at\": null,\n            \"trans_desc\": \"Electricity Token Purchase\"\n        },\n        {\n            \"id\": 12,\n            \"type\": \"electricity\",\n            \"product_name\": \"Jos Electricity\",\n            \"product_description\": \"Pay Jos Electricity\",\n            \"product_icon\": \"images/upload/20200609051631029.jpeg\",\n            \"service_id\": \"BILL_PAYMENT_001\",\n            \"network\": \"0\",\n            \"instruct_1\": \"Meter Number\",\n            \"instruct_2\": \"UTILITY_BILLS\",\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ELECT\",\n            \"auto_type\": \"JEDC\",\n            \"status\": \"1\",\n            \"created_at\": null,\n            \"updated_at\": null,\n            \"trans_desc\": \"Electricity Token Purchase\"\n        },\n        {\n            \"id\": 13,\n            \"type\": \"electricity\",\n            \"product_name\": \"Kano ELectricity\",\n            \"product_description\": \"Pay Kano Electricity\",\n            \"product_icon\": \"images/upload/20200609051814733.png\",\n            \"service_id\": \"BILL_PAYMENT_001\",\n            \"network\": \"0\",\n            \"instruct_1\": \"Meter Number\",\n            \"instruct_2\": \"UTILITY_BILLS\",\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ELECT\",\n            \"auto_type\": \"KAEDC\",\n            \"status\": \"1\",\n            \"created_at\": null,\n            \"updated_at\": null,\n            \"trans_desc\": \"Electricity Token Purchase\"\n        },\n        {\n            \"id\": 14,\n            \"type\": \"electricity\",\n            \"product_name\": \"Yola Electricity\",\n            \"product_description\": \"Pay Yola Electricity\",\n            \"product_icon\": \"images/upload/20200609051918168.jpeg\",\n            \"service_id\": \"BILL_PAYMENT_001\",\n            \"network\": \"0\",\n            \"instruct_1\": \"Meter Number\",\n            \"instruct_2\": \"UTILITY_BILLS\",\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ELECT\",\n            \"auto_type\": \"YEDC\",\n            \"status\": \"1\",\n            \"created_at\": null,\n            \"updated_at\": null,\n            \"trans_desc\": \"Electricity Token Purchase\"\n        },\n        {\n            \"id\": 15,\n            \"type\": \"electricity\",\n            \"product_name\": \"Benin Electricity\",\n            \"product_description\": \"Pay Benin Electricity\",\n            \"product_icon\": \"images/upload/20200609052005686.png\",\n            \"service_id\": \"BILL_PAYMENT_001\",\n            \"network\": \"0\",\n            \"instruct_1\": \"Meter Number\",\n            \"instruct_2\": \"UTILITY_BILLS\",\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ELECT\",\n            \"auto_type\": \"BEDC\",\n            \"status\": \"1\",\n            \"created_at\": null,\n            \"updated_at\": null,\n            \"trans_desc\": \"Electricity Token Purchase\"\n        },\n        {\n            \"id\": 18,\n            \"type\": \"electricity\",\n            \"product_name\": \"Abuja Electricity\",\n            \"product_description\": \"Pay Abuja Electricity\",\n            \"product_icon\": \"images/upload/20200609051110940.jpeg\",\n            \"service_id\": \"BILL_PAYMENT_001\",\n            \"network\": \"0\",\n            \"instruct_1\": \"Meter Number\",\n            \"instruct_2\": \"UTILITY_BILLS\",\n            \"max_amount\": \"0.00\",\n            \"min_amount\": \"0.00\",\n            \"user_percentage\": \"0\",\n            \"auto_prod_id\": \"ELECT\",\n            \"auto_type\": \"AEDC\",\n            \"status\": \"1\",\n            \"created_at\": null,\n            \"updated_at\": null,\n            \"trans_desc\": \"Electricity Token Purchase\"\n        }\n    ],\n    \"message\": \"Products\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Sub Products",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/getSubProduct/19",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"getSubProduct",
+								"19"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Sub Products",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8000/api/getSubProduct/23",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"getSubProduct",
+										"23"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": [\n        {\n            \"id\": 115,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 10GB\",\n            \"sub_price\": \"2600.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 10,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_10gb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:07:19.000000Z\",\n            \"updated_at\": \"2024-02-18T23:07:19.000000Z\"\n        },\n        {\n            \"id\": 114,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 5GB\",\n            \"sub_price\": \"1300.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 5,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_5gb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:06:19.000000Z\",\n            \"updated_at\": \"2024-02-18T23:06:19.000000Z\"\n        },\n        {\n            \"id\": 113,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 3GB\",\n            \"sub_price\": \"780.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 3,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_3gb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:03:39.000000Z\",\n            \"updated_at\": \"2024-02-18T23:03:39.000000Z\"\n        },\n        {\n            \"id\": 112,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 2GB\",\n            \"sub_price\": \"520.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 2,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_2gb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:03:39.000000Z\",\n            \"updated_at\": \"2024-02-11T23:03:39.000000Z\"\n        },\n        {\n            \"id\": 111,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 1GB\",\n            \"sub_price\": \"260.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 1,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_1gb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:01:32.000000Z\",\n            \"updated_at\": \"2024-02-18T23:01:32.000000Z\"\n        },\n        {\n            \"id\": 110,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 500MB\",\n            \"sub_price\": \"130.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 0.5,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_500mb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:01:32.000000Z\",\n            \"updated_at\": \"2024-02-18T23:01:32.000000Z\"\n        }\n    ],\n    \"message\": \"Sub Products\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Sub Products With Variation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/getSubProduct/19/SME",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"getSubProduct",
+								"19",
+								"SME"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Sub Products",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8000/api/getSubProduct/23",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"getSubProduct",
+										"23"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": [\n        {\n            \"id\": 115,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 10GB\",\n            \"sub_price\": \"2600.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 10,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_10gb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:07:19.000000Z\",\n            \"updated_at\": \"2024-02-18T23:07:19.000000Z\"\n        },\n        {\n            \"id\": 114,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 5GB\",\n            \"sub_price\": \"1300.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 5,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_5gb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:06:19.000000Z\",\n            \"updated_at\": \"2024-02-18T23:06:19.000000Z\"\n        },\n        {\n            \"id\": 113,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 3GB\",\n            \"sub_price\": \"780.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 3,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_3gb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:03:39.000000Z\",\n            \"updated_at\": \"2024-02-18T23:03:39.000000Z\"\n        },\n        {\n            \"id\": 112,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 2GB\",\n            \"sub_price\": \"520.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 2,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_2gb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:03:39.000000Z\",\n            \"updated_at\": \"2024-02-11T23:03:39.000000Z\"\n        },\n        {\n            \"id\": 111,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 1GB\",\n            \"sub_price\": \"260.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 1,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_1gb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:01:32.000000Z\",\n            \"updated_at\": \"2024-02-18T23:01:32.000000Z\"\n        },\n        {\n            \"id\": 110,\n            \"product_entity_id\": 19,\n            \"sub_name\": \"MTN SME 500MB\",\n            \"sub_price\": \"130.00\",\n            \"user_percent\": \"0\",\n            \"optional_param\": \"JUSTPAYNG\",\n            \"data_id\": null,\n            \"data_type\": \"SME\",\n            \"data_size\": 0.5,\n            \"plan_id\": null,\n            \"auto_sub_prod_id\": \"data_share_500mb\",\n            \"addon_code\": null,\n            \"status\": \"1\",\n            \"created_at\": \"2024-02-18T23:01:32.000000Z\",\n            \"updated_at\": \"2024-02-18T23:01:32.000000Z\"\n        }\n    ],\n    \"message\": \"Sub Products\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Banks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNGUwYzQ1ODgxMmJlYzk2ZDA3NDY2YWZmZjIwMmU3NmY2ZjU3ZTQ4MDhjZTI2ZGFiNzlmODZkNzAzZTA4OWMwNGQwNzQ4MjE3NjUwMWNlOWQiLCJpYXQiOjE3MjE3ODg1ODIuNTk2MzIyLCJuYmYiOjE3MjE3ODg1ODIuNTk2MzI1LCJleHAiOjE3NTMzMjQ1ODIuNTQwMTMzLCJzdWIiOiI3NiIsInNjb3BlcyI6W119.HYdKGv6G0yDPQzh-10jAEwM5j-M9Jlx0rGdEBX7d-feZKgDSwlQ-zRkg6clUgLVUf7LiWxd4VqNVuq80CSdWu1fzQmt9n1njB5d4sc2BSiRe8WaNopuLPGVZrYn-sJOZX3s80-an2ZeLi_IfQBTWuVDpkfpkaLwD9qpdZ09bC2o-OIWU3cGJdA5HH1qlMz3krNoApRE7tz6sXvsAZKEbSxse6YuYUu2KQUMDLLtUgbw6hZoFEwMqeSZx8VjcQJ1ugvDGOu6tFLu3snCTU_47FJUg5MK91IEJLlxv2cp8gfzSfZzyY6kyJbQqea76fjHSeUtrmFg6VRd62OhbrYRhL98Wu8UfIaFrDximUNyHuWwGawxdDkDZKQguUjPINW1APQpgAXyEaR37schhNSCncNUvEzTlP1Tj8WXQ-AUMDrX1RKxAMvrVJ9i3bcZxGcHvnQ_ZdTaYmqNy6Jb9qkOUT1pFk2mhe0CAeIKpgrcYUIgCtSXIRz8FCnSDoZes-XAAEok62NcxONeZtY8TT506bk1p3mHEGjaylmG46Zpl0D-TrIz_maLgGOYKJrxXP7bamXbJaDpYGfMhpDlXyvf76ifvS-giEYrjZ4E55yH4rocAyZC0f1sm1j78XQ0StpU2QkeovVYwyTMG7_8qOhNjgFP-_d9obPUZ2QK6An9lszQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{local_url}}/get-banks",
+							"host": [
+								"{{local_url}}"
+							],
+							"path": [
+								"get-banks"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Banks",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "API-ACCESS-KEY",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/get-banks",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"get-banks"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "Text",
+							"header": null,
+							"cookie": [],
+							"body": "{\"status\":\"success\",\"data\":[{\"bank_code\":\"011\",\"bank_name\":\"First Bank of Nigeria Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"014\",\"bank_name\":\"Mainstreet Bank  Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"030\",\"bank_name\":\"Heritage Bank\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"032\",\"bank_name\":\"Union Bank Nigeria Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"033\",\"bank_name\":\"United Bank for Africa Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"035\",\"bank_name\":\"WEMA Bank Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"039\",\"bank_name\":\"Stanbic IBTC Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"044\",\"bank_name\":\"Access Bank Nigeria Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"050\",\"bank_name\":\"Ecobank Nigeria\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"057\",\"bank_name\":\"Zenith Bank International\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"058\",\"bank_name\":\"Guaranty Trust Bank Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"063\",\"bank_name\":\"Diamond Bank Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"070\",\"bank_name\":\"Fidelity Bank Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"076\",\"bank_name\":\"Polaris Bank\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"082\",\"bank_name\":\"Keystone Bank Ltd\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"084\",\"bank_name\":\"Enterprise Bank Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"085\",\"bank_name\":\"First Inland Bank Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"086\",\"bank_name\":\"Bond Bank\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"214\",\"bank_name\":\"First City Monument Bank\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"215\",\"bank_name\":\"Unity Bank Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"232\",\"bank_name\":\"Sterling Bank Plc\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"},{\"bank_code\":\"301\",\"bank_name\":\"Jaiz  Bank PLC\",\"status\":\"active\",\"created_at\":null,\"updated_at\":\"-000001-11-30T00:00:00.000000Z\"}],\"message\":\"Banks fetched successfully\"}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Transaction",
+			"item": [
+				{
+					"name": "User Transactions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "API-ACCESS-KEY",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/userTransactions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"userTransactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Transaction Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "TOKEN",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "API-ACCESS-KEY",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/transaction-details",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"transaction-details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate Bill Transaction",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZjBmMjc0MWU0NzMxODI3MzVkMzc1ZTY3NzU2YTM3MTRmMmZjZDc0ZWNjMzA0YzNlNzQ2MDBhMDRmYjA5ZWY0M2U2NTllNDY3NTM2MzI1NGIiLCJpYXQiOjE3MjIwMDcxOTEuNTEzNjg1OTQxNjk2MTY2OTkyMTg3NSwibmJmIjoxNzIyMDA3MTkxLjUxMzY4ODA4NzQ2MzM3ODkwNjI1LCJleHAiOjE3NTM1NDMxOTEuNTA1Njk3MDExOTQ3NjMxODM1OTM3NSwic3ViIjoiODciLCJzY29wZXMiOltdfQ.X-WhSu0w_St12AxxvVOiExM4IVKt0NrY1zZ2DG7Mu-oSZBrP9KtJ3V57siKPhr5_urOP6FCOlhowqJ9erQ_nxKJpI7PNCzfQIRey7OsYpwYOcVJ2QwBv_IUSf5OnRRmjX-8yj_7kqUW6cdIIJMWIGwqE9xjC3z9eIhHYZyqidIJHYclw4J9VYLLfJ9ZBCMai1Ooli58McAdHycXU0fuMOopUFos6JR4kbYe58QxRFPNQOruXRMugqol15_ZkQaPdXP1NUsGy8Mfq6mSTaYmnDcMI5cXU4tVjkykMV6uDW693Pg8Ec7qcEoiXXvuRqR5liWBUFpTBxt56QvYeHtRjWFV5jE3b5-H1qMRBzwogdGvg3cd99SFGLwPsh-L_IyOs_0v2bkgLA_YACJYGq4Q2KQ7Ujw2U6jrZxDqhUjPZUIdI53f96_YDFTDeO1imo8NknA41-ob1qVL63zRYB9bEt8vXCNDNtnAfNl8pejAQ3j88M28Uyvi5q1YV_l2mqz9M389DnMcR2Va4A-Q8YbfiDOY9DpH1g8UKptpj67tWZX7ntb15vX6Yv8spiSpWgKB-hm_fMv5xz4ByoSR1sSUX6cblLJXOApKSmCqTBmAYD7IqvQ5FUUbeSjSB7brKfdwa9-Uk16KPY_uA5H8LtWHKfDerSRiPwEdERFud8Iw3TK0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": \"100\",\n    \"mac_address\": \"ejjw-eyete-rrtr\",\n    \"ip_address\": \"192.168.23.1\",\n    \"latitude\": \"0.34555\",\n    \"longitude\": \"5.6555\",\n    \"cr_acc\": \"\", // empty if epin\n    \"platform\": \"WEB\", //WEB/APP\n    \"sub_prod_id\": 120,\n    \"service_id\": \"BILL_PAYMENT_001\",\n    \"pin\": \"2233\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/initiateBillTransaction",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"initiateBillTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buy Data & Airtime",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "379|3vw2zOpv9K3ifHtpkexTLiYjUEMjiTBnDzWOicUD1f1796d7",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": \"130\",\n    \"mac_address\": \"ejjw-eyete-rrtr\",\n    \"ip_address\": \"192.168.23.1\",\n    \"latitude\": \"0.34555\",\n    \"longitude\": \"5.6555\",\n    \"cr_acc\": \"08137457095\",\n    \"platform\": \"WEB\", //WEB/APP\n    \"sub_prod_id\": 110,\n    \"service_id\": \"DATA_PUR_01\", // e.g BUY_AIRTIME_001 | DATA_PUR_01\n    \"pin\": \"2244\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/initiateDataAirtimeTransaction",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"initiateDataAirtimeTransaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Bill",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"number\": \"8061384512\",\n    \"product_entity_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/validateBill",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"validateBill"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Validate Bill",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "AccessToken",
+										"value": "{{Access_Token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"number\": \"8061384512\",\n    \"product_entity_id\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8000/api/validateBill",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"validateBill"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": null,
+							"cookie": [],
+							"body": "{\"status\":\"success\",\"data\":\"BADAMASI MASHOOD\",\"message\":\"Validation Successful\"}"
+						}
+					]
+				},
+				{
+					"name": "Get Transaction By Type",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "56|DTuPrPjTVIrVHbQJ6r6M13gnnzSCEoQauCpTb4Wu578dc39c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/userTransactions/epin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"userTransactions",
+								"epin"
+							]
+						},
+						"description": "The Transanction types are:\n\ncable_tv, mobile_data, airtime, electricity, education, internet, betting, withdrawal, fund_wallet, epin"
+					},
+					"response": []
+				},
+				{
+					"name": "Withdraw",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{live_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "AccessToken",
+								"value": "{{Access_Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": \"200\",\n    \"mac_address\": \"ejjw-eyete-rrtr\",\n    \"ip_address\": \"192.168.23.1\",\n    \"latitude\": \"0.34555\",\n    \"longitude\": \"5.6555\",\n    \"account_number\": \"2177545179\", // Account Number\n    \"platform\": \"WEB\", //WEB/APP\n    \"pin\": \"2233\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user-withdraw",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-withdraw"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\n{\n  \"Event\": \"charge_successful\",\n  \"TransactionRef\": \"SQGRAN7557984665043\",\n  \"Body\": {\n    \"amount\": 506000,\n    \"transaction_ref\": \"SQGRAN7557984665043\",\n    \"gateway_ref\": \"SQGRAN7557984665043_2_1\",\n    \"transaction_status\": \"Success\",\n    \"email\": \"akuetee@gmail.com\",\n    \"merchant_id\": \"HD3DDPKW\",\n    \"currency\": \"NGN\",\n    \"transaction_type\": \"Bank\",\n    \"merchant_amount\": 990,\n    \"created_at\": \"2023-01-23T10:01:52.284\",\n    \"meta\": {},\n    \"is_recurring\": false\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.bundlegram.com/squad/payment/notification/webhook",
+					"protocol": "https",
+					"host": [
+						"api",
+						"bundlegram",
+						"com"
+					],
+					"path": [
+						"squad",
+						"payment",
+						"notification",
+						"webhook"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "X-API-Key",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://farming-simulator.pstmn.io"
+		},
+		{
+			"key": "Access_Token",
+			"value": "AE35AC4D32E_3ACF"
+		},
+		{
+			"key": "base_url",
+			"value": "https://api.bundlegram.com/api"
+		},
+		{
+			"key": "local_url",
+			"value": "http://localhost:8000/api"
+		},
+		{
+			"key": "login_key",
+			"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZGRjYWYzZTliNGRkYWFhMzczMzQ5NzE0MmEyNjVhYTRiMThlYmU4YWIyYzJmNzAwNmJmZDUwMjZiOWQ5NjUwNjQ2OGM4NWNkMjVhMGE2MjUiLCJpYXQiOjE3MDgyNjYxNDcuNjQ0MzA5LCJuYmYiOjE3MDgyNjYxNDcuNjQ0MzEyLCJleHAiOjE3Mzk4ODg1NDcuNjQyMTc3LCJzdWIiOiIzIiwic2NvcGVzIjpbXX0.H29DrYDy7Bl0aXjl0r9Uw8BjsKi7hch7c9_1QGD3N6NRluHz3SPqJKgrhFkRHafJxiuyKUfhhyuEhWGAB-9hqa3_cjiXHPO2Ds8YhLlGPXiMB7HJGsnBRd34Yrw08C63Tn9t760GDljqCgMe21tfFUxluBcizRoj1J2PYJGiT_3Wc8Onbu0VhlkpQKJq7eARVNKcQmuK6J9WKc4NR9XJWMlZlX5kiXCQ8ydrlA8asFWBTFjtBuRG9NgahA-OknHqAG-ohKHEG-IsbgS8lxOOc8Vj2Do9_HMU3FqdWPYh4yI8r-qtol55jsfEL1PdXuBeJqZhClxy3Qi3b_0hnZ0n0sMuQlYdjsIDvfHtK3nsJEC4XK_ixCF-QN0K6W6gV8evr0HJMg1I4KN8JN56YS5jxsONwX-K7j6f-kbCxOiWsSEjNuKXSPeK28OyOvi9p-REWx39J8xzLRClJEHLWkTnt0Sp3Zek24Na_ttTgxVfngNcKJzAT5hrk732fy6Q9S6_6riELSRgb5EHmtAxCgxU2_4Xmr4AKvhVKvbij2pLa1ynqf-LExXGhvz_QsishCE_cNelMj-_XAe9MLoUFY4cS0P69NHjrUuAHs4V-HBYFnXIvNidYMBXWTaJGHKbD-woupxrn2iyKSYHNHB3kPRQpoyiIItVnrOF1vBNxscZX_k"
+		},
+		{
+			"key": "live_token",
+			"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiOWRkODRiNWNlMTNjNDI2MzQyM2IyY2FmNDZlZDhhNDA4NDVjMjdlMDNjNzhmMWFkNDM0OTRjNjE1NWU0NzdkNjg0MTczZDBiZDljYjY4MzkiLCJpYXQiOjE3MDgzNDQ3MTMuMzA2ODU0MDA5NjI4Mjk1ODk4NDM3NSwibmJmIjoxNzA4MzQ0NzEzLjMwNjg1NzEwOTA2OTgyNDIxODc1LCJleHAiOjE3Mzk5NjcxMTMuMjk1MzI2OTQ4MTY1ODkzNTU0Njg3NSwic3ViIjoiMzkiLCJzY29wZXMiOltdfQ.Myco7bmLm_7GIxzGIKbYvrM7c_26hJt9wTpRpeYqEGVm2eCmKntUcStGjFDlsHsKeMicPUmPgEsWBGtz1DcC5U4r_eG1ipGN6Y9Z2O7GcoLnGMI-Ma7S9tc5WDmecxGWS519lsHlPnKIxaAPrXAu2ge9657nz6IbnTfxWiy9cD06cuIUjXDk3o1pMHJ7JAxRamxGPMhGnzniXhSsKSS-HWejq7ec-6wrra9U4rFZxy1OEdbSk9cclBn40NQ9dsUDe_F8_9p-IyyT5aIk_jZQO9BiOfHhmO5OS4k1VTdRtRPuWBN_ksajb8P3KjjAu8jK-9sMytuxZNmR_tLzriSXXSOSAk4DCo8IfYGYFk5rd9ARGDfm2GsAMBU4oRWi6Jms-gGpdySdAbc66x_L3MYPASMoFl_Jc5Wgv1NE9a4WmWUkDFY6U7eCY0o2L956vlCqmWFQ-WqanhjTg9cNej2EW1nkkEdMlz_9OMuIEnHlUSvLCVxdQnlap5njr0BhiGdsKCt3Zg6IKN-gf7tibTQl-P54N_tnW9MOEjy7-zOXyLImaQ90FXk-cJ51t7XZwMiPHH-m4W5iQf0FTrDefbuTgkr3ErVRnwLBeUEI3C7cjcY6DBC323PMtYUS8uS3H1uAGQgCZF4EMp9esOyyx1PhrsvJB7KSXeNPGZ4U_JYK0T8"
+		}
+	]
+}

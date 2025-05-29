@@ -10,7 +10,8 @@ extension BuildContextExt on BuildContext {
 
   EdgeInsetsGeometry get bottomPaddingForTextField =>
       EdgeInsets.only(bottom: MediaQuery.of(this).viewInsets.bottom);
-
+  EdgeInsetsGeometry symmetricPadding(double horizontal,double vertical) =>
+      EdgeInsets.symmetric(horizontal: horizontal.w, vertical: vertical.h);
   Future<dynamic> showPopUp(
     Widget child, {
     bool? isDismissable,
@@ -58,6 +59,7 @@ extension BuildContextExt on BuildContext {
   Future<T?> showBottomSheet<T>({
     required Widget child,
     Color? color,
+    bool? showIcon,
     bool? isDismissible,
   }) =>
       showModalBottomSheet(
@@ -65,7 +67,8 @@ extension BuildContextExt on BuildContext {
           isDismissible: isDismissible ?? false,
           context: this,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+            borderRadius: BorderRadius.vertical(top:
+             Radius.circular(24.r),),
           ),
           builder: (context) {
             return BackdropFilter(
@@ -84,7 +87,24 @@ extension BuildContextExt on BuildContext {
                 child: Padding(
                   padding: EdgeInsets.only(
                       bottom: MediaQuery.of(context).viewInsets.bottom,),
-                  child: child,
+                  child: Column(
+                     mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Visibility(
+    visible: showIcon??true,
+                        child: Center(
+                          child: Container(
+                            width: 48.w,
+                            height: 4.h,
+                            margin: EdgeInsets.only(top: 16.h,bottom: 24.h),
+                            color: AppColors.greyDE,
+                          ),
+                        ),
+                      ),
+
+                      child,
+                    ],
+                  ),
                 ),
               ),
             );
