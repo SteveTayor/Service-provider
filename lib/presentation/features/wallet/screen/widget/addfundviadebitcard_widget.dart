@@ -1,6 +1,6 @@
 // ignore_for_file: lines_longer_than_80_chars
 
-import 'package:bundlegram/Core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
@@ -17,11 +17,11 @@ class AddfundviadebitcardWidget extends StatefulWidget {
   const AddfundviadebitcardWidget({super.key});
 
   @override
-  State<AddfundviadebitcardWidget> createState() => _AddfundviadebitcardWidgetState();
+  State<AddfundviadebitcardWidget> createState() =>
+      _AddfundviadebitcardWidgetState();
 }
 
 class _AddfundviadebitcardWidgetState extends State<AddfundviadebitcardWidget> {
-   
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -29,17 +29,24 @@ class _AddfundviadebitcardWidgetState extends State<AddfundviadebitcardWidget> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Add money via debit card',style: context.textTheme.displaySmall,),
-        28.verticalSpace,
-        const AppTextField(
-          hintText: 'Amount to top-up',
-        ),
-        40.verticalSpace,
-        BundlegramButton(text: 'Continue', onPressed: (){
-          context..pop()
-          ..push(RouteConstants.topUpResult);
-        },),
-        20.verticalSpace,
+          Text(
+            'Add money via debit card',
+            style: context.textTheme.displaySmall,
+          ),
+          28.verticalSpace,
+          const AppTextField(
+            hintText: 'Amount to top-up',
+          ),
+          40.verticalSpace,
+          BundlegramButton(
+            text: 'Continue',
+            onPressed: () {
+              context
+                ..pop()
+                ..push(RouteConstants.topUpResult);
+            },
+          ),
+          20.verticalSpace,
         ],
       ),
     );

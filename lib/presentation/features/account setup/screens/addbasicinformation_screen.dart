@@ -12,70 +12,59 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddbasicinformationScreen extends StatelessWidget {
-  const AddbasicinformationScreen({super.key,this.userAction = UserAction.create});
+  const AddbasicinformationScreen(
+      {super.key, this.userAction = UserAction.create});
   final UserAction userAction;
+
   @override
   Widget build(BuildContext context) {
     return BundlegramScaffold(
-      appBar:   BundlegramAppbar(titleText:
-      userAction.isCreate?
-       'Add basic information':'Update account details',),
-      body: Column(
+      appBar: BundlegramAppbar(
+        titleText: userAction.isCreate
+            ? 'Add basic information'
+            : 'Update account details',
+      ),
+      body: ListView(
+        padding: EdgeInsets.all(16.w),
         children: [
-       if (userAction.isCreate) Column(
-            children: [
-              const Text('Rose Owen').withContainer(
-                      width: context.width,
-                      color: AppColors.greyD0.withOpacity(0.3),
-               padding: context.symmetricPadding(24, 22),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.greyD0),
-                     ),
-                     24.verticalSpace,
-              const Text('roseowen@gmail.com').withContainer(
-                      width: context.width,
-                      color: AppColors.greyD0.withOpacity(0.3),
-               padding: context.symmetricPadding(24, 22),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.greyD0),
-                     ),
-            ],
-          ) else   Column(
-            children: [
-              const AppTextField(
-                hintText: 'First Name',
-              ),
-              24.verticalSpace,
-                            const AppTextField(
-                hintText: 'Last Name',
-              ),
-              24.verticalSpace,
-                            const AppTextField(
-                hintText: 'Email',
-              ),
-              24.verticalSpace,
-                            const AppTextField(
-                hintText: 'Phone Number',
-              ),
-            ],
+          if (userAction.isCreate) ...[
+            const Text('Rose Owen').withContainer(
+              width: context.width,
+              color: AppColors.greyD0.withOpacity(0.3),
+              padding: context.symmetricPadding(24, 22),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.greyD0),
+            ),
+            SizedBox(height: 24.h),
+            const Text('roseowen@gmail.com').withContainer(
+              width: context.width,
+              color: AppColors.greyD0.withOpacity(0.3),
+              padding: context.symmetricPadding(24, 22),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.greyD0),
+            ),
+          ] else ...[
+            const AppTextField(hintText: 'First Name'),
+            SizedBox(height: 24.h),
+            const AppTextField(hintText: 'Last Name'),
+            SizedBox(height: 24.h),
+            const AppTextField(hintText: 'Email'),
+            SizedBox(height: 24.h),
+            const AppTextField(hintText: 'Phone Number'),
+          ],
+          SizedBox(height: 24.h),
+          const AppDropdown(title: 'Gender'),
+          SizedBox(height: 24.h),
+          const AppTextField(hintText: 'Address'),
+          SizedBox(height: 24.h),
+          const AppDatetextfield(title: 'Date of birth'),
+          SizedBox(height: 24.h),
+          BundlegramButton(
+            text: '${userAction.isCreate ? 'Submit' : 'Update'} details',
+            onPressed: () {},
           ),
-       
-       24.verticalSpace,
-       
-       const AppDropdown(title: 'Gender'),
-       24.verticalSpace,
-      
-       const AppTextField(hintText: 'Address',),
-       24.verticalSpace,
- const AppDatetextfield(title: 'Date of birth'),
-       24.verticalSpace,
-       BundlegramButton(text:
-       
-        '${userAction.isCreate?'Submit':'Update'} details',
-        onPressed: (){},),
         ],
-      )
-    
-    ,);
+      ),
+    );
   }
 }

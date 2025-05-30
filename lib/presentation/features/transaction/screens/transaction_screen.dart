@@ -1,4 +1,4 @@
-import 'package:bundlegram/Core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_widget.dart';
@@ -19,26 +19,31 @@ class TransactionScreen extends StatefulWidget {
 class _TransactionScreenState extends State<TransactionScreen> {
   @override
   Widget build(BuildContext context) {
-    return   BundlegramScaffold(
+    return BundlegramScaffold(
       appBar: BundlegramAppbar(
-              trailing:GestureDetector(
-                onTap: (){
-                  context.showBottomSheet(child: const TransactionFilterWidget());
-                },
-                child: Text('Filter',style: context.textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w500),),)
-       , showBackButton: false,
-        titleText: 'Transactions',),
-      body: 
-      Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppTextField(
-          decoration: const InputDecoration().search(),
+        trailing: GestureDetector(
+          onTap: () {
+            context.showBottomSheet(child: const TransactionFilterWidget());
+          },
+          child: Text(
+            'Filter',
+            style: context.textTheme.bodySmall!
+                .copyWith(fontWeight: FontWeight.w500),
+          ),
         ),
-        20.verticalSpace,
-        const TransactionitemWidget(),
-      ],
-    ),
+        showBackButton: false,
+        titleText: 'Transactions',
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppTextField(
+            decoration: const InputDecoration().search(),
+          ),
+          20.verticalSpace,
+          const TransactionitemWidget(),
+        ],
+      ),
     );
   }
 }

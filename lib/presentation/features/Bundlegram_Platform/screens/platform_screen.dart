@@ -9,27 +9,21 @@ import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class PlatformScreen extends StatefulWidget {
   const PlatformScreen({super.key});
 
   @override
   State<PlatformScreen> createState() => _PlatformScreenState();
 }
- final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
 class _PlatformScreenState extends State<PlatformScreen> {
- 
-
- 
-
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
       drawer: const PlatFormDrawer(),
- 
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -39,7 +33,7 @@ class _PlatformScreenState extends State<PlatformScreen> {
                 children: [
                   PlatformQuickActionWidget(),
                   Positioned(
-                    bottom: 0,
+                    bottom: 20,
                     left: 16,
                     right: 16,
                     child: ViewStatisticsWidget(),
@@ -47,9 +41,8 @@ class _PlatformScreenState extends State<PlatformScreen> {
                 ],
               ),
             ),
-                const PlatformNoticeWidget(),
-                const RecenttransactionWidget(),
- 
+            const PlatformNoticeWidget(),
+            const RecenttransactionWidget(),
           ],
         ),
       ),

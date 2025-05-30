@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppTheme {
   AppTheme._();
 
-    ThemeData lightTheme = _themeData(_lightColorScheme);
+  static ThemeData lightTheme = _themeData(_lightColorScheme);
 
   static ThemeData darkTheme = _themeData(_darkColorScheme);
 
@@ -25,6 +25,7 @@ class AppTheme {
     secondary: AppColors.primaryColor,
     onPrimary: AppColors.primaryColor,
     surface: AppColors.white,
+    onSurface: AppColors.black,
   );
 
   static final ColorScheme _darkColorScheme = const ColorScheme.dark().copyWith(
@@ -32,6 +33,7 @@ class AppTheme {
     secondary: AppColors.primaryColor,
     onPrimary: AppColors.primaryColor,
     surface: AppColors.black,
+    onSurface: AppColors.white,
   );
 
   static AppBarTheme _appBarTheme(ColorScheme colorScheme) => AppBarTheme(
@@ -49,7 +51,7 @@ class AppTheme {
           fontFamily: FontFamily.mabryProBold,
         ),
         displaySmall: TextStyle(
-          fontSize: 18.sp,
+          fontSize: 16.sp,
           fontWeight: FontWeight.w700,
           color: AppColors.black,
           fontFamily: FontFamily.mabryPro,
@@ -67,47 +69,46 @@ class AppTheme {
           letterSpacing: -1.sp,
           fontFamily: FontFamily.mabryProBold,
         ),
-
         titleSmall: TextStyle(
-          fontSize: 24.sp,
+          fontSize: 20.sp,
           fontWeight: FontWeight.w500,
           color: AppColors.black,
           fontFamily: FontFamily.mabryProBold,
         ),
         titleMedium: TextStyle(
-          fontSize: 20.sp,
+          fontSize: 24.sp,
           fontWeight: FontWeight.w700,
           color: AppColors.black,
           fontFamily: FontFamily.mabryProBold,
         ),
-         bodyLarge: TextStyle(
+        bodyLarge: TextStyle(
           fontSize: 22.sp,
           fontWeight: FontWeight.w600,
-          color: AppColors.white,
+          color: AppColors.black,
           fontFamily: FontFamily.mabryPro,
         ),
-          bodyMedium: TextStyle(
+        bodyMedium: TextStyle(
           fontSize: 18.sp,
           fontWeight: FontWeight.w500,
           color: AppColors.black,
           fontFamily: FontFamily.mabryPro,
         ),
         bodySmall: TextStyle(
-          fontSize: 18.sp,
+          fontSize: 16.sp,
           fontWeight: FontWeight.w400,
-           color: AppColors.grey33,
+          color: AppColors.grey33,
           fontFamily: FontFamily.mabryPro,
         ),
-       headlineLarge: TextStyle(
+        headlineLarge: TextStyle(
           fontSize: 28.sp,
           fontWeight: FontWeight.w500,
-           color: AppColors.grey19,
+          color: AppColors.grey19,
           fontFamily: FontFamily.mabryPro,
         ),
-       headlineMedium: TextStyle(
+        headlineMedium: TextStyle(
           fontSize: 18.sp,
           fontWeight: FontWeight.w700,
-           color: AppColors.white,
+          color: AppColors.black,
           fontFamily: FontFamily.mabryProBold,
         ),
       );

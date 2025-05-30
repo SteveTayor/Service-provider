@@ -1,4 +1,4 @@
-import 'package:bundlegram/Presentation/Features/Onboarding/Notifier/onboard_notifier.dart';
+import 'package:bundlegram/presentation/features/onboarding/notifier/onboard_notifier.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
@@ -43,6 +43,7 @@ class WalkthroughScreen extends StatelessWidget {
                             ),
                             Text(
                               OnboardingData.walkthrough[index]['subText']!,
+                              textAlign: TextAlign.center,
                               style: context.textTheme.bodySmall,
                             ),
                             Expanded(

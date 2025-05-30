@@ -9,8 +9,8 @@ import 'package:bundlegram/presentation/screens/auth/forgot_password_screen.dart
 import 'package:bundlegram/presentation/screens/auth/username_screen.dart';
 // import '../screens/home_screen.dart';
 
-final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+// final routerProvider = Provider<GoRouter>((ref) {
+//   final authState = ref.watch(authProvider);
 
-  return  AppRouter.router;
-}); 
+//   return  AppRouter.router;
+// });

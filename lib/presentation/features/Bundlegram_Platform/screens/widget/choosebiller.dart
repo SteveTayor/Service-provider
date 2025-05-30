@@ -1,10 +1,9 @@
-import 'package:bundlegram/Core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/data/platform_data.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 class ChoosebillerWidget extends StatelessWidget {
   const ChoosebillerWidget({super.key});
@@ -13,13 +12,11 @@ class ChoosebillerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-       children: [
-         
+      children: [
         Padding(
           padding: context.symmetricPadding(20, 0),
           child: AppTextField(
             hintText: 'Search for biller',
-            
             decoration: const InputDecoration().search(),
           ),
         ),
@@ -34,7 +31,7 @@ class ChoosebillerWidget extends StatelessWidget {
         //     );
         //    }),
         // ),
-       ],
+      ],
     );
   }
 }

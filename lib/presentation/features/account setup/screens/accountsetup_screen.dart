@@ -1,4 +1,4 @@
-import 'package:bundlegram/Core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
@@ -12,19 +12,59 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-
 class AccountsetupScreen extends StatelessWidget {
   const AccountsetupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-     
-      Widget buildItemRow(
-         
-        String asset,String title, String label, bool verify,
-        {VoidCallback? onPressed,}){
-      return 
-      InkWell(
+    // Define the list of steps with their data
+    final List<Map<String, dynamic>> steps = [
+      {
+        'asset': Assets.svgs.createaccount,
+        'title': 'Create account',
+        'label': 'Create a Bundlegram account',
+        'verify': true,
+      },
+      {
+        'asset': Assets.svgs.verifyemail,
+        'title': 'Verify email',
+        'label': 'Verify your email for security purpose',
+        'verify': false,
+        'onPressed': () =>
+            context.showBottomSheet(child: const VerifyemailWidget()),
+      },
+      {
+        'asset': Assets.svgs.addbasicinfo,
+        'title': 'Add basic information',
+        'label': 'Let’s know more about you',
+        'verify': false,
+        'onPressed': () => context.push(RouteConstants.addbasicinformation),
+      },
+      {
+        'asset': Assets.svgs.linkyourbvn,
+        'title': 'Link your BVN',
+        'label': 'Link BVN to be able to withdraw',
+        'verify': false,
+        'onPressed': () => context.push(RouteConstants.linkyourbvn),
+      },
+      {
+        'asset': Assets.svgs.addbankdetail,
+        'title': 'Add bank details',
+        'label': 'Save bank details to withdraw later',
+        'verify': false,
+        'onPressed': () => context.push(RouteConstants.addbankdetail),
+      },
+    ];
+
+    // Helper method to build each step row
+    Widget buildItemRow(
+      String asset,
+      String title,
+      String label,
+      bool verify, {
+      VoidCallback? onPressed,
+    }) {
+      return InkWell(
         onTap: onPressed,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -35,91 +75,78 @@ class AccountsetupScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,style: context.textTheme.bodyMedium,),
+                  Text(
+                    title,
+                    style: context.textTheme.bodyMedium,
+                  ),
                   8.verticalSpace,
-                  Text(label,style: context.textTheme.labelMedium,),
+                  Text(
+                    label,
+                    style: context.textTheme.labelMedium,
+                  ),
                 ],
               ),
             ),
-                      AppSvgIcon(path:verify? Assets.svgs.check:Assets.svgs.unveirifycheck),
+            AppSvgIcon(
+              path: verify ? Assets.svgs.check : Assets.svgs.unveirifycheck,
+            ),
           ],
         ).withContainer(
           padding: context.symmetricPadding(0, 8),
           margin: EdgeInsets.only(bottom: 24.h),
         ),
       );
-    
     }
-   
-    return   BundlegramScaffold(
-      appBar: const BundlegramAppbar(titleText: 'Complete account set up',),
-      body: Column(
 
- children: [
-  Text('Hi Rose, finish setting up your account to enjoy Bundlegram fully.',
-  textAlign: TextAlign.center,
-  style: context.textTheme.bodyMedium!.copyWith(
-    color: AppColors.grey33,
-  ),
-  ),
- 24.verticalSpace,
- SizedBox(
-  height: 10.h,
-   child: Row(
-    children: List.generate(5, (index){
-      return Expanded(child: 
-      Container(
-        height: 10.h,
-        margin:context.symmetricPadding(4, 0) ,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6),
-          color:
-          index ==0?
-           AppColors.primaryColor:AppColors.greyd9,
+    return BundlegramScaffold(
+      appBar: const BundlegramAppbar(
+        titleText: 'Complete account set up',
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(
+              'Hi Rose, finish setting up your account to enjoy Bundlegram fully.',
+              textAlign: TextAlign.center,
+              style: context.textTheme.bodyMedium!.copyWith(
+                color: AppColors.grey33,
+              ),
+            ),
+            24.verticalSpace,
+            // Progress bar reflecting step completion
+            SizedBox(
+              height: 10.h,
+              child: Row(
+                children: List.generate(steps.length, (index) {
+                  return Expanded(
+                    child: Container(
+                      margin: context.symmetricPadding(4, 0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: (steps[index]['verify'] as bool)
+                            ? AppColors.primaryColor
+                            : AppColors.greyd9,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+            48.verticalSpace,
+            // List of steps using spread operator
+            Column(
+                children: steps
+                    .map((step) => buildItemRow(
+                          step['asset'] as String,
+                          step['title'] as String,
+                          step['label'] as String,
+                          step['verify'] as bool,
+                          onPressed: step['onPressed'] as VoidCallback?,
+                        ))
+                    .toList()),
+          ],
         ),
       ),
-      );
-    }),
-   ),
- ),
- 48.verticalSpace,
- Column(
-  
-  children: [
-    buildItemRow(Assets.svgs.createaccount,
-   
-     'Create account', 'Create a Bundlegram account',
-     true,),
-    buildItemRow(
-       onPressed: () => context.showBottomSheet(child: const VerifyemailWidget()),
-      Assets.svgs.verifyemail,
-     'Verify email', 'Verify your email for security purpose',
-     false,),
-    buildItemRow(
-      onPressed: ()=>context.push(RouteConstants.addbasicinformation),
-      Assets.svgs.addbasicinfo,
-     'Add basic information',
-      'Let’s know more about you',
-     false,),
-    buildItemRow(
-      onPressed: ()=>context.push(RouteConstants.linkyourbvn),
-      Assets.svgs.linkyourbvn,
-     'Link your BVN',
-      'Link BVN to be able to withdraw',
-     false,),
-    buildItemRow(
-        onPressed: ()=>context.push(RouteConstants.addbankdetail),
-      Assets.svgs.addbankdetail,
-     'Add bank details',
-      'Save bank details to withdraw later',
-     false,),
-  ],
- ),
- ],
-
-
-      )
-    
-    ,);
+    );
   }
 }

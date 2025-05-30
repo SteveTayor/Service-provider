@@ -1,4 +1,4 @@
-import 'package:bundlegram/Core/utils/colors.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/gen/assets.gen.dart';

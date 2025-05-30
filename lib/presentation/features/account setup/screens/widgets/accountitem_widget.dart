@@ -13,46 +13,64 @@ class AccountitemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget buildRowWidget(String asset, String title, {
-      Color ?titleColor,
-      VoidCallback? onPressed,}){
+    Widget buildRowWidget(
+      String asset,
+      String title, {
+      Color? titleColor,
+      VoidCallback? onPressed,
+    }) {
       return AppListTile(
-        onPressed: onPressed??(){},
+        onPressed: onPressed ?? () {},
         assetPath: asset,
         titleColor: titleColor,
-    trailingAsset:Assets.svgs.arrowFowardIos,
-     title: title,).withContainer(
-      padding: context.symmetricPadding(0, 24),
-      border: const Border(bottom: BorderSide(color: Color(0xffECECEC))),
-    );
+        trailingAsset: Assets.svgs.arrowFowardIos,
+        title: title,
+      ).withContainer(
+        padding: context.symmetricPadding(0, 24),
+        border: const Border(bottom: BorderSide(color: Color(0xffECECEC))),
+      );
     }
+
     return Column(
       children: [
         buildRowWidget(
-          onPressed: ()=>context.push(RouteConstants.updatebasicinformation),
+          onPressed: () => context.push(RouteConstants.updatebasicinformation),
           Assets.svgs.userIdentifierCardStreamlineCore,
-        'Update account details',),
-        buildRowWidget(Assets.svgs.uploadCircleStreamlineCore,
-                  onPressed: ()=>context.push(RouteConstants.becomeagent),
-        'Become an agent',),
+          'Update account details',
+        ),
         buildRowWidget(
-          onPressed: ()=>context.push(RouteConstants.withdrawalAccount),
+          Assets.svgs.uploadCircleStreamlineCore,
+          onPressed: () => context.push(RouteConstants.becomeagent),
+          'Become an agent',
+        ),
+        buildRowWidget(
+          onPressed: () => context.push(RouteConstants.withdrawalAccount),
           Assets.svgs.walletAdd1,
-        'Withdrawal accounts',),
-        buildRowWidget(Assets.svgs.starBadgeStreamlineCore,
-        'Rate Bundlegram',),
-        buildRowWidget(Assets.svgs.customerSupport1StreamlineCore,
-        onPressed: () => context.push(RouteConstants.helpSupport),
-        'Help & Support',),
-        buildRowWidget(Assets.svgs.heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
-        'Share Bundlegram',),
-        buildRowWidget(Assets.svgs.heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
-        'Update app',),
+          'Withdrawal accounts',
+        ),
         buildRowWidget(
-          onPressed: ()=>context.showBottomSheet(child: const LogoutWidget()),
+          Assets.svgs.starBadgeStreamlineCore,
+          'Rate Bundlegram',
+        ),
+        buildRowWidget(
+          Assets.svgs.customerSupport1StreamlineCore,
+          onPressed: () => context.push(RouteConstants.helpSupport),
+          'Help & Support',
+        ),
+        buildRowWidget(
+          Assets.svgs.heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
+          'Share Bundlegram',
+        ),
+        buildRowWidget(
+          Assets.svgs.heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
+          'Update app',
+        ),
+        buildRowWidget(
+          onPressed: () => context.showBottomSheet(child: const LogoutWidget()),
           titleColor: AppColors.primaryColor,
           Assets.svgs.logout1StreamlineCore,
-        'Log out',),
+          'Log out',
+        ),
       ],
     );
   }

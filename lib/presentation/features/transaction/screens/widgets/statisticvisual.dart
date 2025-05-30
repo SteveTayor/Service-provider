@@ -42,100 +42,111 @@ class _StatisticsDashboardState extends State<StatisticsDashboard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 390,
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-             Row(
-            children: [
-              Expanded(child: Center(child: Text('Statistics',style: context.textTheme.bodyMedium,))),
-            InkWell(
-              onTap: (){
-                context.pop();
-              },
-              child: AppSvgIcon(path: Assets.svgs.close),),
-            ],
-          ),
-          24.verticalSpace,
-          
-          // Daily transactions section
-          Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                    Text(
-                    'Daily transactions',
-                    style: context.textTheme.bodySmall,
-                  ),
-                  _buildDropdown(
-                    selectedTransactionMonth,
-                    (String? newValue) {
-                      setState(() {
-                        selectedTransactionMonth = newValue!;
-                      });
-                    },
-                  ),
-                ],
-              ),
-               24.verticalSpace,
-              SizedBox(
-                height: 224.h,
-                child: _buildBarChart(),
-              ),
-            ],
-          ).withContainer(
-            border: Border.all(width:1.w,color: const Color(0xffE8EBEF) ),
-            padding: context.symmetricPadding(10, 16),
-          ),
-          const SizedBox(height: 36),
-          
-          // Bill distributed section
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Bill distributed',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              _buildDropdown(
-                selectedBillsMonth,
-                (String? newValue) {
-                  setState(() {
-                    selectedBillsMonth = newValue!;
-                  });
-                },
-              ),
-            ],
-          ),
- 24.verticalSpace,
-          SizedBox(
-            height: 350,
-            child: Column(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
- Flexible(
-  flex: 3,
-  child: _buildPieChart(),),
-                Flexible(child: _buildLegend()),
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      'Statistics',
+                      style: context.textTheme.bodyMedium,
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    context.pop();
+                  },
+                  child: AppSvgIcon(path: Assets.svgs.close),
+                ),
               ],
             ),
-          ),
-        ],
+            24.verticalSpace,
+
+            // Daily transactions section
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Daily transactions',
+                      style: context.textTheme.bodySmall,
+                    ),
+                    _buildDropdown(
+                      selectedTransactionMonth,
+                      (String? newValue) {
+                        setState(() {
+                          selectedTransactionMonth = newValue!;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                24.verticalSpace,
+                SizedBox(
+                  height: 224.h, // Already adaptive
+                  child: _buildBarChart(),
+                ),
+              ],
+            ).withContainer(
+              border: Border.all(width: 1.w, color: const Color(0xffE8EBEF)),
+              padding: context.symmetricPadding(10, 16),
+            ),
+            const SizedBox(height: 36),
+
+            // Bill distributed section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Bill distributed',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                _buildDropdown(
+                  selectedBillsMonth,
+                  (String? newValue) {
+                    setState(() {
+                      selectedBillsMonth = newValue!;
+                    });
+                  },
+                ),
+              ],
+            ),
+            24.verticalSpace,
+            SizedBox(
+              height: 350.h, // Changed to adaptive height
+              child: Column(
+                children: [
+                  Flexible(
+                    flex: 3,
+                    child: _buildPieChart(),
+                  ),
+                  Flexible(child: _buildLegend()),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildDropdown(String value, Function(String?) onChanged) {
     return Container(
- height: 36.h,
+      height: 36.h,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         border: Border.all(color: const Color(0xffDBDEE2)),
@@ -189,15 +200,9 @@ class _StatisticsDashboardState extends State<StatisticsDashboard> {
               reservedSize: 30,
             ),
           ),
-          leftTitles: const AxisTitles(
-            
-          ),
-          topTitles: const AxisTitles(
-            
-          ),
-          rightTitles: const AxisTitles(
-            
-          ),
+          leftTitles: const AxisTitles(),
+          topTitles: const AxisTitles(),
+          rightTitles: const AxisTitles(),
         ),
         gridData: const FlGridData(
           show: false,
@@ -242,18 +247,18 @@ class _StatisticsDashboardState extends State<StatisticsDashboard> {
             sectionsSpace: 0,
           ),
         ),
-             Positioned(
-              right: 0,
-               child: Container(
-                         padding: const EdgeInsets.all(12),
-                         decoration: BoxDecoration(
-                           color: Colors.grey.shade100,
-                           borderRadius: BorderRadius.circular(8),
-                         ),
-                         child: Column(
-                           crossAxisAlignment: CrossAxisAlignment.start,
-                           mainAxisSize: MainAxisSize.min,
-                           children: [
+        Positioned(
+          right: 0,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 const Text(
                   'Bills payment',
                   style: TextStyle(
@@ -278,21 +283,19 @@ class _StatisticsDashboardState extends State<StatisticsDashboard> {
                     color: Colors.grey.shade600,
                   ),
                 ),
-                           ],
-                         ),
-                       ),
-             ),
-      
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildLegend() {
-    return   Row(
+    return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         const SizedBox(height: 16),
         Expanded(
           child: Row(
@@ -320,21 +323,18 @@ class _StatisticsDashboardState extends State<StatisticsDashboard> {
             }).toList(),
           ),
         ),
-      
       ],
     );
   }
 }
 
 class TransactionData {
-
   TransactionData(this.day, this.amount);
   final int day;
   final double amount;
 }
 
 class BillDistributionData {
-
   BillDistributionData(this.category, this.percentage, this.color);
   final String category;
   final double percentage;

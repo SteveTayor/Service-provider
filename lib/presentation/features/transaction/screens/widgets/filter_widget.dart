@@ -1,4 +1,4 @@
-import 'package:bundlegram/Core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
@@ -11,7 +11,8 @@ class TransactionFilterWidget extends StatefulWidget {
   const TransactionFilterWidget({super.key});
 
   @override
-  State<TransactionFilterWidget> createState() => _TransactionFilterWidgetState();
+  State<TransactionFilterWidget> createState() =>
+      _TransactionFilterWidgetState();
 }
 
 class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
@@ -32,14 +33,20 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-            Row(
+          Row(
             children: [
-              Expanded(child: Center(child: Text('Filters',style: context.textTheme.bodyMedium,))),
-            InkWell(
-              onTap: (){
-                context.pop();
-              },
-              child: AppSvgIcon(path: Assets.svgs.close),),
+              Expanded(
+                  child: Center(
+                      child: Text(
+                'Filters',
+                style: context.textTheme.bodyMedium,
+              ))),
+              InkWell(
+                onTap: () {
+                  context.pop();
+                },
+                child: AppSvgIcon(path: Assets.svgs.close),
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -49,39 +56,42 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
           Row(
             children: [
               Transform.scale(
-            scale: 1.5,
-            child: Radio(
- 
-              activeColor: Colors.black,
-              value: 'new', groupValue: sortBy,
-               onChanged: (value) => setState(() => sortBy = value!),),
-            ),
-              Text('Newest first (default)',style:
-               context.textTheme.bodySmall!.copyWith(
-                color: AppColors.black,
-               ),),
+                scale: 1.5,
+                child: Radio(
+                  activeColor: Colors.black,
+                  value: 'new',
+                  groupValue: sortBy,
+                  onChanged: (value) => setState(() => sortBy = value!),
+                ),
+              ),
+              Text(
+                'Newest first (default)',
+                style: context.textTheme.bodySmall!.copyWith(
+                  color: AppColors.black,
+                ),
+              ),
             ],
           ),
-         
+
           Row(
             children: [
               Transform.scale(
-            scale: 1.5,
-            child: Radio(
- 
-              activeColor: Colors.black,
-              value: 'new', groupValue: sortBy,
-               onChanged: (value) => setState(() => sortBy = value!),),
-            ),
-              Text('Newest first (default)',style:
-               context.textTheme.bodySmall!.copyWith(
-                color: AppColors.black,
-               ),),
+                scale: 1.5,
+                child: Radio(
+                  activeColor: Colors.black,
+                  value: 'new',
+                  groupValue: sortBy,
+                  onChanged: (value) => setState(() => sortBy = value!),
+                ),
+              ),
+              Text(
+                'Newest first (default)',
+                style: context.textTheme.bodySmall!.copyWith(
+                  color: AppColors.black,
+                ),
+              ),
             ],
           ),
-         
- 
- 
 
           /// Amount
           const Divider(),
@@ -89,47 +99,52 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
           Row(
             children: [
               Transform.scale(
-            scale: 1.5,
-            child: Radio(
- 
-              activeColor: Colors.black,
-              value: '', groupValue: sortBy,
-               onChanged: (value) => setState(() => sortBy = value!),),
-            ),
-              Text('Largest first',style:
-               context.textTheme.bodySmall!.copyWith(
-                color: AppColors.black,
-               ),),
+                scale: 1.5,
+                child: Radio(
+                  activeColor: Colors.black,
+                  value: '',
+                  groupValue: sortBy,
+                  onChanged: (value) => setState(() => sortBy = value!),
+                ),
+              ),
+              Text(
+                'Largest first',
+                style: context.textTheme.bodySmall!.copyWith(
+                  color: AppColors.black,
+                ),
+              ),
             ],
           ),
-            Row(
+          Row(
             children: [
               Transform.scale(
-            scale: 1.5,
-            child: Radio(
-     
-              activeColor: Colors.black,
-              value: '', groupValue: sortBy,
-               onChanged: (value) => setState(() => sortBy = value!),),
-            ),
-              Text('Smallest first',style:
-               context.textTheme.bodySmall!.copyWith(
-                color: AppColors.black,
-               ),),
+                scale: 1.5,
+                child: Radio(
+                  activeColor: Colors.black,
+                  value: '',
+                  groupValue: sortBy,
+                  onChanged: (value) => setState(() => sortBy = value!),
+                ),
+              ),
+              Text(
+                'Smallest first',
+                style: context.textTheme.bodySmall!.copyWith(
+                  color: AppColors.black,
+                ),
+              ),
             ],
           ),
-         
-         
- 
 
           /// Status
           const Divider(),
           const Text('Status'),
           CheckboxListTile(
-            title: Text('Pending',style:
-               context.textTheme.bodySmall!.copyWith(
+            title: Text(
+              'Pending',
+              style: context.textTheme.bodySmall!.copyWith(
                 color: AppColors.black,
-               ),),
+              ),
+            ),
             value: status.contains('pending'),
             onChanged: (val) {
               setState(() {
@@ -138,10 +153,12 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
             },
           ),
           CheckboxListTile(
-            title: Text('Failed',style:
-               context.textTheme.bodySmall!.copyWith(
+            title: Text(
+              'Failed',
+              style: context.textTheme.bodySmall!.copyWith(
                 color: AppColors.black,
-               ),),
+              ),
+            ),
             value: status.contains('failed'),
             onChanged: (val) {
               setState(() {
@@ -150,10 +167,12 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
             },
           ),
           CheckboxListTile(
-            title: Text('Successfull',style:
-               context.textTheme.bodySmall!.copyWith(
+            title: Text(
+              'Successfull',
+              style: context.textTheme.bodySmall!.copyWith(
                 color: AppColors.black,
-               ),),
+              ),
+            ),
             value: status.contains('successful'),
             onChanged: (val) {
               setState(() {
@@ -166,10 +185,12 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
           const Divider(),
           const Text('Type'),
           CheckboxListTile(
-            title:             Text('Top-up',style:
-               context.textTheme.bodySmall!.copyWith(
+            title: Text(
+              'Top-up',
+              style: context.textTheme.bodySmall!.copyWith(
                 color: AppColors.black,
-               ),),
+              ),
+            ),
             value: type.contains('topup'),
             onChanged: (val) {
               setState(() {
@@ -179,10 +200,11 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
           ),
 
           /// Apply Button
-        40.verticalSpace, 
- BundlegramButton(text: 'Apply', onPressed: (){
-  
- },),
+          40.verticalSpace,
+          BundlegramButton(
+            text: 'Apply',
+            onPressed: () {},
+          ),
         ],
       ),
     );

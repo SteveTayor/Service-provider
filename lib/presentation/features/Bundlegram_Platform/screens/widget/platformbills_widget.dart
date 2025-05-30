@@ -1,10 +1,9 @@
-import 'package:bundlegram/Core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/data/platform_data.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 class PlatformbillsWidget extends StatelessWidget {
   const PlatformbillsWidget({super.key});
@@ -13,27 +12,24 @@ class PlatformbillsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-       children: [
-         
+      children: [
         Padding(
           padding: context.symmetricPadding(20, 0),
           child: AppTextField(
             hintText: 'Search for bill',
-            
             decoration: const InputDecoration().search(),
           ),
         ),
-             Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: List.generate(PlatFormData.payBillWidget.length,
-           (index){
+          children: List.generate(PlatFormData.payBillWidget.length, (index) {
             return PlatFormData.payBillWidget[index].withContainer(
               padding: context.symmetricPadding(0, 20.h),
               margin: context.symmetricPadding(20.w, 8.h),
             );
-           }),
+          }),
         ),
-       ],
+      ],
     );
   }
 }

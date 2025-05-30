@@ -1,5 +1,3 @@
-
- 
 import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/utils/themes.dart';
 // import 'package:bundlegram/presentation/routes/app_router.dart';
@@ -13,35 +11,32 @@ class App extends ConsumerWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
-    
-
-    return 
-       ScreenUtilInit(
-        designSize: const Size(360, 800),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        useInheritedMediaQuery: true,
-        builder: (context, c) {
-          return DevicePreview(
-              builder: (context) {
-                return GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                  },
-                  child:  MaterialApp.router(
-                      themeMode: ThemeMode.light,
-                      theme: AppTheme.darkTheme,
-                      darkTheme: AppTheme.darkTheme,
- 
-                            routerConfig: AppRouter.router,
-                       
-                       
-                      debugShowCheckedModeBanner: false,
-                    ),
-                );
-              },);
-        },);
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ScreenUtilInit(
+      designSize: const Size(360, 800),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      ensureScreenSize: true,
+      useInheritedMediaQuery: true,
+      builder: (context, c) {
+        return DevicePreview(
+          builder: (context) {
+            return GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: MaterialApp.router(
+                themeMode: ThemeMode.system,
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                routerConfig: AppRouter.router,
+                debugShowCheckedModeBanner: false,
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }

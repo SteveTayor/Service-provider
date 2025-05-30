@@ -1,5 +1,5 @@
-import 'package:bundlegram/Core/extensions/texttheme_extensions.dart';
-import 'package:bundlegram/Core/utils/colors.dart';
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/styles.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:flutter/material.dart';
@@ -16,26 +16,31 @@ class LogoutWidget extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Log out',style: context.textTheme.bodyMedium!.
-          copyWith(
-      fontSize: 18.sp,
-          ),),
+          Text(
+            'Log out',
+            style: context.textTheme.bodyMedium!.copyWith(
+              fontSize: 18.sp,
+            ),
+          ),
           12.verticalSpace,
-          Text('Are you sure you want to log out?',
-          textAlign: TextAlign.center,
-          style: context.textTheme.bodySmall,),
+          Text(
+            'Are you sure you want to log out?',
+            textAlign: TextAlign.center,
+            style: context.textTheme.bodySmall,
+          ),
           28.verticalSpace,
-          BundlegramButton(text: 'Log out', onPressed: (){}),
+          BundlegramButton(text: 'Log out', onPressed: () {}),
           24.verticalSpace,
           BundlegramButton(
             isOutline: true,
             borderColor: AppColors.greyD0,
             buttonStyle: BundlegramButtonOutline(),
-            text: 'Cancel', onPressed: (){
+            text: 'Cancel',
+            onPressed: () {
               context.pop();
-            },),
+            },
+          ),
           24.verticalSpace,
-       
         ],
       ),
     );

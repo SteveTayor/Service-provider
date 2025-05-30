@@ -1,7 +1,7 @@
 // ignore_for_file: inference_failure_on_function_invocation
 
-import 'package:bundlegram/Core/extensions/navigation_extensions.dart';
-import 'package:bundlegram/Core/utils/colors.dart';
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';

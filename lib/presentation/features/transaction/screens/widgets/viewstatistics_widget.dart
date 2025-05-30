@@ -1,4 +1,4 @@
-import 'package:bundlegram/Core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -14,39 +14,46 @@ class ViewStatisticsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         context.showBottomSheet(child: const StatisticsDashboard());
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          AppSvgIcon(path: 
-          Assets.svgs.viewstat,
-          
+          AppSvgIcon(
+            path: Assets.svgs.viewstat,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('View statistics',style: context.textTheme.bodyMedium,),
-              Text('View charts of your transactions',
-              style: context.textTheme.bodySmall!.copyWith(fontSize: 14.sp),),
-            ],
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'View statistics',
+                  style: context.textTheme.bodyMedium,
+                ),
+                // SizedBox(height: 4.h),
+                Text(
+                  'View charts of your transactions',
+                  style: context.textTheme.bodySmall!.copyWith(fontSize: 14.sp),
+                  // maxLines: 2,
+                  overflow: TextOverflow.clip,
+                ),
+              ],
+            ),
           ),
-          AppSvgIcon(path: 
-          Assets.svgs.chevronDown,
-      
+          AppSvgIcon(
+            path: Assets.svgs.chevronDown,
           ),
         ],
       ).withContainer(
         color: AppColors.white,
         width: context.width,
-       
         boxShadow: [
           const BoxShadow(
-              color: Color(0xFFEBEEF1),
-              offset: Offset(0, 4),
-              blurRadius: 24,
-            ),
+            color: Color(0xFFEBEEF1),
+            offset: Offset(0, 4),
+            blurRadius: 24,
+          ),
         ],
         borderRadius: BorderRadius.circular(8.r),
         padding: const EdgeInsets.all(20),
