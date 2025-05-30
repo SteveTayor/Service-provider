@@ -1,0 +1,150 @@
+// data/models/user_model.dart
+@freezed
+class UserModel with _$UserModel {
+  const factory UserModel({
+    required String id,
+    required String email,
+    required String name,
+    String? photoUrl,
+    @Default(false) bool isEmailVerified,
+  }) = _UserModel;
+
+  factory UserModel.fromJson(Map<String, dynamic> json) => 
+      _$UserModelFromJson(json);
+}
+
+// data/repositories/auth_repository_impl.dart
+@Injectable(as: AuthRepository)
+class AuthRepositoryImpl implements AuthRepository {
+  final AuthRemoteDataSource _remoteDataSource;
+  final AuthLocalDataSource _localDataSource;
+
+  AuthRepositoryImpl(this._remoteDataSource, this._localDataSource);
+
+  @override
+  Future<Either<Failure, UserModel>> signIn({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final user = await _remoteDataSource.signIn(
+        email: email,
+        password: password,
+      );
+      await _localDataSource.cacheUser(user);
+      return Right(user);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+}
+
+// data/datasources/remote/auth_remote_data_source.dart
+abstract class AuthRemoteDataSource {
+  Future<UserModel> signIn({
+    required String email,
+    required String password,
+  });
+  Future<UserModel> signUp({
+    required String email,
+    required String password,
+    required String name,
+  });
+  Future<void> signOut();
+}
+
+@Injectable(as: AuthRemoteDataSource)
+class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
+  final FirebaseAuth _firebaseAuth;
+  final FirebaseFirestore _firestore;
+
+  AuthRemoteDataSourceImpl(this._firebaseAuth, this._firestore);
+
+  @override
+  Future<UserModel> signIn({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final credential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      
+      if (credential.user == null) {
+        throw const ServerException('User not found');
+      }
+
+      final userDoc = await _firestore
+          .collection('users')
+          .doc(credential.user!.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        throw const ServerException('User data not found');
+      }
+
+      return UserModel.fromJson(userDoc.data()!);
+    } on FirebaseAuthException catch (e) {
+      throw ServerException(e.message ?? 'Authentication failed');
+    }
+  }
+}
+
+// data/datasources/local/auth_local_data_source.dart
+abstract class AuthLocalDataSource {
+  Future<void> cacheUser(UserModel user);
+  Future<UserModel?> getCachedUser();
+  Future<void> clearUser();
+}
+
+@Injectable(as: AuthLocalDataSource)
+class AuthLocalDataSourceImpl implements AuthLocalDataSource {
+  final SharedPreferences _prefs;
+  static const String _userKey = 'CACHED_USER';
+
+  AuthLocalDataSourceImpl(this._prefs);
+
+  @override
+  Future<void> cacheUser(UserModel user) async {
+    await _prefs.setString(_userKey, jsonEncode(user.toJson()));
+  }
+
+  @override
+  Future<UserModel?> getCachedUser() async {
+    final jsonString = _prefs.getString(_userKey);
+    if (jsonString == null) return null;
+    return UserModel.fromJson(jsonDecode(jsonString));
+  }
+
+  @override
+  Future<void> clearUser() async {
+    await _prefs.remove(_userKey);
+  }
+}
+
+// data/core/exceptions.dart
+class ServerException implements Exception {
+  final String message;
+  const ServerException(this.message);
+}
+
+class CacheException implements Exception {
+  final String message;
+  const CacheException(this.message);
+}
+
+// data/core/network/network_info.dart
+abstract class NetworkInfo {
+  Future<bool> get isConnected;
+}
+
+@Injectable(as: NetworkInfo)
+class NetworkInfoImpl implements NetworkInfo {
+  final InternetConnectionChecker connectionChecker;
+
+  NetworkInfoImpl(this.connectionChecker);
+
+  @override
+  Future<bool> get isConnected => connectionChecker.hasConnection;
+} 

@@ -1,0 +1,241 @@
+// presentation/features/auth/bloc/auth_bloc.dart
+@injectable
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final SignIn _signIn;
+  final SignUp _signUp;
+
+  AuthBloc(this._signIn, this._signUp) : super(const AuthState.initial()) {
+    on<AuthSignInRequested>(_onSignInRequested);
+    on<AuthSignUpRequested>(_onSignUpRequested);
+  }
+
+  Future<void> _onSignInRequested(
+    AuthSignInRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthState.loading());
+
+    final result = await _signIn(SignInParams(
+      email: event.email,
+      password: event.password,
+    ));
+
+    emit(result.fold(
+      (failure) => AuthState.error(failure.message),
+      (user) => AuthState.authenticated(user),
+    ));
+  }
+
+  Future<void> _onSignUpRequested(
+    AuthSignUpRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthState.loading());
+
+    final result = await _signUp(SignUpParams(
+      email: event.email,
+      password: event.password,
+      name: event.name,
+    ));
+
+    emit(result.fold(
+      (failure) => AuthState.error(failure.message),
+      (user) => AuthState.authenticated(user),
+    ));
+  }
+}
+
+// presentation/features/auth/bloc/auth_event.dart
+@freezed
+class AuthEvent with _$AuthEvent {
+  const factory AuthEvent.signInRequested({
+    required String email,
+    required String password,
+  }) = AuthSignInRequested;
+
+  const factory AuthEvent.signUpRequested({
+    required String email,
+    required String password,
+    required String name,
+  }) = AuthSignUpRequested;
+}
+
+// presentation/features/auth/bloc/auth_state.dart
+@freezed
+class AuthState with _$AuthState {
+  const factory AuthState.initial() = _Initial;
+  const factory AuthState.loading() = _Loading;
+  const factory AuthState.authenticated(User user) = _Authenticated;
+  const factory AuthState.error(String message) = _Error;
+}
+
+// presentation/features/auth/screens/login_screen.dart
+@injectable
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<AuthBloc>(),
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Login')),
+        body: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            state.maybeWhen(
+              authenticated: (_) => context.go('/home'),
+              error: (message) => context.showSnackBar(message),
+              orElse: () {},
+            );
+          },
+          builder: (context, state) {
+            return state.maybeWhen(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              orElse: () => const AuthForm(),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+// presentation/features/auth/widgets/auth_form.dart
+class AuthForm extends StatefulWidget {
+  const AuthForm({super.key});
+
+  @override
+  State<AuthForm> createState() => _AuthFormState();
+}
+
+class _AuthFormState extends State<AuthForm> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          CustomTextField(
+            controller: _emailController,
+            label: 'Email',
+            validator: Validators.email,
+          ),
+          CustomTextField(
+            controller: _passwordController,
+            label: 'Password',
+            obscureText: true,
+            validator: Validators.password,
+          ),
+          PrimaryButton(
+            onPressed: _handleSubmit,
+            child: const Text('Login'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleSubmit() {
+    if (_formKey.currentState?.validate() ?? false) {
+      context.read<AuthBloc>().add(AuthEvent.signInRequested(
+        email: _emailController.text,
+        password: _passwordController.text,
+      ));
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+}
+
+// presentation/general_widget/buttons/primary_button.dart
+class PrimaryButton extends StatelessWidget {
+  final VoidCallback? onPressed;
+  final Widget child;
+
+  const PrimaryButton({
+    super.key,
+    required this.onPressed,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+      onPressed: onPressed,
+      child: child,
+    );
+  }
+}
+
+// presentation/general_widget/inputs/custom_text_field.dart
+class CustomTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String label;
+  final String? Function(String?)? validator;
+  final bool obscureText;
+
+  const CustomTextField({
+    super.key,
+    required this.controller,
+    required this.label,
+    this.validator,
+    this.obscureText = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      obscureText: obscureText,
+      validator: validator,
+    );
+  }
+}
+
+// presentation/general_widget/dialogs/loading_dialog.dart
+class LoadingDialog extends StatelessWidget {
+  final String message;
+
+  const LoadingDialog({
+    super.key,
+    this.message = 'Please wait...',
+  });
+
+  static Future<void> show(BuildContext context, {String? message}) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => LoadingDialog(message: message ?? 'Please wait...'),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(message),
+          ],
+        ),
+      ),
+    );
+  }
+} 

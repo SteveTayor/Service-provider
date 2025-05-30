@@ -12,11 +12,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppForm extends StatefulWidget {
   const AppForm({required this.children, 
   required this.isActive,
-  required this.formKey, required this.onPressed, required this.buttonText, super.key,});
+
+  required this.formKey, required this.onPressed, 
+  required this.buttonText, 
+  this.isExpanded = true,
+  this.extraWidget,
+  super.key,});
   final List<AppTextField>  children;
   final VoidCallback onPressed;
   final String buttonText;
   final bool isActive;
+  final Widget? extraWidget;
+  final bool? isExpanded;
 
  final GlobalKey<FormState> formKey;
 
@@ -32,8 +39,15 @@ class _AppFormState extends State<AppForm> {
     return Form(
       key: widget.formKey,
       child: Column(
+        mainAxisSize:
+        widget.isExpanded!?
+         MainAxisSize.max:MainAxisSize.min,
+        mainAxisAlignment:
+        
+        widget.isExpanded!?
+         MainAxisAlignment.spaceBetween:MainAxisAlignment.start,
         children: [
-          Expanded(
+          Flexible(
             child: SingleChildScrollView(
               child: Column(
                 children: List.generate(widget.children.length, (index){
@@ -42,6 +56,7 @@ class _AppFormState extends State<AppForm> {
               ),
             ),
           ),
+          widget.extraWidget??const SizedBox(),
           32.verticalSpace,
           
           Opacity(
@@ -57,7 +72,9 @@ class _AppFormState extends State<AppForm> {
                
               text: widget.buttonText,
              onPressed: (){
+              widget.onPressed();
                            widget.formKey.currentState!.validate();
+             
              },),
           ),
         ],

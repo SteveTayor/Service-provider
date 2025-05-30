@@ -118,6 +118,7 @@ class _BundlegramButton extends State<BundlegramButton> {
                           color: AppColors.primaryColor,
                         ),
                       ),
+                      ),
                       5.horizontalSpace,
                     ],
                     Text(

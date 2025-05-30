@@ -1,0 +1,17 @@
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter/foundation.dart';
+
+@immutable
+abstract class BaseAsyncNotifier<T> extends AsyncNotifier<T> {
+  @protected
+  Future<T> handleError(Future<T> Function() cb) async {
+    try {
+      return await cb();
+    } catch (error, stackTrace) {
+      debugPrint('Error: $error');
+      debugPrint('StackTrace: $stackTrace');
+      // You can add custom error handling here
+      rethrow;
+    }
+  }
+} 

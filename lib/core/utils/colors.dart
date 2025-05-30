@@ -7,8 +7,20 @@ class AppColors {
   static const Color background = Color(0xffFFFFFF);
   static const Color greyEE = Color(0xffEEEEEE);
   static const Color grey80 = Color(0xff808080);
+  static const Color grey83 = Color(0xff586283);
   static const Color greyD0 = Color(0xffBBC6D0);
   static const Color grey33 = Color(0xff333333);
+  static const Color grey19 = Color(0xff0F1419);
+  static const Color greyb3 = Color(0xffB3B3B3);
   static const Color errorText = Colors.red;
+  static const Color grey8E = Color(0xff8E8E8E);
+  static const Color greyDE = Color(0xffDEDEDE);
+  static const Color greyF5 = Color(0xffF5F5F5);
+  static const Color greyd9= Color(0xffD9D9D9);
+  static const Color grey5B= Color(0xff5B5B5B);
+  static const Color grey2F= Color(0xff332F2F);
+  static const Color pink = Color(0xffEE4878);
+
+  
 
 }

@@ -1,8 +1,9 @@
-import 'package:bundlegram/core/extensions/navigation_extensions.dart';
-import 'package:bundlegram/core/router/router.dart';
-import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/Core/utils/colors.dart';
+import 'package:bundlegram/core/router/app_router.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,7 +14,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   void _goToWalkThrough() {
-    context.replaceAll(AppRouter.walkThrough);
+    context.go(RouteConstants.walkThrough);
   }
 
   @override

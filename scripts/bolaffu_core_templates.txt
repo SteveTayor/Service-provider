@@ -1,0 +1,138 @@
+// main.dart
+void main() {
+  bootstrap(() => const App());
+}
+
+// app.dart
+class App extends StatelessWidget {
+  const App({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerConfig: appRouter,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+    );
+  }
+}
+
+// bootstrap.dart
+Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await configureDependencies();
+  runApp(await builder());
+}
+
+// core/config/app_config.dart
+@singleton
+class AppConfig {
+  final String apiBaseUrl;
+  final String appName;
+  final bool enableLogging;
+
+  AppConfig({
+    required this.apiBaseUrl,
+    required this.appName,
+    required this.enableLogging,
+  });
+
+  factory AppConfig.development() {
+    return AppConfig(
+      apiBaseUrl: 'https://api.dev.example.com',
+      appName: 'MyApp Dev',
+      enableLogging: true,
+    );
+  }
+
+  factory AppConfig.production() {
+    return AppConfig(
+      apiBaseUrl: 'https://api.example.com',
+      appName: 'MyApp',
+      enableLogging: false,
+    );
+  }
+}
+
+// core/config/theme.dart
+class AppTheme {
+  static ThemeData get light => ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.light,
+        ),
+      );
+
+  static ThemeData get dark => ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
+      );
+}
+
+// core/extensions/context_extensions.dart
+extension BuildContextX on BuildContext {
+  ThemeData get theme => Theme.of(this);
+  TextTheme get textTheme => theme.textTheme;
+  ColorScheme get colorScheme => theme.colorScheme;
+  MediaQueryData get mediaQuery => MediaQuery.of(this);
+  Size get screenSize => mediaQuery.size;
+  double get screenWidth => screenSize.width;
+  double get screenHeight => screenSize.height;
+  bool get isDarkMode => theme.brightness == Brightness.dark;
+  
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(this).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+}
+
+// core/router/app_router.dart
+@singleton
+class AppRouter {
+  static final _router = GoRouter(
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
+    ],
+  );
+
+  static GoRouter get router => _router;
+}
+
+// core/utils/logger.dart
+class AppLogger {
+  static final Logger _logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 0,
+      errorMethodCount: 8,
+      lineLength: 120,
+      colors: true,
+      printEmojis: true,
+      printTime: true,
+    ),
+  );
+
+  static void debug(dynamic message) => _logger.d(message);
+  static void info(dynamic message) => _logger.i(message);
+  static void warning(dynamic message) => _logger.w(message);
+  static void error(dynamic message, [dynamic error, StackTrace? stackTrace]) {
+    _logger.e(message, error, stackTrace);
+  }
+} 

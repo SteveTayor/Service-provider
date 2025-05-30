@@ -10,7 +10,7 @@ class OnboardingState extends UserState{
     required this.walkThroughIndex,
  
   }) : super(submitUsername: false, 
-  loadState: LoadState.loading, userName: '',);
+  userName: '',);
   factory OnboardingState.initial(){
     return OnboardingState(
       walkThroughIndex:0,
