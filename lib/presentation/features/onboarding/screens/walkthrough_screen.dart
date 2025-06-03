@@ -41,6 +41,7 @@ class WalkthroughScreen extends StatelessWidget {
                               textAlign: TextAlign.center,
                               style: context.textTheme.titleLarge,
                             ),
+                            20.verticalSpace,
                             Text(
                               OnboardingData.walkthrough[index]['subText']!,
                               textAlign: TextAlign.center,
@@ -82,7 +83,7 @@ class WalkthroughScreen extends StatelessWidget {
                       RouteConstants.register,
                     ),
                   ),
-                  34.verticalSpace,
+                  16.verticalSpace,
                   InkWell(
                     onTap: () {
                       context.push(RouteConstants.login);

@@ -6,10 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class ListtileswitchWidget extends StatefulWidget {
-  const ListtileswitchWidget({required this.title,
-    required this.label, this.switchValue, super.key,});
+  const ListtileswitchWidget({
+    required this.title,
+    required this.label,
+    this.switchValue,
+    super.key,
+  });
   final String title;
   final String label;
   final bool? switchValue;
@@ -19,31 +22,37 @@ class ListtileswitchWidget extends StatefulWidget {
 }
 
 class _ListtileswitchWidgetState extends State<ListtileswitchWidget> {
-bool switchValue = true;
+  bool switchValue = true;
   @override
   Widget build(BuildContext context) {
-    return   Column(
-     crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-        Text(widget.title,style: context.textTheme.bodyMedium!.copyWith(
-          fontSize: 22.sp,
-        ),),
-        CupertinoSwitch(
-          activeTrackColor:AppColors.primaryColor ,
-          value: switchValue, onChanged: (c){
-          setState(() {
-            switchValue = c;
-          });
-        },),
+            Expanded(
+              child: Text(
+                widget.title,
+                style: context.textTheme.bodyMedium!.copyWith(
+                  fontSize: 22.sp,
+                ),
+              ),
+            ),
+            CupertinoSwitch(
+              activeTrackColor: AppColors.primaryColor,
+              value: switchValue,
+              onChanged: (c) {
+                setState(() {
+                  switchValue = c;
+                });
+              },
+            ),
           ],
         ),
-                8.verticalSpace,
-        Text(widget.label,style: context.textTheme.labelMedium),
-
+        8.verticalSpace,
+        Text(widget.label, style: context.textTheme.labelMedium),
       ],
     ).withContainer(
       padding: context.symmetricPadding(0, 24),

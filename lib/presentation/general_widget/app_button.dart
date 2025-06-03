@@ -42,6 +42,7 @@ class BundlegramButton extends StatefulWidget {
     this.trailing,
     this.textStyle,
     this.color,
+    this.svgIconContainerColor,
     this.borderColor,
     this.isOutline,
     super.key,
@@ -57,7 +58,7 @@ class BundlegramButton extends StatefulWidget {
   final Color? borderColor;
   final BundlegramButtonStyle? buttonStyle;
   final TextStyle? textStyle;
-
+  final Color? svgIconContainerColor;
   final VoidCallback onPressed;
   final String? leading;
   final String? trailing;
@@ -111,7 +112,7 @@ class _BundlegramButton extends State<BundlegramButton> {
                       ).withContainer(
                         width: 32.w,
                         height: 32.h,
-                        color: AppColors.white,
+                        color: widget.svgIconContainerColor ?? AppColors.white,
                         shape: BoxShape.circle,
                         border: Border.all(
                           width: 1.86,

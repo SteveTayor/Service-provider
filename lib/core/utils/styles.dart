@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BundlegramButtonStyle {
-
   BundlegramButtonStyle({
     required this.background,
-    required this.borderColor, this.textColor = Colors.white,
+    required this.borderColor,
+    this.textColor = Colors.white,
     this.textStyle,
     this.border,
   });
@@ -56,14 +56,14 @@ class BundlegramButtonSecondary extends BundlegramButtonStyle {
           ),
         );
 }
+
 class BundlegramButtonOutline extends BundlegramButtonStyle {
   BundlegramButtonOutline()
       : super(
-        
           background: Colors.transparent,
           textColor: AppColors.greyD0,
           borderColor: AppColors.greyD0,
-           border: Border.all(width: 1.sp,color: AppColors.greyD0),
+          border: Border.all(width: 1.sp, color: AppColors.greyD0),
           textStyle: TextStyle(
             color: AppColors.grey19,
             fontSize: 18.sp,

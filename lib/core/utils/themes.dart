@@ -108,7 +108,7 @@ class AppTheme {
         headlineMedium: TextStyle(
           fontSize: 18.sp,
           fontWeight: FontWeight.w700,
-          color: AppColors.black,
+          color: AppColors.white,
           fontFamily: FontFamily.mabryProBold,
         ),
       );

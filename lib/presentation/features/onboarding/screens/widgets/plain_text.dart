@@ -11,16 +11,27 @@ class PlainTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  SingleChildScrollView(
-      child: Column(
-        children: [
-          Text(text,style: context.textTheme.bodySmall!.copyWith(
-          color: AppColors.grey33,
-          height: 30/18,
-          ),),
-          40.verticalSpace,
-          BundlegramButton(text: 'Close', onPressed: ()=>context.pop()),
-        ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 24,
+          bottom: 48,
+        ),
+        child: Column(
+          children: [
+            Text(
+              text,
+              style: context.textTheme.bodySmall!.copyWith(
+                color: AppColors.grey33,
+                height: 30 / 18,
+              ),
+            ),
+            40.verticalSpace,
+            BundlegramButton(text: 'Close', onPressed: () => context.pop()),
+          ],
+        ),
       ),
     );
   }

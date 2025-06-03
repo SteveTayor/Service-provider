@@ -12,6 +12,10 @@ import 'package:flutter/widgets.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/B_bundlegram.png
+  AssetGenImage get bBundlegram =>
+      const AssetGenImage('assets/images/B_bundlegram.png');
+
   /// File path: assets/images/Bundlegram App.zip
   String get bundlegramApp => 'assets/images/Bundlegram App.zip';
 
@@ -44,6 +48,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<dynamic> get values => [
+        bBundlegram,
         bundlegramApp,
         growth,
         shapes,
