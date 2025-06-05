@@ -132,4 +132,9 @@ extension CharacterValidation on String {
   String removePlus() {
     return startsWith('+') ? substring(1) : this;
   }
+
+  double toNumericValue() {
+    final cleaned = replaceAll(RegExp(r'[^0-9.]'), '');
+    return double.tryParse(cleaned) ?? 0.0;
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/styles.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -8,7 +9,22 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class TransactionFilterWidget extends StatefulWidget {
-  const TransactionFilterWidget({super.key});
+  /// Called when the user presses “Apply.”
+  ///   sortBy: 'newest' or 'oldest'
+  ///   amountBy: 'largest' or 'smallest'
+  ///   statusSet: any of {'pending','failed','successful'}
+  ///   typeSet: any of {'top-up','betting','cable tv','education','mobile data','electricity','airtime','e-pin voucher'}
+  final void Function({
+    required String sortBy,
+    required String amountBy,
+    required Set<String> statusSet,
+    required Set<String> typeSet,
+  }) onApply;
+
+  const TransactionFilterWidget({
+    Key? key,
+    required this.onApply,
+  }) : super(key: key);
 
   @override
   State<TransactionFilterWidget> createState() =>
@@ -16,196 +32,367 @@ class TransactionFilterWidget extends StatefulWidget {
 }
 
 class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
-  String sortBy = 'newest';
-  String amount = 'largest';
-  List<String> status = [];
-  List<String> type = [];
+  String _sortBy = 'newest';
+  String _amountBy = 'largest';
+  final Set<String> _statusSet = {};
+  final Set<String> _typeSet = {};
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              children: [
+                Expanded(
                   child: Center(
-                      child: Text(
-                'Filters',
-                style: context.textTheme.bodyMedium,
-              ))),
-              InkWell(
-                onTap: () {
-                  context.pop();
-                },
-                child: AppSvgIcon(path: Assets.svgs.close),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          /// Sort By
-          const Text('Sort by'),
-          Row(
-            children: [
-              Transform.scale(
-                scale: 1.5,
-                child: Radio(
-                  activeColor: Colors.black,
-                  value: 'new',
-                  groupValue: sortBy,
-                  onChanged: (value) => setState(() => sortBy = value!),
+                    child: Text(
+                      'Filters',
+                      style: context.textTheme.titleMedium,
+                    ),
+                  ),
                 ),
-              ),
-              Text(
-                'Newest first (default)',
-                style: context.textTheme.bodySmall!.copyWith(
-                  color: AppColors.black,
+                GestureDetector(
+                  onTap: () => context.pop(),
+                  child: AppSvgIcon(path: Assets.svgs.close),
                 ),
-              ),
-            ],
-          ),
-
-          Row(
-            children: [
-              Transform.scale(
-                scale: 1.5,
-                child: Radio(
-                  activeColor: Colors.black,
-                  value: 'new',
-                  groupValue: sortBy,
-                  onChanged: (value) => setState(() => sortBy = value!),
-                ),
-              ),
-              Text(
-                'Newest first (default)',
-                style: context.textTheme.bodySmall!.copyWith(
-                  color: AppColors.black,
-                ),
-              ),
-            ],
-          ),
-
-          /// Amount
-          const Divider(),
-          const Text('Amount'),
-          Row(
-            children: [
-              Transform.scale(
-                scale: 1.5,
-                child: Radio(
-                  activeColor: Colors.black,
-                  value: '',
-                  groupValue: sortBy,
-                  onChanged: (value) => setState(() => sortBy = value!),
-                ),
-              ),
-              Text(
-                'Largest first',
-                style: context.textTheme.bodySmall!.copyWith(
-                  color: AppColors.black,
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Transform.scale(
-                scale: 1.5,
-                child: Radio(
-                  activeColor: Colors.black,
-                  value: '',
-                  groupValue: sortBy,
-                  onChanged: (value) => setState(() => sortBy = value!),
-                ),
-              ),
-              Text(
-                'Smallest first',
-                style: context.textTheme.bodySmall!.copyWith(
-                  color: AppColors.black,
-                ),
-              ),
-            ],
-          ),
-
-          /// Status
-          const Divider(),
-          const Text('Status'),
-          CheckboxListTile(
-            title: Text(
-              'Pending',
-              style: context.textTheme.bodySmall!.copyWith(
-                color: AppColors.black,
-              ),
+              ],
             ),
-            value: status.contains('pending'),
-            onChanged: (val) {
-              setState(() {
-                val! ? status.add('pending') : status.remove('pending');
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text(
-              'Failed',
-              style: context.textTheme.bodySmall!.copyWith(
-                color: AppColors.black,
-              ),
-            ),
-            value: status.contains('failed'),
-            onChanged: (val) {
-              setState(() {
-                val! ? status.add('failed') : status.remove('failed');
-              });
-            },
-          ),
-          CheckboxListTile(
-            title: Text(
-              'Successfull',
-              style: context.textTheme.bodySmall!.copyWith(
-                color: AppColors.black,
-              ),
-            ),
-            value: status.contains('successful'),
-            onChanged: (val) {
-              setState(() {
-                val! ? status.add('successful') : status.remove('successful');
-              });
-            },
-          ),
+            SizedBox(height: 20.h),
 
-          /// Type
-          const Divider(),
-          const Text('Type'),
-          CheckboxListTile(
-            title: Text(
-              'Top-up',
-              style: context.textTheme.bodySmall!.copyWith(
-                color: AppColors.black,
-              ),
+            // Sort by
+            Text(
+              'Sort by',
+              style: context.textTheme.bodySmall!
+                  .copyWith(fontWeight: FontWeight.w600),
             ),
-            value: type.contains('topup'),
-            onChanged: (val) {
-              setState(() {
-                val! ? type.add('topup') : type.remove('topup');
-              });
-            },
-          ),
+            SizedBox(height: 8.h),
+            Row(
+              children: [
+                Transform.scale(
+                  scale: 1.2,
+                  child: Radio<String>(
+                    activeColor: AppColors.black,
+                    value: 'newest',
+                    groupValue: _sortBy,
+                    onChanged: (v) => setState(() => _sortBy = v!),
+                  ),
+                ),
+                Text(
+                  'Newest first',
+                  style: context.textTheme.bodySmall!
+                      .copyWith(color: AppColors.black),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Transform.scale(
+                  scale: 1.2,
+                  child: Radio<String>(
+                    activeColor: AppColors.black,
+                    value: 'oldest',
+                    groupValue: _sortBy,
+                    onChanged: (v) => setState(() => _sortBy = v!),
+                  ),
+                ),
+                Text(
+                  'Oldest first',
+                  style: context.textTheme.bodySmall!
+                      .copyWith(color: AppColors.black),
+                ),
+              ],
+            ),
 
-          /// Apply Button
-          40.verticalSpace,
-          BundlegramButton(
-            text: 'Apply',
-            onPressed: () {},
-          ),
-        ],
+            SizedBox(height: 16.h),
+            const Divider(),
+
+            // Amount
+            SizedBox(height: 8.h),
+            Text(
+              'Amount',
+              style: context.textTheme.bodySmall!
+                  .copyWith(fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: 8.h),
+            Row(
+              children: [
+                Transform.scale(
+                  scale: 1.2,
+                  child: Radio<String>(
+                    activeColor: AppColors.black,
+                    value: 'largest',
+                    groupValue: _amountBy,
+                    onChanged: (v) => setState(() => _amountBy = v!),
+                  ),
+                ),
+                Text(
+                  'Largest first',
+                  style: context.textTheme.bodySmall!
+                      .copyWith(color: AppColors.black),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Transform.scale(
+                  scale: 1.2,
+                  child: Radio<String>(
+                    activeColor: AppColors.black,
+                    value: 'smallest',
+                    groupValue: _amountBy,
+                    onChanged: (v) => setState(() => _amountBy = v!),
+                  ),
+                ),
+                Text(
+                  'Smallest first',
+                  style: context.textTheme.bodySmall!
+                      .copyWith(color: AppColors.black),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 16.h),
+            const Divider(),
+
+            // Status
+            SizedBox(height: 8.h),
+            Text(
+              'Status',
+              style: context.textTheme.bodySmall!
+                  .copyWith(fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: 8.h),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Pending',
+                style: context.textTheme.bodySmall!
+                    .copyWith(color: AppColors.black),
+              ),
+              value: _statusSet.contains('pending'),
+              onChanged: (val) {
+                setState(() {
+                  if (val == true)
+                    _statusSet.add('pending');
+                  else
+                    _statusSet.remove('pending');
+                });
+              },
+            ),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Failed',
+                style: context.textTheme.bodySmall!
+                    .copyWith(color: AppColors.black),
+              ),
+              value: _statusSet.contains('failed'),
+              onChanged: (val) {
+                setState(() {
+                  if (val == true)
+                    _statusSet.add('failed');
+                  else
+                    _statusSet.remove('failed');
+                });
+              },
+            ),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Successful',
+                style: context.textTheme.bodySmall!
+                    .copyWith(color: AppColors.black),
+              ),
+              value: _statusSet.contains('successful'),
+              onChanged: (val) {
+                setState(() {
+                  if (val == true)
+                    _statusSet.add('successful');
+                  else
+                    _statusSet.remove('successful');
+                });
+              },
+            ),
+
+            SizedBox(height: 16.h),
+            const Divider(),
+
+            // Type
+            SizedBox(height: 8.h),
+            Text(
+              'Type',
+              style: context.textTheme.bodySmall!
+                  .copyWith(fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: 8.h),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Top-up',
+                style: context.textTheme.bodySmall!
+                    .copyWith(color: AppColors.black),
+              ),
+              value: _typeSet.contains('top-up'),
+              onChanged: (val) {
+                setState(() {
+                  if (val == true)
+                    _typeSet.add('top-up');
+                  else
+                    _typeSet.remove('top-up');
+                });
+              },
+            ),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Betting',
+                style: context.textTheme.bodySmall!
+                    .copyWith(color: AppColors.black),
+              ),
+              value: _typeSet.contains('betting'),
+              onChanged: (val) {
+                setState(() {
+                  if (val == true)
+                    _typeSet.add('betting');
+                  else
+                    _typeSet.remove('betting');
+                });
+              },
+            ),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Cable TV',
+                style: context.textTheme.bodySmall!
+                    .copyWith(color: AppColors.black),
+              ),
+              value: _typeSet.contains('cable tv'),
+              onChanged: (val) {
+                setState(() {
+                  if (val == true)
+                    _typeSet.add('cable tv');
+                  else
+                    _typeSet.remove('cable tv');
+                });
+              },
+            ),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Education',
+                style: context.textTheme.bodySmall!
+                    .copyWith(color: AppColors.black),
+              ),
+              value: _typeSet.contains('education'),
+              onChanged: (val) {
+                setState(() {
+                  if (val == true)
+                    _typeSet.add('education');
+                  else
+                    _typeSet.remove('education');
+                });
+              },
+            ),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Mobile Data',
+                style: context.textTheme.bodySmall!
+                    .copyWith(color: AppColors.black),
+              ),
+              value: _typeSet.contains('mobile data'),
+              onChanged: (val) {
+                setState(() {
+                  if (val == true)
+                    _typeSet.add('mobile data');
+                  else
+                    _typeSet.remove('mobile data');
+                });
+              },
+            ),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Electricity',
+                style: context.textTheme.bodySmall!
+                    .copyWith(color: AppColors.black),
+              ),
+              value: _typeSet.contains('electricity'),
+              onChanged: (val) {
+                setState(() {
+                  if (val == true)
+                    _typeSet.add('electricity');
+                  else
+                    _typeSet.remove('electricity');
+                });
+              },
+            ),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Airtime',
+                style: context.textTheme.bodySmall!
+                    .copyWith(color: AppColors.black),
+              ),
+              value: _typeSet.contains('airtime'),
+              onChanged: (val) {
+                setState(() {
+                  if (val == true)
+                    _typeSet.add('airtime');
+                  else
+                    _typeSet.remove('airtime');
+                });
+              },
+            ),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'E-pin Voucher',
+                style: context.textTheme.bodySmall!
+                    .copyWith(color: AppColors.black),
+              ),
+              value: _typeSet.contains('e-pin voucher'),
+              onChanged: (val) {
+                setState(() {
+                  if (val == true)
+                    _typeSet.add('e-pin voucher');
+                  else
+                    _typeSet.remove('e-pin voucher');
+                });
+              },
+            ),
+
+            SizedBox(height: 24.h),
+
+            // Apply Button
+            BundlegramButton(
+              text: 'Apply',
+              onPressed: () {
+                widget.onApply(
+                  sortBy: _sortBy,
+                  amountBy: _amountBy,
+                  statusSet: _statusSet,
+                  typeSet: _typeSet,
+                );
+              },
+              width: double.infinity,
+              height: 48.h,
+              buttonStyle: BundlegramButtonStyle.primary(),
+            ),
+
+            SizedBox(height: 16.h),
+          ],
+        ),
       ),
     );
   }

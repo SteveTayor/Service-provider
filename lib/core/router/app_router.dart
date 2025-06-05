@@ -27,16 +27,17 @@ import 'package:bundlegram/presentation/features/setting/screens/resetaccountpin
 import 'package:bundlegram/presentation/features/setting/screens/setting_screen.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/topupresult_screen.dart';
+import 'package:bundlegram/presentation/features/wallet/screen/wallet_history.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/withdrawal_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
- 
+
 import 'package:flutter/material.dart';
- 
+
 import 'package:go_router/go_router.dart';
 
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/router/route_guards.dart';
- 
+
 /// Application router configuration using GoRouter
 class AppRouter {
   /// Private constructor to prevent direct instantiation
@@ -52,7 +53,7 @@ class AppRouter {
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
-        path: RouteConstants.walkThrough ,
+        path: RouteConstants.walkThrough,
         builder: (context, state) => const WalkthroughScreen(),
       ),
       GoRoute(
@@ -145,7 +146,7 @@ class AppRouter {
       ),
       GoRoute(
         path: RouteConstants.updatebasicinformation,
-        builder: (context, state) =>   const AddbasicinformationScreen(
+        builder: (context, state) => const AddbasicinformationScreen(
           userAction: UserAction.update,
         ),
       ),
@@ -169,33 +170,35 @@ class AppRouter {
         path: RouteConstants.becomeagent,
         builder: (context, state) => const BecomeagentScreen(),
       ),
+      GoRoute(
+        path: RouteConstants.walletHistoryScreen,
+        builder: (context, state) => const WalletHistoryScreen(),
+      ),
 
+      //   ShellRoute(
+      //     builder: (context, state, child) =>const BundlegramScaffold(
+      //   body: Center(child: Text('Error'),),
+      // ) ,
+      //     routes: const [
+      //        GoRoute(
+      //         path: RouteConstants.agent,
+      //         builder: (context, state) => const AgentScreen(),
+      //         routes: [
+      //           GoRoute(
+      //             path: RouteConstants.commission,
+      //             builder: (context, state) => const CommissionScreen(),
+      //           ),
+      //         ],
+      //       ),
+      //     ],
 
-     
-      
-    //   ShellRoute(
-    //     builder: (context, state, child) =>const BundlegramScaffold(
-    //   body: Center(child: Text('Error'),),
-    // ) ,
-    //     routes: const [
-    //        GoRoute(
-    //         path: RouteConstants.agent,
-    //         builder: (context, state) => const AgentScreen(),
-    //         routes: [
-    //           GoRoute(
-    //             path: RouteConstants.commission,
-    //             builder: (context, state) => const CommissionScreen(),
-    //           ),
-    //         ],
-    //       ),
-    //     ],
-     
-    //   ),
-   
+      //   ),
     ],
     // redirect: RouteGuards.authGuard,
     errorBuilder: (context, state) => const BundlegramScaffold(
-      body: Center(child: Text('Error'),),
+      body: Center(
+        child: Text('Error'),
+      ),
     ),
   );
 }

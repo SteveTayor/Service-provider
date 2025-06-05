@@ -21,6 +21,7 @@ class ChooseUsernameScreen extends StatefulWidget {
 class _ChooseUsernameScreenState extends State<ChooseUsernameScreen> {
   final bool _isFormValid = false;
   final _formKey = GlobalKey<FormState>();
+  TextEditingController _username = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return BundlegramScaffold(
@@ -34,6 +35,7 @@ class _ChooseUsernameScreenState extends State<ChooseUsernameScreen> {
                 'Choose username',
                 style: context.textTheme.titleMedium,
               ),
+              10.verticalSpace,
               Text(
                 'Add a username to personalize your account.',
                 textAlign: TextAlign.center,
@@ -56,9 +58,13 @@ class _ChooseUsernameScreenState extends State<ChooseUsernameScreen> {
               formKey: _formKey,
               children: [
                 AppTextField(
+                  controller: _username,
                   hintText: 'Choose a username',
+                  onChange: (val) {},
                   suffixIcon: AppSvgIcon(
-                    path: Assets.svgs.tickCircle,
+                    path: _isFormValid == true
+                        ? Assets.svgs.check
+                        : Assets.svgs.tickCircle,
                     fit: BoxFit.scaleDown,
                   ),
                 ),

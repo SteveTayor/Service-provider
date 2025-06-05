@@ -58,6 +58,7 @@ class PlatFormDrawer extends StatelessWidget {
                       'Bundlegram agent',
                       style: context.textTheme.bodySmall!.copyWith(
                         fontSize: 14.sp,
+                        color: AppColors.greyF5,
                       ),
                     ),
                   ],

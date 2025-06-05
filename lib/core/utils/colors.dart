@@ -16,11 +16,16 @@ class AppColors {
   static const Color grey8E = Color(0xff8E8E8E);
   static const Color greyDE = Color(0xffDEDEDE);
   static const Color greyF5 = Color(0xffF5F5F5);
-  static const Color greyd9= Color(0xffD9D9D9);
-  static const Color grey5B= Color(0xff5B5B5B);
-  static const Color grey2F= Color(0xff332F2F);
+  static const Color greyd9 = Color(0xffD9D9D9);
+  static const Color grey5B = Color(0xff5B5B5B);
+  static const Color grey2F = Color(0xff332F2F);
   static const Color pink = Color(0xffEE4878);
-
-  
-
+  // Status color
+  static const Color success = Color(0xFF0F9624);
+  static const Color error = Color(0xFFE24934);
+  static const Color warning = Color(0xFFFFC107);
+  static const Color info = Color(0xFF2196F3);
+  static const Color pending = Color(0xFF332F2F);
+  // Divider color
+  static const Color divider = Color(0xFFED3DDF1);
 }

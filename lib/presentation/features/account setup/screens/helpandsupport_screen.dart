@@ -90,12 +90,14 @@ class HelpandsupportScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      'Enquiry: info@bundlegram.com',
-                      style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.grey33,
+                    Flexible(
+                      child: Text(
+                        'Enquiry: info@bundlegram.com',
+                        style: context.textTheme.bodySmall!.copyWith(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.grey33,
+                        ),
                       ),
                     ),
                     5.horizontalSpace,
@@ -104,12 +106,14 @@ class HelpandsupportScreen extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    Text(
-                      'Technical: support@bundlegram.com',
-                      style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.grey33,
+                    Flexible(
+                      child: Text(
+                        'Technical: support@bundlegram.com',
+                        style: context.textTheme.bodySmall!.copyWith(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.grey33,
+                        ),
                       ),
                     ),
                     5.horizontalSpace,

@@ -18,7 +18,6 @@ class RouteConstants {
   static const String onboardResult = '/onboardResult';
   static const String resetPassword = '/resetPassword';
 
-
   /// Main app routes
   static const String dashboard = '/dashboard';
   static const String home = '/home';
@@ -38,24 +37,25 @@ class RouteConstants {
   static const String platformProduct = '/platformProduct';
 
   //// User Account
-  static const String setting ='/settings';
-  static const String changePassword ='/changePassword';
-  static const String changeAccountPin='/changeAccountPin';
-  static const String resetAccountPin='/resetAccountPin';
-  static const String notificationsetting='/notificationsetting';
-  static const String privacySecurity='/privacySecurity';
-  static const String accountSetup='/accountSetup';
-  static const String addbasicinformation='/addBasicInformation';
-  static const String updatebasicinformation='/updateBasicInformation';
-  static const String linkyourbvn='/linkyourbvn';
-  static const String addbankdetail='/addbankdetail';
-  static const String withdrawalAccount='/withdrawalaccount';
-  static const String helpSupport='/helpSupport';
-  static const String becomeagent='/becomeagent';
+  static const String setting = '/settings';
+  static const String changePassword = '/changePassword';
+  static const String changeAccountPin = '/changeAccountPin';
+  static const String resetAccountPin = '/resetAccountPin';
+  static const String notificationsetting = '/notificationsetting';
+  static const String privacySecurity = '/privacySecurity';
+  static const String accountSetup = '/accountSetup';
+  static const String addbasicinformation = '/addBasicInformation';
+  static const String updatebasicinformation = '/updateBasicInformation';
+  static const String linkyourbvn = '/linkyourbvn';
+  static const String addbankdetail = '/addbankdetail';
+  static const String withdrawalAccount = '/withdrawalaccount';
+  static const String helpSupport = '/helpSupport';
+  static const String becomeagent = '/becomeagent';
+
   /// Agent routes
   static const String agent = '/agent';
   static const String commission = 'commission';
+  static const String walletHistoryScreen = '/walletHistoryScreen';
 
   static const String notification = '/notification';
-
-} 
+}
