@@ -21,22 +21,10 @@ class ReceiptBrandingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // height: 30.h,
+      // width: 160.w,
       padding: EdgeInsets.all(padding.w),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          logoWidget,
-          SizedBox(width: spacing.w),
-          Text(
-            brandName!,
-            style: TextStyle(
-              color: brandColor,
-              fontWeight: FontWeight.w600,
-              fontSize: 16.sp,
-            ),
-          ),
-        ],
-      ),
+      child: logoWidget,
     );
   }
 }

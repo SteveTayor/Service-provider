@@ -26,4 +26,6 @@ class AppColors {
   static const Color warning = Color(0xFFFFC107);
   static const Color info = Color(0xFF2196F3);
   static const Color pending = Color(0xFF332F2F);
+  // Divider color
+  static const Color divider = Color(0xFFED3DDF1);
 }

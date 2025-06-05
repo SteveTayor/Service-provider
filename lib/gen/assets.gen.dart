@@ -64,6 +64,9 @@ class $AssetsImagesGen {
 class $AssetsSvgsGen {
   const $AssetsSvgsGen();
 
+  /// File path: assets/svgs/9mobile.svg
+  String get a9mobile => 'assets/svgs/9mobile.svg';
+
   /// File path: assets/svgs/Browser-Delete--Streamline-Core.svg
   String get browserDeleteStreamlineCore =>
       'assets/svgs/Browser-Delete--Streamline-Core.svg';
@@ -198,6 +201,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/addbasicinfo.svg
   String get addbasicinfo => 'assets/svgs/addbasicinfo.svg';
 
+  /// File path: assets/svgs/airtel.svg
+  String get airtel => 'assets/svgs/airtel.svg';
+
   /// File path: assets/svgs/arrow-foward_ios.svg
   String get arrowFowardIos => 'assets/svgs/arrow-foward_ios.svg';
 
@@ -283,6 +289,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/finger-cricle.svg
   String get fingerCricle => 'assets/svgs/finger-cricle.svg';
+
+  /// File path: assets/svgs/glo.svg
+  String get glo => 'assets/svgs/glo.svg';
 
   /// File path: assets/svgs/heart--reward-social-rating-media-heart-it-like-favorite-love.svg
   String get heartRewardSocialRatingMediaHeartItLikeFavoriteLove =>
@@ -404,6 +413,7 @@ class $AssetsSvgsGen {
 
   /// List of all assets
   List<dynamic> get values => [
+        a9mobile,
         browserDeleteStreamlineCore,
         browserLockStreamlineCore,
         bundlegramApp1,
@@ -443,6 +453,7 @@ class $AssetsSvgsGen {
         accountsetup,
         addbankdetail,
         addbasicinfo,
+        airtel,
         arrowFowardIos,
         arrowLeft,
         balance,
@@ -471,6 +482,7 @@ class $AssetsSvgsGen {
         eye,
         fingerCricle1,
         fingerCricle,
+        glo,
         heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
         home,
         homeinactive,

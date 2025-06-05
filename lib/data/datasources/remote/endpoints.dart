@@ -17,4 +17,4 @@ class Endpoints {
   static const String updatePassword = '/users/password';
 
   // Other endpoints can be added here as needed
-} 
+}

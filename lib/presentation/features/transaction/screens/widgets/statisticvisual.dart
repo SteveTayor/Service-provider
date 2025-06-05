@@ -78,9 +78,11 @@ class _StatisticsDashboardState extends State<StatisticsDashboard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Daily transactions',
-                      style: context.textTheme.bodySmall,
+                    Expanded(
+                      child: Text(
+                        'Daily transactions',
+                        style: context.textTheme.bodySmall,
+                      ),
                     ),
                     _buildDropdown(
                       selectedTransactionMonth,

@@ -14,7 +14,7 @@ class VisualReceiptCard extends StatelessWidget {
     super.key,
     required this.data,
     this.width = 390,
-    this.height = 592.53,
+    this.height = 573.53,
   });
 
   final TransactionReceiptData data;
@@ -38,6 +38,7 @@ class VisualReceiptCard extends StatelessWidget {
         ],
       ),
       child: Column(
+        spacing: 40,
         children: [
           // Receipt header
           Container(
@@ -102,6 +103,8 @@ class VisualReceiptCard extends StatelessWidget {
             // brandName: 'bundlegram',
             // brandColor: const Color(0xFFE53E3E),
           ),
+
+          20.verticalSpace
         ],
       ),
     );
@@ -112,20 +115,22 @@ class VisualReceiptCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: status['backgroundColor'] as Color,
+        // color: status['backgroundColor'] as Color,
         borderRadius: BorderRadius.circular(24.r),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 8.w,
-            height: 8.h,
-            decoration: BoxDecoration(
-              color: status['iconColor'] as Color,
-              shape: BoxShape.circle,
-            ),
-          ),
+              width: 24.w,
+              height: 24.h,
+              // decoration: BoxDecoration(
+              //   color: status['iconColor'] as Color,
+              //   shape: BoxShape.circle,
+              // ),
+              child: AppSvgIcon(path: Assets.svgs.check)
+              //  _getStatusIcon(),
+              ),
           SizedBox(width: 8.w),
           Text(
             status['text'] as String,
@@ -169,6 +174,22 @@ class VisualReceiptCard extends StatelessWidget {
       ],
     );
   }
+
+  // Widget _getStatusIcon() {
+  //   switch (data.status.toLowerCase()) {
+  //     case 'successful':
+  //     case 'completed':
+  //     case 'success':
+  //       return AppSvgIcon(path: Assets.svgs.check);
+  //     case 'failed':
+  //     case 'declined':
+  //     case 'error':
+  //       return AppSvgIcon(path: Assets.svgs.closeCircle);
+  //     case 'pending':
+  //     case 'processing':
+  //       return AppSvgIcon(path: Assets.svgs.);
+  //   }
+  // }
 
   Map<String, dynamic> _getStatusInfo() {
     switch (data.status.toLowerCase()) {
