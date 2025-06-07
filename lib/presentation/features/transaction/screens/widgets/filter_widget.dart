@@ -1,3 +1,5 @@
+// lib/presentation/features/transaction/screens/widgets/transaction_filter_widget.dart
+
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/styles.dart';
@@ -9,11 +11,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class TransactionFilterWidget extends StatefulWidget {
-  /// Called when the user presses “Apply.”
-  ///   sortBy: 'newest' or 'oldest'
-  ///   amountBy: 'largest' or 'smallest'
-  ///   statusSet: any of {'pending','failed','successful'}
-  ///   typeSet: any of {'top-up','betting','cable tv','education','mobile data','electricity','airtime','e-pin voucher'}
   final void Function({
     required String sortBy,
     required String amountBy,
@@ -69,7 +66,7 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
             ),
             SizedBox(height: 20.h),
 
-            // Sort by
+            // ─── Sort by ───────────────────────────────────────────────────────────
             Text(
               'Sort by',
               style: context.textTheme.bodySmall!
@@ -81,7 +78,7 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
                 Transform.scale(
                   scale: 1.2,
                   child: Radio<String>(
-                    activeColor: AppColors.black,
+                    activeColor: AppColors.primaryColor,
                     value: 'newest',
                     groupValue: _sortBy,
                     onChanged: (v) => setState(() => _sortBy = v!),
@@ -99,7 +96,7 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
                 Transform.scale(
                   scale: 1.2,
                   child: Radio<String>(
-                    activeColor: AppColors.black,
+                    activeColor: AppColors.primaryColor,
                     value: 'oldest',
                     groupValue: _sortBy,
                     onChanged: (v) => setState(() => _sortBy = v!),
@@ -116,7 +113,7 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
             SizedBox(height: 16.h),
             const Divider(),
 
-            // Amount
+            // ─── Amount ─────────────────────────────────────────────────────────────
             SizedBox(height: 8.h),
             Text(
               'Amount',
@@ -129,7 +126,7 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
                 Transform.scale(
                   scale: 1.2,
                   child: Radio<String>(
-                    activeColor: AppColors.black,
+                    activeColor: AppColors.primaryColor,
                     value: 'largest',
                     groupValue: _amountBy,
                     onChanged: (v) => setState(() => _amountBy = v!),
@@ -147,7 +144,7 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
                 Transform.scale(
                   scale: 1.2,
                   child: Radio<String>(
-                    activeColor: AppColors.black,
+                    activeColor: AppColors.primaryColor,
                     value: 'smallest',
                     groupValue: _amountBy,
                     onChanged: (v) => setState(() => _amountBy = v!),
@@ -164,7 +161,7 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
             SizedBox(height: 16.h),
             const Divider(),
 
-            // Status
+            // ─── Status ─────────────────────────────────────────────────────────────
             SizedBox(height: 8.h),
             Text(
               'Status',
@@ -173,6 +170,9 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
             ),
             SizedBox(height: 8.h),
             CheckboxListTile(
+              controlAffinity: ListTileControlAffinity.leading,
+              activeColor: AppColors.primaryColor,
+              checkColor: Colors.white,
               contentPadding: EdgeInsets.zero,
               title: Text(
                 'Pending',
@@ -190,6 +190,9 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
               },
             ),
             CheckboxListTile(
+              controlAffinity: ListTileControlAffinity.leading,
+              activeColor: AppColors.primaryColor,
+              checkColor: Colors.white,
               contentPadding: EdgeInsets.zero,
               title: Text(
                 'Failed',
@@ -207,6 +210,9 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
               },
             ),
             CheckboxListTile(
+              controlAffinity: ListTileControlAffinity.leading,
+              activeColor: AppColors.primaryColor,
+              checkColor: Colors.white,
               contentPadding: EdgeInsets.zero,
               title: Text(
                 'Successful',
@@ -227,7 +233,7 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
             SizedBox(height: 16.h),
             const Divider(),
 
-            // Type
+            // ─── Type ─────────────────────────────────────────────────────────────────
             SizedBox(height: 8.h),
             Text(
               'Type',
@@ -235,146 +241,43 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
                   .copyWith(fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 8.h),
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'Top-up',
-                style: context.textTheme.bodySmall!
-                    .copyWith(color: AppColors.black),
-              ),
-              value: _typeSet.contains('top-up'),
-              onChanged: (val) {
-                setState(() {
-                  if (val == true)
-                    _typeSet.add('top-up');
-                  else
-                    _typeSet.remove('top-up');
-                });
-              },
-            ),
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'Betting',
-                style: context.textTheme.bodySmall!
-                    .copyWith(color: AppColors.black),
-              ),
-              value: _typeSet.contains('betting'),
-              onChanged: (val) {
-                setState(() {
-                  if (val == true)
-                    _typeSet.add('betting');
-                  else
-                    _typeSet.remove('betting');
-                });
-              },
-            ),
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'Cable TV',
-                style: context.textTheme.bodySmall!
-                    .copyWith(color: AppColors.black),
-              ),
-              value: _typeSet.contains('cable tv'),
-              onChanged: (val) {
-                setState(() {
-                  if (val == true)
-                    _typeSet.add('cable tv');
-                  else
-                    _typeSet.remove('cable tv');
-                });
-              },
-            ),
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'Education',
-                style: context.textTheme.bodySmall!
-                    .copyWith(color: AppColors.black),
-              ),
-              value: _typeSet.contains('education'),
-              onChanged: (val) {
-                setState(() {
-                  if (val == true)
-                    _typeSet.add('education');
-                  else
-                    _typeSet.remove('education');
-                });
-              },
-            ),
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'Mobile Data',
-                style: context.textTheme.bodySmall!
-                    .copyWith(color: AppColors.black),
-              ),
-              value: _typeSet.contains('mobile data'),
-              onChanged: (val) {
-                setState(() {
-                  if (val == true)
-                    _typeSet.add('mobile data');
-                  else
-                    _typeSet.remove('mobile data');
-                });
-              },
-            ),
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'Electricity',
-                style: context.textTheme.bodySmall!
-                    .copyWith(color: AppColors.black),
-              ),
-              value: _typeSet.contains('electricity'),
-              onChanged: (val) {
-                setState(() {
-                  if (val == true)
-                    _typeSet.add('electricity');
-                  else
-                    _typeSet.remove('electricity');
-                });
-              },
-            ),
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'Airtime',
-                style: context.textTheme.bodySmall!
-                    .copyWith(color: AppColors.black),
-              ),
-              value: _typeSet.contains('airtime'),
-              onChanged: (val) {
-                setState(() {
-                  if (val == true)
-                    _typeSet.add('airtime');
-                  else
-                    _typeSet.remove('airtime');
-                });
-              },
-            ),
-            CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'E-pin Voucher',
-                style: context.textTheme.bodySmall!
-                    .copyWith(color: AppColors.black),
-              ),
-              value: _typeSet.contains('e-pin voucher'),
-              onChanged: (val) {
-                setState(() {
-                  if (val == true)
-                    _typeSet.add('e-pin voucher');
-                  else
-                    _typeSet.remove('e-pin voucher');
-                });
-              },
-            ),
+            // List all service types, with checkboxes on the left
+            ...[
+              'top-up',
+              'withdrawal',
+              'betting',
+              'mobile data',
+              'education',
+              'cable tv',
+              'electricity',
+              'airtime',
+              'e-pin voucher'
+            ]
+                .map((typeKey) => CheckboxListTile(
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: AppColors.primaryColor,
+                      checkColor: Colors.white,
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        typeKey[0].toUpperCase() + typeKey.substring(1),
+                        style: context.textTheme.bodySmall!
+                            .copyWith(color: AppColors.black),
+                      ),
+                      value: _typeSet.contains(typeKey),
+                      onChanged: (val) {
+                        setState(() {
+                          if (val == true)
+                            _typeSet.add(typeKey);
+                          else
+                            _typeSet.remove(typeKey);
+                        });
+                      },
+                    ))
+                .toList(),
 
             SizedBox(height: 24.h),
 
-            // Apply Button
+            // ─── Apply Button ─────────────────────────────────────────────────────────
             BundlegramButton(
               text: 'Apply',
               onPressed: () {
@@ -389,7 +292,6 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
               height: 48.h,
               buttonStyle: BundlegramButtonStyle.primary(),
             ),
-
             SizedBox(height: 16.h),
           ],
         ),

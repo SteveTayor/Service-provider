@@ -36,7 +36,7 @@ class BundlegramAppbar extends StatelessWidget implements PreferredSizeWidget {
       padding: EdgeInsets.only(
         // top: MediaQuery.of(context).padding.top,
         bottom: 0,
-        top: 60,
+        top: 40,
       ),
       decoration: BoxDecoration(
         color: Colors.transparent,

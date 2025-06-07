@@ -1,10 +1,9 @@
-// lib/presentation/features/wallet/wallet_history_screen.dart
-
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_sheet.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_widget.dart';
 import 'package:bundlegram/presentation/general_widget/history_widget.dart';
+import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -148,7 +147,9 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
     );
     context.showPopUp(
       color: Colors.transparent,
-      transactionData as Widget,
+      TransactionReceiptWidget(
+        data: transactionData,
+      ),
       isDismissable: true,
     );
   }

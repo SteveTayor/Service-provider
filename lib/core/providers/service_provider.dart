@@ -1,52 +1,62 @@
-import 'package:bundlegram/presentation/features/transaction/screens/notifier/recent_transaction_notifier.dart';
-import 'package:bundlegram/presentation/features/transaction/screens/notifier/recent_transaction_state.dart';
+import 'package:bundlegram/presentation/features/transaction/notifier/all_service_provider.dart';
+import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_notifier.dart';
+import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
+import 'package:bundlegram/presentation/features/transaction/notifier/transaction_history_notifier.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_notifier.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// Providers for different service types
-
 final bettingHistoryProvider =
-    StateNotifierProvider<ServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => ServiceHistoryNotifier('betting'),
+    StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
+  (ref) => AllServiceHistoryNotifier('betting'),
 );
 
 final mobileDataHistoryProvider =
-    StateNotifierProvider<ServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => ServiceHistoryNotifier('mobile_data'),
+    StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
+  (ref) => AllServiceHistoryNotifier('mobile data'),
 );
 
 final educationHistoryProvider =
-    StateNotifierProvider<ServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => ServiceHistoryNotifier('education'),
+    StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
+  (ref) => AllServiceHistoryNotifier('education'),
 );
 
 final cableTvHistoryProvider =
-    StateNotifierProvider<ServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => ServiceHistoryNotifier('cable_tv'),
+    StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
+  (ref) => AllServiceHistoryNotifier('cable tv'),
+);
+
+final internetServiceHistoryProvider =
+    StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
+  (ref) => AllServiceHistoryNotifier('internet service'),
 );
 
 final electricityHistoryProvider =
-    StateNotifierProvider<ServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => ServiceHistoryNotifier('electricity'),
+    StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
+  (ref) => AllServiceHistoryNotifier('electricity'),
 );
 
 final airtimeHistoryProvider =
-    StateNotifierProvider<ServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => ServiceHistoryNotifier('airtime'),
+    StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
+  (ref) => AllServiceHistoryNotifier('airtime'),
 );
 
 final ePinHistoryProvider =
-    StateNotifierProvider<ServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => ServiceHistoryNotifier('e_pin'),
+    StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
+  (ref) => AllServiceHistoryNotifier('e-pin'),
+);
+
+final walletHistoryProvider =
+    StateNotifierProvider<WalletServiceHistoryNotifier, ServiceHistoryState>(
+  (ref) => WalletServiceHistoryNotifier('wallet'),
 );
 
 final recentTransactionsProvider =
     StateNotifierProvider<RecentTransactionsNotifier, RecentTransactionsState>(
-  RecentTransactionsNotifier.new,
+  (ref) => RecentTransactionsNotifier(),
 );
 
-final walletHistoryProvider =
-    StateNotifierProvider<ServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => ServiceHistoryNotifier('wallet'),
+final transactionHistoryProvider =
+    StateNotifierProvider<TransactionHistoryNotifier, ServiceHistoryState>(
+  (ref) => TransactionHistoryNotifier(),
 );

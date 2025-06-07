@@ -1,7 +1,9 @@
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/models/wallet/service_model.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
 import 'package:bundlegram/presentation/general_widget/custom_listview.dart';
 import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +54,23 @@ class MobileDataHistoryScreen extends ConsumerWidget {
               onItemTap: (service, index) {
                 _showDataDetails(context, service);
               },
-              emptyWidget:
-                  _buildEmptyState('No data purchases found', Icons.wifi),
+              emptyWidget: Builder(
+                builder: (context) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      EmptytransactionWidget(),
+                      SizedBox(height: 16.h),
+                      Text(
+                        'No Data bundle history found',
+                        style: context.textTheme.bodyMedium
+                            ?.copyWith(color: AppColors.grey8E),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // _buildEmptyState('No data purchases found', Icons.wifi),
             ),
           ),
         ],

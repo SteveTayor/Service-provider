@@ -26,8 +26,8 @@ mixin _$TransactionReceiptData {
   String get time => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
   String get amount => throw _privateConstructorUsedError;
-  String get bankName => throw _privateConstructorUsedError;
-  String get accountNumber => throw _privateConstructorUsedError;
+  String? get bankName => throw _privateConstructorUsedError;
+  String? get accountNumber => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String? get reference => throw _privateConstructorUsedError;
@@ -54,8 +54,8 @@ abstract class $TransactionReceiptDataCopyWith<$Res> {
       String time,
       String type,
       String amount,
-      String bankName,
-      String accountNumber,
+      String? bankName,
+      String? accountNumber,
       String status,
       String? description,
       String? reference});
@@ -82,8 +82,8 @@ class _$TransactionReceiptDataCopyWithImpl<$Res,
     Object? time = null,
     Object? type = null,
     Object? amount = null,
-    Object? bankName = null,
-    Object? accountNumber = null,
+    Object? bankName = freezed,
+    Object? accountNumber = freezed,
     Object? status = null,
     Object? description = freezed,
     Object? reference = freezed,
@@ -109,14 +109,14 @@ class _$TransactionReceiptDataCopyWithImpl<$Res,
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
               as String,
-      bankName: null == bankName
+      bankName: freezed == bankName
           ? _value.bankName
           : bankName // ignore: cast_nullable_to_non_nullable
-              as String,
-      accountNumber: null == accountNumber
+              as String?,
+      accountNumber: freezed == accountNumber
           ? _value.accountNumber
           : accountNumber // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -148,8 +148,8 @@ abstract class _$$TransactionReceiptDataImplCopyWith<$Res>
       String time,
       String type,
       String amount,
-      String bankName,
-      String accountNumber,
+      String? bankName,
+      String? accountNumber,
       String status,
       String? description,
       String? reference});
@@ -175,8 +175,8 @@ class __$$TransactionReceiptDataImplCopyWithImpl<$Res>
     Object? time = null,
     Object? type = null,
     Object? amount = null,
-    Object? bankName = null,
-    Object? accountNumber = null,
+    Object? bankName = freezed,
+    Object? accountNumber = freezed,
     Object? status = null,
     Object? description = freezed,
     Object? reference = freezed,
@@ -202,14 +202,14 @@ class __$$TransactionReceiptDataImplCopyWithImpl<$Res>
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
               as String,
-      bankName: null == bankName
+      bankName: freezed == bankName
           ? _value.bankName
           : bankName // ignore: cast_nullable_to_non_nullable
-              as String,
-      accountNumber: null == accountNumber
+              as String?,
+      accountNumber: freezed == accountNumber
           ? _value.accountNumber
           : accountNumber // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -235,8 +235,8 @@ class _$TransactionReceiptDataImpl implements _TransactionReceiptData {
       required this.time,
       required this.type,
       required this.amount,
-      required this.bankName,
-      required this.accountNumber,
+      this.bankName,
+      this.accountNumber,
       required this.status,
       this.description,
       this.reference});
@@ -255,9 +255,9 @@ class _$TransactionReceiptDataImpl implements _TransactionReceiptData {
   @override
   final String amount;
   @override
-  final String bankName;
+  final String? bankName;
   @override
-  final String accountNumber;
+  final String? accountNumber;
   @override
   final String status;
   @override
@@ -321,8 +321,8 @@ abstract class _TransactionReceiptData implements TransactionReceiptData {
       required final String time,
       required final String type,
       required final String amount,
-      required final String bankName,
-      required final String accountNumber,
+      final String? bankName,
+      final String? accountNumber,
       required final String status,
       final String? description,
       final String? reference}) = _$TransactionReceiptDataImpl;
@@ -341,9 +341,9 @@ abstract class _TransactionReceiptData implements TransactionReceiptData {
   @override
   String get amount;
   @override
-  String get bankName;
+  String? get bankName;
   @override
-  String get accountNumber;
+  String? get accountNumber;
   @override
   String get status;
   @override

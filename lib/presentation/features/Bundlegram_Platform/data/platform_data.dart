@@ -85,7 +85,7 @@ class PlatFormData {
               ),
             );
           },
-          assetPath: Assets.svgs.cabletv,
+          assetPath: Assets.svgs.cableTv,
           title: 'Cable Tv',
         );
       },

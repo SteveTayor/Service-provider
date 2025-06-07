@@ -4,16 +4,14 @@ import 'package:bundlegram/data/models/wallet/service_model.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class WalletServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
-  WalletServiceHistoryNotifier(this.serviceType) : super(ServiceHistoryState());
-
-  final String serviceType;
+class TransactionHistoryNotifier extends StateNotifier<ServiceHistoryState> {
+  TransactionHistoryNotifier() : super(ServiceHistoryState());
 
   Future<void> loadServices() async {
     state = state.copyWith(isLoading: true);
     try {
-      final services = await _fetchServices();
-      print('Fetched $serviceType Services: ${services.length}'); // Debug
+      final services = await _fetchAllTransactions();
+      print('Fetched All Transactions: ${services.length}'); // Debug
       state = state.copyWith(
         services: services,
         filteredServices: services,
@@ -77,24 +75,11 @@ class WalletServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
         final bb = b.amount.toNumericValue();
         return amountBy == 'largest' ? bb.compareTo(aa) : aa.compareTo(bb);
       });
-    print('Filtered $serviceType Services: ${temp.length}'); // Debug
+    print('Filtered Transactions: ${temp.length}'); // Debug
     state = state.copyWith(filteredServices: temp);
   }
 
-  Future<List<ServiceModel>> _fetchServices() async {
-    switch (serviceType) {
-      case 'wallet':
-        return await _fetchWalletHistory();
-      default:
-        throw UnimplementedError('Service type $serviceType not implemented');
-    }
-  }
-
-  Future<List<ServiceModel>> _fetchWalletHistory() async {
-    final walletTransactions = dummyTransactions
-        .where((transaction) =>
-            transaction.type == 'top-up' || transaction.type == 'withdrawal')
-        .toList();
-    return Future.value(walletTransactions);
+  Future<List<ServiceModel>> _fetchAllTransactions() async {
+    return Future.value(dummyTransactions);
   }
 }

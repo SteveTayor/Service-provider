@@ -204,6 +204,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/airtel.svg
   String get airtel => 'assets/svgs/airtel.svg';
 
+  /// File path: assets/svgs/airtime.svg
+  String get airtime => 'assets/svgs/airtime.svg';
+
   /// File path: assets/svgs/arrow-foward_ios.svg
   String get arrowFowardIos => 'assets/svgs/arrow-foward_ios.svg';
 
@@ -234,8 +237,8 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/buydata.svg
   String get buydata => 'assets/svgs/buydata.svg';
 
-  /// File path: assets/svgs/cabletv.svg
-  String get cabletv => 'assets/svgs/cabletv.svg';
+  /// File path: assets/svgs/cableTv.svg
+  String get cableTv => 'assets/svgs/cableTv.svg';
 
   /// File path: assets/svgs/calendar.svg
   String get calendar => 'assets/svgs/calendar.svg';
@@ -284,6 +287,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/eye.svg
   String get eye => 'assets/svgs/eye.svg';
 
+  /// File path: assets/svgs/failed illustration.svg
+  String get failedIllustration => 'assets/svgs/failed illustration.svg';
+
   /// File path: assets/svgs/finger-cricle (1).svg
   String get fingerCricle1 => 'assets/svgs/finger-cricle (1).svg';
 
@@ -329,6 +335,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/mobile.svg
   String get mobile => 'assets/svgs/mobile.svg';
 
+  /// File path: assets/svgs/mobile_data.svg
+  String get mobileData => 'assets/svgs/mobile_data.svg';
+
   /// File path: assets/svgs/no-transactions-e-commerce 1.svg
   String get noTransactionsECommerce1 =>
       'assets/svgs/no-transactions-e-commerce 1.svg';
@@ -347,6 +356,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/paybills.svg
   String get paybills => 'assets/svgs/paybills.svg';
+
+  /// File path: assets/svgs/pending.svg
+  String get pending => 'assets/svgs/pending.svg';
 
   /// File path: assets/svgs/ph_copy-simple.svg
   String get phCopySimple => 'assets/svgs/ph_copy-simple.svg';
@@ -454,6 +466,7 @@ class $AssetsSvgsGen {
         addbankdetail,
         addbasicinfo,
         airtel,
+        airtime,
         arrowFowardIos,
         arrowLeft,
         balance,
@@ -464,7 +477,7 @@ class $AssetsSvgsGen {
         box,
         bundlegramagent,
         buydata,
-        cabletv,
+        cableTv,
         calendar,
         call,
         chartBarSquare,
@@ -480,6 +493,7 @@ class $AssetsSvgsGen {
         educationSvg,
         electricity,
         eye,
+        failedIllustration,
         fingerCricle1,
         fingerCricle,
         glo,
@@ -494,12 +508,14 @@ class $AssetsSvgsGen {
         logout1ArrowExitFrameLeaveLogoutRectangleRight,
         mailresent,
         mobile,
+        mobileData,
         noTransactionsECommerce1,
         noapineeded,
         notification,
         notificationbell,
         overview,
         paybills,
+        pending,
         phCopySimple,
         receipt,
         receiptactive,

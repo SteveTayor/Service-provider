@@ -14,7 +14,7 @@ class VisualReceiptCard extends StatelessWidget {
     super.key,
     required this.data,
     this.width = 390,
-    this.height = 573.53,
+    this.height = 500.53,
   });
 
   final TransactionReceiptData data;
@@ -43,26 +43,32 @@ class VisualReceiptCard extends StatelessWidget {
           // Receipt header
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(24.w),
+            padding: EdgeInsets.all(15.w),
             child: Column(
               children: [
                 Text(
                   'Transaction receipt',
                   style: context.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18.sp,
                     color: AppColors.black,
                   ),
                 ),
-                SizedBox(height: 20.h),
+                Container(
+                  height: 1,
+                  color: AppColors.greyD0.withOpacity(0.3),
+                  margin: EdgeInsets.symmetric(vertical: 12.h),
+                ),
+                // SizedBox(height: 10.h),
                 Text(
                   data.amount,
                   style: context.textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 32.sp,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 40.sp,
                     color: AppColors.black,
                   ),
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: 8.h),
                 _buildStatusIndicator(),
               ],
             ),
@@ -73,18 +79,38 @@ class VisualReceiptCard extends StatelessWidget {
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
+              child: ListView(
                 children: [
-                  _buildDetailRow(context, 'Transaction type', data.type),
+                  _buildDetailRow(
+                    context,
+                    'Transaction type',
+                    data.type,
+                  ),
                   SizedBox(height: 16.h),
-                  _buildDetailRow(context, 'Beneficiary', data.accountNumber),
+                  if (data.accountNumber != null)
+                    _buildDetailRow(
+                      context,
+                      'Beneficiary',
+                      data.accountNumber!,
+                    ),
                   SizedBox(height: 16.h),
                   _buildDetailRow(
-                      context, 'Transaction ID', data.transactionId),
+                    context,
+                    'Transaction ID',
+                    data.transactionId,
+                  ),
                   SizedBox(height: 16.h),
-                  _buildDetailRow(context, 'Date', data.date),
+                  _buildDetailRow(
+                    context,
+                    'Date',
+                    data.date,
+                  ),
                   SizedBox(height: 16.h),
-                  _buildDetailRow(context, 'Time', data.time),
+                  _buildDetailRow(
+                    context,
+                    'Time',
+                    data.time,
+                  ),
                 ],
               ),
             ),
@@ -104,7 +130,7 @@ class VisualReceiptCard extends StatelessWidget {
             // brandColor: const Color(0xFFE53E3E),
           ),
 
-          20.verticalSpace
+          16.verticalSpace
         ],
       ),
     );
@@ -122,22 +148,21 @@ class VisualReceiptCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-              width: 24.w,
-              height: 24.h,
-              // decoration: BoxDecoration(
-              //   color: status['iconColor'] as Color,
-              //   shape: BoxShape.circle,
-              // ),
-              child: AppSvgIcon(path: Assets.svgs.check)
-              //  _getStatusIcon(),
-              ),
+            width: 24.w,
+            height: 24.h,
+            decoration: BoxDecoration(
+              // color: status['iconColor'] as Color,
+              shape: BoxShape.circle,
+            ),
+            child: _getStatusIcon(),
+          ),
           SizedBox(width: 8.w),
           Text(
             status['text'] as String,
             style: TextStyle(
               color: status['textColor'] as Color,
               fontWeight: FontWeight.w600,
-              fontSize: 14.sp,
+              fontSize: 18.sp,
             ),
           ),
         ],
@@ -175,21 +200,35 @@ class VisualReceiptCard extends StatelessWidget {
     );
   }
 
-  // Widget _getStatusIcon() {
-  //   switch (data.status.toLowerCase()) {
-  //     case 'successful':
-  //     case 'completed':
-  //     case 'success':
-  //       return AppSvgIcon(path: Assets.svgs.check);
-  //     case 'failed':
-  //     case 'declined':
-  //     case 'error':
-  //       return AppSvgIcon(path: Assets.svgs.closeCircle);
-  //     case 'pending':
-  //     case 'processing':
-  //       return AppSvgIcon(path: Assets.svgs.);
-  //   }
-  // }
+  Widget _getStatusIcon() {
+    switch (data.status.toLowerCase()) {
+      case 'successful':
+      case 'completed':
+      case 'success':
+        return AppSvgIcon(
+          path: Assets.svgs.check,
+          // color: Colors.white,
+        );
+      case 'failed':
+      case 'declined':
+      case 'error':
+        return AppSvgIcon(
+          path: Assets.svgs.closeCircle,
+          // color: Colors.white,
+        );
+      case 'pending':
+      case 'processing':
+        return AppSvgIcon(
+          path: Assets.svgs.pending,
+          // color: Colors.white,
+        );
+      default:
+        return AppSvgIcon(
+          path: Assets.svgs.infoCircle,
+          // color: Colors.white,
+        );
+    }
+  }
 
   Map<String, dynamic> _getStatusInfo() {
     switch (data.status.toLowerCase()) {
@@ -200,7 +239,7 @@ class VisualReceiptCard extends StatelessWidget {
           'text': 'Successful',
           'backgroundColor': const Color(0xFFE8F5E8),
           'textColor': AppColors.success,
-          'iconColor': const Color(0xFF4CAF50),
+          'iconColor': const Color(0xFFFFFFF),
         };
       case 'failed':
       case 'declined':
@@ -233,8 +272,9 @@ class VisualReceiptCard extends StatelessWidget {
 // Helper function to generate receipt image/widget for sharing
 Widget generateShareableReceipt(TransactionReceiptData data) {
   return Container(
-    color: AppColors.greyD0,
-    padding: EdgeInsets.all(20.w),
+    height: 500,
+    // color: AppColors.greyD0,
+    // padding: EdgeInsets.all(20.w),
     child: VisualReceiptCard(data: data),
   );
 }

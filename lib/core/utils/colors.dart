@@ -28,4 +28,6 @@ class AppColors {
   static const Color pending = Color(0xFF332F2F);
   // Divider color
   static const Color divider = Color(0xFFED3DDF1);
+  // Background color
+  static const Color dateColor = Color(0xFF332F2F);
 }
