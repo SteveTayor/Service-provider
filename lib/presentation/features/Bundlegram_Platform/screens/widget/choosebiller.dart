@@ -21,16 +21,15 @@ class ChoosebillerWidget extends StatelessWidget {
           ),
         ),
         30.verticalSpace,
-        //      Column(
-        //   crossAxisAlignment: CrossAxisAlignment.start,
-        //   children: List.generate(PlatFormData.payBillWidget.length,
-        //    (index){
-        //     return PlatFormData.payBillWidget[index].withContainer(
-        //       padding: context.symmetricPadding(0, 20.h),
-        //       margin: context.symmetricPadding(20.w, 8.h),
-        //     );
-        //    }),
-        // ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(PlatFormData.payBillWidget.length, (index) {
+            return PlatFormData.payBillWidget[index].withContainer(
+              padding: context.symmetricPadding(0, 20.h),
+              margin: context.symmetricPadding(20.w, 8.h),
+            );
+          }),
+        ),
       ],
     );
   }

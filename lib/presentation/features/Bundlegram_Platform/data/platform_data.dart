@@ -93,6 +93,74 @@ class PlatFormData {
     AppListTile(
         assetPath: Assets.svgs.internetservice, title: 'Internet Provider'),
   ];
+
+  static final List<Widget> serviceProviderWidget = [
+    // Builder(
+    //   builder: (context) {
+    //     return AppListTile(
+    //       assetPath: Assets.images.mtn.,
+    //       onPressed: () {
+    //         Navigator.push(
+    //           context,
+    //           MaterialPageRoute(
+    //             builder: (context) => const PlatformproductScreen(
+    //               title: 'Betting',
+    //             ),
+    //           ),
+    //         );
+    //       },
+    //       title: 'Betting',
+    //     );
+    //   },
+    // ),
+    Builder(
+      builder: (context) {
+        return AppListTile(
+          assetPath: Assets.svgs.electricity,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PlatformproductScreen(
+                  title: 'Electricity',
+                ),
+              ),
+            );
+          },
+          title: 'Electricity',
+        );
+      },
+    ),
+    AppListTile(
+      assetPath: Assets.svgs.ePin,
+      title: 'E-pin voucher',
+    ),
+    AppListTile(
+      assetPath: Assets.svgs.educationSvg,
+      title: 'Education',
+    ),
+    Builder(
+      builder: (context) {
+        return AppListTile(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PlatformproductScreen(
+                  title: 'Cable Tv',
+                  type: PlatformProductType.userPrice,
+                ),
+              ),
+            );
+          },
+          assetPath: Assets.svgs.cableTv,
+          title: 'Cable Tv',
+        );
+      },
+    ),
+    AppListTile(
+        assetPath: Assets.svgs.internetservice, title: 'Internet Provider'),
+  ];
   static final List<Widget> platformDrawerItem = [
     AppListTile(assetPath: Assets.svgs.overview, title: 'Overview'),
     AppListTile(assetPath: Assets.svgs.buydata, title: 'Buy data'),

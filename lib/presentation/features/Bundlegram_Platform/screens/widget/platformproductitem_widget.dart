@@ -6,12 +6,11 @@ import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transactionsummary_widget.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
+import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
- 
 
 class ProductItemGrid extends StatefulWidget {
-
   const ProductItemGrid({
     super.key,
     this.onBundleSelected,
@@ -49,11 +48,13 @@ class _ProductItemGridState extends State<ProductItemGrid> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: isSelected ? AppColors.primaryColor : AppColors.grey83.withOpacity(0.2),
+            color: isSelected
+                ? AppColors.primaryColor
+                : AppColors.grey83.withOpacity(0.2),
             width: 1.5,
           ),
           borderRadius: BorderRadius.circular(8.r),
-          color:const Color(0xffEEF3FF),
+          color: const Color(0xffEEF3FF),
         ),
         padding: EdgeInsets.symmetric(vertical: 16.h),
         child: Column(
@@ -90,7 +91,7 @@ class _ProductItemGridState extends State<ProductItemGrid> {
           child: GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-         padding: EdgeInsets.zero,
+            padding: EdgeInsets.zero,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               mainAxisSpacing: 20.h,
@@ -98,27 +99,37 @@ class _ProductItemGridState extends State<ProductItemGrid> {
               childAspectRatio: 1.2,
             ),
             itemCount: _bundles.length,
-            itemBuilder: (context, index) => _buildBundleOption(_bundles[index], index),
+            itemBuilder: (context, index) =>
+                _buildBundleOption(_bundles[index], index),
           ),
         ),
-       24.verticalSpace,
-           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-           children: [
-             Text('Amount',style: context.textTheme.bodySmall,),
-               Text('N100',style:
-                context.textTheme.bodySmall!.copyWith(color: AppColors.grey19,),),
-           ],
-         ).withContainer(
-        width: context.width,
- 
-        color: AppColors.greyD0.withOpacity(0.3),
- padding: context.symmetricPadding(12, 12),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.greyD0),
-       ),
-       24.verticalSpace,
-
+        24.verticalSpace,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Amount',
+              style: context.textTheme.bodySmall,
+            ),
+            // AppTextField(
+            //   controller: _amountController,
+            //   hintText: 'N100',
+            // ),
+            Text(
+              'N100',
+              style: context.textTheme.bodySmall!.copyWith(
+                color: AppColors.grey19,
+              ),
+            ),
+          ],
+        ).withContainer(
+          width: context.width,
+          color: AppColors.greyD0.withOpacity(0.3),
+          padding: context.symmetricPadding(12, 12),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.greyD0),
+        ),
+        24.verticalSpace,
       ],
     );
   }
