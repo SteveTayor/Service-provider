@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PlatformItemWidget extends StatelessWidget {
-  const PlatformItemWidget({required this.title, required this.icon, required this.onPressed, super.key});
+  const PlatformItemWidget(
+      {required this.title,
+      required this.icon,
+      required this.onPressed,
+      super.key});
   final String title;
   final String icon;
   final VoidCallback onPressed;
@@ -19,17 +23,22 @@ class PlatformItemWidget extends StatelessWidget {
         children: [
           Container(
             alignment: Alignment.center,
-            
-          width: 52,height: 52,decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            
-            color: const Color(0xffDDB9B4).withOpacity(0.48),
-          ),
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xffDDB9B4).withOpacity(0.48),
+            ),
             child: AppSvgIcon(path: icon),
           ),
           8.verticalSpace,
-          Text(title,style: context.textTheme.bodyMedium!.copyWith(color:
-           AppColors.white,fontSize: 14.sp,),),
+          Text(
+            title,
+            style: context.textTheme.bodyMedium!.copyWith(
+              color: AppColors.white,
+              fontSize: 14.sp,
+            ),
+          ),
         ],
       ),
     );

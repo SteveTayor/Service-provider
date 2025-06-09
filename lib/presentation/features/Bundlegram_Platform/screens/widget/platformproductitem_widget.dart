@@ -2,22 +2,22 @@ import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
-import 'package:bundlegram/gen/assets.gen.dart';
-import 'package:bundlegram/presentation/features/transaction/screens/widgets/transactionsummary_widget.dart';
-import 'package:bundlegram/presentation/general_widget/app_button.dart';
-import 'package:bundlegram/presentation/general_widget/app_svg.dart';
-import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductItemGrid extends StatefulWidget {
-  const ProductItemGrid({
-    super.key,
-    this.onBundleSelected,
-    this.showContinueButton = false,
-  });
-  final Function(Map<String, String>)? onBundleSelected;
+  final List<Map<String, String>> bundles;
+  final Map<String, String>? selectedBundle;
+  final Function(Map<String, String>) onBundleSelected;
   final bool showContinueButton;
+
+  const ProductItemGrid({
+    this.showContinueButton = false,
+    required this.bundles,
+    this.selectedBundle,
+    required this.onBundleSelected,
+    super.key,
+  });
 
   @override
   State<ProductItemGrid> createState() => _ProductItemGridState();
@@ -26,24 +26,19 @@ class ProductItemGrid extends StatefulWidget {
 class _ProductItemGridState extends State<ProductItemGrid> {
   int? _selectedIndex;
 
-  final List<Map<String, String>> _bundles = [
-    {'data': '100MB', 'duration': '1 Day'},
-    {'data': '200MB', 'duration': '3 Days'},
-    {'data': '1GB', 'duration': '1 Day'},
-    {'data': '2.5GB', 'duration': '2 Days'},
-    {'data': '5GB', 'duration': '7 Days'},
-    {'data': '3GB', 'duration': '30 Days'},
-  ];
-
   Widget _buildBundleOption(Map<String, String> bundle, int index) {
     final isSelected = _selectedIndex == index;
+    final dataKey = bundle.keys.firstWhere((k) => k == 'data' || k == 'amount',
+        orElse: () => 'amount');
+    final durationKey = bundle.keys.contains('duration') ? 'duration' : '';
 
     return GestureDetector(
       onTap: () {
         setState(() {
           _selectedIndex = index;
         });
-        widget.onBundleSelected?.call(bundle);
+        // widget.onBundleSelected?.call(bundle);
+        widget.onBundleSelected(bundle);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -62,20 +57,25 @@ class _ProductItemGridState extends State<ProductItemGrid> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              bundle['data']!,
+              bundle[dataKey]!,
               style: context.textTheme.titleMedium!.copyWith(
                 fontWeight: FontWeight.w600,
                 color: isSelected ? AppColors.primaryColor : AppColors.grey83,
               ),
             ),
-            4.verticalSpace,
-            Text(
-              bundle['duration']!,
-              style: context.textTheme.bodySmall!.copyWith(
-                color: AppColors.grey83,
-                fontSize: 12.sp,
+            if (durationKey.isNotEmpty)
+              Column(
+                children: [
+                  4.verticalSpace,
+                  Text(
+                    bundle[durationKey]!,
+                    style: context.textTheme.bodySmall!.copyWith(
+                      color: AppColors.grey83,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                ],
               ),
-            ),
           ],
         ),
       ),
@@ -98,9 +98,9 @@ class _ProductItemGridState extends State<ProductItemGrid> {
               crossAxisSpacing: 10.w,
               childAspectRatio: 1.2,
             ),
-            itemCount: _bundles.length,
+            itemCount: widget.bundles.length,
             itemBuilder: (context, index) =>
-                _buildBundleOption(_bundles[index], index),
+                _buildBundleOption(widget.bundles[index], index),
           ),
         ),
         24.verticalSpace,
@@ -111,12 +111,9 @@ class _ProductItemGridState extends State<ProductItemGrid> {
               'Amount',
               style: context.textTheme.bodySmall,
             ),
-            // AppTextField(
-            //   controller: _amountController,
-            //   hintText: 'N100',
-            // ),
             Text(
-              'N100',
+              widget.bundles[_selectedIndex!].values
+                  .first, // Placeholder, update dynamically
               style: context.textTheme.bodySmall!.copyWith(
                 color: AppColors.grey19,
               ),

@@ -24,7 +24,7 @@ class PlatformbillsWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: List.generate(PlatFormData.payBillWidget.length, (index) {
             return PlatFormData.payBillWidget[index].withContainer(
-              padding: context.symmetricPadding(0, 20.h),
+              padding: context.symmetricPadding(0, 10.h),
               margin: context.symmetricPadding(20.w, 8.h),
             );
           }),

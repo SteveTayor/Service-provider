@@ -8,12 +8,14 @@ class ProductuserpriceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return   Column(
+    return Column(
       children: [
         24.verticalSpace,
         const AppDropdown(title: 'Startimes Plus Web Access'),
         24.verticalSpace,
-const AppTextField(hintText: 'N',),
+        const AppTextField(
+          hintText: 'N',
+        ),
         24.verticalSpace,
       ],
     );
