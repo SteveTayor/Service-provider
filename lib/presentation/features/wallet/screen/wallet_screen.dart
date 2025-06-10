@@ -3,6 +3,7 @@ import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/data/models/wallet/service_model.dart';
@@ -93,7 +94,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                               textStyle: context.textTheme.bodyMedium!
                                   .copyWith(color: AppColors.primaryColor),
                               onPressed: () {
-                                // WalletNotifier().showAddMoney(context);
+                                context.push(RouteConstants.withdrawFund);
                               },
                             ),
                           ),

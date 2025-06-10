@@ -7,78 +7,85 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppListTile extends StatelessWidget {
   const AppListTile({
     this.assetPath,
-    this.imagePath,
     required this.title,
     this.subtitle,
     this.trailingAsset,
     this.onPressed,
     this.titleColor,
-    this.showSubtitle = false, // Default to false
+    this.imagePath,
+    this.showSubtitle = false,
+    this.isSelected = false, // New parameter for selection state
     super.key,
   });
   final String? assetPath;
-  final String? imagePath;
   final String? trailingAsset;
   final Color? titleColor;
   final VoidCallback? onPressed;
   final String title;
   final String? subtitle;
   final bool showSubtitle;
+  final String? imagePath;
+  final bool isSelected; // Tracks if this tile is selected
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              if (imagePath != null)
-                Image.asset(
-                  imagePath!,
-                  width: 24.w,
-                  height: 24.w,
-                  fit: BoxFit.contain,
-                )
-              else
-                AppSvgIcon(
-                  path: assetPath!,
-                  fit: BoxFit.scaleDown,
-                ),
-              16.horizontalSpace,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: context.textTheme.bodyMedium!.copyWith(
-                      color: titleColor ?? AppColors.black,
-                    ),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: isSelected ? const Color(0xFFEEF3FF) : null,
+      ),
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                if (imagePath != null)
+                  Image.asset(
+                    imagePath!,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.fill,
                   ),
-                  if (showSubtitle)
-                    Padding(
-                      padding: EdgeInsets.only(top: 4.h),
-                      child: Text(
-                        subtitle!,
-                        style: context.textTheme.bodySmall!.copyWith(
-                          color: titleColor ?? AppColors.subtitleColor,
-                          fontSize: 14.sp,
-                        ),
+                if (assetPath != null)
+                  AppSvgIcon(
+                    path: assetPath!,
+                    fit: BoxFit.scaleDown,
+                  ),
+                16.horizontalSpace,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: context.textTheme.bodyMedium!.copyWith(
+                        color: titleColor ?? AppColors.black,
                       ),
                     ),
-                ],
-              ),
-            ],
-          ),
-          if (trailingAsset == null)
-            const SizedBox()
-          else
-            AppSvgIcon(
-              path: trailingAsset!,
-              fit: BoxFit.scaleDown,
+                    if (showSubtitle)
+                      Padding(
+                        padding: EdgeInsets.only(top: 4.h),
+                        child: Text(
+                          subtitle!,
+                          style: context.textTheme.bodySmall!.copyWith(
+                            color: titleColor ?? AppColors.subtitleColor,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
             ),
-        ],
+            if (trailingAsset == null)
+              const SizedBox()
+            else
+              AppSvgIcon(
+                path: trailingAsset!,
+                fit: BoxFit.scaleDown,
+              ),
+          ],
+        ),
       ),
     );
   }

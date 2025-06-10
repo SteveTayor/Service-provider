@@ -1,5 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 
 class AppSvgIcon extends StatelessWidget {
   const AppSvgIcon({
@@ -24,9 +26,9 @@ class AppSvgIcon extends StatelessWidget {
       onTap: onTap,
       child: SvgPicture.asset(
         path,
-        fit: fit,
         width: width,
         height: height,
+        fit: fit,
         colorFilter:
             color == null ? null : ColorFilter.mode(color!, BlendMode.srcIn),
       ),

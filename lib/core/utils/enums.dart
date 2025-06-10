@@ -89,67 +89,67 @@ extension WalletTransactionTypeExtension on WalletTransactionType {
   bool get isWithdrawal => this == WalletTransactionType.withdrawal;
 }
 
-extension ServiceProviderExtension on ServiceProvider {
-  String get imagePath {
-    switch (this) {
-      case ServiceProvider.mtn:
-        return Assets.svgs.mtnLogo;
-      case ServiceProvider.airtel:
-        return Assets.svgs.airtel;
-      case ServiceProvider.glo:
-        return Assets.svgs.glo;
-      case ServiceProvider.a9mobile:
-        return Assets.svgs.a9mobile;
-    }
-  }
-}
+// extension ServiceProviderExtension on ServiceProvider {
+//   String get imagePath {
+//     switch (this) {
+//       case ServiceProvider.mtn:
+//         return Assets.svgs.mtnLogo;
+//       case ServiceProvider.airtel:
+//         return Assets.svgs.airtel;
+//       case ServiceProvider.glo:
+//         return Assets.svgs.glo;
+//       case ServiceProvider.a9mobile:
+//         return Assets.svgs.a9mobile;
+//     }
+//   }
+// }
 
-extension educationProviderExtension on educationProvider {
-  String get imagePath {
-    switch (this) {
-      case educationProvider.jamb:
-        return Assets.svgs.jamb;
-      case educationProvider.waec:
-        return Assets.svgs.waec;
-    }
-  }
-}
+// extension educationProviderExtension on educationProvider {
+//   String get imagePath {
+//     switch (this) {
+//       case educationProvider.jamb:
+//         return Assets.svgs.jamb;
+//       case educationProvider.waec:
+//         return Assets.svgs.waec;
+//     }
+//   }
+// }
 
-extension internetServiceProviderExtension on internetServiceProvider {
-  String get imagePath {
-    switch (this) {
-      case internetServiceProvider.smileBundle:
-        return Assets.svgs.smile;
-      case internetServiceProvider.spectranet:
-        return Assets.svgs.spectranet;
-    }
-  }
-}
+// extension internetServiceProviderExtension on internetServiceProvider {
+//   String get imagePath {
+//     switch (this) {
+//       case internetServiceProvider.smileBundle:
+//         return Assets.svgs.smile;
+//       case internetServiceProvider.spectranet:
+//         return Assets.svgs.spectranet;
+//     }
+//   }
+// }
 
-extension cableTvProviderExtension on cableTvProvider {
-  String get imagePath {
-    switch (this) {
-      case cableTvProvider.dstv:
-        return Assets.svgs.dstv;
-      case cableTvProvider.startimes:
-        return Assets.svgs.startimes;
-      case cableTvProvider.gotv:
-        return Assets.svgs.gotv;
-    }
-  }
-}
+// extension cableTvProviderExtension on cableTvProvider {
+//   String get imagePath {
+//     switch (this) {
+//       case cableTvProvider.dstv:
+//         return Assets.svgs.dstv;
+//       case cableTvProvider.startimes:
+//         return Assets.svgs.startimes;
+//       case cableTvProvider.gotv:
+//         return Assets.svgs.gotv;
+//     }
+//   }
+// }
 
-extension electricityProviderExtension on electricityProvider {
-  String get imagePath {
-    switch (this) {
-      case electricityProvider.EnuguPHCN:
-        return Assets.svgs.eedc;
-      case electricityProvider.EkoPHCN:
-        return Assets.svgs.ekoElectricity;
-      case electricityProvider.IbadanElectricity:
-        return Assets.svgs.ibedc;
-      case electricityProvider.IkejaElectricity:
-        return Assets.svgs.ikejaElectricity;
-    }
-  }
-}
+// extension electricityProviderExtension on electricityProvider {
+//   String get imagePath {
+//     switch (this) {
+//       case electricityProvider.EnuguPHCN:
+//         return Assets.svgs.eedc;
+//       case electricityProvider.EkoPHCN:
+//         return Assets.svgs.ekoElectricity;
+//       case electricityProvider.IbadanElectricity:
+//         return Assets.svgs.ibedc;
+//       case electricityProvider.IkejaElectricity:
+//         return Assets.svgs.ikejaElectricity;
+//     }
+//   }
+// }

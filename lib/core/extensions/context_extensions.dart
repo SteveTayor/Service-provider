@@ -56,13 +56,14 @@ extension BuildContextExt on BuildContext {
     );
   }
 
-  Future<T?> showBottomSheet<T>({
-    required Widget child,
-    Color? color,
-    bool? showIcon,
-    bool? isDismissible,
-  }) =>
+  Future<T?> showBottomSheet<T>(
+          {required Widget child,
+          Color? color,
+          bool? showIcon,
+          bool? isDismissible,
+          bool? showDragHandle}) =>
       showModalBottomSheet(
+        showDragHandle: showDragHandle ?? false,
         isScrollControlled: true,
         isDismissible: isDismissible ?? false,
         context: this,

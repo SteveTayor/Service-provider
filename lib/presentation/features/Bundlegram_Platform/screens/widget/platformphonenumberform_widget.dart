@@ -1,3 +1,5 @@
+// lib/presentation/features/Bundlegram_Platform/screens/widget/PlatformphonenumberformWidget_widget.dart
+
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
@@ -14,18 +16,18 @@ class PlatformphonenumberformWidget extends StatefulWidget {
     this.inputHint,
     this.secondaryInputHint,
     this.dropdownHint,
-    this.imagePaths,
     this.onProviderSelected,
     this.initialProviderImage,
+    this.secondaryInputfieldController,
     required this.serviceType,
   });
 
   final String? inputHint;
   final String? secondaryInputHint;
   final String? dropdownHint;
-  final List<String>? imagePaths;
   final Function(String?)? onProviderSelected;
   final String? initialProviderImage;
+  final TextEditingController? secondaryInputfieldController;
   final PlatformProductType serviceType;
 
   @override
@@ -36,87 +38,93 @@ class PlatformphonenumberformWidget extends StatefulWidget {
 class _PlatformphonenumberformWidgetState
     extends State<PlatformphonenumberformWidget> {
   String? _selectedProviderImage;
-  String? _selectedProvider;
+  String? _selectedProviderName;
 
   @override
   void initState() {
     super.initState();
-    _selectedProviderImage = widget.initialProviderImage;
-    _selectedProvider = widget.initialProviderImage!.contains('mtn')
-        ? 'mtn'
-        : null; // Default to MTN if set
+    _selectedProviderImage = widget.initialProviderImage ?? Assets.svgs.mtnLogo;
+    _selectedProviderName = null;
   }
 
-  bool _isSvgPath(String path) =>
-      path.startsWith('assets/svgs/') ||
-      Assets.svgs.values.any((svg) => svg == path);
+  bool get _allowsFreeText =>
+      widget.serviceType == PlatformProductType.airtime ||
+      widget.serviceType == PlatformProductType.mobileData;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (widget.inputHint != null)
-          AppTextField(
-            hintText: widget.inputHint!,
-            prefixIcon: (widget.imagePaths != null)
-                ? GestureDetector(
-                    onTap: () {
-                      context.showBottomSheet(
-                        child: ChoosebillerWidget(
-                          imagePaths: widget.imagePaths!,
-                          onProviderSelected: (imagePath, provider) {
-                            setState(() {
-                              _selectedProviderImage = imagePath;
-                            });
-                            if (widget.onProviderSelected != null) {
-                              widget.onProviderSelected!(provider);
-                            }
-                          },
-                          serviceType: widget.serviceType,
-                        ),
-                      );
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (_selectedProviderImage != null)
-                          _isSvgPath(_selectedProviderImage!)
-                              ? AppSvgIcon(path: _selectedProviderImage!)
-                              : Image.asset(
-                                  _selectedProviderImage!,
-                                  width: 24.w,
-                                  height: 24.w,
-                                )
-                        else if (widget.initialProviderImage != null)
-                          _isSvgPath(widget.initialProviderImage!)
-                              ? AppSvgIcon(path: widget.initialProviderImage!)
-                              : Image.asset(
-                                  widget.initialProviderImage!,
-                                  width: 24.w,
-                                  height: 24.w,
-                                )
-                        else
-                          Assets.images.mtn.image(),
-                        AppSvgIcon(path: Assets.svgs.chevronDown),
-                        8.horizontalSpace,
-                      ],
+        AppTextField(
+          hintText: !_allowsFreeText && _selectedProviderName != null
+              ? _selectedProviderName
+              : widget.inputHint,
+          readOnly: !_allowsFreeText,
+          onTap: !_allowsFreeText ? () => _showBillerPicker(context) : null,
+          prefixIcon: SizedBox(
+            child: GestureDetector(
+              onTap: _showBillerPicker,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  12.horizontalSpace,
+                  if (_selectedProviderImage != null)
+                    _selectedProviderImage!.contains('.svg')
+                        ? AppSvgIcon(
+                            path: _selectedProviderImage!,
+                            width: 20,
+                            height: 20,
+                          )
+                        : Image.asset(_selectedProviderImage!, width: 24)
+                  else
+                    AppSvgIcon(
+                      path: Assets.svgs.betting,
+                      width: 20,
+                      fit: BoxFit.contain,
+                      height: 20,
                     ),
-                  )
-                : null,
+                  8.horizontalSpace,
+                  AppSvgIcon(path: Assets.svgs.chevronDown),
+                  8.horizontalSpace,
+                ],
+              ),
+            ),
           ),
+          initialValue: !_allowsFreeText && _selectedProviderName != null
+              ? _selectedProviderName
+              : null,
+        ),
         if (widget.secondaryInputHint != null)
           Padding(
             padding: EdgeInsets.only(top: 24.h),
             child: AppTextField(
-              hintText: widget.secondaryInputHint!,
+              hintText: widget.secondaryInputHint,
+              controller: widget.secondaryInputfieldController,
             ),
           ),
         if (widget.dropdownHint != null)
           Padding(
             padding: EdgeInsets.only(top: 24.h),
-            child: AppDropdown(title: widget.dropdownHint!),
+            child: AppDropdown(
+              title: widget.dropdownHint!,
+            ),
           ),
       ],
+    );
+  }
+
+  void _showBillerPicker([_]) {
+    context.showBottomSheet(
+      child: ChoosebillerWidget(
+        serviceType: widget.serviceType,
+        onProviderSelected: (path, name) {
+          setState(() {
+            _selectedProviderImage = path;
+            _selectedProviderName = name;
+          });
+          widget.onProviderSelected?.call(name);
+        },
+      ),
     );
   }
 }

@@ -18,7 +18,6 @@ class TransactionSummary extends StatelessWidget {
     this.transactionType,
     this.discountedPrice,
     this.assetPath,
-    this.imagePath,
   });
   final String amount;
   final String? transactionType;
@@ -27,7 +26,6 @@ class TransactionSummary extends StatelessWidget {
   final String beneficiary;
   final VoidCallback onPay;
   final String? assetPath;
-  final String? imagePath;
 
   Widget _buildSummaryRow(String label, String value) {
     return Padding(
@@ -44,21 +42,23 @@ class TransactionSummary extends StatelessWidget {
           ),
           Row(
             children: [
-              if (imagePath != null)
-                Image.asset(
-                  imagePath!,
-                  width: 24.w,
-                  height: 24.w,
-                  fit: BoxFit.contain,
-                )
-              else
-                AppSvgIcon(
-                  path: assetPath!,
-                  fit: BoxFit.scaleDown,
-                ),
+              if (label == 'Transaction type' && assetPath != null)
+                assetPath!.contains('.svg')
+                    ? AppSvgIcon(
+                        path: assetPath!,
+                        fit: BoxFit.scaleDown,
+                      )
+                    : Image.asset(
+                        assetPath!,
+                        width: 24.w,
+                        height: 24.h,
+                        fit: BoxFit.scaleDown,
+                      ),
               8.horizontalSpace,
               Text(
-                value,
+                value.contains('Buy')
+                    ? value.replaceFirst('Buy', '').trim()
+                    : value,
                 style: TextStyle(
                   color: AppColors.grey33,
                   fontSize: 14.sp,
@@ -93,11 +93,13 @@ class TransactionSummary extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                  child: Center(
-                      child: Text(
-                'Summary',
-                style: context.textTheme.bodyMedium,
-              ))),
+                child: Center(
+                  child: Text(
+                    'Summary',
+                    style: context.textTheme.bodyMedium,
+                  ),
+                ),
+              ),
               InkWell(
                 onTap: () {
                   context.pop();
@@ -106,7 +108,11 @@ class TransactionSummary extends StatelessWidget {
               ),
             ],
           ),
-          32.verticalSpace,
+          8.verticalSpace,
+          Divider(
+            color: AppColors.divider,
+          ),
+          12.verticalSpace,
           Text(
             amount,
             style: TextStyle(
@@ -127,9 +133,7 @@ class TransactionSummary extends StatelessWidget {
           24.verticalSpace,
           BundlegramButton(
             text: 'Pay',
-            onPressed: () {
-              context.push(RouteConstants.enterPin);
-            },
+            onPressed: onPay,
           ),
         ],
       ),
