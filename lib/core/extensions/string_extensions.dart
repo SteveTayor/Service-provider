@@ -123,9 +123,82 @@ extension CharacterValidation on String {
 
   DateTime? toDateTime() {
     try {
-      return DateFormat('dd/MM/yyyy').parse(this);
+      // Try parsing DD-MM-YYYY format
+      return DateFormat('dd-MM-yyyy').parse(this);
     } catch (e) {
-      return null;
+      try {
+        // Fallback to DD/MM/YYYY format
+        return DateFormat('dd/MM/yyyy').parse(this);
+      } catch (e) {
+        return null;
+      }
+    }
+  }
+
+  String toFullDateString() {
+    try {
+      final dt = toDateTime() ?? DateTime.now();
+      const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ];
+      final month = months[dt.month - 1];
+      final day = dt.day;
+      final year = dt.year;
+      final ordinal = _getOrdinal(day);
+      return '$month $day$ordinal, $year';
+    } catch (e) {
+      print('Error formatting date $this: $e');
+      final now = DateTime.now();
+      final month = _getMonthName(now.month);
+      final day = now.day;
+      final year = now.year;
+      final ordinal = _getOrdinal(day);
+      return '$month $day$ordinal, $year';
+    }
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    return months[month - 1];
+  }
+
+  String _getOrdinal(int day) {
+    if (day >= 11 && day <= 13) {
+      return 'th';
+    }
+    switch (day % 10) {
+      case 1:
+        return 'st';
+      case 2:
+        return 'nd';
+      case 3:
+        return 'rd';
+      default:
+        return 'th';
     }
   }
 

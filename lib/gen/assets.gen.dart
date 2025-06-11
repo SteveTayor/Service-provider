@@ -12,27 +12,106 @@ import 'package:flutter/widgets.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/1xbet.png
+  AssetGenImage get a1xbet => const AssetGenImage('assets/images/1xbet.png');
+
+  /// File path: assets/images/9mobile.png
+  AssetGenImage get a9mobile =>
+      const AssetGenImage('assets/images/9mobile.png');
+
   /// File path: assets/images/B_bundlegram.png
   AssetGenImage get bBundlegram =>
       const AssetGenImage('assets/images/B_bundlegram.png');
 
+  /// File path: assets/images/Betland logo.png
+  AssetGenImage get betlandLogo =>
+      const AssetGenImage('assets/images/Betland logo.png');
+
   /// File path: assets/images/Bundlegram App.zip
   String get bundlegramApp => 'assets/images/Bundlegram App.zip';
+
+  /// File path: assets/images/EnuguPhcn.png
+  AssetGenImage get enuguPhcn =>
+      const AssetGenImage('assets/images/EnuguPhcn.png');
 
   /// File path: assets/images/Growth.png
   AssetGenImage get growth => const AssetGenImage('assets/images/Growth.png');
 
+  /// File path: assets/images/Nairabet logo.png
+  AssetGenImage get nairabetLogo =>
+      const AssetGenImage('assets/images/Nairabet logo.png');
+
   /// File path: assets/images/Shapes.png
   AssetGenImage get shapes => const AssetGenImage('assets/images/Shapes.png');
+
+  /// File path: assets/images/airtel.png
+  AssetGenImage get airtel => const AssetGenImage('assets/images/airtel.png');
+
+  /// File path: assets/images/bangbet.png
+  AssetGenImage get bangbet => const AssetGenImage('assets/images/bangbet.png');
 
   /// File path: assets/images/bars-3.svg
   String get bars3 => 'assets/images/bars-3.svg';
 
+  /// File path: assets/images/bet9ja.png
+  AssetGenImage get bet9ja => const AssetGenImage('assets/images/bet9ja.png');
+
+  /// File path: assets/images/betway.png
+  AssetGenImage get betway => const AssetGenImage('assets/images/betway.png');
+
+  /// File path: assets/images/dstv.png
+  AssetGenImage get dstv => const AssetGenImage('assets/images/dstv.png');
+
+  /// File path: assets/images/ekoPhcn.png
+  AssetGenImage get ekoPhcn => const AssetGenImage('assets/images/ekoPhcn.png');
+
+  /// File path: assets/images/glo.png
+  AssetGenImage get glo => const AssetGenImage('assets/images/glo.png');
+
+  /// File path: assets/images/gotv.png
+  AssetGenImage get gotv => const AssetGenImage('assets/images/gotv.png');
+
+  /// File path: assets/images/ibedc.png
+  AssetGenImage get ibedc => const AssetGenImage('assets/images/ibedc.png');
+
+  /// File path: assets/images/ikejaPhcn.png
+  AssetGenImage get ikejaPhcn =>
+      const AssetGenImage('assets/images/ikejaPhcn.png');
+
+  /// File path: assets/images/jamb.png
+  AssetGenImage get jamb => const AssetGenImage('assets/images/jamb.png');
+
   /// File path: assets/images/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
 
+  /// File path: assets/images/merrybet.png
+  AssetGenImage get merrybet =>
+      const AssetGenImage('assets/images/merrybet.png');
+
   /// File path: assets/images/mtn.png
   AssetGenImage get mtn => const AssetGenImage('assets/images/mtn.png');
+
+  /// File path: assets/images/mtn_voucher.png
+  AssetGenImage get mtnVoucher =>
+      const AssetGenImage('assets/images/mtn_voucher.png');
+
+  /// File path: assets/images/smile.png
+  AssetGenImage get smile => const AssetGenImage('assets/images/smile.png');
+
+  /// File path: assets/images/spectranet.png
+  AssetGenImage get spectranet =>
+      const AssetGenImage('assets/images/spectranet.png');
+
+  /// File path: assets/images/startimes.png
+  AssetGenImage get startimes =>
+      const AssetGenImage('assets/images/startimes.png');
+
+  /// File path: assets/images/superbet.png
+  AssetGenImage get superbet =>
+      const AssetGenImage('assets/images/superbet.png');
+
+  /// File path: assets/images/waec.png
+  AssetGenImage get waec => const AssetGenImage('assets/images/waec.png');
 
   /// File path: assets/images/walkthrough1.png
   AssetGenImage get walkthrough1 =>
@@ -48,13 +127,36 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<dynamic> get values => [
+        a1xbet,
+        a9mobile,
         bBundlegram,
+        betlandLogo,
         bundlegramApp,
+        enuguPhcn,
         growth,
+        nairabetLogo,
         shapes,
+        airtel,
+        bangbet,
         bars3,
+        bet9ja,
+        betway,
+        dstv,
+        ekoPhcn,
+        glo,
+        gotv,
+        ibedc,
+        ikejaPhcn,
+        jamb,
         logo,
+        merrybet,
         mtn,
+        mtnVoucher,
+        smile,
+        spectranet,
+        startimes,
+        superbet,
+        waec,
         walkthrough1,
         walkthrough2,
         walkthrough3
@@ -63,9 +165,6 @@ class $AssetsImagesGen {
 
 class $AssetsSvgsGen {
   const $AssetsSvgsGen();
-
-  /// File path: assets/svgs/9mobile.svg
-  String get a9mobile => 'assets/svgs/9mobile.svg';
 
   /// File path: assets/svgs/Browser-Delete--Streamline-Core.svg
   String get browserDeleteStreamlineCore =>
@@ -129,6 +228,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/Logout-1--Streamline-Core.svg
   String get logout1StreamlineCore =>
       'assets/svgs/Logout-1--Streamline-Core.svg';
+
+  /// File path: assets/svgs/Nairabet logo.svg
+  String get nairabetLogo => 'assets/svgs/Nairabet logo.svg';
 
   /// File path: assets/svgs/Phone-Ringing-1--Streamline-Core.svg
   String get phoneRinging1StreamlineCore =>
@@ -201,8 +303,8 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/addbasicinfo.svg
   String get addbasicinfo => 'assets/svgs/addbasicinfo.svg';
 
-  /// File path: assets/svgs/airtel.svg
-  String get airtel => 'assets/svgs/airtel.svg';
+  /// File path: assets/svgs/airtime.svg
+  String get airtime => 'assets/svgs/airtime.svg';
 
   /// File path: assets/svgs/arrow-foward_ios.svg
   String get arrowFowardIos => 'assets/svgs/arrow-foward_ios.svg';
@@ -234,8 +336,8 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/buydata.svg
   String get buydata => 'assets/svgs/buydata.svg';
 
-  /// File path: assets/svgs/cabletv.svg
-  String get cabletv => 'assets/svgs/cabletv.svg';
+  /// File path: assets/svgs/cableTv.svg
+  String get cableTv => 'assets/svgs/cableTv.svg';
 
   /// File path: assets/svgs/calendar.svg
   String get calendar => 'assets/svgs/calendar.svg';
@@ -284,14 +386,14 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/eye.svg
   String get eye => 'assets/svgs/eye.svg';
 
+  /// File path: assets/svgs/failed illustration.svg
+  String get failedIllustration => 'assets/svgs/failed illustration.svg';
+
   /// File path: assets/svgs/finger-cricle (1).svg
   String get fingerCricle1 => 'assets/svgs/finger-cricle (1).svg';
 
   /// File path: assets/svgs/finger-cricle.svg
   String get fingerCricle => 'assets/svgs/finger-cricle.svg';
-
-  /// File path: assets/svgs/glo.svg
-  String get glo => 'assets/svgs/glo.svg';
 
   /// File path: assets/svgs/heart--reward-social-rating-media-heart-it-like-favorite-love.svg
   String get heartRewardSocialRatingMediaHeartItLikeFavoriteLove =>
@@ -329,6 +431,15 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/mobile.svg
   String get mobile => 'assets/svgs/mobile.svg';
 
+  /// File path: assets/svgs/mobile_data.svg
+  String get mobileData => 'assets/svgs/mobile_data.svg';
+
+  /// File path: assets/svgs/mtn_neww.svg
+  String get mtnNeww => 'assets/svgs/mtn_neww.svg';
+
+  /// File path: assets/svgs/mtnnw.svg
+  String get mtnnw => 'assets/svgs/mtnnw.svg';
+
   /// File path: assets/svgs/no-transactions-e-commerce 1.svg
   String get noTransactionsECommerce1 =>
       'assets/svgs/no-transactions-e-commerce 1.svg';
@@ -347,6 +458,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/paybills.svg
   String get paybills => 'assets/svgs/paybills.svg';
+
+  /// File path: assets/svgs/pending.svg
+  String get pending => 'assets/svgs/pending.svg';
 
   /// File path: assets/svgs/ph_copy-simple.svg
   String get phCopySimple => 'assets/svgs/ph_copy-simple.svg';
@@ -413,7 +527,6 @@ class $AssetsSvgsGen {
 
   /// List of all assets
   List<dynamic> get values => [
-        a9mobile,
         browserDeleteStreamlineCore,
         browserLockStreamlineCore,
         bundlegramApp1,
@@ -433,6 +546,7 @@ class $AssetsSvgsGen {
         helpQuestion1StreamlineCore,
         lockRotationStreamlineCore,
         logout1StreamlineCore,
+        nairabetLogo,
         phoneRinging1StreamlineCore,
         radioButton1,
         radioButton,
@@ -453,7 +567,7 @@ class $AssetsSvgsGen {
         accountsetup,
         addbankdetail,
         addbasicinfo,
-        airtel,
+        airtime,
         arrowFowardIos,
         arrowLeft,
         balance,
@@ -464,7 +578,7 @@ class $AssetsSvgsGen {
         box,
         bundlegramagent,
         buydata,
-        cabletv,
+        cableTv,
         calendar,
         call,
         chartBarSquare,
@@ -480,9 +594,9 @@ class $AssetsSvgsGen {
         educationSvg,
         electricity,
         eye,
+        failedIllustration,
         fingerCricle1,
         fingerCricle,
-        glo,
         heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
         home,
         homeinactive,
@@ -494,12 +608,16 @@ class $AssetsSvgsGen {
         logout1ArrowExitFrameLeaveLogoutRectangleRight,
         mailresent,
         mobile,
+        mobileData,
+        mtnNeww,
+        mtnnw,
         noTransactionsECommerce1,
         noapineeded,
         notification,
         notificationbell,
         overview,
         paybills,
+        pending,
         phCopySimple,
         receipt,
         receiptactive,

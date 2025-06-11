@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/models/wallet/service_model.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
@@ -16,6 +17,7 @@ class ServiceListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Service Icon
         Container(
@@ -27,22 +29,22 @@ class ServiceListItem extends StatelessWidget {
           ),
           child: service.iconUrl != null
               ? ClipRRect(
-                  borderRadius: BorderRadius.circular(20.w),
+                  borderRadius: BorderRadius.circular(80.w),
                   child: Image.network(
                     service.iconUrl!,
-                    width: 24.w,
-                    height: 24.w,
+                    width: 40.w,
+                    height: 40.w,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => SizedBox(
-                      width: 20.w,
-                      height: 20.w,
+                      width: 40.w,
+                      height: 40.w,
                       child: _getServiceIcon(),
                     ),
                   ),
                 )
               : SizedBox(
-                  width: 20.w,
-                  height: 20.w,
+                  width: 40.w,
+                  height: 40.w,
                   child: _getServiceIcon(),
                 ),
         ),
@@ -55,28 +57,29 @@ class ServiceListItem extends StatelessWidget {
             children: [
               Text(
                 service.title,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.black,
+                style: context.textTheme.bodyMedium!.copyWith(
+                  fontSize: 16.sp,
                 ),
               ),
               SizedBox(height: 4.h),
               Row(
                 children: [
-                  Text(
-                    service.status,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: _getStatusColor(),
-                      fontWeight: FontWeight.w500,
+                  Flexible(
+                    child: Text(
+                      service.status,
+                      style: context.textTheme.bodySmall!.copyWith(
+                        fontSize: 14.sp,
+                        color: _getStatusColor(),
+                      ),
                     ),
                   ),
-                  Text(
-                    ' • ${service.date}',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: AppColors.grey8E,
+                  Expanded(
+                    child: Text(
+                      '  -  ${service.date}',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppColors.dateColor,
+                      ),
                     ),
                   ),
                 ],
@@ -88,10 +91,9 @@ class ServiceListItem extends StatelessWidget {
         // Service Amount
         Text(
           service.amount,
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.black,
+          style: context.textTheme.bodyMedium!.copyWith(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -126,14 +128,15 @@ class ServiceListItem extends StatelessWidget {
       case 'top-up':
         return AppSvgIcon(path: Assets.svgs.topup);
       case 'airtime':
-        return AppSvgIcon(path: Assets.svgs.mobile);
+        return AppSvgIcon(path: Assets.svgs.airtime);
       case 'cable tv':
-        return AppSvgIcon(path: Assets.svgs.cabletv);
+        return AppSvgIcon(path: Assets.svgs.cableTv);
       case 'betting':
         return AppSvgIcon(path: Assets.svgs.betting);
       case 'education':
         return AppSvgIcon(path: Assets.svgs.educationSvg);
       case 'mobile data':
+        return AppSvgIcon(path: Assets.svgs.mobileData);
       case 'internet':
         return AppSvgIcon(path: Assets.svgs.internetservice);
       case 'electricity':
@@ -141,7 +144,7 @@ class ServiceListItem extends StatelessWidget {
       case 'e-pin voucher':
         return AppSvgIcon(path: Assets.svgs.ePin);
       case 'withdrawal':
-        return AppSvgIcon(path: Assets.svgs.walletAdd);
+        return AppSvgIcon(path: Assets.svgs.topup);
       default:
         return AppSvgIcon(path: Assets.svgs.wallet);
     }
@@ -150,11 +153,11 @@ class ServiceListItem extends StatelessWidget {
   Color _getStatusColor() {
     switch (service.status.toLowerCase()) {
       case 'successful':
-        return Colors.green;
+        return AppColors.success;
       case 'failed':
-        return Colors.red;
+        return AppColors.error;
       case 'pending':
-        return Colors.orange;
+        return AppColors.pending;
       default:
         return AppColors.grey8E;
     }

@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformquickaction_widget.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformdrawer_widget.dart';
@@ -42,7 +43,15 @@ class _PlatformScreenState extends State<PlatformScreen> {
               ),
             ),
             const PlatformNoticeWidget(),
-            const RecenttransactionWidget(),
+            40.verticalSpace,
+            Padding(
+              padding: context.symmetricPadding(20, 0),
+              child: RecenttransactionWidget(
+                SizedBox(
+                  height: 0.h,
+                ),
+              ),
+            ),
           ],
         ),
       ),

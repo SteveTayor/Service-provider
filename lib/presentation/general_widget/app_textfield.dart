@@ -158,13 +158,15 @@ class _AppTextFieldState extends State<AppTextField> {
                   constraints: BoxConstraints(
                     minHeight: 67.h,
                   ),
-                  
-                  fillColor:
-                  
-                   widget.backgroundColor ??
-                   AppColors.white,
+
+                  fillColor: widget.backgroundColor ?? AppColors.white,
+                  prefixIconConstraints: BoxConstraints(
+                    minWidth: 64.w,
+                    minHeight: 24.h,
+                  ),
                   prefixIcon: widget.prefixIcon,
-                  suffixIconConstraints: BoxConstraints(minWidth: 50.w,minHeight: 20.h),
+                  suffixIconConstraints:
+                      BoxConstraints(minWidth: 50.w, minHeight: 20.h),
                   suffixIcon: widget.suffixIcon,
                   enabled: false,
                   errorStyle: context.textTheme.bodySmall!.copyWith(
@@ -176,7 +178,7 @@ class _AppTextFieldState extends State<AppTextField> {
                   hintStyle: widget.hintStyle ??
                       context.textTheme.bodySmall!.copyWith(
                         fontSize: 18.sp,
-                        color: AppColors.grey80,
+                        color: AppColors.grey33,
                       ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6.r),

@@ -64,12 +64,12 @@ class _HistoryScreenState<T> extends ConsumerState<HistoryScreen<T>> {
       ),
       body: Column(
         children: [
-          16.verticalSpace,
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: const EdgeInsets.only(left: 10, right: 10),
             child: AppTextField(
               decoration: const InputDecoration().search(),
               onChange: widget.onSearchChanged,
+              label: 'Search...',
             ),
           ),
           16.verticalSpace,
@@ -94,7 +94,7 @@ class _HistoryScreenState<T> extends ConsumerState<HistoryScreen<T>> {
                             // ),
                             ))
                     : ListView.separated(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
                         itemCount: widget.items.length,
                         separatorBuilder: (_, __) =>
                             widget.separator ?? SizedBox(height: 12.h),

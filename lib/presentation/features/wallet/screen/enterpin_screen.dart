@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -10,27 +12,62 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class EnterPinScreen extends StatefulWidget {
-  const EnterPinScreen({super.key, this.onTap});
-  final VoidCallback? onTap;
+  const EnterPinScreen({super.key, this.onVerified});
+  final VoidCallback? onVerified;
 
   @override
   State<EnterPinScreen> createState() => _EnterPinScreenState();
 }
 
-class _EnterPinScreenState extends State<EnterPinScreen> {
+class _EnterPinScreenState extends State<EnterPinScreen>
+    with SingleTickerProviderStateMixin {
   final List<String> _pin = ['', '', '', ''];
   int _currentIndex = 0;
-  bool _isFormValid = false;
+  String? _errorMessage;
+
+  late AnimationController _shakeController;
+  late Animation<double> _offsetAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _shakeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _offsetAnimation = Tween(begin: 0.0, end: 24.0)
+        .chain(CurveTween(curve: Curves.elasticIn))
+        .animate(_shakeController);
+  }
+
+  @override
+  void dispose() {
+    _shakeController.dispose();
+    super.dispose();
+  }
 
   void _updatePin(String value) {
     if (_currentIndex < 4) {
       setState(() {
         _pin[_currentIndex] = value;
         _currentIndex++;
-        _validatePin();
       });
+      if (_currentIndex == 4) _checkPin();
+    }
+  }
+
+  void _checkPin() {
+    final entered = _pin.join();
+    if (entered == '1234') {
+      widget.onVerified?.call();
     } else {
-      widget.onTap;
+      _shakeController.forward(from: 0);
+      setState(() {
+        _errorMessage = 'Incorrect PIN';
+        _pin.setAll(0, ['', '', '', '']);
+        _currentIndex = 0;
+      });
     }
   }
 
@@ -39,15 +76,8 @@ class _EnterPinScreenState extends State<EnterPinScreen> {
       setState(() {
         _currentIndex--;
         _pin[_currentIndex] = '';
-        _validatePin();
       });
     }
-  }
-
-  void _validatePin() {
-    setState(() {
-      _isFormValid = !_pin.contains('');
-    });
   }
 
   Widget _buildPinDot(int index) {
@@ -60,27 +90,21 @@ class _EnterPinScreenState extends State<EnterPinScreen> {
         color: _pin[index].isNotEmpty
             ? AppColors.primaryColor
             : Colors.transparent,
-        border: Border.all(
-          color: AppColors.primaryColor,
-          width: 1.5,
-        ),
+        border: Border.all(color: AppColors.primaryColor, width: 1.5),
       ),
     );
   }
 
   Widget _buildNumberButton(String number) {
     return TextButton(
-      onPressed: () => _updatePin(number),
-      style: TextButton.styleFrom(
-        padding: EdgeInsets.all(20.w),
-      ),
-      child: Text(
-        number,
-        style: context.textTheme.titleLarge!.copyWith(
-          fontSize: 24.sp,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      onPressed: () {
+        setState(() => _errorMessage = null);
+        _updatePin(number);
+      },
+      style: TextButton.styleFrom(padding: EdgeInsets.all(20.w)),
+      child: Text(number,
+          style: context.textTheme.titleLarge!
+              .copyWith(fontSize: 24.sp, fontWeight: FontWeight.w500)),
     );
   }
 
@@ -110,11 +134,30 @@ class _EnterPinScreenState extends State<EnterPinScreen> {
                   ],
                 ),
                 40.verticalSpace,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(4, _buildPinDot),
+                AnimatedBuilder(
+                  animation: _shakeController,
+                  builder: (context, child) {
+                    final offset = sin(_offsetAnimation.value) * 12;
+                    return Transform.translate(
+                      offset: Offset(offset, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(4, _buildPinDot),
+                      ),
+                    );
+                  },
                 ),
-                40.verticalSpace,
+                if (_errorMessage != null) ...[
+                  16.verticalSpace,
+                  Text(
+                    _errorMessage!,
+                    style: TextStyle(
+                      color: AppColors.errorText,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  24.verticalSpace,
+                ],
               ],
             ),
           ),

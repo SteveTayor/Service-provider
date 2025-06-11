@@ -97,7 +97,7 @@ extension AppTextFieldDecorationExtension on InputDecoration {
       hintText: hintText,
       hintStyle: TextStyle(
         fontSize: 14.sp,
-        color: AppColors.grey8E,
+        color: AppColors.searchHintColor,
       ),
       focusedBorder: OutlineInputBorder(
         borderSide: BorderSide.none,

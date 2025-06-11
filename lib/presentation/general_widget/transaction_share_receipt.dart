@@ -504,14 +504,16 @@ class TransactionReceiptWidget extends StatelessWidget {
           color: AppColors.black,
         ),
       ),
-      _TransactionDetailItem(
-        label: 'Bank name',
-        value: data.bankName,
-      ),
-      _TransactionDetailItem(
-        label: 'Account number',
-        value: data.accountNumber,
-      ),
+      if (data.bankName != null)
+        _TransactionDetailItem(
+          label: 'Bank name',
+          value: data.bankName!,
+        ),
+      if (data.accountNumber != null)
+        _TransactionDetailItem(
+          label: 'Account number',
+          value: data.accountNumber!,
+        ),
       _TransactionDetailItem(
         label: 'Transaction status',
         value: data.status,

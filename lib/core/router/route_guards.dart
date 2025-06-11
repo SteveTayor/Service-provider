@@ -10,8 +10,9 @@ class RouteGuards {
 
   /// Authentication guard
   static String? authGuard(
-    
-    BuildContext context, GoRouterState state,) {
+    BuildContext context,
+    GoRouterState state,
+  ) {
     // TODO: Implement actual auth check
     const isAuthenticated = false;
     final isAuthRoute = state.matchedLocation == RouteConstants.login ||
@@ -30,4 +31,4 @@ class RouteGuards {
     // Allow navigation to proceed
     return null;
   }
-} 
+}

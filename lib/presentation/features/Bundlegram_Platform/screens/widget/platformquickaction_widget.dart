@@ -3,6 +3,7 @@ import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platform_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
@@ -81,7 +82,7 @@ class PlatformQuickActionWidget extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const PlatformproductScreen(
-                            title: 'Buy data',
+                            serviceType: PlatformProductType.mobileData,
                           ),
                         ),
                       );
@@ -95,7 +96,7 @@ class PlatformQuickActionWidget extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const PlatformproductScreen(
-                            title: 'Buy Airtime',
+                            serviceType: PlatformProductType.airtime,
                           ),
                         ),
                       );
