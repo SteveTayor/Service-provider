@@ -67,13 +67,19 @@ class _PlatformphonenumberformWidgetState
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  12.horizontalSpace,
+                  16.horizontalSpace,
                   if (_selectedProviderImage != null)
                     _selectedProviderImage!.contains('.svg')
-                        ? AppSvgIcon(
-                            path: _selectedProviderImage!,
-                            width: 20,
-                            height: 20,
+                        ? CircleAvatar(
+                            radius: 15,
+                            child: ClipOval(
+                              child: AppSvgIcon(
+                                path: _selectedProviderImage!,
+                                // width: 34,
+                                // height: 24,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           )
                         : Image.asset(_selectedProviderImage!, width: 24)
                   else
@@ -82,7 +88,7 @@ class _PlatformphonenumberformWidgetState
                       height: 24,
                       child: CircleAvatar(
                         child: AppSvgIcon(
-                            path: Assets.svgs.betting, fit: BoxFit.fill),
+                            path: Assets.svgs.call, fit: BoxFit.fill),
                       ),
                     ),
                   8.horizontalSpace,

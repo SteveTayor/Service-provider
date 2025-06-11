@@ -32,27 +32,22 @@ class CustomListItem<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: margin ?? EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-      child: Material(
-        color: backgroundColor ?? Colors.white,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: borderRadius ?? BorderRadius.circular(8.r),
-        elevation: elevation,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: borderRadius ?? BorderRadius.circular(8.r),
-          child: Container(
-            padding: padding ?? EdgeInsets.all(16.w),
-            child: Column(
-              children: [
-                itemBuilder(item),
-                if (showDivider) ...[
-                  SizedBox(height: 8.h),
-                  Divider(
-                    color: dividerColor ?? AppColors.greyD0.withOpacity(0.3),
-                    height: 1,
-                  ),
-                ],
+        child: Container(
+          padding: padding ?? EdgeInsets.all(16.w),
+          child: Column(
+            children: [
+              itemBuilder(item),
+              if (showDivider) ...[
+                SizedBox(height: 8.h),
+                Divider(
+                  color: dividerColor ?? AppColors.greyD0.withOpacity(0.3),
+                  height: 1,
+                ),
               ],
-            ),
+            ],
           ),
         ),
       ),

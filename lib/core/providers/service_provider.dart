@@ -13,7 +13,7 @@ final bettingHistoryProvider =
 
 final mobileDataHistoryProvider =
     StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => AllServiceHistoryNotifier('mobile data'),
+  (ref) => AllServiceHistoryNotifier('mobile_data'),
 );
 
 final educationHistoryProvider =
@@ -23,12 +23,12 @@ final educationHistoryProvider =
 
 final cableTvHistoryProvider =
     StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => AllServiceHistoryNotifier('cable tv'),
+  (ref) => AllServiceHistoryNotifier('cable_tv'),
 );
 
 final internetServiceHistoryProvider =
     StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => AllServiceHistoryNotifier('internet service'),
+  (ref) => AllServiceHistoryNotifier('internet_service'),
 );
 
 final electricityHistoryProvider =

@@ -2,6 +2,7 @@ import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -10,6 +11,7 @@ class ProductItemGrid extends StatefulWidget {
   final Map<String, String>? selectedBundle;
   final Function(Map<String, String>) onBundleSelected;
   final bool showContinueButton;
+  final PlatformProductType serviceType;
 
   const ProductItemGrid({
     Key? key,
@@ -17,6 +19,7 @@ class ProductItemGrid extends StatefulWidget {
     required this.bundles,
     this.selectedBundle,
     required this.onBundleSelected,
+    required this.serviceType,
   }) : super(key: key);
 
   @override
@@ -118,7 +121,10 @@ class _ProductItemGridState extends State<ProductItemGrid> {
           itemBuilder: (ctx, i) => _buildBundleOption(widget.bundles[i], i),
         ),
         // Show the selected amount box only if something is selected
-        if (_selectedIndex != null) ...[
+        if (_selectedIndex != null &&
+            (widget.serviceType == PlatformProductType.mobileData ||
+                widget.serviceType ==
+                    PlatformProductType.internetServices)) ...[
           24.verticalSpace,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
