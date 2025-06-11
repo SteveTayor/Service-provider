@@ -6,54 +6,93 @@ import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/data/models/wallet/service_model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/wallet_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/custom_listview.dart';
+import 'package:bundlegram/presentation/general_widget/history_widget.dart';
 import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
-class MobileDataHistoryScreen extends ConsumerWidget {
+class MobileDataHistoryScreen extends ConsumerStatefulWidget {
   const MobileDataHistoryScreen({super.key});
+  @override
+  ConsumerState<MobileDataHistoryScreen> createState() =>
+      _MobileDataHistoryScreenState();
+}
+
+class _MobileDataHistoryScreenState
+    extends ConsumerState<MobileDataHistoryScreen> {
+  String _sortBy = 'newest';
+  String _amountBy = 'largest';
+  final Set<String> _statusSet = {};
+  final Set<String> _typeSet = {};
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final mobileDataState = ref.watch(mobileDataHistoryProvider);
+  void initState() {
+    super.initState();
+    //initial fetch
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(mobileDataHistoryProvider.notifier).loadServices();
+    });
+  }
 
-    return BundlegramScaffold(
-      appBar: const BundlegramAppbar(
-        showBackButton: true,
-        title: Text('History'),
-      ),
-      body: CustomListView<ServiceModel>(
-        items: mobileDataState.services,
-        isLoading: mobileDataState.isLoading,
-        onRefresh: () => ref.read(mobileDataHistoryProvider.notifier).refresh(),
-        itemBuilder: (service, index) => ServiceListItem(service: service),
-        onItemTap: (service, index) {
-          _showProviderDetails(context, service);
-        },
-        backgroundColor: Colors.grey[50],
-        emptyWidget: Builder(
-          builder: (context) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                EmptytransactionWidget(),
-                SizedBox(height: 16.h),
-                Text(
-                  'No Data subscription history found',
-                  style: context.textTheme.bodyMedium
-                      ?.copyWith(color: AppColors.grey8E),
-                ),
-              ],
-            ),
+  @override
+  Widget build(BuildContext context) {
+    final mobileDataState = ref.watch(mobileDataHistoryProvider);
+    return HistoryScreen<ServiceModel>(
+      titleText: 'History',
+      items: mobileDataState.filteredServices,
+      isLoading: mobileDataState.isLoading,
+      onSearchChanged: (query) {
+        ref.read(mobileDataHistoryProvider.notifier).search(query);
+      },
+      onFilterPressed: (ctx) {
+        ctx.showBottomSheet(
+          child: TransactionFilterWidget(
+            onApply: ({
+              required String sortBy,
+              required String amountBy,
+              required Set<String> statusSet,
+              required Set<String> typeSet,
+            }) {
+              _sortBy = sortBy;
+              _amountBy = amountBy;
+              _statusSet
+                ..clear()
+                ..addAll(statusSet);
+              _typeSet
+                ..clear()
+                ..addAll(typeSet);
+
+              // Apply filters on "wallet" history: only 'top-up' and 'withdrawal'
+              ref.read(mobileDataHistoryProvider.notifier).applyFilters(
+                    typeSet: _typeSet,
+                    statusSet: _statusSet,
+                    sortBy: _sortBy,
+                    amountBy: _amountBy,
+                  );
+
+              context.pop();
+            },
           ),
-        ),
+        );
+      },
+      itemBuilder: (ctx, txn, index) => ServiceListItem(service: txn),
+      onItemTap: (txn) => _showProviderDetails(context, txn),
+      emptyWidget: const Padding(
+        padding: EdgeInsets.all(20),
+        child: Center(child: EmptytransactionWidget()),
       ),
-      showBackImage: false,
+      separator: Container(
+        height: 1,
+        color: AppColors.greyD0.withOpacity(0.3),
+        margin: EdgeInsets.symmetric(vertical: 12.h),
+      ),
     );
   }
 

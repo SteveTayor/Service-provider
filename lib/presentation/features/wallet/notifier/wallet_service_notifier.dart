@@ -91,10 +91,9 @@ class WalletServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
   }
 
   Future<List<ServiceModel>> _fetchWalletHistory() async {
-    final walletTransactions = dummyTransactions
-        .where((transaction) =>
-            transaction.type == 'top-up' || transaction.type == 'withdrawal')
-        .toList();
-    return Future.value(walletTransactions);
+    return dummyTransactions.where((transaction) {
+      final type = transaction.type.toLowerCase();
+      return type.contains('top-up') || type.contains('withdrawal');
+    }).toList();
   }
 }

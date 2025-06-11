@@ -43,11 +43,10 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(walletHistoryProvider);
     final allTxns = state.filteredServices;
-    final recent = _getRecentTransactions(allTxns);
 
     return HistoryScreen<ServiceModel>(
       titleText: 'History',
-      items: recent,
+      items: allTxns,
       isLoading: state.isLoading,
       onSearchChanged: (query) {
         ref.read(walletHistoryProvider.notifier).search(query);

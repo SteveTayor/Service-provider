@@ -1,77 +1,117 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
-import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/enums.dart';
+import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/data/models/wallet/service_model.dart';
-import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
-import 'package:bundlegram/presentation/features/wallet/screen/wallet_screen.dart';
-import 'package:bundlegram/presentation/general_widget/app_bar.dart';
-import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
-import 'package:bundlegram/presentation/general_widget/custom_listview.dart';
+import 'package:bundlegram/presentation/features/transaction/notifier/all_service_provider.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_widget.dart';
+import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_state.dart';
+import 'package:bundlegram/presentation/general_widget/history_widget.dart';
 import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
+import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
+import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
-class BettingHistoryScreen extends ConsumerStatefulWidget {
-  const BettingHistoryScreen({super.key});
+/// Generic history screen that displays any service history based on [serviceType].
+class ServiceHistoryScreen extends ConsumerStatefulWidget {
+  const ServiceHistoryScreen({
+    Key? key,
+    required this.serviceType,
+  }) : super(key: key);
+
+  /// Which service history to load and display
+  final PlatformProductType serviceType;
+
   @override
-  ConsumerState<BettingHistoryScreen> createState() =>
-      _BettingHistoryScreenState();
+  ConsumerState<ServiceHistoryScreen> createState() =>
+      _ServiceHistoryScreenState();
 }
 
-class _BettingHistoryScreenState extends ConsumerState<BettingHistoryScreen> {
+class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
+  late final StateNotifierProvider<AllServiceHistoryNotifier,
+      ServiceHistoryState> provider;
+  String _sortBy = 'newest';
+  String _amountBy = 'largest';
+  final Set<String> _statusSet = {};
+  final Set<String> _typeSet = {};
+
   @override
   void initState() {
     super.initState();
-    // initial fetch
+    // Map the serviceType to its corresponding provider
+    provider = {
+      PlatformProductType.mobileData: mobileDataHistoryProvider,
+      PlatformProductType.airtime: airtimeHistoryProvider,
+      PlatformProductType.betting: bettingHistoryProvider,
+      PlatformProductType.electricity: electricityHistoryProvider,
+      PlatformProductType.education: educationHistoryProvider,
+      PlatformProductType.cableTv: cableTvHistoryProvider,
+      PlatformProductType.internetServices: internetServiceHistoryProvider,
+      PlatformProductType.ePinVoucher: ePinHistoryProvider,
+      PlatformProductType.bulkEPin: ePinHistoryProvider,
+    }[widget.serviceType]!;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(bettingHistoryProvider.notifier).loadServices();
+      ref.read(provider.notifier).loadServices();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final bettingState = ref.watch(bettingHistoryProvider);
+    final state = ref.watch(provider);
 
-    return BundlegramScaffold(
-      appBar: BundlegramAppbar(
-        showBackButton: true,
-        title: const Text('Betting History'),
-      ),
-      body: CustomListView<ServiceModel>(
-        items: bettingState.services,
-        isLoading: bettingState.isLoading,
-        onRefresh: () => ref.read(bettingHistoryProvider.notifier).refresh(),
-        itemBuilder: (service, index) => ServiceListItem(service: service),
-        onItemTap: (service, index) {
-          _showBettingDetails(context, service);
-        },
-        backgroundColor: Colors.grey[50],
-        emptyWidget: Builder(
-          builder: (context) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                EmptytransactionWidget(),
-                SizedBox(height: 16.h),
-                Text(
-                  'No betting history found',
-                  style: context.textTheme.bodyMedium
-                      ?.copyWith(color: AppColors.grey8E),
-                ),
-              ],
-            ),
-          ),
+    return HistoryScreen<ServiceModel>(
+      titleText: '${widget.serviceType.name.capitalizeFirst} History',
+      items: state.filteredServices,
+      isLoading: state.isLoading,
+      onSearchChanged: (q) => ref.read(provider.notifier).search(q),
+      onFilterPressed: (ctx) => ctx.showBottomSheet(
+        child: TransactionFilterWidget(
+          onApply: (
+              {required sortBy,
+              required amountBy,
+              required statusSet,
+              required typeSet}) {
+            _sortBy = sortBy;
+            _amountBy = amountBy;
+            _statusSet
+              ..clear()
+              ..addAll(statusSet);
+            _typeSet
+              ..clear()
+              ..addAll(typeSet);
+            ref.read(provider.notifier).applyFilters(
+                  sortBy: _sortBy,
+                  amountBy: _amountBy,
+                  statusSet: _statusSet,
+                  typeSet: _typeSet,
+                );
+            context.pop();
+          },
         ),
       ),
-      showBackImage: false,
+      itemBuilder: (ctx, item, idx) => ServiceListItem(service: item),
+      onItemTap: (item) => _showProviderDetails(item),
+      emptyWidget: const Padding(
+        padding: EdgeInsets.all(20),
+        child: Center(child: EmptytransactionWidget()),
+      ),
+      separator: Container(
+        height: 1,
+        color: AppColors.greyD0.withOpacity(0.3),
+        margin: EdgeInsets.symmetric(vertical: 12.h),
+      ),
     );
   }
 
-  void _showBettingDetails(BuildContext context, ServiceModel service) {
+  void _showProviderDetails(ServiceModel service) {
     final transactionData = TransactionReceiptData(
       transactionId: service.id,
       date: _formatTransactionDate(service.date),

@@ -11,9 +11,12 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
 
   Future<void> loadServices() async {
     state = state.copyWith(isLoading: true);
+
     try {
       final services = await _fetchServices();
       print('Fetched $serviceType Services: ${services.length}'); // Debug
+      print(
+          'All types in dummy: ${dummyTransactions.map((t) => t.type).toSet()}');
       state = state.copyWith(
         services: services,
         filteredServices: services,
@@ -90,11 +93,11 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
     switch (serviceType) {
       case 'betting':
         return await _fetchBettingHistory();
-      case 'mobile data':
+      case 'mobile_data':
         return await _fetchMobileDataHistory();
       case 'education':
         return await _fetchEducationHistory();
-      case 'cable tv':
+      case 'cable_tv':
         return await _fetchCableTvHistory();
       case 'electricity':
         return await _fetchElectricityHistory();
@@ -102,7 +105,7 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
         return await _fetchAirtimeHistory();
       case 'e-pin':
         return await _fetchEPinHistory();
-      case 'internet service':
+      case 'internet_service':
         return await _fetchInternetServiceHistory();
       default:
         throw UnimplementedError('Service type $serviceType not implemented');

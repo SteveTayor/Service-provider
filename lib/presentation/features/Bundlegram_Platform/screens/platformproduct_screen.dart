@@ -1,9 +1,12 @@
+// ignore_for_file: inference_failure_on_instance_creation
+
 import 'package:bundlegram/core/config/service_config.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/enums.dart';
+import 'package:bundlegram/core/utils/styles.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/gen/fonts.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/data/platform_data.dart';
@@ -14,6 +17,7 @@ import 'package:bundlegram/presentation/features/transaction/screens/airtime/wid
 import 'package:bundlegram/presentation/features/transaction/screens/betting/betting_transaction_screen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/betting/widget/betting_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/cabletv/widget/cabletvsuccess.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/e-pin/bulkE-pin_screen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/e-pin/widget/bulk_pin_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/e-pin/widget/epin_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/education/widget/education_success.dart';
@@ -21,6 +25,7 @@ import 'package:bundlegram/presentation/features/transaction/screens/electricity
 import 'package:bundlegram/presentation/features/transaction/screens/internet-services/widget/internetservice_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/mobile-data/mobile_data_transaction_screen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/mobile-data/widget/mobiledata_success.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/serviceProviders_history_screen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transactionsummary_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/topup_failed_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
@@ -28,6 +33,7 @@ import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
+import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
@@ -48,6 +54,7 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
   Map<String, String>? selectedBundle;
   final TextEditingController _secondaryInputFieldController =
       TextEditingController();
+  final TextEditingController amountController = TextEditingController();
   String? selectedProvider;
 
   // Map service types to their success and failure screens
@@ -75,7 +82,8 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
     PlatformProductType.betting: {
       'success': const BettingSuccessResultScreen(amount: '', biller: ''),
       'failure': const FailedResultScreen(
-          serviceContent: 'payment to your betting account '),
+        serviceContent: 'payment to your betting account ',
+      ),
     },
     PlatformProductType.cableTv: {
       'success': const CableTvSuccessResultScreen(
@@ -99,7 +107,8 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
       'success':
           const InternetServicesSuccessResultScreen(amount: '', biller: ''),
       'failure': const FailedResultScreen(
-          serviceContent: 'payment for internet service'),
+        serviceContent: 'payment for internet service',
+      ),
     },
   };
 
@@ -134,47 +143,92 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
           onTap: () {
             switch (serviceType) {
               case PlatformProductType.mobileData:
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (ctx) => const MobileDataHistoryScreen(),
-                  ),
-                );
-                break;
-              // case PlatformProductType.airtime:
-              //  Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (BuildContext ctx) => Airtim(),
-              //     ),
-              //   );
-              //   context.push('${RouteConstants.history}/airtime');
-              //   break;
-              // case PlatformProductType.betting:
-              //   context.push('${RouteConstants.history}/betting');
-              //   break;
-              // case PlatformProductType.electricity:
-              //   context.push('${RouteConstants.history}/electricity');
-              //   break;
-              // case PlatformProductType.education:
-              //   context.push('${RouteConstants.history}/education');
-              //   break;
-              // case PlatformProductType.cableTv:
-              //   context.push('${RouteConstants.history}/cableTv');
-              //   break;
-              // case PlatformProductType.internetServices:
-              //   context.push('${RouteConstants.history}/internetServices');
-              //   break;
-              // case PlatformProductType.ePinVoucher:
-              //   context.push('${RouteConstants.history}/ePinVoucher');
-              //   break;
-              // case PlatformProductType.bulkEPin:
-              //   context.push('${RouteConstants.history}/bulkEPin');
-              //   break;
-              default:
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext ctx) => const BettingHistoryScreen(),
+                    builder: (_) => const ServiceHistoryScreen(
+                      serviceType: PlatformProductType.mobileData,
+                    ),
+                  ),
+                );
+
+              case PlatformProductType.airtime:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ServiceHistoryScreen(
+                      serviceType: PlatformProductType.airtime,
+                    ),
+                  ),
+                );
+
+              case PlatformProductType.betting:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ServiceHistoryScreen(
+                      serviceType: PlatformProductType.betting,
+                    ),
+                  ),
+                );
+
+              case PlatformProductType.electricity:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ServiceHistoryScreen(
+                      serviceType: PlatformProductType.electricity,
+                    ),
+                  ),
+                );
+
+              case PlatformProductType.education:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ServiceHistoryScreen(
+                      serviceType: PlatformProductType.education,
+                    ),
+                  ),
+                );
+
+              case PlatformProductType.cableTv:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ServiceHistoryScreen(
+                      serviceType: PlatformProductType.cableTv,
+                    ),
+                  ),
+                );
+
+              case PlatformProductType.internetServices:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ServiceHistoryScreen(
+                      serviceType: PlatformProductType.internetServices,
+                    ),
+                  ),
+                );
+
+              case PlatformProductType.ePinVoucher:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ServiceHistoryScreen(
+                      serviceType: PlatformProductType.ePinVoucher,
+                    ),
+                  ),
+                );
+
+              case PlatformProductType.bulkEPin:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ServiceHistoryScreen(
+                      serviceType: PlatformProductType.bulkEPin,
+                    ),
                   ),
                 );
             }
@@ -207,20 +261,41 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
                 selectedBundle: selectedBundle,
                 onBundleSelected: (bundle) =>
                     setState(() => selectedBundle = bundle),
+                serviceType: serviceType,
               ),
             if (serviceType == PlatformProductType.ePinVoucher ||
                 serviceType == PlatformProductType.bulkEPin)
-              const ProductuserpriceWidget(),
+              const ProductuserpriceWidget(serviceType: serviceType),
+            
+            if (serviceType != PlatformProductType.mobileData &&
+                serviceType != PlatformProductType.internetServices)
+              Padding(
+                padding: EdgeInsets.only(top: 10.h),
+                child: AppTextField(
+                  hintText: "Amount",
+                  controller: amountController ??
+                      selectedBundle?.values.first as TextEditingController,
+                  prefixIcon: Padding(
+                    padding: context.symmetricPadding(24, 0),
+                    child: Text(
+                      '₦',
+                      style: context.textTheme.bodyMedium,
+                    ),
+                  ),
+                ),
+              ),
             Row(
               children: [
                 AppSvgIcon(path: Assets.svgs.balance),
                 16.horizontalSpace,
                 Text('Balance (₦20,000)', style: context.textTheme.bodySmall),
                 const Spacer(),
-                Text(
-                  'Top-up >',
-                  style: context.textTheme.bodySmall!
-                      .copyWith(color: AppColors.primaryColor),
+                Flexible(
+                  child: Text(
+                    'Top-up >',
+                    style: context.textTheme.bodySmall!
+                        .copyWith(color: AppColors.primaryColor),
+                  ),
                 ),
               ],
             ).withContainer(
@@ -243,7 +318,8 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
                     child: TransactionSummary(
                       assetPath: _getImagePath(serviceType, selectedProvider),
                       transactionType: selectedProvider,
-                      amount: selectedBundle?.values.first ?? 'N0.00',
+                      amount:
+                          selectedBundle?.values.first ?? amountController.text,
                       paymentMethod: 'Wallet',
                       beneficiary:
                           _secondaryInputFieldController.text ?? 'beneficiary',
@@ -254,8 +330,8 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
                             RouteConstants.enterPin,
                             extra: {
                               'onVerified': () {
-                                final amount =
-                                    selectedBundle?.values.first ?? 'N0.00';
+                                final amount = (amountController.text ??
+                                    selectedBundle?.values.first) as String;
                                 final beneficiary =
                                     _secondaryInputFieldController.text ??
                                         'beneficiary';
@@ -323,9 +399,10 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
             ),
             if (serviceType == PlatformProductType.ePinVoucher)
               Padding(
-                padding: EdgeInsets.only(top: 16.h),
+                padding: EdgeInsets.only(top: 24.h),
                 child: BundlegramButton(
                   text: 'Print bulk e-pin voucher',
+                  borderColor: AppColors.grey5B,
                   textStyle: context.textTheme.bodyMedium?.copyWith(
                     color: AppColors.grey19,
                     fontFamily: FontFamily.mabryPro,
@@ -335,46 +412,74 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
                   onPressed: () {
                     context.showBottomSheet(
                       showIcon: false,
-                      child: TransactionSummary(
-                        transactionType: selectedProvider,
-                        amount: selectedBundle?.values.first ?? 'N0.00',
-                        paymentMethod: 'Wallet',
-                        beneficiary: _secondaryInputFieldController.text ??
-                            'beneficiary',
-                        onPay: () {
-                          context
-                            ..pop() // Close the bottom sheet
-                            ..push(
-                              RouteConstants.enterPin,
-                              extra: {
-                                'onVerified': () {
-                                  final amount =
-                                      selectedBundle?.values.first ?? 'N0.00';
-                                  final beneficiary =
-                                      _secondaryInputFieldController.text ??
-                                          'beneficiary';
-                                  final successScreen =
-                                      _serviceRoutes[serviceType]!['success']!;
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        // Handle different success screen parameters
-                                        switch (serviceType) {
-                                          case PlatformProductType.ePinVoucher:
-                                            return EpinSuccessResultScreen(
-                                              amount: amount,
-                                            );
-                                          default:
-                                            return successScreen;
-                                        }
-                                      },
+                      showDragHandle: true,
+                      child: Padding(
+                        padding: context.symmetricPadding(16, 16),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            18.verticalSpace,
+                            Text(
+                              'Print bulk e-pin voucher',
+                              style: context.textTheme.displayLarge,
+                            ),
+                            12.verticalSpace,
+                            RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                text:
+                                    'Do you want to print E-PIN in bulk? You will make money selling E-PIN to people in your community.\n',
+                                style: context.textTheme.displaySmall,
+                                children: [
+                                  TextSpan(
+                                    text: 'Note:',
+                                    style: const TextStyle(
+                                      color: Color(0xFFAA0B27),
                                     ),
-                                  );
-                                },
+                                  ),
+                                  const TextSpan(
+                                      text: 'This feature is available to all'),
+                                  TextSpan(
+                                    text: ' Bundlegram agents only.',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const TextSpan(
+                                      text:
+                                          ' Our agents enjoy bulk E-PIN at discounted prices.'),
+                                ],
+                              ),
+                            ),
+                            40.verticalSpace,
+                            BundlegramButton(
+                              text: 'Continue',
+                              onPressed: () {
+                                context.pop();
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => BulkEpinScreen(),
+                                  ),
+                                );
                               },
-                            );
-                        },
+                            ),
+                            18.verticalSpace,
+                            BundlegramButton(
+                              text: 'Cancel',
+                              borderColor: AppColors.grey5B,
+                              textStyle: context.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.grey19,
+                                fontFamily: FontFamily.mabryPro,
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              onPressed: () {
+                                context.pop();
+                              },
+                            ),
+                            20.verticalSpace,
+                          ],
+                        ),
                       ),
                     );
                   },
