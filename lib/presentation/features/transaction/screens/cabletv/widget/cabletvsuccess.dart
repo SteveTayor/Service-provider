@@ -7,7 +7,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class CableTvSuccessResultScreen extends StatelessWidget {
-  const CableTvSuccessResultScreen({super.key});
+  final String amount;
+
+  const CableTvSuccessResultScreen({
+    super.key,
+    required this.amount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +23,7 @@ class CableTvSuccessResultScreen extends StatelessWidget {
           path: Assets.svgs.successfulIllustration,
         ),
         title: 'Payment Successful!',
-        subText: 'Your subscription of ₦2,000 to Cable TV was successful.',
+        subText: 'Your subscription of ${amount} to Cable TV was successful.',
         buttonText: 'Go to home',
         onPressed: () {
           context.pop();

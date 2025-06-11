@@ -6,8 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class AirtimeFailedResultScreen extends StatelessWidget {
-  const AirtimeFailedResultScreen({super.key});
+class DataSubscriptionSuccessResultScreen extends StatelessWidget {
+  final String dataValue;
+  final String beneficiary;
+  const DataSubscriptionSuccessResultScreen({
+    super.key,
+    required this.dataValue,
+    required this.beneficiary,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +21,12 @@ class AirtimeFailedResultScreen extends StatelessWidget {
       sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
       body: ResultWidget(
         appIcon: AppSvgIcon(
-          path: Assets.svgs.failedIllustration,
+          path: Assets.svgs.successfulIllustration,
         ),
-        title: 'Airtime recharge failed!',
+        title: 'Data subscription successful!',
         subText:
-            'Your airtime recharge failed. Please, check your connection and try again..',
-        buttonText: 'Retry',
+            'Your data subscription of ${dataValue} to ${beneficiary} was successful.',
+        buttonText: 'Go to home',
         onPressed: () {
           context.pop();
         },

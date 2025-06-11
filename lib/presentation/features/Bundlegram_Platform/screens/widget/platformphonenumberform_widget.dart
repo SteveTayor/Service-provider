@@ -43,7 +43,7 @@ class _PlatformphonenumberformWidgetState
   @override
   void initState() {
     super.initState();
-    _selectedProviderImage = widget.initialProviderImage ?? Assets.svgs.mtnLogo;
+    _selectedProviderImage = widget.initialProviderImage;
     _selectedProviderName = null;
   }
 
@@ -77,11 +77,13 @@ class _PlatformphonenumberformWidgetState
                           )
                         : Image.asset(_selectedProviderImage!, width: 24)
                   else
-                    AppSvgIcon(
-                      path: Assets.svgs.betting,
-                      width: 20,
-                      fit: BoxFit.contain,
-                      height: 20,
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircleAvatar(
+                        child: AppSvgIcon(
+                            path: Assets.svgs.betting, fit: BoxFit.fill),
+                      ),
                     ),
                   8.horizontalSpace,
                   AppSvgIcon(path: Assets.svgs.chevronDown),

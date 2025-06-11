@@ -6,8 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class BettingFailedResultScreen extends StatelessWidget {
-  const BettingFailedResultScreen({super.key});
+class EpinSuccessResultScreen extends StatelessWidget {
+  final String amount;
+
+  const EpinSuccessResultScreen({
+    super.key,
+    required this.amount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +20,11 @@ class BettingFailedResultScreen extends StatelessWidget {
       sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
       body: ResultWidget(
         appIcon: AppSvgIcon(
-          path: Assets.svgs.failedIllustration,
+          path: Assets.svgs.successfulIllustration,
         ),
-        title: 'Payment failed!',
-        subText:
-            'The payment to your betting account wallet failed. Please, check your connection and try again..',
-        buttonText: 'Retry',
+        title: 'Payment Successful!',
+        subText: 'Your payment of ${amount} for epin voucher was successful.',
+        buttonText: 'Go to home',
         onPressed: () {
           context.pop();
         },

@@ -6,8 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class BettingSuccessResultScreen extends StatelessWidget {
-  const BettingSuccessResultScreen({super.key});
+class EducationProviderSuccessResultScreen extends StatelessWidget {
+  final String amount;
+  final String biller;
+
+  const EducationProviderSuccessResultScreen({
+    super.key,
+    required this.amount,
+    required this.biller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +24,8 @@ class BettingSuccessResultScreen extends StatelessWidget {
         appIcon: AppSvgIcon(
           path: Assets.svgs.successfulIllustration,
         ),
-        title: 'Payment successful!',
-        subText: 'Your payment of ₦2,000 to your Bet9ja account wallet was successful.',
+        title: 'Payment Successful!',
+        subText: 'Your payment of ${amount} to ${biller} was successful.',
         buttonText: 'Go to home',
         onPressed: () {
           context.pop();

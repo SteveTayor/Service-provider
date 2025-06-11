@@ -25,7 +25,7 @@ class MobileDataHistoryScreen extends ConsumerWidget {
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(
         showBackButton: true,
-        title: Text('MobileData History'),
+        title: Text('History'),
       ),
       body: CustomListView<ServiceModel>(
         items: mobileDataState.services,
@@ -33,7 +33,7 @@ class MobileDataHistoryScreen extends ConsumerWidget {
         onRefresh: () => ref.read(mobileDataHistoryProvider.notifier).refresh(),
         itemBuilder: (service, index) => ServiceListItem(service: service),
         onItemTap: (service, index) {
-          _showBettingDetails(context, service);
+          _showProviderDetails(context, service);
         },
         backgroundColor: Colors.grey[50],
         emptyWidget: Builder(
@@ -44,7 +44,7 @@ class MobileDataHistoryScreen extends ConsumerWidget {
                 EmptytransactionWidget(),
                 SizedBox(height: 16.h),
                 Text(
-                  'No betting history found',
+                  'No Data subscription history found',
                   style: context.textTheme.bodyMedium
                       ?.copyWith(color: AppColors.grey8E),
                 ),
@@ -57,7 +57,7 @@ class MobileDataHistoryScreen extends ConsumerWidget {
     );
   }
 
-  void _showBettingDetails(BuildContext context, ServiceModel service) {
+  void _showProviderDetails(BuildContext context, ServiceModel service) {
     final transactionData = TransactionReceiptData(
       transactionId: service.id,
       date: _formatTransactionDate(service.date),

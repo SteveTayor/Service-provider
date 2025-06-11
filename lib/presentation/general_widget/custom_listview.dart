@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
 import 'package:bundlegram/presentation/general_widget/app_loader.dart';
 import 'package:bundlegram/presentation/general_widget/custom_listview_item.dart';
 import 'package:flutter/material.dart';
@@ -98,11 +99,7 @@ class CustomListView<T> extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.inbox_outlined,
-                  size: 64.w,
-                  color: AppColors.grey8E,
-                ),
+                EmptytransactionWidget(),
                 SizedBox(height: 16.h),
                 Text(
                   'No items found',

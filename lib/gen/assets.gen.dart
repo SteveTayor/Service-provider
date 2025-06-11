@@ -411,6 +411,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/info-circle.svg
   String get infoCircle => 'assets/svgs/info-circle.svg';
 
+  /// File path: assets/svgs/internetservice.svg
+  String get internetservice => 'assets/svgs/internetservice.svg';
+
   /// File path: assets/svgs/linkyourbvn.svg
   String get linkyourbvn => 'assets/svgs/linkyourbvn.svg';
 
@@ -599,6 +602,7 @@ class $AssetsSvgsGen {
         homeinactive,
         infoCircle1,
         infoCircle,
+        internetservice,
         linkyourbvn,
         logout1ArrowExitFrameLeaveLogoutRectangleRight1,
         logout1ArrowExitFrameLeaveLogoutRectangleRight,

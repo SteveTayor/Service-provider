@@ -7,7 +7,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class AirtimeSuccessResultScreen extends StatelessWidget {
-  const AirtimeSuccessResultScreen({super.key});
+  final String amount;
+  final String beneficiary;
+  const AirtimeSuccessResultScreen({
+    super.key,
+    required this.amount,
+    required this.beneficiary,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +24,8 @@ class AirtimeSuccessResultScreen extends StatelessWidget {
           path: Assets.svgs.successfulIllustration,
         ),
         title: 'Airtime recharge successful!',
-        subText: 'Your airtime recharge of ₦100 to 07018505040 was successful.',
+        subText:
+            'Your airtime recharge of ${amount} to ${beneficiary} was successful.',
         buttonText: 'Go to home',
         onPressed: () {
           context.pop();

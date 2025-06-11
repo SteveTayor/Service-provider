@@ -6,11 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class FailedResultScreen extends StatelessWidget {
-  final String serviceContent;
-  const FailedResultScreen({
+class ElectricitySuccessResultScreen extends StatelessWidget {
+  final String amount;
+  final String biller;
+
+  const ElectricitySuccessResultScreen({
     super.key,
-    required this.serviceContent,
+    required this.amount,
+    required this.biller,
   });
 
   @override
@@ -19,12 +22,11 @@ class FailedResultScreen extends StatelessWidget {
       sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
       body: ResultWidget(
         appIcon: AppSvgIcon(
-          path: Assets.svgs.failedIllustration,
+          path: Assets.svgs.successfulIllustration,
         ),
-        title: 'Top-up failed!',
-        subText:
-            'Your ${serviceContent} failed. Please, check your connection and try again..',
-        buttonText: 'Retry',
+        title: 'Payment Successful!',
+        subText: 'Your payment of ${amount} for ${biller} was successful.',
+        buttonText: 'Go to home',
         onPressed: () {
           context.pop();
         },

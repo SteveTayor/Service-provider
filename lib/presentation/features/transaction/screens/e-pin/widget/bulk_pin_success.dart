@@ -6,11 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class FailedResultScreen extends StatelessWidget {
-  final String serviceContent;
-  const FailedResultScreen({
+class BulkPinSuccessResultScreen extends StatelessWidget {
+  const BulkPinSuccessResultScreen({
     super.key,
-    required this.serviceContent,
   });
 
   @override
@@ -19,12 +17,12 @@ class FailedResultScreen extends StatelessWidget {
       sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
       body: ResultWidget(
         appIcon: AppSvgIcon(
-          path: Assets.svgs.failedIllustration,
+          path: Assets.svgs.successfulIllustration,
         ),
-        title: 'Top-up failed!',
+        title: 'Details submitted!',
         subText:
-            'Your ${serviceContent} failed. Please, check your connection and try again..',
-        buttonText: 'Retry',
+            'Your request has been received. We will contact you soon for more information.',
+        buttonText: 'Go to home',
         onPressed: () {
           context.pop();
         },
