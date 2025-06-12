@@ -265,8 +265,8 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
               ),
             if (serviceType == PlatformProductType.ePinVoucher ||
                 serviceType == PlatformProductType.bulkEPin)
-              const ProductuserpriceWidget(serviceType: serviceType),
-            
+              ProductuserpriceWidget(serviceType: serviceType),
+
             if (serviceType != PlatformProductType.mobileData &&
                 serviceType != PlatformProductType.internetServices)
               Padding(
