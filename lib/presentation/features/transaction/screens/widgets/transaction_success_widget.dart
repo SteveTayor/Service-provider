@@ -8,10 +8,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class TransactionSuccessful extends StatelessWidget {
+  const TransactionSuccessful({
+    required this.title,
+    required this.subTitle,
+    this.isCloseAccount = false,
+    this.isBasicInfo = false,
+    super.key,
+  });
   final String title;
   final String subTitle;
-  const TransactionSuccessful(
-      {required this.title, required this.subTitle, super.key});
+  final bool isCloseAccount;
+  final bool isBasicInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +30,11 @@ class TransactionSuccessful extends StatelessWidget {
         ),
         title: title,
         subText: subTitle,
-        buttonText: 'Go to home',
+        buttonText: isCloseAccount == true
+            ? 'Okay!'
+            : isBasicInfo == true
+                ? 'Continue'
+                : 'Go to home',
         onPressed: () {
           context.push(RouteConstants.dashboard);
         },

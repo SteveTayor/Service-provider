@@ -1,16 +1,26 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/styles.dart';
-import 'package:bundlegram/presentation/features/setting/screens/close_account_screen.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class CloseaccountWidget extends StatelessWidget {
-  final String userName;
-  const CloseaccountWidget({this.userName = 'Rose', super.key});
+class SecurityPopWidget extends StatelessWidget {
+  final String popHeader;
+  final String popContent;
+  final String popButtonTitle;
+  final VoidCallback? onConfirm; // Add callback for confirm action
+
+  const SecurityPopWidget({
+    required this.popHeader,
+    required this.popContent,
+    required this.popButtonTitle,
+    this.onConfirm,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,37 +30,30 @@ class CloseaccountWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Close account',
+            popHeader,
             style: context.textTheme.bodyMedium!.copyWith(
               fontSize: 18.sp,
             ),
           ),
           12.verticalSpace,
           Text(
-            'Hi ${userName}, we work very hard to ensure all our users are happy using our services. Bundlegram offers one of the best rates for all its services from buying data, airtime and paying for bills. If you have any issue, kindly contact us, we will gladly help. However, if you want to close your account, click proceed.',
+            popContent,
             textAlign: TextAlign.center,
             style: context.textTheme.bodySmall,
           ),
           28.verticalSpace,
           BundlegramButton(
-              text: 'Proceed',
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => EnterPinScreen(
-                      onVerified: () {
-                        // TODO: implement onVerified callback
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (ctx) => CloseAccountScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              }),
+            text: popButtonTitle,
+            onPressed: () {
+              // Call the confirm callback if provided
+              if (onConfirm != null) {
+                onConfirm!();
+              } else {
+                // Default behavior - navigate to dashboard
+                context.push(RouteConstants.dashboard);
+              }
+            },
+          ),
           24.verticalSpace,
           BundlegramButton(
             isOutline: true,

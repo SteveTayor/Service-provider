@@ -10,6 +10,19 @@ enum HomeSessionState {
   authenticated
 } // Added authenticated for user state
 
+enum PinScreenMode {
+  create,
+  confirm,
+  validate,
+}
+
+enum NotificationType {
+  promo,
+  transaction,
+  payment,
+  system,
+}
+
 enum OverLayType { loader, message, none }
 
 enum MessageType {

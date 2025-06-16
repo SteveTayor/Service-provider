@@ -84,10 +84,10 @@ class AppRouter {
         path: RouteConstants.forgetPassword,
         builder: (context, state) => const ForgetPasswordScreen(),
       ),
-      GoRoute(
-        path: RouteConstants.resetPassword,
-        builder: (context, state) => const ResetPasswordLinkScreen(),
-      ),
+      // GoRoute(
+      //   path: RouteConstants.resetPassword,
+      //   builder: (context, state) => const ResetPasswordLinkScreen(),
+      // ),
       GoRoute(
         path: RouteConstants.dashboard,
         builder: (context, state) => const Dashboard(),

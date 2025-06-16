@@ -16,6 +16,7 @@ class AppForm extends StatefulWidget {
     required this.buttonText,
     this.isExpanded = true,
     this.extraWidget,
+    this.buttonColor,
     super.key,
   });
   final List<AppTextField> children;
@@ -24,6 +25,7 @@ class AppForm extends StatefulWidget {
   final bool isActive;
   final Widget? extraWidget;
   final bool? isExpanded;
+  final Color? buttonColor;
 
   final GlobalKey<FormState> formKey;
 
@@ -57,7 +59,7 @@ class _AppFormState extends State<AppForm> {
           Opacity(
             opacity: widget.isActive ? 1 : 0.5,
             child: BundlegramButton(
-              color: AppColors.primaryColor,
+              color: widget.buttonColor ?? AppColors.primaryColor,
               text: widget.buttonText,
               onPressed: () {
                 widget.onPressed();

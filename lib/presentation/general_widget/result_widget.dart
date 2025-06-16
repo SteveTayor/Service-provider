@@ -37,7 +37,7 @@ class ResultWidget extends StatelessWidget {
                 title,
                 style: context.textTheme.headlineLarge,
               ),
-              24.verticalSpace,
+              12.verticalSpace,
               Text(
                 subText,
                 textAlign: TextAlign.center,

@@ -3,6 +3,8 @@ import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
+import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_dropdown.dart';
@@ -17,6 +19,7 @@ class WithdrawalScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String amount = '₦10,500';
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(
         titleText: 'Withdraw from wallet',
@@ -79,7 +82,25 @@ class WithdrawalScreen extends StatelessWidget {
           BundlegramButton(
             text: 'Request withdrawal',
             onPressed: () {
-              context.push(RouteConstants.enterPin);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => EnterPinScreen(
+                    onVerified: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (ctx) => TransactionSuccessful(
+                            title: 'Withdrawal request received! ',
+                            subTitle:
+                                'Your withdrawal request of ${amount} from your Bundlegram wallet has been successfully received.',
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
             },
           ),
         ],

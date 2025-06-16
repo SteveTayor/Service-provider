@@ -11,11 +11,13 @@ class ListtileswitchWidget extends StatefulWidget {
     required this.title,
     required this.label,
     this.switchValue,
+    this.onToggle, // Add callback for handling toggle
     super.key,
   });
   final String title;
   final String label;
   final bool? switchValue;
+  final Function(bool)? onToggle; // Callback function
 
   @override
   State<ListtileswitchWidget> createState() => _ListtileswitchWidgetState();
@@ -23,6 +25,14 @@ class ListtileswitchWidget extends StatefulWidget {
 
 class _ListtileswitchWidgetState extends State<ListtileswitchWidget> {
   bool switchValue = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with provided value or default to true
+    switchValue = widget.switchValue ?? true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,9 +54,14 @@ class _ListtileswitchWidgetState extends State<ListtileswitchWidget> {
               activeTrackColor: AppColors.primaryColor,
               value: switchValue,
               onChanged: (c) {
-                setState(() {
-                  switchValue = c;
-                });
+                // If callback is provided, use it; otherwise use default behavior
+                if (widget.onToggle != null) {
+                  widget.onToggle!(c);
+                } else {
+                  setState(() {
+                    switchValue = c;
+                  });
+                }
               },
             ),
           ],

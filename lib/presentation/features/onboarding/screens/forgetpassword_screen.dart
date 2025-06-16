@@ -3,6 +3,7 @@ import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/onboarding/screens/resetpasswordlink_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
@@ -24,6 +25,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    String userEmail = 'roseowen@gmail.com';
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(),
       sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
@@ -51,7 +53,16 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               isExpanded: false,
               isActive: _isFormValid,
               onPressed: () {
-                context.go(RouteConstants.resetPassword);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => ResetPasswordLinkScreen(
+                      title: 'Reset link sent!',
+                      subtitle:
+                          'A password reset link has been sent to your email, ${userEmail}. Check your inbox and click the link to reset your password.',
+                    ),
+                  ),
+                );
               },
               buttonText: 'Continue',
               formKey: _formKey,

@@ -1,6 +1,7 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/presentation/features/onboarding/screens/resetpasswordlink_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class VerifyemailWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String userEmail = 'roseowen@gmail.com';
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -36,8 +38,16 @@ class VerifyemailWidget extends StatelessWidget {
           BundlegramButton(
             text: 'Confirm email',
             onPressed: () {
-              context.pop();
-              context.push(RouteConstants.resetPassword);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => ResetPasswordLinkScreen(
+                    title: 'Verification link sent!',
+                    subtitle:
+                        'Verify your email, ${userEmail}, to start paying your bills with Bundlegram.',
+                  ),
+                ),
+              );
             },
           ),
           24.verticalSpace,
