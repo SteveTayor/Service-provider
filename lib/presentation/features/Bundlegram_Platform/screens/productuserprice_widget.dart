@@ -12,14 +12,14 @@ class ProductuserpriceWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        24.verticalSpace,
-        if (serviceType == PlatformProductType.cableTv)
+        // 24.verticalSpace,
+        if (serviceType == PlatformProductType.cableTv) ...[
           const AppDropdown(title: 'Startimes Plus Web Access'),
-        24.verticalSpace,
+          24.verticalSpace,
+        ]
         // const AppTextField(
         //   hintText: 'N',
         // ),
-        24.verticalSpace,
       ],
     );
   }

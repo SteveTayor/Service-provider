@@ -7,15 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class ElectricitySuccessResultScreen extends StatelessWidget {
-  final String amount;
-  final String biller;
-
-  const ElectricitySuccessResultScreen({
-    super.key,
-    required this.amount,
-    required this.biller,
-  });
+class TransactionSuccessful extends StatelessWidget {
+  final String title;
+  final String subTitle;
+  const TransactionSuccessful(
+      {required this.title, required this.subTitle, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +21,8 @@ class ElectricitySuccessResultScreen extends StatelessWidget {
         appIcon: AppSvgIcon(
           path: Assets.svgs.successfulIllustration,
         ),
-        title: 'Payment Successful!',
-        subText: 'Your payment of ${amount} for ${biller} was successful.',
+        title: title,
+        subText: subTitle,
         buttonText: 'Go to home',
         onPressed: () {
           context.push(RouteConstants.dashboard);

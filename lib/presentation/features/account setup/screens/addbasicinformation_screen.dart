@@ -25,7 +25,7 @@ class AddbasicinformationScreen extends StatelessWidget {
             : 'Update account details',
       ),
       body: ListView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(8.w),
         children: [
           if (userAction.isCreate) ...[
             const Text('Rose Owen').withContainer(

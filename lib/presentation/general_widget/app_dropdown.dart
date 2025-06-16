@@ -31,7 +31,7 @@ class AppDropdown extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: context.textTheme.bodySmall),
+          Text(title, style: context.textTheme.bodyMedium),
           AppSvgIcon(path: Assets.svgs.chevronDown),
         ],
       ).withContainer(
@@ -45,23 +45,31 @@ class AppDropdown extends StatelessWidget {
 
   void _showMenu(BuildContext context) {
     context.showBottomSheet(
-      child: ListView(
-        shrinkWrap: true,
-        children: options.map((o) {
-          return ListTile(
-            title: Text(
-              o,
-              style: context.textTheme.bodyMedium!.copyWith(
-                color: AppColors.black,
-              ),
-            ),
-            selected: o == selected,
-            onTap: () {
-              context.pop();
-              onChanged?.call(o);
-            },
-          );
-        }).toList(),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: ListView(
+          shrinkWrap: true,
+          children: options.map((o) {
+            return Column(
+              children: [
+                ListTile(
+                  title: Text(
+                    o,
+                    style: context.textTheme.bodyMedium!.copyWith(
+                      color: AppColors.black,
+                    ),
+                  ),
+                  selected: o == selected,
+                  onTap: () {
+                    context.pop();
+                    onChanged?.call(o);
+                  },
+                ),
+                24.verticalSpace,
+              ],
+            );
+          }).toList(),
+        ),
       ),
     );
   }

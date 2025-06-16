@@ -27,7 +27,9 @@ import 'package:bundlegram/presentation/features/transaction/screens/mobile-data
 import 'package:bundlegram/presentation/features/transaction/screens/mobile-data/widget/mobiledata_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/serviceProviders_history_screen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transactionsummary_widget.dart';
+import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/topup_failed_screen.dart';
+import 'package:bundlegram/presentation/features/wallet/screen/wallet_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
@@ -55,6 +57,8 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
   final TextEditingController _secondaryInputFieldController =
       TextEditingController();
   final TextEditingController amountController = TextEditingController();
+  final TextEditingController _firstInputController = TextEditingController();
+
   String? selectedProvider;
 
   // Map service types to their success and failure screens
@@ -245,6 +249,7 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
           children: [
             // 80.verticalSpace,
             PlatformphonenumberformWidget(
+              firstInputfieldController: _firstInputController,
               secondaryInputfieldController: _secondaryInputFieldController,
               serviceType: serviceType,
               inputHint: config.inputHint,
@@ -253,14 +258,23 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
               onProviderSelected: isProviderApplicable
                   ? (provider) => setState(() => selectedProvider = provider)
                   : null,
-              initialProviderImage: Assets.svgs.mtnnw,
+              // initialProviderImage: Assets.svgs.mtnnw,
+              dropdownOptions: config.dropdownOptions ?? [],
             ),
-            if (config.bundles != null && config.bundles!.isNotEmpty)
+            if (selectedProvider != null && config.bundles!.isNotEmpty)
               ProductItemGrid(
                 bundles: config.bundles!,
                 selectedBundle: selectedBundle,
-                onBundleSelected: (bundle) =>
-                    setState(() => selectedBundle = bundle),
+                onBundleSelected: (bundle) {
+                  setState(() {
+                    selectedBundle = bundle;
+                    // If this service uses an “amount” key, push it into the textfield:
+                    if (bundle.containsKey('amount')) {
+                      amountController.text =
+                          bundle['amount']!.replaceAll('₦', '');
+                    }
+                  });
+                },
                 serviceType: serviceType,
               ),
             if (serviceType == PlatformProductType.ePinVoucher ||
@@ -270,20 +284,24 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
             if (serviceType != PlatformProductType.mobileData &&
                 serviceType != PlatformProductType.internetServices)
               Padding(
-                padding: EdgeInsets.only(top: 10.h),
+                padding: EdgeInsets.only(top: 24.h),
                 child: AppTextField(
                   hintText: "Amount",
-                  controller: amountController ??
-                      selectedBundle?.values.first as TextEditingController,
+                  controller: amountController,
+                  onChange: (val) {
+                    // Forget any old bundle selection so summary uses this new text
+                    if (selectedBundle != null) {
+                      setState(() => selectedBundle = null);
+                    }
+                  },
                   prefixIcon: Padding(
                     padding: context.symmetricPadding(24, 0),
-                    child: Text(
-                      '₦',
-                      style: context.textTheme.bodyMedium,
-                    ),
+                    child: Text('₦', style: context.textTheme.bodyMedium),
                   ),
                 ),
               ),
+
+            24.verticalSpace,
             Row(
               children: [
                 AppSvgIcon(path: Assets.svgs.balance),
@@ -291,10 +309,20 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
                 Text('Balance (₦20,000)', style: context.textTheme.bodySmall),
                 const Spacer(),
                 Flexible(
-                  child: Text(
-                    'Top-up >',
-                    style: context.textTheme.bodySmall!
-                        .copyWith(color: AppColors.primaryColor),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const WalletScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Top-up >',
+                      style: context.textTheme.bodySmall!
+                          .copyWith(color: AppColors.primaryColor),
+                    ),
                   ),
                 ),
               ],
@@ -309,88 +337,135 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
               onPressed: () {
                 bool isValid = true;
                 if (isProviderApplicable) isValid = selectedProvider != null;
-                if (serviceType == PlatformProductType.ePinVoucher ||
-                    serviceType == PlatformProductType.bulkEPin)
-                  isValid = isValid && selectedBundle != null;
+                // if (serviceType == PlatformProductType.ePinVoucher ||
+                //     serviceType == PlatformProductType.bulkEPin)
+                //   isValid = isValid && selectedBundle != null;
                 if (isValid) {
+                  String? discountedPriceString;
+                  if (serviceType != PlatformProductType.betting) {
+                    final rawPrice = selectedBundle?['price'] ??
+                        amountController.text.trim();
+                    // strip out everything but digits
+                    final numeric = int.tryParse(
+                            rawPrice.replaceAll(RegExp(r'[^\d]'), '')) ??
+                        0;
+                    final discounted = numeric - 20;
+                    discountedPriceString = '₦$discounted.00';
+                  }
                   context.showBottomSheet(
                     showIcon: true,
                     child: TransactionSummary(
                       assetPath: _getImagePath(serviceType, selectedProvider),
                       transactionType: selectedProvider,
-                      amount:
-                          selectedBundle?.values.first ?? amountController.text,
+                      amount: summaryAmount(serviceType),
+                      discountedPrice: discountedPriceString,
                       paymentMethod: 'Wallet',
                       beneficiary:
-                          _secondaryInputFieldController.text ?? 'beneficiary',
+                          (serviceType != PlatformProductType.mobileData &&
+                                  serviceType != PlatformProductType.airtime)
+                              ? _secondaryInputFieldController.text
+                              : _firstInputController.text,
                       onPay: () {
-                        context
-                          ..pop() // Close the bottom sheet
-                          ..push(
-                            RouteConstants.enterPin,
-                            extra: {
-                              'onVerified': () {
-                                final amount = (amountController.text ??
-                                    selectedBundle?.values.first) as String;
-                                final beneficiary =
-                                    _secondaryInputFieldController.text ??
-                                        'beneficiary';
-                                final successScreen =
-                                    _serviceRoutes[serviceType]!['success']!;
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      // Handle different success screen parameters
-                                      switch (serviceType) {
-                                        case PlatformProductType.mobileData:
-                                          return DataSubscriptionSuccessResultScreen(
-                                            dataValue: amount,
-                                            beneficiary: beneficiary,
-                                          );
-                                        case PlatformProductType.airtime:
-                                          return AirtimeSuccessResultScreen(
-                                            amount: amount,
-                                            beneficiary: beneficiary,
-                                          );
-                                        case PlatformProductType.ePinVoucher:
-                                          return EpinSuccessResultScreen(
-                                            amount: amount,
-                                          );
-                                        case PlatformProductType.betting:
-                                          return BettingSuccessResultScreen(
-                                            amount: amount,
-                                            biller: beneficiary,
-                                          );
-                                        case PlatformProductType.cableTv:
-                                          return CableTvSuccessResultScreen(
-                                            amount: amount,
-                                          );
-                                        case PlatformProductType.education:
-                                          return EducationProviderSuccessResultScreen(
-                                            amount: amount,
-                                            biller: beneficiary,
-                                          );
-                                        case PlatformProductType.electricity:
-                                          return ElectricitySuccessResultScreen(
-                                            amount: amount,
-                                            biller: beneficiary,
-                                          );
-                                        case PlatformProductType
-                                              .internetServices:
-                                          return InternetServicesSuccessResultScreen(
-                                            amount: amount,
-                                            biller: beneficiary,
-                                          );
-                                        default:
-                                          return successScreen;
-                                      }
-                                    },
-                                  ),
-                                );
-                              },
-                            },
-                          );
+                        context.pop(); // Close the bottom sheet
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => EnterPinScreen(onVerified: () {
+                              String size = '';
+                              String amount = '';
+
+                              // For mobile data and internet services, use the data size
+                              if (serviceType ==
+                                      PlatformProductType.mobileData ||
+                                  serviceType ==
+                                      PlatformProductType.internetServices) {
+                                size = selectedBundle?['data'] ?? '';
+                                amount = selectedBundle?['price'] ?? '';
+                              } else {
+                                // For other services, use amount from bundle or text field
+                                if (selectedBundle?.containsKey('amount') ==
+                                    true) {
+                                  amount = selectedBundle!['amount']!;
+                                } else if (selectedBundle
+                                        ?.containsKey('price') ==
+                                    true) {
+                                  amount = selectedBundle!['price']!;
+                                } else {
+                                  amount = '₦${amountController.text}';
+                                }
+                              }
+
+                              // Ensure amount has proper formatting
+                              if (amount.isNotEmpty &&
+                                  !amount.startsWith('₦')) {
+                                amount = '₦$amount';
+                              }
+
+                              final beneficiary = (serviceType !=
+                                          PlatformProductType.mobileData &&
+                                      serviceType !=
+                                          PlatformProductType.airtime)
+                                  ? _secondaryInputFieldController.text
+                                  : _firstInputController.text;
+
+                              final biller = selectedProvider ?? '';
+
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    // Handle different success screen parameters
+                                    switch (serviceType) {
+                                      case PlatformProductType.mobileData:
+                                        return DataSubscriptionSuccessResultScreen(
+                                          dataValue: size,
+                                          beneficiary: beneficiary,
+                                        );
+                                      case PlatformProductType.airtime:
+                                        return AirtimeSuccessResultScreen(
+                                          amount: amount,
+                                          beneficiary: beneficiary,
+                                        );
+                                      case PlatformProductType.ePinVoucher:
+                                        return EpinSuccessResultScreen(
+                                          amount: amount,
+                                        );
+                                      case PlatformProductType.bulkEPin:
+                                        return const BulkPinSuccessResultScreen();
+                                      case PlatformProductType.betting:
+                                        return BettingSuccessResultScreen(
+                                          amount: amount,
+                                          biller: biller,
+                                        );
+                                      case PlatformProductType.cableTv:
+                                        return CableTvSuccessResultScreen(
+                                          amount: amount,
+                                        );
+                                      case PlatformProductType.education:
+                                        return EducationProviderSuccessResultScreen(
+                                          amount: amount,
+                                          biller: biller,
+                                        );
+                                      case PlatformProductType.electricity:
+                                        return ElectricitySuccessResultScreen(
+                                          amount: amount,
+                                          biller: biller,
+                                        );
+                                      case PlatformProductType.internetServices:
+                                        return InternetServicesSuccessResultScreen(
+                                          amount:
+                                              size.isNotEmpty ? size : amount,
+                                          biller: biller,
+                                        );
+                                      default:
+                                        // Fallback - this shouldn't happen but provides safety
+                                        return const FailedResultScreen(
+                                            serviceContent: 'transaction');
+                                    }
+                                  },
+                                ),
+                              );
+                            }),
+                          ),
+                        );
                       },
                     ),
                   );
@@ -402,7 +477,7 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
                 padding: EdgeInsets.only(top: 24.h),
                 child: BundlegramButton(
                   text: 'Print bulk e-pin voucher',
-                  borderColor: AppColors.grey5B,
+                  isOutline: true,
                   textStyle: context.textTheme.bodyMedium?.copyWith(
                     color: AppColors.grey19,
                     fontFamily: FontFamily.mabryPro,
@@ -411,25 +486,26 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
                   ),
                   onPressed: () {
                     context.showBottomSheet(
+                      color: AppColors.background,
                       showIcon: false,
-                      showDragHandle: true,
+                      // showDragHandle: true,
                       child: Padding(
                         padding: context.symmetricPadding(16, 16),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            18.verticalSpace,
+                            24.verticalSpace,
                             Text(
                               'Print bulk e-pin voucher',
-                              style: context.textTheme.displayLarge,
+                              style: context.textTheme.displaySmall,
                             ),
-                            12.verticalSpace,
+                            24.verticalSpace,
                             RichText(
                               textAlign: TextAlign.center,
                               text: TextSpan(
                                 text:
                                     'Do you want to print E-PIN in bulk? You will make money selling E-PIN to people in your community.\n',
-                                style: context.textTheme.displaySmall,
+                                style: context.textTheme.bodySmall,
                                 children: [
                                   TextSpan(
                                     text: 'Note:',
@@ -441,8 +517,9 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
                                       text: 'This feature is available to all'),
                                   TextSpan(
                                     text: ' Bundlegram agents only.',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w500,
+                                    style:
+                                        context.textTheme.bodySmall!.copyWith(
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   const TextSpan(
@@ -466,7 +543,8 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
                             18.verticalSpace,
                             BundlegramButton(
                               text: 'Cancel',
-                              borderColor: AppColors.grey5B,
+                              isOutline: true,
+                              color: AppColors.background,
                               textStyle: context.textTheme.bodyMedium?.copyWith(
                                 color: AppColors.grey19,
                                 fontFamily: FontFamily.mabryPro,
@@ -492,35 +570,56 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
     );
   }
 
+  String summaryAmount(PlatformProductType serviceType) {
+    //for data bundles use the size string
+    if (serviceType == PlatformProductType.mobileData ||
+        serviceType == PlatformProductType.internetServices) {
+      return selectedBundle!['price']! + '.00' ?? '';
+    }
+    // bundles that define a ‘price’ field use that
+    if (selectedBundle?.containsKey('price') ?? false) {
+      return selectedBundle!['price']! + '.00';
+    }
+    // bundles that define an ‘amount’ field use that
+    if (selectedBundle?.containsKey('amount') ?? false) {
+      return selectedBundle!['amount']! + '.00';
+    }
+    // fallback to whatever the user typed
+    final text = amountController.text.trim();
+    return text.isNotEmpty || text.contains('₦')
+        ? text.replaceAll('₦', '₦$text.00')
+        : '';
+  }
+
   String? _getImagePath(PlatformProductType serviceType, String? provider) {
-    if (provider == null) return Assets.svgs.mtnnw;
+    // if (provider == null) return Assets.svgs.mtnnw;
     switch (serviceType) {
       case PlatformProductType.mobileData:
       case PlatformProductType.airtime:
       case PlatformProductType.ePinVoucher:
       case PlatformProductType.bulkEPin:
-        return _findProviderImage(PlatFormData.serviceProviderWidget, provider);
+        return _findProviderImage(
+            PlatFormData.serviceProviderWidget, provider!);
       case PlatformProductType.education:
         return _findProviderImage(
           PlatFormData.educationProviderWidget,
-          provider,
+          'Education',
         );
       case PlatformProductType.betting:
-        return _findProviderImage(PlatFormData.bettingProviders, provider);
+        return _findProviderImage(PlatFormData.bettingProviders, provider!);
       case PlatformProductType.cableTv:
-        return _findProviderImage(PlatFormData.cableTvProviderWidget, provider);
+        return _findProviderImage(
+            PlatFormData.cableTvProviderWidget, provider!);
       case PlatformProductType.internetServices:
         return _findProviderImage(
           PlatFormData.internetServiceProviderWidget,
-          provider,
+          'Internet service',
         );
       case PlatformProductType.electricity:
         return _findProviderImage(
           PlatFormData.electricityProviderWidget,
-          provider,
+          'Electricity',
         );
-      default:
-        return Assets.svgs.mtnnw;
     }
   }
 

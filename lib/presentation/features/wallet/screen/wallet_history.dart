@@ -1,6 +1,5 @@
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
-import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_sheet.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_widget.dart';
 import 'package:bundlegram/presentation/general_widget/history_widget.dart';
 import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
@@ -101,7 +100,7 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
     final sevenDaysAgo = now.subtract(const Duration(days: 7));
     return all.where((txn) {
       try {
-        final dt = _parseDate(txn.date);
+        final dt = _formatDate(txn.date) as DateTime;
         return dt.isAfter(sevenDaysAgo);
       } catch (_) {
         return false;
@@ -109,25 +108,24 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
     }).toList();
   }
 
-  DateTime _parseDate(String s) {
-    final today = DateTime.now();
-    switch (s.toLowerCase()) {
-      case 'today':
-        return DateTime(today.year, today.month, today.day);
-      case 'yesterday':
-        final y = today.subtract(const Duration(days: 1));
-        return DateTime(y.year, y.month, y.day);
-      default:
-        if (s.toLowerCase().contains('days ago')) {
-          final m = RegExp(r'(\d+)').firstMatch(s);
-          if (m != null) {
-            final d = int.parse(m.group(1)!);
-            final dd = today.subtract(Duration(days: d));
-            return DateTime(dd.year, dd.month, dd.day);
-          }
-        }
-        final dt = s.toDateTime();
-        return dt ?? today.subtract(const Duration(days: 8));
+  String _formatDate(String date) {
+    try {
+      final dt = date.toDateTime() ?? DateTime.now();
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final yesterday = today.subtract(const Duration(days: 1));
+      final txnDate = DateTime(dt.year, dt.month, dt.day);
+
+      if (txnDate.isAtSameMomentAs(today)) {
+        return 'Today';
+      } else if (txnDate.isAtSameMomentAs(yesterday)) {
+        return 'Yesterday';
+      }
+      return date.toFullDateString();
+    } catch (e) {
+      print('Error formattng date $date :$e');
+      final now = DateTime.now();
+      return '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
     }
   }
 
@@ -135,12 +133,12 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
     // Show a bottom sheet or dialog with transaction details
     final transactionData = TransactionReceiptData(
       transactionId: txn.id,
-      date: _parseDate(txn.date) as String,
+      date: _formatDate(txn.date),
       time: (txn.date),
       type: txn.type,
       amount: txn.amount,
-      bankName: txn.bankName as String,
-      accountNumber: txn.accountNumber ?? '72398923233',
+      bankName: txn.bankName,
+      accountNumber: txn.accountNumber,
       status: txn.status,
       description: txn.title,
     );

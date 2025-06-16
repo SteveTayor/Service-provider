@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -29,7 +30,7 @@ class BettingSuccessResultScreen extends StatelessWidget {
             'Your payment of ${amount} to your ${biller} account wallet was successful.',
         buttonText: 'Go to home',
         onPressed: () {
-          context.pop();
+          context.push(RouteConstants.dashboard);
         },
       ),
     );

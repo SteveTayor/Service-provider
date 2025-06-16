@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -24,7 +25,7 @@ class BulkPinSuccessResultScreen extends StatelessWidget {
             'Your request has been received. We will contact you soon for more information.',
         buttonText: 'Go to home',
         onPressed: () {
-          context.pop();
+          context.push(RouteConstants.dashboard);
         },
       ),
     );

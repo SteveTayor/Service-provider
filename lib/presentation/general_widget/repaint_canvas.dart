@@ -55,7 +55,7 @@ class ReceiptCutPainter extends CustomPainter {
     final path = Path();
 
     // Create the zigzag pattern for receipt cut edge
-    double zigzagWidth = 20.w; // Width of each zigzag tooth
+    double zigzagWidth = 24.w; // Width of each zigzag tooth
     double zigzagHeight = 12.h; // Height of each zigzag tooth
 
     // Start from bottom left

@@ -35,7 +35,7 @@ class _ProductItemGridState extends State<ProductItemGrid> {
     // If a bundle was pre-selected, find its index
     _selectedIndex = widget.selectedBundle != null
         ? widget.bundles.indexOf(widget.selectedBundle!)
-        : null;
+        : 0;
   }
 
   Widget _buildBundleOption(Map<String, String> bundle, int index) {
@@ -103,6 +103,10 @@ class _ProductItemGridState extends State<ProductItemGrid> {
 
   @override
   Widget build(BuildContext context) {
+    // final currentIndex = _selectedIndex ?? 0;
+    final hasAnyDuration = widget.bundles.any(
+      (b) => b['duration']?.isNotEmpty == true,
+    );
     return Column(
       children: [
         24.verticalSpace,
@@ -115,16 +119,14 @@ class _ProductItemGridState extends State<ProductItemGrid> {
             crossAxisCount: 3,
             mainAxisSpacing: 20.h,
             crossAxisSpacing: 10.w,
-            childAspectRatio: 1.0,
+            childAspectRatio: hasAnyDuration ? 1.0 : 1.5,
           ),
           itemCount: widget.bundles.length,
           itemBuilder: (ctx, i) => _buildBundleOption(widget.bundles[i], i),
         ),
         // Show the selected amount box only if something is selected
         if (_selectedIndex != null &&
-            (widget.serviceType == PlatformProductType.mobileData ||
-                widget.serviceType ==
-                    PlatformProductType.internetServices)) ...[
+            (widget.serviceType == PlatformProductType.mobileData)) ...[
           24.verticalSpace,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,13 +135,15 @@ class _ProductItemGridState extends State<ProductItemGrid> {
               8.verticalSpace,
               Text(
                 // Use the same dataKey logic to retrieve the displayed value
-                widget.bundles[_selectedIndex!].entries
-                    .firstWhere(
-                      (e) => e.key == 'data' || e.key == 'amount',
-                      orElse: () =>
-                          widget.bundles[_selectedIndex!].entries.first,
-                    )
-                    .value,
+                // widget.bundles[_selectedIndex!].entries
+                //     .firstWhere(
+                //       (e) => e.key == 'data' || e.key == 'amount',
+                //       orElse: () =>
+                //           widget.bundles[_selectedIndex!].entries.first,
+                //     )
+                //     .value,
+
+                widget.bundles[_selectedIndex!]['price']!,
                 style: context.textTheme.bodySmall!
                     .copyWith(color: AppColors.grey19),
               ),

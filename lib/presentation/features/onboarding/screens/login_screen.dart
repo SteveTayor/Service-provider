@@ -98,13 +98,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                     },
                   ),
-                  Flexible(
-                    child: Text(
-                      'Remember me',
-                      style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 16.sp,
-                        color: AppColors.grey83,
-                      ),
+                  Text(
+                    'Remember me',
+                    style: context.textTheme.bodySmall!.copyWith(
+                      fontSize: 16.sp,
+                      color: AppColors.grey83,
                     ),
                   ),
                   const Spacer(),
@@ -149,9 +147,9 @@ class _LoginScreenState extends State<LoginScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AppSvgIcon(path: Assets.svgs.fingerCricle),
+              Center(child: AppSvgIcon(path: Assets.svgs.fingerCricle)),
               8.horizontalSpace,
-              Expanded(
+              Flexible(
                 child: Text(
                   textAlign: TextAlign.center,
                   'Sign in with fingerprint / face ID',

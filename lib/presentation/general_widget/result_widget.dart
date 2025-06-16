@@ -3,6 +3,7 @@ import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ResultWidget extends StatelessWidget {
   const ResultWidget({
@@ -36,6 +37,7 @@ class ResultWidget extends StatelessWidget {
                 title,
                 style: context.textTheme.headlineLarge,
               ),
+              24.verticalSpace,
               Text(
                 subText,
                 textAlign: TextAlign.center,

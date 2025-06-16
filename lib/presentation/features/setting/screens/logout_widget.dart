@@ -29,7 +29,8 @@ class LogoutWidget extends StatelessWidget {
             style: context.textTheme.bodySmall,
           ),
           28.verticalSpace,
-          BundlegramButton(text: 'Log out', onPressed: () {}),
+          BundlegramButton(
+              text: 'Log out', color: AppColors.logOut, onPressed: () {}),
           24.verticalSpace,
           BundlegramButton(
             isOutline: true,

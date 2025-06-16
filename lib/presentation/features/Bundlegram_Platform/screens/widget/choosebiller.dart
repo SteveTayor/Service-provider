@@ -61,11 +61,12 @@ class _ChoosebillerWidgetState extends State<ChoosebillerWidget> {
             padding: context.symmetricPadding(20, 0),
             child: AppTextField(
               controller: _searchController,
-              hintText: (widget.serviceType == PlatformProductType.airtime ||
-                      widget.serviceType == PlatformProductType.mobileData)
-                  ? 'Search for biller'
-                  : 'Search for provider',
-              decoration: const InputDecoration().search(),
+              decoration: InputDecoration(
+                hintText: (widget.serviceType == PlatformProductType.airtime ||
+                        widget.serviceType == PlatformProductType.mobileData)
+                    ? 'Search for biller'
+                    : 'Search for provider',
+              ).search(),
               onChange: (value) {
                 setState(() {}); // Trigger rebuild to filter providers
               },
@@ -93,7 +94,13 @@ class _ChoosebillerWidgetState extends State<ChoosebillerWidget> {
           if (imagePath != null) {
             return GestureDetector(
               onTap: () {
-                final provider = tile.title.toLowerCase().split(' ')[0];
+                final provider = (widget.serviceType ==
+                            PlatformProductType.mobileData ||
+                        widget.serviceType == PlatformProductType.airtime)
+                    ? tile.title.toLowerCase().split(' ')[0]
+                    : (widget.serviceType == PlatformProductType.ePinVoucher)
+                        ? tile.title.split(' ')[0] + ' Voucher'
+                        : tile.title;
                 debugPrint('The title tile is: ${tile.title}');
                 debugPrint('The selected image provider is: $imagePath');
                 _onProviderSelected(imagePath, provider);
