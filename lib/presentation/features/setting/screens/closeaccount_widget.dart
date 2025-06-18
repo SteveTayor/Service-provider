@@ -23,6 +23,7 @@ class CloseaccountWidget extends StatelessWidget {
             'Close account',
             style: context.textTheme.bodyMedium!.copyWith(
               fontSize: 18.sp,
+              fontWeight: FontWeight.w500,
             ),
           ),
           12.verticalSpace,

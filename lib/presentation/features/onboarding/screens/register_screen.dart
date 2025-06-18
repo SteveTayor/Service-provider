@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -214,11 +215,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 AppTextField(
-                  hintText: 'Phone number',
+                  hintText: 'Phone number ',
                   controller: _phoneController,
                   validateFunction: Validators.phone(),
                   keyboardType: TextInputType.phone,
-                  prefixIcon: _buildCountryCodeDropdown(),
+                  prefixIcon: Padding(
+                    padding: context.symmetricPadding(24, 12),
+                    child: Text('+234', style: context.textTheme.bodyMedium),
+                  ),
                 ),
                 AppTextField(
                   hintText: 'Password',

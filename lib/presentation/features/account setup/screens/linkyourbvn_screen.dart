@@ -47,7 +47,7 @@ class LinkyourbvnScreen extends StatelessWidget {
             BundlegramButton(
               text: 'Submit detail',
               onPressed: () {
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (ctx) => const TransactionSuccessful(

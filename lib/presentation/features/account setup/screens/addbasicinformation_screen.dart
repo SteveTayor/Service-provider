@@ -70,7 +70,7 @@ class AddbasicinformationScreen extends StatelessWidget {
             onPressed: () {
               if (userAction.isCreate) {
                 // Create user
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (ctx) => const TransactionSuccessful(

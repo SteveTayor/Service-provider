@@ -183,6 +183,8 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                         height: 24,
                       ),
                     ), // Empty space for layout
+                  ] else ...[
+                    24.verticalSpace
                   ],
                   _buildNumberButton('0'),
                   IconButton(

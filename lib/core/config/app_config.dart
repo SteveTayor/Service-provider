@@ -42,4 +42,4 @@ class AppConfig {
 
   /// Cache duration for API responses
   Duration get cacheDuration => const Duration(hours: 1);
-} 
+}

@@ -35,6 +35,7 @@ class ResultWidget extends StatelessWidget {
               appIcon,
               Text(
                 title,
+                textAlign: TextAlign.center,
                 style: context.textTheme.headlineLarge,
               ),
               12.verticalSpace,

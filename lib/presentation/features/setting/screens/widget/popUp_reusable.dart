@@ -33,6 +33,7 @@ class SecurityPopWidget extends StatelessWidget {
             popHeader,
             style: context.textTheme.bodyMedium!.copyWith(
               fontSize: 18.sp,
+              fontWeight: FontWeight.w500,
             ),
           ),
           12.verticalSpace,

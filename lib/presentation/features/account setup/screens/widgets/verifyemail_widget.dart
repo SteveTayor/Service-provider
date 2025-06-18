@@ -38,7 +38,7 @@ class VerifyemailWidget extends StatelessWidget {
           BundlegramButton(
             text: 'Confirm email',
             onPressed: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (ctx) => ResetPasswordLinkScreen(

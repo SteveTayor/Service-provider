@@ -1,5 +1,3 @@
-// ignore_for_file: camel_case_types
-
 import 'package:bundlegram/gen/assets.gen.dart';
 
 enum LoadState { loading, idle, success, error, loadmore, done }
@@ -14,6 +12,12 @@ enum PinScreenMode {
   create,
   confirm,
   validate,
+}
+
+enum SecurityToggleType {
+  faceId,
+  fingerprintLogin,
+  fingerprintPayment,
 }
 
 enum NotificationType {

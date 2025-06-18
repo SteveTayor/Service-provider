@@ -38,7 +38,7 @@ class _ResetaccountpinState extends State<Resetaccountpin> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  Navigator.pushReplacement(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (ctx) => ResetPasswordLinkScreen(

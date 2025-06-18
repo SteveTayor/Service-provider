@@ -66,14 +66,21 @@ class AppConstants {
   static const String themeKey = 'theme';
   static const String localeKey = 'locale';
   static const String onboardingKey = 'onboarding';
+  static String get authTokenKey => 'auth_token';
+  static String get usernameKey => 'username';
+  static String get phoneKey => 'phone';
 
   /// Error messages
   static const String networkErrorMessage = 'Network error. Please try again.';
-  static const String serverErrorMessage = 'Server error. Please try again later.';
+  static const String serverErrorMessage =
+      'Server error. Please try again later.';
   static const String unknownErrorMessage = 'An unknown error occurred.';
-  static const String invalidEmailMessage = 'Please enter a valid email address.';
-  static const String invalidPhoneMessage = 'Please enter a valid phone number.';
-  static const String invalidPasswordMessage = 'Password must be at least 8 characters long and contain at least one letter and one number.';
+  static const String invalidEmailMessage =
+      'Please enter a valid email address.';
+  static const String invalidPhoneMessage =
+      'Please enter a valid phone number.';
+  static const String invalidPasswordMessage =
+      'Password must be at least 8 characters long and contain at least one letter and one number.';
   static const String fieldRequiredMessage = 'This field is required.';
 
   /// Success messages
@@ -82,6 +89,4 @@ class AppConstants {
   static const String logoutSuccessMessage = 'Logout successful.';
   static const String updateSuccessMessage = 'Update successful.';
   static const String deleteSuccessMessage = 'Delete successful.';
-
 }
- 

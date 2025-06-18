@@ -216,12 +216,12 @@ class _PinScreenState extends State<PinScreen>
       ),
       sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            flex: 2,
+          Flexible(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                10.verticalSpace,
                 Text(
                   _subtitle,
                   textAlign: TextAlign.center,
@@ -260,69 +260,66 @@ class _PinScreenState extends State<PinScreen>
             ),
           ),
           Expanded(
-            flex: 3,
-            child: Column(
-              children: [
-                Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 3,
-                    childAspectRatio: 1.2,
-                    mainAxisSpacing: 10.h,
-                    crossAxisSpacing: 10.w,
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    children: [
-                      // Numbers 1-9
-                      ...List.generate(
-                          9, (index) => _buildNumberButton('${index + 1}')),
+            flex: 1,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: GridView.count(
+                crossAxisCount: 3,
+                childAspectRatio: 1.2,
+                mainAxisSpacing: 10.h,
+                crossAxisSpacing: 10.w,
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                children: [
+                  // Numbers 1-9
+                  ...List.generate(
+                      9, (index) => _buildNumberButton('${index + 1}')),
 
-                      // Fingerprint icon (bottom left)
-                      Container(
-                        alignment: Alignment.center,
-                        child: AppSvgIcon(
-                          path: Assets.svgs.fingerCricle1,
-                          width: 24.w,
-                          height: 24.w,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
+                  // Fingerprint icon (bottom left)
+                  // Container(
+                  //   alignment: Alignment.center,
+                  //   child: AppSvgIcon(
+                  //     path: Assets.svgs.fingerCricle1,
+                  //     width: 24.w,
+                  //     height: 24.w,
+                  //     fit: BoxFit.contain,
+                  //   ),
+                  // ),
 
-                      // Number 0
-                      _buildNumberButton('0'),
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                  ), // Empty space for layout
 
-                      // Delete button (bottom right)
-                      Container(
-                        alignment: Alignment.center,
-                        child: IconButton(
-                          onPressed: _deletePin,
-                          icon: Icon(
-                            Icons.backspace_outlined,
-                            size: 24.sp,
-                            color: AppColors.grey83,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                  // Number 0
+                  _buildNumberButton('0'),
 
-                // Show "Forgot PIN?" only in validate mode
-                if (widget.mode == PinScreenMode.validate) ...[
-                  20.verticalSpace,
-                  TextButton(
-                    onPressed: () =>
-                        context.push(RouteConstants.forgetPassword),
-                    child: Text(
-                      'Forgot PIN?',
-                      style: context.textTheme.bodyMedium!.copyWith(
-                        fontSize: 16.sp,
-                        color: AppColors.black,
-                      ),
+                  // Delete button (bottom right)
+                  IconButton(
+                    onPressed: _deletePin,
+                    icon: Icon(
+                      Icons.backspace_outlined,
+                      size: 24.sp,
+                      color: AppColors.grey83,
                     ),
                   ),
                 ],
-              ],
+              ),
             ),
           ),
+          // Show "Forgot PIN?" only in validate mode
+          if (widget.mode == PinScreenMode.validate) ...[
+            20.verticalSpace,
+            TextButton(
+              onPressed: () => context.push(RouteConstants.forgetPassword),
+              child: Text(
+                'Forgot PIN?',
+                style: context.textTheme.bodyMedium!.copyWith(
+                  fontSize: 16.sp,
+                  color: AppColors.black,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

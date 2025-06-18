@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/data/models/notification_model.dart';
@@ -21,14 +22,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
       id: '1',
       title: 'Win 1 million naira for free',
       description:
-          'Every ₦100 discount when you deposit ₦500 into your bundelgram app. Stand a chance to win up our MEGA MILLION JACKPOT event',
+          'Enjoy ₦100 discount when you deposit ₦500. Don’t miss the opportunity of a lifetime. Stand a chance to win big our MEGA MILLION JACKPOT event!',
       time: 'Dec 06, 2024 • 07:35 AM',
       type: NotificationType.promo,
       isRead: false,
     ),
     NotificationItem(
       id: '2',
-      title: 'Air-time recharge successful',
+      title: 'Airtime recharge successful',
       description:
           'Your airtime recharge of ₦100 to 07039650430 was successful.',
       time: 'Dec 06, 2024 • 07:35 AM',
@@ -65,9 +66,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 onPressed: _clearAllNotifications,
                 child: Text(
                   'Clear all',
-                  style: context.textTheme.labelMedium?.copyWith(
-                    color: Theme.of(context).primaryColor,
-                  ),
                 ),
               )
             : null,
@@ -77,7 +75,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
           : NotificationListWidget(
               notifications: notifications,
               onNotificationTap: _handleNotificationTap,
-              onClearAll: _clearAllNotifications,
             ),
     );
   }
@@ -112,5 +109,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     setState(() {
       notifications.clear();
     });
+    context.showCustomSnackBar('All notifications has been cleared');
   }
 }

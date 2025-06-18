@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -24,14 +25,28 @@ class AppSvgIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: SvgPicture.asset(
-        path,
-        width: width,
-        height: height,
-        fit: fit,
-        colorFilter:
-            color == null ? null : ColorFilter.mode(color!, BlendMode.srcIn),
-      ),
+      child: path.contains('.svg')
+          ? SvgPicture.asset(
+              path,
+              width: width,
+              height: height,
+              fit: fit,
+              colorFilter: color == null
+                  ? null
+                  : ColorFilter.mode(color!, BlendMode.srcIn),
+            )
+          : CircleAvatar(
+              backgroundColor: color ?? AppColors.primaryColor,
+              radius: 20,
+              child: Image.asset(
+                path,
+                width: 28,
+                height: 28,
+                fit: fit,
+                // color: color ?? AppColors.primaryColor
+                // colorBlendMode: BlendMode.srcIn,
+              ),
+            ),
     );
   }
 }
