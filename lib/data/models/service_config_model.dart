@@ -7,6 +7,8 @@ class ServiceConfig {
   final String? inputHint;
   final String? secondaryInputHint;
   final String? dropdownHint;
+  final List<String>? dropdownOptions;
+  final List<String>? tabs;
 
   ServiceConfig({
     required this.title,
@@ -15,5 +17,7 @@ class ServiceConfig {
     this.inputHint,
     this.secondaryInputHint,
     this.dropdownHint,
+    this.dropdownOptions,
+    this.tabs,
   });
 }

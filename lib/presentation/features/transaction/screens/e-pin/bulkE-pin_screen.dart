@@ -6,6 +6,7 @@ import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/e-pin/widget/bulk_pin_success.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
+import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_dropdown.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
@@ -28,85 +29,83 @@ class _BulkEpinScreenState extends State<BulkEpinScreen> {
   Widget build(BuildContext context) {
     return BundlegramScaffold(
       sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
-      appBar: const BundlegramAppbar(),
-      body: Column(
-        children: [
-          Flexible(
-            child: AppForm(
-              isActive: true,
-              formKey: _formKey,
-              onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => BulkPinSuccessResultScreen(),
+      appBar: BundlegramAppbar(
+        titleText: 'Bulk E-PIN',
+      ),
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            spacing: 24,
+            children: [
+              10.verticalSpace,
+              AppTextField(
+                hintText: 'Agent name',
+                validateFunction: Validators.name(),
+              ),
+              AppTextField(
+                hintText: 'Agent email',
+                validateFunction: Validators.email(),
+              ),
+              AppTextField(
+                hintText: 'Agent phone number',
+                validateFunction: Validators.phone(),
+              ),
+              AppTextField(
+                hintText: 'Business name',
+                validateFunction: Validators.name(),
+              ),
+              AppDropdown(
+                title: 'Network',
+              ),
+              AppTextField(
+                hintText: 'Amount',
+                prefixIcon: Padding(
+                  padding: context.symmetricPadding(24, 0),
+                  child: Text(
+                    '₦',
+                    style: context.textTheme.bodyMedium,
                   ),
-                );
-              },
-              buttonText: 'Continue',
-              children: [
-                AppTextField(
-                  hintText: 'Agent name',
-                  validateFunction: Validators.name(),
                 ),
-                AppTextField(
-                  hintText: 'Agent email',
-                  validateFunction: Validators.email(),
-                ),
-                AppTextField(
-                  hintText: 'Agent phone number',
-                  validateFunction: Validators.phone(),
-                ),
-                AppTextField(
-                  hintText: 'Business name',
-                  validateFunction: Validators.name(),
-                ),
-                AppTextField(
-                  hintText: 'Amount',
-                  prefixIcon: Padding(
-                    padding: context.symmetricPadding(24, 0),
+              ),
+              //  24.verticalSpace,
+              AppDropdown(
+                title: 'Quantity',
+              ),
+              Row(
+                children: [
+                  AppSvgIcon(path: Assets.svgs.balance),
+                  16.horizontalSpace,
+                  Text('Balance (₦20,000)', style: context.textTheme.bodySmall),
+                  const Spacer(),
+                  Flexible(
                     child: Text(
-                      '₦',
-                      style: context.textTheme.bodyMedium,
+                      'Top-up >',
+                      style: context.textTheme.bodySmall!
+                          .copyWith(color: AppColors.primaryColor),
                     ),
                   ),
-                ),
-              ],
-              extraWidget: ListView(
-                shrinkWrap: true,
-                children: [
-                  AppDropdown(
-                    title: 'Network',
-                  ),
-                  AppDropdown(
-                    title: 'Quantity',
-                  ),
-                  16.verticalSpace,
-                  Row(
-                    children: [
-                      AppSvgIcon(path: Assets.svgs.balance),
-                      16.horizontalSpace,
-                      Text('Balance (₦20,000)',
-                          style: context.textTheme.bodySmall),
-                      const Spacer(),
-                      Flexible(
-                        child: Text(
-                          'Top-up >',
-                          style: context.textTheme.bodySmall!
-                              .copyWith(color: AppColors.primaryColor),
-                        ),
-                      ),
-                    ],
-                  ).withContainer(
-                    color: const Color(0xffEEF3FF),
-                    padding: context.symmetricPadding(16, 12),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  40.verticalSpace,
                 ],
+              ).withContainer(
+                color: const Color(0xffEEF3FF),
+                padding: context.symmetricPadding(16, 12),
+                borderRadius: BorderRadius.circular(6),
               ),
-            ),
+              20.verticalSpace,
+
+              BundlegramButton(
+                text: 'Continue',
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => BulkPinSuccessResultScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

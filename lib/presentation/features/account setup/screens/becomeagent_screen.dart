@@ -5,7 +5,9 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/verifyemail_widget.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transactionsummary_widget.dart';
+import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
@@ -89,10 +91,33 @@ class BecomeagentScreen extends StatelessWidget {
                   onPressed: () {
                     context.showBottomSheet(
                       child: TransactionSummary(
-                        amount: 'N10000',
+                        isBecomeAnAgent: true,
+                        transactionType: 'Agent fee',
+                        amount: '₦10,000.00',
                         paymentMethod: 'Wallet',
-                        beneficiary: '',
-                        onPay: () {},
+                        onPay: () {
+                          // Handle payment
+                          context.pop(); // Close the bottom sheet
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => EnterPinScreen(
+                                onVerified: () {
+                                  // Handle verification
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (ctx) => TransactionSuccessful(
+                                        title: 'Congratulations!',
+                                        subTitle:
+                                            'You are now officially a Bundlegram agent.',
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },

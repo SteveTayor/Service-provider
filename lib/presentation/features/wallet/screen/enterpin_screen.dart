@@ -12,8 +12,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class EnterPinScreen extends StatefulWidget {
-  const EnterPinScreen({super.key, this.onVerified});
+  const EnterPinScreen(
+      {super.key, this.onVerified, this.isChangedAccountPin = false});
   final VoidCallback? onVerified;
+  final bool isChangedAccountPin;
 
   @override
   State<EnterPinScreen> createState() => _EnterPinScreenState();
@@ -170,16 +172,20 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                 children: [
                   ...List.generate(
                       9, (index) => _buildNumberButton('${index + 1}')),
-                  SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: AppSvgIcon(
-                      path: Assets.svgs.fingerCricle1,
-                      fit: BoxFit.scaleDown,
+                  if (!widget.isChangedAccountPin) ...[
+                    SizedBox(
                       width: 24,
                       height: 24,
-                    ),
-                  ), // Empty space for layout
+                      child: AppSvgIcon(
+                        path: Assets.svgs.fingerCricle1,
+                        fit: BoxFit.scaleDown,
+                        width: 24,
+                        height: 24,
+                      ),
+                    ), // Empty space for layout
+                  ] else ...[
+                    24.verticalSpace
+                  ],
                   _buildNumberButton('0'),
                   IconButton(
                     onPressed: _deletePin,

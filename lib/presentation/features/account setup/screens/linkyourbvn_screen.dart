@@ -1,3 +1,4 @@
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_dropdown.dart';
@@ -11,31 +12,57 @@ class LinkyourbvnScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return   BundlegramScaffold(
-      appBar: const BundlegramAppbar(titleText: 'Link your BVN',),
-      body: 
-    SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const AppTextField(hintText: 'Bank Verification Number (BVN)',),
-          24.verticalSpace,
-          const AppTextField(hintText: 'Phone Number linked to BVN',),
-          24.verticalSpace,
-          const AppTextField(hintText: 'Date of birth (DD/MM/YY)',),
-          24.verticalSpace,
-          const Text('Add bank details of a linked account'),
-          18.verticalSpace,
-          const AppDropdown(title: 'Bank name'),
-          24.verticalSpace,
-          const AppTextField(hintText: 'Account number',),
-          24.verticalSpace,
-          const AppTextField(hintText: 'Account name',),
-          40.verticalSpace,
-          BundlegramButton(text: 'Submit detail', onPressed: (){}),
-        ],
+    return BundlegramScaffold(
+      appBar: const BundlegramAppbar(
+        titleText: 'Link your BVN',
       ),
-    )
-    ,);
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const AppTextField(
+              hintText: 'Bank Verification Number (BVN)',
+            ),
+            24.verticalSpace,
+            const AppTextField(
+              hintText: 'Phone Number linked to BVN',
+            ),
+            24.verticalSpace,
+            const AppTextField(
+              hintText: 'Date of birth (DD/MM/YY)',
+            ),
+            24.verticalSpace,
+            const Text('Add bank details of a linked account'),
+            18.verticalSpace,
+            const AppDropdown(title: 'Bank name'),
+            24.verticalSpace,
+            const AppTextField(
+              hintText: 'Account number',
+            ),
+            24.verticalSpace,
+            const AppTextField(
+              hintText: 'Account name',
+            ),
+            40.verticalSpace,
+            BundlegramButton(
+              text: 'Submit detail',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => const TransactionSuccessful(
+                      isBasicInfo: true,
+                      title: 'BVN Linked!',
+                      subTitle:
+                          'Your BVN has been successfully linked to your Bundlegram account. We will notify you once verified.',
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

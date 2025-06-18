@@ -14,6 +14,7 @@ import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
+import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -68,7 +69,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
     final state = ref.watch(provider);
 
     return HistoryScreen<ServiceModel>(
-      titleText: '${widget.serviceType.name.capitalizeFirst} History',
+      titleText: 'History',
       items: state.filteredServices,
       isLoading: state.isLoading,
       onSearchChanged: (q) => ref.read(provider.notifier).search(q),
@@ -114,52 +115,72 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
   void _showProviderDetails(ServiceModel service) {
     final transactionData = TransactionReceiptData(
       transactionId: service.id,
-      date: _formatTransactionDate(service.date),
+      date: _formatDate(service.date),
       time: _formatTransactionTime(service.date),
       type: service.type,
       amount: service.amount,
-      bankName: service.bankName as String,
-      accountNumber: service.accountNumber ?? '21830217312',
+      bankName: service.bankName,
+      accountNumber: service.accountNumber,
       status: service.status,
       description: service.title,
     );
     context.showPopUp(
       color: Colors.transparent,
-      transactionData as Widget,
+      TransactionReceiptWidget(data: transactionData),
       isDismissable: true,
     );
   }
 
-  String _formatTransactionDate(String originalDate) {
+  // String _formatTransactionDate(String originalDate) {
+  //   try {
+  //     final now = DateTime.now();
+  //     final today = DateTime(now.year, now.month, now.day);
+
+  //     switch (originalDate.toLowerCase()) {
+  //       case 'Today':
+  //         return '${today.day.toString().padLeft(2, '0')}-${today.month.toString().padLeft(2, '0')}-${today.year}';
+  //       case 'Yesterday':
+  //         final yesterday = today.subtract(const Duration(days: 1));
+  //         return '${yesterday.day.toString().padLeft(2, '0')}-${yesterday.month.toString().padLeft(2, '0')}-${yesterday.year}';
+  //       default:
+  //         if (originalDate.toLowerCase().contains('days ago')) {
+  //           final daysMatch = RegExp(r'(\d+)').firstMatch(originalDate);
+  //           if (daysMatch != null) {
+  //             final days = int.parse(daysMatch.group(1)!);
+  //             final date = today.subtract(Duration(days: days));
+  //             return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
+  //           }
+  //         }
+
+  //         final parsedDate = originalDate.toDateTime();
+  //         if (parsedDate != null) {
+  //           return '${parsedDate.day.toString().padLeft(2, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.year}';
+  //         }
+
+  //         // Default fallback
+  //         return '${today.day.toString().padLeft(2, '0')}-${today.month.toString().padLeft(2, '0')}-${today.year}';
+  //     }
+  //   } catch (e) {
+  //     final now = DateTime.now();
+  //     return '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
+  //   }
+  // }
+  String _formatDate(String date) {
     try {
+      final dt = date.toDateTime() ?? DateTime.now();
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
+      final yesterday = today.subtract(const Duration(days: 1));
+      final txnDate = DateTime(dt.year, dt.month, dt.day);
 
-      switch (originalDate.toLowerCase()) {
-        case 'Today':
-          return '${today.day.toString().padLeft(2, '0')}-${today.month.toString().padLeft(2, '0')}-${today.year}';
-        case 'Yesterday':
-          final yesterday = today.subtract(const Duration(days: 1));
-          return '${yesterday.day.toString().padLeft(2, '0')}-${yesterday.month.toString().padLeft(2, '0')}-${yesterday.year}';
-        default:
-          if (originalDate.toLowerCase().contains('days ago')) {
-            final daysMatch = RegExp(r'(\d+)').firstMatch(originalDate);
-            if (daysMatch != null) {
-              final days = int.parse(daysMatch.group(1)!);
-              final date = today.subtract(Duration(days: days));
-              return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
-            }
-          }
-
-          final parsedDate = originalDate.toDateTime();
-          if (parsedDate != null) {
-            return '${parsedDate.day.toString().padLeft(2, '0')}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.year}';
-          }
-
-          // Default fallback
-          return '${today.day.toString().padLeft(2, '0')}-${today.month.toString().padLeft(2, '0')}-${today.year}';
+      if (txnDate.isAtSameMomentAs(today)) {
+        return 'Today';
+      } else if (txnDate.isAtSameMomentAs(yesterday)) {
+        return 'Yesterday';
       }
+      return date.toFullDateString();
     } catch (e) {
+      print('Error formattng date $date :$e');
       final now = DateTime.now();
       return '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
     }

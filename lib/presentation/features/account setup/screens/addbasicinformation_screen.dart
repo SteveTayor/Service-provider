@@ -2,6 +2,7 @@ import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/enums.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_datetextfield.dart';
@@ -12,8 +13,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddbasicinformationScreen extends StatelessWidget {
-  const AddbasicinformationScreen(
-      {super.key, this.userAction = UserAction.create});
+  const AddbasicinformationScreen({
+    super.key,
+    this.userAction = UserAction.create,
+  });
   final UserAction userAction;
 
   @override
@@ -25,7 +28,7 @@ class AddbasicinformationScreen extends StatelessWidget {
             : 'Update account details',
       ),
       body: ListView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(8.w),
         children: [
           if (userAction.isCreate) ...[
             const Text('Rose Owen').withContainer(
@@ -53,7 +56,10 @@ class AddbasicinformationScreen extends StatelessWidget {
             const AppTextField(hintText: 'Phone Number'),
           ],
           SizedBox(height: 24.h),
-          const AppDropdown(title: 'Gender'),
+          const AppDropdown(
+            title: 'Gender',
+            options: ['Male', 'Female'],
+          ),
           SizedBox(height: 24.h),
           const AppTextField(hintText: 'Address'),
           SizedBox(height: 24.h),
@@ -61,7 +67,22 @@ class AddbasicinformationScreen extends StatelessWidget {
           SizedBox(height: 24.h),
           BundlegramButton(
             text: '${userAction.isCreate ? 'Submit' : 'Update'} details',
-            onPressed: () {},
+            onPressed: () {
+              if (userAction.isCreate) {
+                // Create user
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => const TransactionSuccessful(
+                      isBasicInfo: true,
+                      title: 'Basic information added!',
+                      subTitle:
+                          'The basic information you provided has been successfully added to your Bundlegram account.',
+                    ),
+                  ),
+                );
+              }
+            },
           ),
         ],
       ),

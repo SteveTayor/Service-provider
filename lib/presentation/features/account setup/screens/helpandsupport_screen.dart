@@ -4,6 +4,7 @@ import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/gen/fonts.gen.dart';
+import 'package:bundlegram/presentation/features/account%20setup/screens/faqs_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -71,14 +72,24 @@ class HelpandsupportScreen extends StatelessWidget {
           40.verticalSpace,
           buildItemRow(
             Assets.svgs.helpQuestion1StreamlineCore,
-            extraWidget: Text(
-              'View FAQs',
-              style: context.textTheme.titleMedium!.copyWith(
-                fontSize: 16.sp,
-                height: 3,
-                color: AppColors.primaryColor,
-                decorationColor: AppColors.primaryColor,
-                decoration: TextDecoration.underline,
+            extraWidget: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => const HelpCenterScreen(),
+                  ),
+                );
+              },
+              child: Text(
+                'View FAQs',
+                style: context.textTheme.titleMedium!.copyWith(
+                  fontSize: 16.sp,
+                  height: 3,
+                  color: AppColors.primaryColor,
+                  decorationColor: AppColors.primaryColor,
+                  decoration: TextDecoration.underline,
+                ),
               ),
             ),
             'Help center (FAQs)',

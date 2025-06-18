@@ -4,17 +4,98 @@ class Endpoints {
     defaultValue: 'http://localhost:3000/api',
   );
 
-  // Auth endpoints
-  static const String login = '/auth/login';
-  static const String register = '/auth/register';
-  static const String logout = '/auth/logout';
-  static const String resetPassword = '/auth/reset-password';
-  static const String me = '/auth/me';
+  // ====================
+  // Authentication
+  // ====================
+  static const String register = '/register';
+  static const String login = '/login';
+  static const String logout = '/logout';
+  static const String addUsername = '/add_username';
+  static const String checkUsername = '/check-username';
 
-  // User endpoints
-  static const String users = '/users';
-  static const String updateProfile = '/users/profile';
-  static const String updatePassword = '/users/password';
+  // ====================
+  // Forget Password
+  // ====================
+  static const String forgetPassword = '/forget-password';
+  static const String verifyOtp = '/verify-otp';
+  static const String newPassword = '/new-password';
 
-  // Other endpoints can be added here as needed
+  // ====================
+  // Email Verification
+  // ====================
+  static const String verifyEmail = '/verify-email';
+  static const String resendEmail = '/email-verification';
+
+  // ====================
+  // User & Profile
+  // ====================
+  static const String userProfile = '/user';
+  static const String profileSetup = '/profile-setup';
+  static const String changePassword = '/change-password';
+  static const String changePin = '/change-pin';
+  static const String createPin = '/create-pin';
+  static const String resetPin = '/reset-pin';
+  static const String linkBvn = '/link-bvn';
+  static const String getVirtualAccount = '/get-virtual-account';
+
+  // Bank management
+  static const String getUserBank = '/get-user-bank';
+  static const String addBank = '/add-bank';
+  static const String fetchAccountName = '/fetch-account-name';
+  static const String userWithdraw = '/user-withdraw';
+
+  /// Deletes a user bank by its [bankId].
+  static String deleteBank(int bankId) => '/delete-bank/$bankId';
+
+  /// Marks a user bank as default by its [bankId].
+  static String makeBankDefault(int bankId) => '/make-bank-default/$bankId';
+
+  // ====================
+  // Wallet & Dashboard
+  // ====================
+  static const String wallet = '/wallet';
+  static const String dashboardData = '/dashboard-data';
+
+  // ====================
+  // Products (Airtime, Data, Sub‑Products)
+  // ====================
+  /// Fetches all products for a given [serviceId].
+  static String getProductByService(String serviceId) =>
+      '/getProductByService/$serviceId';
+
+  /// Fetches all products of a given [type], e.g. 'data', 'airtime'.
+  static String getProductByType(String type) => '/getProductByType/$type';
+
+  /// Fetches the sub‑products under [productId].
+  static String getSubProduct(int productId) => '/getSubProduct/$productId';
+
+  /// Fetches a more specific sub‑product, e.g. SME plans under [productId].
+  static String getSubProductCategory(int productId, String category) =>
+      '/getSubProduct/$productId/$category';
+
+  // ====================
+  // Transactions & Payments
+  // ====================
+  /// Validates a bill before payment.
+  static const String validateBill = '/validateBill';
+
+  /// Initiates a bill payment transaction.
+  static const String initiateBillTransaction = '/initiateBillTransaction';
+
+  /// Initiates an airtime/data transaction.
+  static const String initiateDataAirtimeTransaction =
+      '/initiateDataAirtimeTransaction';
+
+  /// Lists electronic PIN transactions.
+  static const String userTransactionsEpin = '/userTransactions/epin';
+
+  // ====================
+  // Merchant / Agent
+  // ====================
+  static const String becomeAMerchant = '/become-a-merchant';
+
+  // ====================
+  // Misc
+  // ====================
+  static const String walletBalance = '/wallet';
 }

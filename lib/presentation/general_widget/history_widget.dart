@@ -67,7 +67,7 @@ class _HistoryScreenState<T> extends ConsumerState<HistoryScreen<T>> {
           Padding(
             padding: const EdgeInsets.only(left: 10, right: 10),
             child: AppTextField(
-              decoration: const InputDecoration().search(),
+              decoration: const InputDecoration().search(), //
               onChange: widget.onSearchChanged,
               label: 'Search...',
             ),

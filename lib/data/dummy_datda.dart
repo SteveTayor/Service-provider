@@ -37,7 +37,8 @@ final List<ServiceModel> dummyTransactions = [
     status: 'failed',
     amount: '₦2,000.00',
     date: '04-06-2025', // 2 days ago
-    description: 'Failed to add funds',
+    bankName: 'Access bank',
+    accountNumber: '00078242367',
   ),
 
   // Withdrawal
@@ -48,7 +49,8 @@ final List<ServiceModel> dummyTransactions = [
     status: 'pending',
     amount: '₦2,500.00',
     date: '05-06-2025', // Yesterday
-    description: 'Sent to bank account',
+    bankName: 'Wema',
+    accountNumber: '00785741379',
   ),
   ServiceModel(
     id: 'TXN10011',
@@ -57,7 +59,8 @@ final List<ServiceModel> dummyTransactions = [
     status: 'successful',
     amount: '₦4,000.00',
     date: '03-06-2025', // 3 days ago
-    description: 'Withdrawn to bank',
+    bankName: 'FCMB',
+    accountNumber: '2898791379',
   ),
   ServiceModel(
     id: 'TXN10019',
@@ -66,7 +69,8 @@ final List<ServiceModel> dummyTransactions = [
     status: 'pending',
     amount: '₦3,500.00',
     date: '02-06-2025', // 4 days ago
-    description: 'Pending bank transfer',
+    bankName: 'Fidelity',
+    accountNumber: '1567324398',
   ),
 
   // Betting

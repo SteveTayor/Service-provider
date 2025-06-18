@@ -7,6 +7,7 @@ import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/internet-services/internet_service_screen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/transaction_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
 import 'package:flutter/material.dart';
@@ -102,11 +103,17 @@ class PlatFormData {
     Builder(builder: (context) {
       return AppListTile(
         onPressed: () {
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => const PlatformproductScreen(
+          //         serviceType: PlatformProductType.internetServices),
+          //   ),
+          // );
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const PlatformproductScreen(
-                  serviceType: PlatformProductType.internetServices),
+              builder: (ctx) => InternetServiceProviderScreen(),
             ),
           );
         },

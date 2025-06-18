@@ -1,5 +1,3 @@
-// ignore_for_file: camel_case_types
-
 import 'package:bundlegram/gen/assets.gen.dart';
 
 enum LoadState { loading, idle, success, error, loadmore, done }
@@ -9,6 +7,25 @@ enum HomeSessionState {
   initial,
   authenticated
 } // Added authenticated for user state
+
+enum PinScreenMode {
+  create,
+  confirm,
+  validate,
+}
+
+enum SecurityToggleType {
+  faceId,
+  fingerprintLogin,
+  fingerprintPayment,
+}
+
+enum NotificationType {
+  promo,
+  transaction,
+  payment,
+  system,
+}
 
 enum OverLayType { loader, message, none }
 

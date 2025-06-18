@@ -1,8 +1,9 @@
 import 'package:bundlegram/bootstrap.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  bootstrap(() => const App());
+  bootstrap(() => const ProviderScope(child: App()));
 }

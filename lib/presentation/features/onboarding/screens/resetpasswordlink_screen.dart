@@ -7,7 +7,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class ResetPasswordLinkScreen extends StatelessWidget {
-  const ResetPasswordLinkScreen({super.key});
+  final String title;
+  final String subtitle;
+  const ResetPasswordLinkScreen(
+      {required this.subtitle, required this.title, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +18,10 @@ class ResetPasswordLinkScreen extends StatelessWidget {
       sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
       body: ResultWidget(
         appIcon: AppSvgIcon(path: Assets.svgs.mailresent),
-        title: 'Reset link sent!',
+        title: title,
         // isLinkSent: true,
 
-        subText:
-            'A password reset link has been sent to your email, roseowen@gmail.com. Check your inbox and click the link to reset your password.',
-        buttonText: 'Go to email app',
+        subText: subtitle, buttonText: 'Go to email app',
         onPressed: () {
           context.go('/login');
         },

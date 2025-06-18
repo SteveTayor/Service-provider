@@ -51,7 +51,7 @@ class AppTheme {
           fontFamily: FontFamily.mabryProBold,
         ),
         displaySmall: TextStyle(
-          fontSize: 16.sp,
+          fontSize: 18.sp,
           fontWeight: FontWeight.w700,
           color: AppColors.black,
           fontFamily: FontFamily.mabryPro,

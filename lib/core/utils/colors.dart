@@ -14,6 +14,7 @@ class AppColors {
   static const Color greyb3 = Color(0xffB3B3B3);
   static const Color errorText = Colors.red;
   static const Color grey8E = Color(0xff8E8E8E);
+  static const Color searchbarColor = Color(0xFFEEEEEC);
   static const Color greyDE = Color(0xffDEDEDE);
   static const Color greyF5 = Color(0xffF5F5F5);
   static const Color greyd9 = Color(0xffD9D9D9);
@@ -26,6 +27,7 @@ class AppColors {
   static const Color warning = Color(0xFFFFC107);
   static const Color info = Color(0xFF2196F3);
   static const Color pending = Color(0xFF332F2F);
+  static const Color logOut = Color(0xFFAA0B27);
   // Divider color
   static const Color divider = Color(0xFFED3DDF1);
   // Background color

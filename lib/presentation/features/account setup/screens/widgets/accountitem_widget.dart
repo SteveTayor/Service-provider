@@ -62,7 +62,7 @@ class AccountitemWidget extends StatelessWidget {
           'Share Bundlegram',
         ),
         buildRowWidget(
-          Assets.svgs.heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
+          Assets.svgs.shiftKeyShiftUpArrowKeyboard,
           'Update app',
         ),
         buildRowWidget(

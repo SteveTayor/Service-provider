@@ -87,13 +87,14 @@ extension WidgetExtension on Widget {
 
 extension AppTextFieldDecorationExtension on InputDecoration {
   InputDecoration search() {
-    return InputDecoration(
-      fillColor: const Color(0xffEEEEEC),
-      filled: true,
+    return copyWith(
+      fillColor: AppColors.searchbarColor,
+      filled: true, // Make sure to set this to true for fillColor to work
       prefixIcon: const Icon(
         Icons.search,
         color: AppColors.black,
       ),
+      // Keep the original hintText if it exists, otherwise use null
       hintText: hintText,
       hintStyle: TextStyle(
         fontSize: 14.sp,
@@ -101,10 +102,18 @@ extension AppTextFieldDecorationExtension on InputDecoration {
       ),
       focusedBorder: OutlineInputBorder(
         borderSide: BorderSide.none,
-        // gapPadding: 14,
         borderRadius: BorderRadius.circular(80.r),
       ),
       enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(80.r),
+      ),
+      // Clear error border to maintain consistent styling
+      errorBorder: OutlineInputBorder(
+        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(80.r),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
         borderSide: BorderSide.none,
         borderRadius: BorderRadius.circular(80.r),
       ),
