@@ -1,70 +1,9 @@
+import 'package:bundlegram/data/models/auth/registeration/registeration_response.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_model.freezed.dart';
 part 'auth_model.g.dart';
-
-@freezed
-class RegisterResponse with _$RegisterResponse {
-  const factory RegisterResponse({
-    @JsonKey(name: "user") required User user,
-    @JsonKey(name: "operations") required List<Operation> operations,
-  }) = _RegisterResponse;
-
-  factory RegisterResponse.fromJson(Map<String, dynamic> json) =>
-      _$RegisterResponseFromJson(json);
-}
-
-@freezed
-class Operation with _$Operation {
-  const factory Operation({
-    @JsonKey(name: "name") required String name,
-    @JsonKey(name: "limit") required int limit,
-    @JsonKey(name: "usage") required int usage,
-    @JsonKey(name: "overage") required int overage,
-  }) = _Operation;
-
-  factory Operation.fromJson(Map<String, dynamic> json) =>
-      _$OperationFromJson(json);
-}
-
-@freezed
-class User with _$User {
-  const factory User({
-    @JsonKey(name: "id") required int id,
-    @JsonKey(name: "username") required String username,
-    @JsonKey(name: "email") required String email,
-    @JsonKey(name: "fullName") required String fullName,
-    @JsonKey(name: "avatar") required String avatar,
-    @JsonKey(name: "isPublic") required bool isPublic,
-  }) = _User;
-
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
-}
-
-@freezed
-class BaseResponse with _$BaseResponse {
-  const factory BaseResponse({
-    required bool success,
-    required String message,
-    dynamic data,
-    String? error,
-  }) = _BaseResponse;
-
-  factory BaseResponse.fromJson(Map<String, dynamic> json) =>
-      _$BaseResponseFromJson(json);
-}
-
-@freezed
-class AuthData with _$AuthData {
-  const factory AuthData({
-    required User user,
-    required String token,
-  }) = _AuthData;
-
-  factory AuthData.fromJson(Map<String, dynamic> json) =>
-      _$AuthDataFromJson(json);
-}
 
 @freezed
 class LoginRequest with _$LoginRequest {
@@ -144,16 +83,4 @@ class CheckUsernameRequest with _$CheckUsernameRequest {
 
   factory CheckUsernameRequest.fromJson(Map<String, dynamic> json) =>
       _$CheckUsernameRequestFromJson(json);
-}
-
-@freezed
-class AuthResponse with _$AuthResponse {
-  const factory AuthResponse({
-    required bool success,
-    String? message,
-    dynamic data,
-  }) = _AuthResponse;
-
-  factory AuthResponse.fromJson(Map<String, dynamic> json) =>
-      _$AuthResponseFromJson(json);
 }

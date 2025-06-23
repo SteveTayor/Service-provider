@@ -2,6 +2,7 @@ import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/phone_number_formatter.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/e-pin/widget/bulk_pin_success.dart';
@@ -49,7 +50,14 @@ class _BulkEpinScreenState extends State<BulkEpinScreen> {
               ),
               AppTextField(
                 hintText: 'Agent phone number',
-                validateFunction: Validators.phone(),
+                validateFunction: Validators.validateNigerianPhoneNumber(),
+                keyboardType: TextInputType.phone,
+                textInputAction: TextInputAction.next,
+                inputFormatters: [NumberInputFormatter()],
+                prefixIcon: Padding(
+                  padding: context.symmetricPadding(24, 12),
+                  child: Text('+234', style: context.textTheme.bodyMedium),
+                ),
               ),
               AppTextField(
                 hintText: 'Business name',

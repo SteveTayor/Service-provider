@@ -2,28 +2,25 @@ import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/onboarding/notifier/choose_username_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
+import 'package:bundlegram/presentation/general_widget/app_loader.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class ChooseUsernameScreen extends StatefulWidget {
+class ChooseUsernameScreen extends ConsumerWidget {
   const ChooseUsernameScreen({super.key});
 
   @override
-  State<ChooseUsernameScreen> createState() => _ChooseUsernameScreenState();
-}
-
-class _ChooseUsernameScreenState extends State<ChooseUsernameScreen> {
-  final bool _isFormValid = false;
-  final _formKey = GlobalKey<FormState>();
-  TextEditingController _username = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(chooseUsernameProvider);
+    final ctrl = ref.read(chooseUsernameProvider);
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(),
       sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
@@ -50,23 +47,31 @@ class _ChooseUsernameScreenState extends State<ChooseUsernameScreen> {
           Expanded(
             child: AppForm(
               isExpanded: false,
-              isActive: _isFormValid,
-              onPressed: () {
-                context.go(RouteConstants.onboardResult);
-              },
-              buttonText: 'Complete account set-up',
-              formKey: _formKey,
+              formKey: ctrl.formKey,
+              isActive: provider.isValid &&
+                  provider.isAvailable &&
+                  !provider.isSubmitting,
+              onPressed: () => ctrl.submit(context),
+              buttonText: provider.isSubmitting
+                  ? 'Submitting...'
+                  : 'Complete account set-up',
               children: [
                 AppTextField(
-                  controller: _username,
+                  controller: ctrl.usernameController,
                   hintText: 'Choose a username',
-                  onChange: (val) {},
-                  suffixIcon: AppSvgIcon(
-                    path: _isFormValid == true
-                        ? Assets.svgs.check
-                        : Assets.svgs.tickCircle,
-                    fit: BoxFit.scaleDown,
-                  ),
+                  suffixIcon: provider.isChecking
+                      ? SizedBox(
+                          height: 20.h,
+                          width: 20.h,
+                          child: AppLoader(
+                              size: 20, color: AppColors.primaryColor),
+                        )
+                      : AppSvgIcon(
+                          path: provider.isAvailable
+                              ? Assets.svgs.check
+                              : Assets.svgs.closeCircle,
+                          fit: BoxFit.scaleDown,
+                        ),
                 ),
               ],
             ),

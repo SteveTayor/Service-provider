@@ -1,5 +1,3 @@
-
-
 // ignore_for_file: lines_longer_than_80_chars, parameter_assignments
 
 import 'package:bundlegram/core/extensions/string_extensions.dart';
@@ -21,13 +19,10 @@ class Validators {
     };
   }
 
-  static Validator confirmPass(String val1, String val2) {
+  static Validator confirmPass(String passwordToMatch) {
     return (String? value) {
-      if (val1 != val2) {
-        return 'Passwords do not match';
-      } else {
-        return null;
-      }
+      if (value == null || value.isEmpty) return 'Required';
+      return value != passwordToMatch ? 'Passwords do not match' : null;
     };
   }
 
@@ -53,14 +48,19 @@ class Validators {
     };
   }
 
-  static Validator phone([String? text]) {
+  static Validator validateNigerianPhoneNumber() {
     return (String? value) {
-      if (value == null) {
-        return null;
+      if (value == null || value.isEmpty) return 'This field is required';
+      final digitsOnly = value.replaceAll(RegExp(r'\D'), '');
+      if (value.startsWith('0')) {
+        if (digitsOnly.length != 11) return 'Must be 11 digits';
+      } else {
+        if (digitsOnly.length != 10) return 'Must be 10 digits';
       }
-      return !phonePattern.hasMatch(value)
-          ? (text ?? 'Invalid phone number')
-          : null;
+      if (!RegExp(r'^(?:07|08|09)\d{8,9}$').hasMatch(value)) {
+        return 'Enter a valid Nigerian number';
+      }
+      return null;
     };
   }
 
@@ -116,9 +116,7 @@ class Validators {
       if (value!.isEmpty) {
         return 'Field cannot be empty.';
       }
-      if (!value.contains(' ')) {
-        return 'Seperate names with spaces';
-      }
+      if (value.length < 3) return 'Input your name as it appears in your id';
       return null;
     };
   }
