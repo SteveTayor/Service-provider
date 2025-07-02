@@ -34,7 +34,8 @@ class NavBar extends ConsumerWidget {
         'name': 'Account',
       },
     ];
-    final v = ref.watch(dashboardProvider);
+    final currentIndex =
+        ref.watch(dashboardProvider.select((p) => p.currentIndex));
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -58,13 +59,14 @@ class NavBar extends ConsumerWidget {
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
-                transform: Matrix4.identity()..scale(index == v ? 1.0 : 1.0),
+                transform: Matrix4.identity()
+                  ..scale(index == currentIndex ? 1.0 : 1.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     AppSvgIcon(
-                      path: index == v
+                      path: index == currentIndex
                           ? '${items[index]['active']}'
                           : '${items[index]['icon']}',
                       width: 24.w,

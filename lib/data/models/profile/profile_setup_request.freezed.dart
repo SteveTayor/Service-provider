@@ -30,6 +30,8 @@ mixin _$ProfileSetupRequest {
   String? get dateOfBirth => throw _privateConstructorUsedError;
   @JsonKey(name: "gender")
   String? get gender => throw _privateConstructorUsedError;
+  @JsonKey(name: "email")
+  String? get email => throw _privateConstructorUsedError;
 
   /// Serializes this ProfileSetupRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -52,7 +54,8 @@ abstract class $ProfileSetupRequestCopyWith<$Res> {
       @JsonKey(name: "last_name") String? lastName,
       @JsonKey(name: "address") String? address,
       @JsonKey(name: "date_of_birth") String? dateOfBirth,
-      @JsonKey(name: "gender") String? gender});
+      @JsonKey(name: "gender") String? gender,
+      @JsonKey(name: "email") String? email});
 }
 
 /// @nodoc
@@ -75,6 +78,7 @@ class _$ProfileSetupRequestCopyWithImpl<$Res, $Val extends ProfileSetupRequest>
     Object? address = freezed,
     Object? dateOfBirth = freezed,
     Object? gender = freezed,
+    Object? email = freezed,
   }) {
     return _then(_value.copyWith(
       firstName: freezed == firstName
@@ -97,6 +101,10 @@ class _$ProfileSetupRequestCopyWithImpl<$Res, $Val extends ProfileSetupRequest>
           ? _value.gender
           : gender // ignore: cast_nullable_to_non_nullable
               as String?,
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -114,7 +122,8 @@ abstract class _$$ProfileSetupRequestImplCopyWith<$Res>
       @JsonKey(name: "last_name") String? lastName,
       @JsonKey(name: "address") String? address,
       @JsonKey(name: "date_of_birth") String? dateOfBirth,
-      @JsonKey(name: "gender") String? gender});
+      @JsonKey(name: "gender") String? gender,
+      @JsonKey(name: "email") String? email});
 }
 
 /// @nodoc
@@ -135,6 +144,7 @@ class __$$ProfileSetupRequestImplCopyWithImpl<$Res>
     Object? address = freezed,
     Object? dateOfBirth = freezed,
     Object? gender = freezed,
+    Object? email = freezed,
   }) {
     return _then(_$ProfileSetupRequestImpl(
       firstName: freezed == firstName
@@ -157,6 +167,10 @@ class __$$ProfileSetupRequestImplCopyWithImpl<$Res>
           ? _value.gender
           : gender // ignore: cast_nullable_to_non_nullable
               as String?,
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -169,7 +183,8 @@ class _$ProfileSetupRequestImpl implements _ProfileSetupRequest {
       @JsonKey(name: "last_name") this.lastName,
       @JsonKey(name: "address") this.address,
       @JsonKey(name: "date_of_birth") this.dateOfBirth,
-      @JsonKey(name: "gender") this.gender});
+      @JsonKey(name: "gender") this.gender,
+      @JsonKey(name: "email") this.email});
 
   factory _$ProfileSetupRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProfileSetupRequestImplFromJson(json);
@@ -189,10 +204,13 @@ class _$ProfileSetupRequestImpl implements _ProfileSetupRequest {
   @override
   @JsonKey(name: "gender")
   final String? gender;
+  @override
+  @JsonKey(name: "email")
+  final String? email;
 
   @override
   String toString() {
-    return 'ProfileSetupRequest(firstName: $firstName, lastName: $lastName, address: $address, dateOfBirth: $dateOfBirth, gender: $gender)';
+    return 'ProfileSetupRequest(firstName: $firstName, lastName: $lastName, address: $address, dateOfBirth: $dateOfBirth, gender: $gender, email: $email)';
   }
 
   @override
@@ -207,13 +225,14 @@ class _$ProfileSetupRequestImpl implements _ProfileSetupRequest {
             (identical(other.address, address) || other.address == address) &&
             (identical(other.dateOfBirth, dateOfBirth) ||
                 other.dateOfBirth == dateOfBirth) &&
-            (identical(other.gender, gender) || other.gender == gender));
+            (identical(other.gender, gender) || other.gender == gender) &&
+            (identical(other.email, email) || other.email == email));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, firstName, lastName, address, dateOfBirth, gender);
+      runtimeType, firstName, lastName, address, dateOfBirth, gender, email);
 
   /// Create a copy of ProfileSetupRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -234,12 +253,12 @@ class _$ProfileSetupRequestImpl implements _ProfileSetupRequest {
 
 abstract class _ProfileSetupRequest implements ProfileSetupRequest {
   const factory _ProfileSetupRequest(
-          {@JsonKey(name: "first_name") final String? firstName,
-          @JsonKey(name: "last_name") final String? lastName,
-          @JsonKey(name: "address") final String? address,
-          @JsonKey(name: "date_of_birth") final String? dateOfBirth,
-          @JsonKey(name: "gender") final String? gender}) =
-      _$ProfileSetupRequestImpl;
+      {@JsonKey(name: "first_name") final String? firstName,
+      @JsonKey(name: "last_name") final String? lastName,
+      @JsonKey(name: "address") final String? address,
+      @JsonKey(name: "date_of_birth") final String? dateOfBirth,
+      @JsonKey(name: "gender") final String? gender,
+      @JsonKey(name: "email") final String? email}) = _$ProfileSetupRequestImpl;
 
   factory _ProfileSetupRequest.fromJson(Map<String, dynamic> json) =
       _$ProfileSetupRequestImpl.fromJson;
@@ -259,6 +278,9 @@ abstract class _ProfileSetupRequest implements ProfileSetupRequest {
   @override
   @JsonKey(name: "gender")
   String? get gender;
+  @override
+  @JsonKey(name: "email")
+  String? get email;
 
   /// Create a copy of ProfileSetupRequest
   /// with the given fields replaced by the non-null parameter values.

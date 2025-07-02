@@ -49,6 +49,7 @@ class AppTextField extends StatefulWidget {
     this.labelColor,
     this.cursorColor,
     this.textAlign,
+    this.isFilled = false,
   });
   final double? width;
   final double? height;
@@ -91,6 +92,7 @@ class AppTextField extends StatefulWidget {
   final BorderSide? borderSide;
   final TextAlign? textAlign;
   final TextCapitalization textCapitalization;
+  final bool? isFilled;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -154,11 +156,10 @@ class _AppTextFieldState extends State<AppTextField> {
                 InputDecoration(
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                  // filled: true,
+                  filled: widget.isFilled,
                   constraints: BoxConstraints(
                     minHeight: 56.h,
                   ),
-
                   fillColor: widget.backgroundColor ?? AppColors.white,
                   prefixIconConstraints: BoxConstraints(
                     minWidth: 60.w,

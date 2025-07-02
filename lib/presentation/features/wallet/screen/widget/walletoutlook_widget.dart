@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
@@ -13,7 +14,7 @@ class WalletoutlookWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = ref.watch(platformProvider);
-
+    final profile = ref.watch(globalProvider).profile;
     return Column(
       children: [
         Row(
@@ -48,14 +49,20 @@ class WalletoutlookWidget extends ConsumerWidget {
         16.verticalSpace,
         BundlegramButton(
           width: 130.w,
-          height: 50.h,
+          height: 40.h,
           color: AppColors.white,
           cornerRadius: 4.r,
           text: 'Fund wallet',
           textStyle: context.textTheme.bodyMedium!
               .copyWith(color: AppColors.primaryColor),
           onPressed: () {
-            WalletNotifier().showAddMoney(context);
+            final bvn = profile.value?.data?.bvn;
+            if (bvn == null) {
+              WalletNotifier().showLinkBVNSnackBar(context);
+            } else {
+              // ref.read(globalProvider.notifier).fetchVirtualAccount(context);
+              WalletNotifier().showAddMoney(context, ref);
+            }
           },
         ),
       ],

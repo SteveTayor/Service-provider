@@ -32,6 +32,8 @@ import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/profile/profile_response.dart';
+import 'package:bundlegram/data/models/profile/profile_setup_request.dart';
+import 'package:bundlegram/data/models/profile/profile_setup_response.dart';
 import 'package:bundlegram/data/models/transaction/initiate_transactcion_requests.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction/validate_bill_request.dart';
@@ -81,6 +83,15 @@ class ApiService {
     return handleApi(() {
       final req = AddUsernameRequest(username: username);
       return _api.addUsername('Bearer $token', _sterilizer, req);
+    });
+  }
+
+  Future<Either<Failure, ProfileSetupResponse>> updateProfileInformation(
+    String token,
+    ProfileSetupRequest req,
+  ) {
+    return handleApi(() {
+      return _api.setupProfile('Bearer $token', _sterilizer, req);
     });
   }
 

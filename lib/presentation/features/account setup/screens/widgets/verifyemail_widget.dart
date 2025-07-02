@@ -1,19 +1,23 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/resetpasswordlink_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class VerifyemailWidget extends StatelessWidget {
+class VerifyemailWidget extends ConsumerWidget {
   const VerifyemailWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    String userEmail = 'roseowen@gmail.com';
+  Widget build(BuildContext context, WidgetRef ref) {
+    final global = ref.watch(globalProvider).profile;
+    final profileProv = global.value?.data;
+    String? userEmail = profileProv?.email;
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(

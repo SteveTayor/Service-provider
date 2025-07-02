@@ -70,6 +70,8 @@ Future<Either<Failure, T>> handleApi<T>(Future<T> Function() call) async {
   } catch (e, stack) {
     log('[API ERROR] Unknown Exception: $e',
         name: 'handleApi', stackTrace: stack);
-    return const Left(UnknownFailure(['Unexpected error']));
+
+    log('[API ERROR] $e\n$stack');
+    return Left(UnknownFailure([e.toString()]));
   }
 }

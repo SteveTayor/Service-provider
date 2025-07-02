@@ -12,6 +12,7 @@ class ProfileSetupRequest with _$ProfileSetupRequest {
     @JsonKey(name: "address") String? address,
     @JsonKey(name: "date_of_birth") String? dateOfBirth,
     @JsonKey(name: "gender") String? gender,
+    @JsonKey(name: "email") String? email,
   }) = _ProfileSetupRequest;
 
   factory ProfileSetupRequest.fromJson(Map<String, dynamic> json) =>

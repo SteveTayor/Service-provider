@@ -58,16 +58,16 @@ class DashboardData {
 
 class BarDatum {
   final String day;
-  final int amount;
+  final dynamic amount;
 
   BarDatum({
     this.day = '',
-    this.amount = 0,
+    this.amount,
   });
 
   factory BarDatum.fromJson(Map<String, dynamic> json) => BarDatum(
         day: json['day'] as String? ?? '',
-        amount: json['amount'] as int? ?? 0,
+        amount: json['amount'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -78,7 +78,7 @@ class BarDatum {
 
 class DoughnutDatum {
   final String label;
-  final int value;
+  final dynamic value;
 
   DoughnutDatum({
     this.label = '',
@@ -87,7 +87,7 @@ class DoughnutDatum {
 
   factory DoughnutDatum.fromJson(Map<String, dynamic> json) => DoughnutDatum(
         label: json['label'] as String? ?? '',
-        value: json['value'] as int? ?? 0,
+        value: json['value'],
       );
 
   Map<String, dynamic> toJson() => {

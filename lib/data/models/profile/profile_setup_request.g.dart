@@ -14,6 +14,7 @@ _$ProfileSetupRequestImpl _$$ProfileSetupRequestImplFromJson(
       address: json['address'] as String?,
       dateOfBirth: json['date_of_birth'] as String?,
       gender: json['gender'] as String?,
+      email: json['email'] as String?,
     );
 
 Map<String, dynamic> _$$ProfileSetupRequestImplToJson(
@@ -24,4 +25,5 @@ Map<String, dynamic> _$$ProfileSetupRequestImplToJson(
       'address': instance.address,
       'date_of_birth': instance.dateOfBirth,
       'gender': instance.gender,
+      'email': instance.email,
     };

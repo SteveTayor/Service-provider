@@ -1,6 +1,7 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
@@ -32,14 +33,15 @@ class PlatformProvider extends ChangeNotifier {
   String get formattedBalance {
     final wallet = _ref.read(globalProvider).walletBalance;
     final value = wallet.value?.wallet;
-    return value != null ? '₦$value' : '₦0.00';
+
+    return CurrencyFormatter.format(value);
   }
 
   List<Sterling> get virtualAccounts {
     final va = _ref.read(globalProvider).virtualAccounts;
 
     if (va is AsyncData<GetVirtualAccountsResponse>) {
-      final data = va.value?.data;
+      final data = va.value.data;
       if (data == null) return [];
 
       return [
@@ -55,7 +57,7 @@ class PlatformProvider extends ChangeNotifier {
     final transactions = _ref.read(globalProvider).usersTransactions;
 
     if (transactions is AsyncData<GetAllUserTransactionResponse>) {
-      return transactions.value?.data ?? [];
+      return transactions.value.data ?? [];
     }
 
     return [];

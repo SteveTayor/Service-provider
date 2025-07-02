@@ -3,23 +3,34 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/data/models/banks/get_virtual_account_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class AddfundWidget extends StatefulWidget {
-  const AddfundWidget({super.key});
+class AddfundWidget extends ConsumerStatefulWidget {
+  final Sterling? sterlingAccount;
+  final Sterling? wemaAccount;
+
+  const AddfundWidget({
+    super.key,
+    this.sterlingAccount,
+    this.wemaAccount,
+  });
 
   @override
-  State<AddfundWidget> createState() => _AddfundWidgetState();
+  ConsumerState<AddfundWidget> createState() => _AddfundWidgetState();
 }
 
-class _AddfundWidgetState extends State<AddfundWidget> {
+class _AddfundWidgetState extends ConsumerState<AddfundWidget> {
   int index = 0;
+
   Row _bankDetailWidget(String title, String label) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,15 +54,28 @@ class _AddfundWidgetState extends State<AddfundWidget> {
             ),
           ],
         ),
-        AppSvgIcon(
-          path: Assets.svgs.phCopySimple,
-        ),
+        AppSvgIcon(path: Assets.svgs.phCopySimple),
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final selectedAccount =
+        index == 0 ? widget.wemaAccount : widget.sterlingAccount;
+
+    // final accounts = ref.watch(globalProvider).virtualAccounts;
+    // final wema = accounts.maybeWhen(
+    //   data: (data) => data?.data?.wema,
+    //   orElse: () => null,
+    // );
+    // final sterling = accounts.maybeWhen(
+    //   data: (data) => data?.data?.sterling,
+    //   orElse: () => null,
+    // );
+
+    // final selectedAccount = index == 0 ? wema : sterling;
+
     return Padding(
       padding: context.symmetricPadding(16, 16),
       child: Column(
@@ -66,11 +90,7 @@ class _AddfundWidgetState extends State<AddfundWidget> {
             children: [
               Expanded(
                 child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      index = 0;
-                    });
-                  },
+                  onTap: () => setState(() => index = 0),
                   child: Text(
                     'Wema',
                     style: context.textTheme.bodyMedium,
@@ -84,11 +104,7 @@ class _AddfundWidgetState extends State<AddfundWidget> {
               ),
               Expanded(
                 child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      index = 1;
-                    });
-                  },
+                  onTap: () => setState(() => index = 1),
                   child: Text(
                     'Sterling',
                     style: context.textTheme.bodyMedium,
@@ -107,9 +123,15 @@ class _AddfundWidgetState extends State<AddfundWidget> {
             padding: context.symmetricPadding(4, 4),
           ),
           24.verticalSpace,
-          _bankDetailWidget('Wema bank', 'Bank name'),
+          _bankDetailWidget(
+            selectedAccount?.bankName ?? 'Unavailable',
+            'Bank name',
+          ),
           32.verticalSpace,
-          _bankDetailWidget('8088557744', 'Account number'),
+          _bankDetailWidget(
+            selectedAccount?.accountNum ?? 'Unavailable',
+            'Account number',
+          ),
           28.verticalSpace,
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,

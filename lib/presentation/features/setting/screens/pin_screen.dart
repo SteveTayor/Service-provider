@@ -101,7 +101,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
           } else {
             ref.read(pinControllerProvider.notifier).start(
                   PinScreenMode.create,
-                  onComplete: controller.onCompleted,
+                  onComplete: () => context.go(RouteConstants.dashboard),
                 );
             context.push(RouteConstants.pinScreen);
           }

@@ -128,7 +128,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               leading: Assets.svgs.walletAdd,
               text: 'Top-up wallet',
               onPressed: () {
-                WalletNotifier().showAddMoney(context);
+                WalletNotifier().showAddMoney(context, ref);
               },
             ),
             45.verticalSpace,

@@ -2,7 +2,7 @@
 
 class GetAllBanksResponse {
   final String? status;
-  final List<Datum>? data;
+  final List<BankDetails>? data;
   final String? message;
 
   GetAllBanksResponse({
@@ -15,7 +15,7 @@ class GetAllBanksResponse {
       GetAllBanksResponse(
         status: json["status"] as String,
         data: (json['data'] as List<dynamic>)
-            .map((e) => Datum.fromJson(e as Map<String, dynamic>))
+            .map((e) => BankDetails.fromJson(e as Map<String, dynamic>))
             .toList(),
         message: json["message"] as String,
       );
@@ -29,14 +29,14 @@ class GetAllBanksResponse {
       };
 }
 
-class Datum {
+class BankDetails {
   final String? bankCode;
   final String? bankName;
   final String? status;
   final dynamic createdAt;
   final dynamic updatedAt;
 
-  Datum({
+  BankDetails({
     this.bankCode,
     this.bankName,
     this.status,
@@ -44,7 +44,7 @@ class Datum {
     this.updatedAt,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory BankDetails.fromJson(Map<String, dynamic> json) => BankDetails(
         bankCode: json["bank_code"] as String,
         bankName: json["bank_name"] as String,
         status: json["status"] as String,

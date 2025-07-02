@@ -19,6 +19,7 @@ class PlatFormDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userName = ref.watch(platformProvider).userName;
     final global = ref.watch(globalProvider).profile;
+    final profileProv = global.value?.data;
     return Material(
       color: AppColors.background,
       child: SizedBox(
@@ -50,11 +51,16 @@ class PlatFormDrawer extends ConsumerWidget {
                       style: context.textTheme.headlineMedium,
                     ),
                     8.horizontalSpace,
-                    global.value?.data?.userType == "agent"
-                        ? AppSvgIcon(
-                            path: Assets
-                                .svgs.warrantyBadgeHighlightStreamlineFlex)
-                        : AppSvgIcon(path: Assets.svgs.tickCircle),
+                    if (profileProv?.emailVerifiedAt != null &&
+                        profileProv?.bvn != null &&
+                        profileProv?.bankName != null &&
+                        profileProv?.accountNumber != null) ...[
+                      AppSvgIcon(
+                          path:
+                              Assets.svgs.warrantyBadgeHighlightStreamlineFlex)
+                    ] else ...[
+                      AppSvgIcon(path: Assets.svgs.tickCircle),
+                    ]
                   ],
                 ),
                 12.verticalSpace,

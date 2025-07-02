@@ -35,20 +35,19 @@ class Data {
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-        sterling: json["Sterling"] == null
+        sterling: json["Sterling bank"] == null
             ? null
-            : Sterling.fromJson(json["Sterling"] as Map<String, dynamic>),
-        wema: json["Wema"] == null
+            : Sterling.fromJson(json["Sterling bank"] as Map<String, dynamic>),
+        wema: json["Wema bank"] == null
             ? null
-            : Sterling.fromJson(
-                json["Wema"] as Map<String, dynamic>,
-              ),
+            : Sterling.fromJson(json["Wema bank"] as Map<String, dynamic>),
       );
 
   Map<String, dynamic> toJson() => {
-        "Sterling": sterling?.toJson(),
-        "Wema": wema?.toJson(),
+        "Sterling bank": sterling?.toJson(),
+        "Wema bank": wema?.toJson(),
       };
+
 }
 
 class Sterling {

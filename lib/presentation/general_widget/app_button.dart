@@ -59,7 +59,7 @@ class BundlegramButton extends StatefulWidget {
   final BundlegramButtonStyle? buttonStyle;
   final TextStyle? textStyle;
   final Color? svgIconContainerColor;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String? leading;
   final String? trailing;
 

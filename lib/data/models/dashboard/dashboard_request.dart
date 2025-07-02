@@ -1,6 +1,6 @@
 class DashboardDataRequest {
-  final int? month;
-  final int? year;
+  final dynamic month;
+  final dynamic year;
 
   DashboardDataRequest({
     this.month,
@@ -9,8 +9,8 @@ class DashboardDataRequest {
 
   factory DashboardDataRequest.fromJson(Map<String, dynamic> json) =>
       DashboardDataRequest(
-        month: json["month"] as int?,
-        year: json["year"] as int?,
+        month: json["month"],
+        year: json["year"],
       );
 
   Map<String, dynamic> toJson() => {
