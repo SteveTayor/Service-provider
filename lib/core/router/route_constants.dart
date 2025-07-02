@@ -58,4 +58,5 @@ class RouteConstants {
   static const String walletHistoryScreen = '/walletHistoryScreen';
 
   static const String notification = '/notification';
+  static const String pinScreen = '/pinScreen';
 }

@@ -15,12 +15,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class ChooseUsernameScreen extends ConsumerWidget {
-  const ChooseUsernameScreen({super.key});
+  final bool fromLogin;
+
+  const ChooseUsernameScreen({super.key, this.fromLogin = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = ref.watch(chooseUsernameProvider);
     final ctrl = ref.read(chooseUsernameProvider);
+    // Setting the fromLogin flag in the provider after the build phase
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      provider.setFromLogin(fromLogin);
+    });
+
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(),
       sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
@@ -55,6 +62,18 @@ class ChooseUsernameScreen extends ConsumerWidget {
               buttonText: provider.isSubmitting
                   ? 'Submitting...'
                   : 'Complete account set-up',
+              extraWidget: Container(
+                child: !provider.isChecking && provider.errorMessage != null
+                    ? Padding(
+                        padding: EdgeInsets.only(top: 8.h),
+                        child: Text(
+                          provider.errorMessage ??
+                              'This username already exists',
+                          style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                        ),
+                      )
+                    : SizedBox(),
+              ),
               children: [
                 AppTextField(
                   controller: ctrl.usernameController,
@@ -67,9 +86,11 @@ class ChooseUsernameScreen extends ConsumerWidget {
                               size: 20, color: AppColors.primaryColor),
                         )
                       : AppSvgIcon(
-                          path: provider.isAvailable
-                              ? Assets.svgs.check
-                              : Assets.svgs.closeCircle,
+                          path: provider.usernameController.text.isEmpty
+                              ? Assets.svgs.tickCircle // Initial state
+                              : provider.isAvailable
+                                  ? Assets.svgs.check // Available
+                                  : Assets.svgs.closeCircle, // Taken
                           fit: BoxFit.scaleDown,
                         ),
                 ),

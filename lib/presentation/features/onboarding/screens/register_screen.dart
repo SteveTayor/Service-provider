@@ -31,6 +31,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final prov = ref.watch(registerProvider);
     final ctrl = ref.read(registerProvider);
     return BundlegramScaffold(
+      resizeToAvoidBottomInset: true,
       sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
       appBar: const BundlegramAppbar(),
       body: Column(
@@ -126,9 +127,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 AppTextField(
                   hintText: 'Confirm Password',
                   controller: ctrl.confirmCtrl,
-                  validateFunction: Validators.confirmPass(
-                    ctrl.passwordCtrl.text,
-                  ),
+                  onChange:
+                      Validators.confirmPass(ctrl.passwordCtrl.text.trim()),
                   obscureText: !prov.showConfirm,
                   suffixIcon: GestureDetector(
                     onTap: () =>

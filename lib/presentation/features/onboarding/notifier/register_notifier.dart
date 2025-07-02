@@ -150,20 +150,22 @@ class RegisterProvider extends ChangeNotifier {
     //     _setLoading(false);
     //   },
     // );
+
     final result = await _api.register(req);
     context.dismissDialog();
     result.fold(
       (failure) {
-        final msg = failure.props.isNotEmpty
-            ? failure.props.first.toString()
+        final msg = failure.properties.isNotEmpty
+            ? failure.properties.join('\n')
             : 'Registration failed';
         context.showErrorSnackBar(msg);
+
         _setLoading(false);
       },
       (data) async {
         await _storage.setAuthToken(data.data!.token!);
         _setLoading(false);
-        context.goNamed(RouteConstants.chooseUsername);
+        context.go(RouteConstants.chooseUsername);
       },
     );
   }

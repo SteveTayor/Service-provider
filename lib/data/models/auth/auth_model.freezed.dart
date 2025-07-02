@@ -819,6 +819,330 @@ abstract class _VerifyOtpRequest implements VerifyOtpRequest {
       throw _privateConstructorUsedError;
 }
 
+VerifyEmailRequest _$VerifyEmailRequestFromJson(Map<String, dynamic> json) {
+  return _VerifyEmailRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$VerifyEmailRequest {
+  String get otp => throw _privateConstructorUsedError;
+
+  /// Serializes this VerifyEmailRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of VerifyEmailRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $VerifyEmailRequestCopyWith<VerifyEmailRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $VerifyEmailRequestCopyWith<$Res> {
+  factory $VerifyEmailRequestCopyWith(
+          VerifyEmailRequest value, $Res Function(VerifyEmailRequest) then) =
+      _$VerifyEmailRequestCopyWithImpl<$Res, VerifyEmailRequest>;
+  @useResult
+  $Res call({String otp});
+}
+
+/// @nodoc
+class _$VerifyEmailRequestCopyWithImpl<$Res, $Val extends VerifyEmailRequest>
+    implements $VerifyEmailRequestCopyWith<$Res> {
+  _$VerifyEmailRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of VerifyEmailRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? otp = null,
+  }) {
+    return _then(_value.copyWith(
+      otp: null == otp
+          ? _value.otp
+          : otp // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$VerifyEmailRequestImplCopyWith<$Res>
+    implements $VerifyEmailRequestCopyWith<$Res> {
+  factory _$$VerifyEmailRequestImplCopyWith(_$VerifyEmailRequestImpl value,
+          $Res Function(_$VerifyEmailRequestImpl) then) =
+      __$$VerifyEmailRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String otp});
+}
+
+/// @nodoc
+class __$$VerifyEmailRequestImplCopyWithImpl<$Res>
+    extends _$VerifyEmailRequestCopyWithImpl<$Res, _$VerifyEmailRequestImpl>
+    implements _$$VerifyEmailRequestImplCopyWith<$Res> {
+  __$$VerifyEmailRequestImplCopyWithImpl(_$VerifyEmailRequestImpl _value,
+      $Res Function(_$VerifyEmailRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VerifyEmailRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? otp = null,
+  }) {
+    return _then(_$VerifyEmailRequestImpl(
+      otp: null == otp
+          ? _value.otp
+          : otp // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$VerifyEmailRequestImpl
+    with DiagnosticableTreeMixin
+    implements _VerifyEmailRequest {
+  const _$VerifyEmailRequestImpl({required this.otp});
+
+  factory _$VerifyEmailRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$VerifyEmailRequestImplFromJson(json);
+
+  @override
+  final String otp;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'VerifyEmailRequest(otp: $otp)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'VerifyEmailRequest'))
+      ..add(DiagnosticsProperty('otp', otp));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$VerifyEmailRequestImpl &&
+            (identical(other.otp, otp) || other.otp == otp));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, otp);
+
+  /// Create a copy of VerifyEmailRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$VerifyEmailRequestImplCopyWith<_$VerifyEmailRequestImpl> get copyWith =>
+      __$$VerifyEmailRequestImplCopyWithImpl<_$VerifyEmailRequestImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$VerifyEmailRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _VerifyEmailRequest implements VerifyEmailRequest {
+  const factory _VerifyEmailRequest({required final String otp}) =
+      _$VerifyEmailRequestImpl;
+
+  factory _VerifyEmailRequest.fromJson(Map<String, dynamic> json) =
+      _$VerifyEmailRequestImpl.fromJson;
+
+  @override
+  String get otp;
+
+  /// Create a copy of VerifyEmailRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$VerifyEmailRequestImplCopyWith<_$VerifyEmailRequestImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+DeleteAccountRequest _$DeleteAccountRequestFromJson(Map<String, dynamic> json) {
+  return _DeleteAccountRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DeleteAccountRequest {
+  String get pin => throw _privateConstructorUsedError;
+
+  /// Serializes this DeleteAccountRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of DeleteAccountRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $DeleteAccountRequestCopyWith<DeleteAccountRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DeleteAccountRequestCopyWith<$Res> {
+  factory $DeleteAccountRequestCopyWith(DeleteAccountRequest value,
+          $Res Function(DeleteAccountRequest) then) =
+      _$DeleteAccountRequestCopyWithImpl<$Res, DeleteAccountRequest>;
+  @useResult
+  $Res call({String pin});
+}
+
+/// @nodoc
+class _$DeleteAccountRequestCopyWithImpl<$Res,
+        $Val extends DeleteAccountRequest>
+    implements $DeleteAccountRequestCopyWith<$Res> {
+  _$DeleteAccountRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of DeleteAccountRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pin = null,
+  }) {
+    return _then(_value.copyWith(
+      pin: null == pin
+          ? _value.pin
+          : pin // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DeleteAccountRequestImplCopyWith<$Res>
+    implements $DeleteAccountRequestCopyWith<$Res> {
+  factory _$$DeleteAccountRequestImplCopyWith(_$DeleteAccountRequestImpl value,
+          $Res Function(_$DeleteAccountRequestImpl) then) =
+      __$$DeleteAccountRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String pin});
+}
+
+/// @nodoc
+class __$$DeleteAccountRequestImplCopyWithImpl<$Res>
+    extends _$DeleteAccountRequestCopyWithImpl<$Res, _$DeleteAccountRequestImpl>
+    implements _$$DeleteAccountRequestImplCopyWith<$Res> {
+  __$$DeleteAccountRequestImplCopyWithImpl(_$DeleteAccountRequestImpl _value,
+      $Res Function(_$DeleteAccountRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of DeleteAccountRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pin = null,
+  }) {
+    return _then(_$DeleteAccountRequestImpl(
+      pin: null == pin
+          ? _value.pin
+          : pin // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DeleteAccountRequestImpl
+    with DiagnosticableTreeMixin
+    implements _DeleteAccountRequest {
+  const _$DeleteAccountRequestImpl({required this.pin});
+
+  factory _$DeleteAccountRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DeleteAccountRequestImplFromJson(json);
+
+  @override
+  final String pin;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'DeleteAccountRequest(pin: $pin)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'DeleteAccountRequest'))
+      ..add(DiagnosticsProperty('pin', pin));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeleteAccountRequestImpl &&
+            (identical(other.pin, pin) || other.pin == pin));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, pin);
+
+  /// Create a copy of DeleteAccountRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeleteAccountRequestImplCopyWith<_$DeleteAccountRequestImpl>
+      get copyWith =>
+          __$$DeleteAccountRequestImplCopyWithImpl<_$DeleteAccountRequestImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DeleteAccountRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DeleteAccountRequest implements DeleteAccountRequest {
+  const factory _DeleteAccountRequest({required final String pin}) =
+      _$DeleteAccountRequestImpl;
+
+  factory _DeleteAccountRequest.fromJson(Map<String, dynamic> json) =
+      _$DeleteAccountRequestImpl.fromJson;
+
+  @override
+  String get pin;
+
+  /// Create a copy of DeleteAccountRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DeleteAccountRequestImplCopyWith<_$DeleteAccountRequestImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 NewPasswordRequest _$NewPasswordRequestFromJson(Map<String, dynamic> json) {
   return _NewPasswordRequest.fromJson(json);
 }
@@ -829,7 +1153,6 @@ mixin _$NewPasswordRequest {
   String get password => throw _privateConstructorUsedError;
   @JsonKey(name: 'password_confirm')
   String get passwordConfirm => throw _privateConstructorUsedError;
-  String get otp => throw _privateConstructorUsedError;
 
   /// Serializes this NewPasswordRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -850,8 +1173,7 @@ abstract class $NewPasswordRequestCopyWith<$Res> {
   $Res call(
       {String email,
       String password,
-      @JsonKey(name: 'password_confirm') String passwordConfirm,
-      String otp});
+      @JsonKey(name: 'password_confirm') String passwordConfirm});
 }
 
 /// @nodoc
@@ -872,7 +1194,6 @@ class _$NewPasswordRequestCopyWithImpl<$Res, $Val extends NewPasswordRequest>
     Object? email = null,
     Object? password = null,
     Object? passwordConfirm = null,
-    Object? otp = null,
   }) {
     return _then(_value.copyWith(
       email: null == email
@@ -886,10 +1207,6 @@ class _$NewPasswordRequestCopyWithImpl<$Res, $Val extends NewPasswordRequest>
       passwordConfirm: null == passwordConfirm
           ? _value.passwordConfirm
           : passwordConfirm // ignore: cast_nullable_to_non_nullable
-              as String,
-      otp: null == otp
-          ? _value.otp
-          : otp // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -906,8 +1223,7 @@ abstract class _$$NewPasswordRequestImplCopyWith<$Res>
   $Res call(
       {String email,
       String password,
-      @JsonKey(name: 'password_confirm') String passwordConfirm,
-      String otp});
+      @JsonKey(name: 'password_confirm') String passwordConfirm});
 }
 
 /// @nodoc
@@ -926,7 +1242,6 @@ class __$$NewPasswordRequestImplCopyWithImpl<$Res>
     Object? email = null,
     Object? password = null,
     Object? passwordConfirm = null,
-    Object? otp = null,
   }) {
     return _then(_$NewPasswordRequestImpl(
       email: null == email
@@ -941,10 +1256,6 @@ class __$$NewPasswordRequestImplCopyWithImpl<$Res>
           ? _value.passwordConfirm
           : passwordConfirm // ignore: cast_nullable_to_non_nullable
               as String,
-      otp: null == otp
-          ? _value.otp
-          : otp // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }
@@ -957,8 +1268,7 @@ class _$NewPasswordRequestImpl
   const _$NewPasswordRequestImpl(
       {required this.email,
       required this.password,
-      @JsonKey(name: 'password_confirm') required this.passwordConfirm,
-      required this.otp});
+      @JsonKey(name: 'password_confirm') required this.passwordConfirm});
 
   factory _$NewPasswordRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$NewPasswordRequestImplFromJson(json);
@@ -970,12 +1280,10 @@ class _$NewPasswordRequestImpl
   @override
   @JsonKey(name: 'password_confirm')
   final String passwordConfirm;
-  @override
-  final String otp;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NewPasswordRequest(email: $email, password: $password, passwordConfirm: $passwordConfirm, otp: $otp)';
+    return 'NewPasswordRequest(email: $email, password: $password, passwordConfirm: $passwordConfirm)';
   }
 
   @override
@@ -985,8 +1293,7 @@ class _$NewPasswordRequestImpl
       ..add(DiagnosticsProperty('type', 'NewPasswordRequest'))
       ..add(DiagnosticsProperty('email', email))
       ..add(DiagnosticsProperty('password', password))
-      ..add(DiagnosticsProperty('passwordConfirm', passwordConfirm))
-      ..add(DiagnosticsProperty('otp', otp));
+      ..add(DiagnosticsProperty('passwordConfirm', passwordConfirm));
   }
 
   @override
@@ -998,14 +1305,13 @@ class _$NewPasswordRequestImpl
             (identical(other.password, password) ||
                 other.password == password) &&
             (identical(other.passwordConfirm, passwordConfirm) ||
-                other.passwordConfirm == passwordConfirm) &&
-            (identical(other.otp, otp) || other.otp == otp));
+                other.passwordConfirm == passwordConfirm));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, email, password, passwordConfirm, otp);
+      Object.hash(runtimeType, email, password, passwordConfirm);
 
   /// Create a copy of NewPasswordRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -1028,8 +1334,8 @@ abstract class _NewPasswordRequest implements NewPasswordRequest {
   const factory _NewPasswordRequest(
       {required final String email,
       required final String password,
-      @JsonKey(name: 'password_confirm') required final String passwordConfirm,
-      required final String otp}) = _$NewPasswordRequestImpl;
+      @JsonKey(name: 'password_confirm')
+      required final String passwordConfirm}) = _$NewPasswordRequestImpl;
 
   factory _NewPasswordRequest.fromJson(Map<String, dynamic> json) =
       _$NewPasswordRequestImpl.fromJson;
@@ -1041,8 +1347,6 @@ abstract class _NewPasswordRequest implements NewPasswordRequest {
   @override
   @JsonKey(name: 'password_confirm')
   String get passwordConfirm;
-  @override
-  String get otp;
 
   /// Create a copy of NewPasswordRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -1375,5 +1679,755 @@ abstract class _CheckUsernameRequest implements CheckUsernameRequest {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$CheckUsernameRequestImplCopyWith<_$CheckUsernameRequestImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+ChangePinRequest _$ChangePinRequestFromJson(Map<String, dynamic> json) {
+  return _ChangePinRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ChangePinRequest {
+  @JsonKey(name: "oldPin")
+  String get oldPin => throw _privateConstructorUsedError;
+  @JsonKey(name: "newPin")
+  String get newPin => throw _privateConstructorUsedError;
+
+  /// Serializes this ChangePinRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ChangePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ChangePinRequestCopyWith<ChangePinRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ChangePinRequestCopyWith<$Res> {
+  factory $ChangePinRequestCopyWith(
+          ChangePinRequest value, $Res Function(ChangePinRequest) then) =
+      _$ChangePinRequestCopyWithImpl<$Res, ChangePinRequest>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "oldPin") String oldPin,
+      @JsonKey(name: "newPin") String newPin});
+}
+
+/// @nodoc
+class _$ChangePinRequestCopyWithImpl<$Res, $Val extends ChangePinRequest>
+    implements $ChangePinRequestCopyWith<$Res> {
+  _$ChangePinRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ChangePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? oldPin = null,
+    Object? newPin = null,
+  }) {
+    return _then(_value.copyWith(
+      oldPin: null == oldPin
+          ? _value.oldPin
+          : oldPin // ignore: cast_nullable_to_non_nullable
+              as String,
+      newPin: null == newPin
+          ? _value.newPin
+          : newPin // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ChangePinRequestImplCopyWith<$Res>
+    implements $ChangePinRequestCopyWith<$Res> {
+  factory _$$ChangePinRequestImplCopyWith(_$ChangePinRequestImpl value,
+          $Res Function(_$ChangePinRequestImpl) then) =
+      __$$ChangePinRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "oldPin") String oldPin,
+      @JsonKey(name: "newPin") String newPin});
+}
+
+/// @nodoc
+class __$$ChangePinRequestImplCopyWithImpl<$Res>
+    extends _$ChangePinRequestCopyWithImpl<$Res, _$ChangePinRequestImpl>
+    implements _$$ChangePinRequestImplCopyWith<$Res> {
+  __$$ChangePinRequestImplCopyWithImpl(_$ChangePinRequestImpl _value,
+      $Res Function(_$ChangePinRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ChangePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? oldPin = null,
+    Object? newPin = null,
+  }) {
+    return _then(_$ChangePinRequestImpl(
+      oldPin: null == oldPin
+          ? _value.oldPin
+          : oldPin // ignore: cast_nullable_to_non_nullable
+              as String,
+      newPin: null == newPin
+          ? _value.newPin
+          : newPin // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ChangePinRequestImpl
+    with DiagnosticableTreeMixin
+    implements _ChangePinRequest {
+  const _$ChangePinRequestImpl(
+      {@JsonKey(name: "oldPin") required this.oldPin,
+      @JsonKey(name: "newPin") required this.newPin});
+
+  factory _$ChangePinRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ChangePinRequestImplFromJson(json);
+
+  @override
+  @JsonKey(name: "oldPin")
+  final String oldPin;
+  @override
+  @JsonKey(name: "newPin")
+  final String newPin;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ChangePinRequest(oldPin: $oldPin, newPin: $newPin)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ChangePinRequest'))
+      ..add(DiagnosticsProperty('oldPin', oldPin))
+      ..add(DiagnosticsProperty('newPin', newPin));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ChangePinRequestImpl &&
+            (identical(other.oldPin, oldPin) || other.oldPin == oldPin) &&
+            (identical(other.newPin, newPin) || other.newPin == newPin));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, oldPin, newPin);
+
+  /// Create a copy of ChangePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ChangePinRequestImplCopyWith<_$ChangePinRequestImpl> get copyWith =>
+      __$$ChangePinRequestImplCopyWithImpl<_$ChangePinRequestImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ChangePinRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ChangePinRequest implements ChangePinRequest {
+  const factory _ChangePinRequest(
+          {@JsonKey(name: "oldPin") required final String oldPin,
+          @JsonKey(name: "newPin") required final String newPin}) =
+      _$ChangePinRequestImpl;
+
+  factory _ChangePinRequest.fromJson(Map<String, dynamic> json) =
+      _$ChangePinRequestImpl.fromJson;
+
+  @override
+  @JsonKey(name: "oldPin")
+  String get oldPin;
+  @override
+  @JsonKey(name: "newPin")
+  String get newPin;
+
+  /// Create a copy of ChangePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ChangePinRequestImplCopyWith<_$ChangePinRequestImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ResetPinRequest _$ResetPinRequestFromJson(Map<String, dynamic> json) {
+  return _ResetPinRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ResetPinRequest {
+  @JsonKey(name: "password")
+  String get password => throw _privateConstructorUsedError;
+
+  /// Serializes this ResetPinRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ResetPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ResetPinRequestCopyWith<ResetPinRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ResetPinRequestCopyWith<$Res> {
+  factory $ResetPinRequestCopyWith(
+          ResetPinRequest value, $Res Function(ResetPinRequest) then) =
+      _$ResetPinRequestCopyWithImpl<$Res, ResetPinRequest>;
+  @useResult
+  $Res call({@JsonKey(name: "password") String password});
+}
+
+/// @nodoc
+class _$ResetPinRequestCopyWithImpl<$Res, $Val extends ResetPinRequest>
+    implements $ResetPinRequestCopyWith<$Res> {
+  _$ResetPinRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ResetPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? password = null,
+  }) {
+    return _then(_value.copyWith(
+      password: null == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ResetPinRequestImplCopyWith<$Res>
+    implements $ResetPinRequestCopyWith<$Res> {
+  factory _$$ResetPinRequestImplCopyWith(_$ResetPinRequestImpl value,
+          $Res Function(_$ResetPinRequestImpl) then) =
+      __$$ResetPinRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({@JsonKey(name: "password") String password});
+}
+
+/// @nodoc
+class __$$ResetPinRequestImplCopyWithImpl<$Res>
+    extends _$ResetPinRequestCopyWithImpl<$Res, _$ResetPinRequestImpl>
+    implements _$$ResetPinRequestImplCopyWith<$Res> {
+  __$$ResetPinRequestImplCopyWithImpl(
+      _$ResetPinRequestImpl _value, $Res Function(_$ResetPinRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ResetPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? password = null,
+  }) {
+    return _then(_$ResetPinRequestImpl(
+      password: null == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ResetPinRequestImpl
+    with DiagnosticableTreeMixin
+    implements _ResetPinRequest {
+  const _$ResetPinRequestImpl(
+      {@JsonKey(name: "password") required this.password});
+
+  factory _$ResetPinRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ResetPinRequestImplFromJson(json);
+
+  @override
+  @JsonKey(name: "password")
+  final String password;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ResetPinRequest(password: $password)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ResetPinRequest'))
+      ..add(DiagnosticsProperty('password', password));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ResetPinRequestImpl &&
+            (identical(other.password, password) ||
+                other.password == password));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, password);
+
+  /// Create a copy of ResetPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ResetPinRequestImplCopyWith<_$ResetPinRequestImpl> get copyWith =>
+      __$$ResetPinRequestImplCopyWithImpl<_$ResetPinRequestImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ResetPinRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ResetPinRequest implements ResetPinRequest {
+  const factory _ResetPinRequest(
+          {@JsonKey(name: "password") required final String password}) =
+      _$ResetPinRequestImpl;
+
+  factory _ResetPinRequest.fromJson(Map<String, dynamic> json) =
+      _$ResetPinRequestImpl.fromJson;
+
+  @override
+  @JsonKey(name: "password")
+  String get password;
+
+  /// Create a copy of ResetPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ResetPinRequestImplCopyWith<_$ResetPinRequestImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+CreatePinRequest _$CreatePinRequestFromJson(Map<String, dynamic> json) {
+  return _CreatePinRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$CreatePinRequest {
+  @JsonKey(name: "pin")
+  String get pin => throw _privateConstructorUsedError;
+  @JsonKey(name: "pin_confirmation")
+  String get pinConfirmation => throw _privateConstructorUsedError;
+
+  /// Serializes this CreatePinRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of CreatePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $CreatePinRequestCopyWith<CreatePinRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $CreatePinRequestCopyWith<$Res> {
+  factory $CreatePinRequestCopyWith(
+          CreatePinRequest value, $Res Function(CreatePinRequest) then) =
+      _$CreatePinRequestCopyWithImpl<$Res, CreatePinRequest>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "pin") String pin,
+      @JsonKey(name: "pin_confirmation") String pinConfirmation});
+}
+
+/// @nodoc
+class _$CreatePinRequestCopyWithImpl<$Res, $Val extends CreatePinRequest>
+    implements $CreatePinRequestCopyWith<$Res> {
+  _$CreatePinRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of CreatePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pin = null,
+    Object? pinConfirmation = null,
+  }) {
+    return _then(_value.copyWith(
+      pin: null == pin
+          ? _value.pin
+          : pin // ignore: cast_nullable_to_non_nullable
+              as String,
+      pinConfirmation: null == pinConfirmation
+          ? _value.pinConfirmation
+          : pinConfirmation // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$CreatePinRequestImplCopyWith<$Res>
+    implements $CreatePinRequestCopyWith<$Res> {
+  factory _$$CreatePinRequestImplCopyWith(_$CreatePinRequestImpl value,
+          $Res Function(_$CreatePinRequestImpl) then) =
+      __$$CreatePinRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "pin") String pin,
+      @JsonKey(name: "pin_confirmation") String pinConfirmation});
+}
+
+/// @nodoc
+class __$$CreatePinRequestImplCopyWithImpl<$Res>
+    extends _$CreatePinRequestCopyWithImpl<$Res, _$CreatePinRequestImpl>
+    implements _$$CreatePinRequestImplCopyWith<$Res> {
+  __$$CreatePinRequestImplCopyWithImpl(_$CreatePinRequestImpl _value,
+      $Res Function(_$CreatePinRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of CreatePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pin = null,
+    Object? pinConfirmation = null,
+  }) {
+    return _then(_$CreatePinRequestImpl(
+      pin: null == pin
+          ? _value.pin
+          : pin // ignore: cast_nullable_to_non_nullable
+              as String,
+      pinConfirmation: null == pinConfirmation
+          ? _value.pinConfirmation
+          : pinConfirmation // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$CreatePinRequestImpl
+    with DiagnosticableTreeMixin
+    implements _CreatePinRequest {
+  const _$CreatePinRequestImpl(
+      {@JsonKey(name: "pin") required this.pin,
+      @JsonKey(name: "pin_confirmation") required this.pinConfirmation});
+
+  factory _$CreatePinRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CreatePinRequestImplFromJson(json);
+
+  @override
+  @JsonKey(name: "pin")
+  final String pin;
+  @override
+  @JsonKey(name: "pin_confirmation")
+  final String pinConfirmation;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'CreatePinRequest(pin: $pin, pinConfirmation: $pinConfirmation)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'CreatePinRequest'))
+      ..add(DiagnosticsProperty('pin', pin))
+      ..add(DiagnosticsProperty('pinConfirmation', pinConfirmation));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CreatePinRequestImpl &&
+            (identical(other.pin, pin) || other.pin == pin) &&
+            (identical(other.pinConfirmation, pinConfirmation) ||
+                other.pinConfirmation == pinConfirmation));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, pin, pinConfirmation);
+
+  /// Create a copy of CreatePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CreatePinRequestImplCopyWith<_$CreatePinRequestImpl> get copyWith =>
+      __$$CreatePinRequestImplCopyWithImpl<_$CreatePinRequestImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CreatePinRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _CreatePinRequest implements CreatePinRequest {
+  const factory _CreatePinRequest(
+      {@JsonKey(name: "pin") required final String pin,
+      @JsonKey(name: "pin_confirmation")
+      required final String pinConfirmation}) = _$CreatePinRequestImpl;
+
+  factory _CreatePinRequest.fromJson(Map<String, dynamic> json) =
+      _$CreatePinRequestImpl.fromJson;
+
+  @override
+  @JsonKey(name: "pin")
+  String get pin;
+  @override
+  @JsonKey(name: "pin_confirmation")
+  String get pinConfirmation;
+
+  /// Create a copy of CreatePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CreatePinRequestImplCopyWith<_$CreatePinRequestImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ChangePasswordRequest _$ChangePasswordRequestFromJson(
+    Map<String, dynamic> json) {
+  return _ChangePasswordRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ChangePasswordRequest {
+  @JsonKey(name: "oldPassword")
+  String get oldPassword => throw _privateConstructorUsedError;
+  @JsonKey(name: "newPassword")
+  String get newPassword => throw _privateConstructorUsedError;
+
+  /// Serializes this ChangePasswordRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ChangePasswordRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ChangePasswordRequestCopyWith<ChangePasswordRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ChangePasswordRequestCopyWith<$Res> {
+  factory $ChangePasswordRequestCopyWith(ChangePasswordRequest value,
+          $Res Function(ChangePasswordRequest) then) =
+      _$ChangePasswordRequestCopyWithImpl<$Res, ChangePasswordRequest>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "oldPassword") String oldPassword,
+      @JsonKey(name: "newPassword") String newPassword});
+}
+
+/// @nodoc
+class _$ChangePasswordRequestCopyWithImpl<$Res,
+        $Val extends ChangePasswordRequest>
+    implements $ChangePasswordRequestCopyWith<$Res> {
+  _$ChangePasswordRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ChangePasswordRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? oldPassword = null,
+    Object? newPassword = null,
+  }) {
+    return _then(_value.copyWith(
+      oldPassword: null == oldPassword
+          ? _value.oldPassword
+          : oldPassword // ignore: cast_nullable_to_non_nullable
+              as String,
+      newPassword: null == newPassword
+          ? _value.newPassword
+          : newPassword // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ChangePasswordRequestImplCopyWith<$Res>
+    implements $ChangePasswordRequestCopyWith<$Res> {
+  factory _$$ChangePasswordRequestImplCopyWith(
+          _$ChangePasswordRequestImpl value,
+          $Res Function(_$ChangePasswordRequestImpl) then) =
+      __$$ChangePasswordRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "oldPassword") String oldPassword,
+      @JsonKey(name: "newPassword") String newPassword});
+}
+
+/// @nodoc
+class __$$ChangePasswordRequestImplCopyWithImpl<$Res>
+    extends _$ChangePasswordRequestCopyWithImpl<$Res,
+        _$ChangePasswordRequestImpl>
+    implements _$$ChangePasswordRequestImplCopyWith<$Res> {
+  __$$ChangePasswordRequestImplCopyWithImpl(_$ChangePasswordRequestImpl _value,
+      $Res Function(_$ChangePasswordRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ChangePasswordRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? oldPassword = null,
+    Object? newPassword = null,
+  }) {
+    return _then(_$ChangePasswordRequestImpl(
+      oldPassword: null == oldPassword
+          ? _value.oldPassword
+          : oldPassword // ignore: cast_nullable_to_non_nullable
+              as String,
+      newPassword: null == newPassword
+          ? _value.newPassword
+          : newPassword // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ChangePasswordRequestImpl
+    with DiagnosticableTreeMixin
+    implements _ChangePasswordRequest {
+  const _$ChangePasswordRequestImpl(
+      {@JsonKey(name: "oldPassword") required this.oldPassword,
+      @JsonKey(name: "newPassword") required this.newPassword});
+
+  factory _$ChangePasswordRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ChangePasswordRequestImplFromJson(json);
+
+  @override
+  @JsonKey(name: "oldPassword")
+  final String oldPassword;
+  @override
+  @JsonKey(name: "newPassword")
+  final String newPassword;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ChangePasswordRequest(oldPassword: $oldPassword, newPassword: $newPassword)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ChangePasswordRequest'))
+      ..add(DiagnosticsProperty('oldPassword', oldPassword))
+      ..add(DiagnosticsProperty('newPassword', newPassword));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ChangePasswordRequestImpl &&
+            (identical(other.oldPassword, oldPassword) ||
+                other.oldPassword == oldPassword) &&
+            (identical(other.newPassword, newPassword) ||
+                other.newPassword == newPassword));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, oldPassword, newPassword);
+
+  /// Create a copy of ChangePasswordRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ChangePasswordRequestImplCopyWith<_$ChangePasswordRequestImpl>
+      get copyWith => __$$ChangePasswordRequestImplCopyWithImpl<
+          _$ChangePasswordRequestImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ChangePasswordRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ChangePasswordRequest implements ChangePasswordRequest {
+  const factory _ChangePasswordRequest(
+          {@JsonKey(name: "oldPassword") required final String oldPassword,
+          @JsonKey(name: "newPassword") required final String newPassword}) =
+      _$ChangePasswordRequestImpl;
+
+  factory _ChangePasswordRequest.fromJson(Map<String, dynamic> json) =
+      _$ChangePasswordRequestImpl.fromJson;
+
+  @override
+  @JsonKey(name: "oldPassword")
+  String get oldPassword;
+  @override
+  @JsonKey(name: "newPassword")
+  String get newPassword;
+
+  /// Create a copy of ChangePasswordRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ChangePasswordRequestImplCopyWith<_$ChangePasswordRequestImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

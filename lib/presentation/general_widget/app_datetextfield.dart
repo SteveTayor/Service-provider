@@ -25,7 +25,7 @@ class AppDatetextfield extends StatelessWidget {
         ),
       ],
     ).withContainer(
-      padding: context.symmetricPadding(16, 23),
+      padding: context.symmetricPadding(16, 15),
       borderRadius: BorderRadius.circular(6.r),
       color: AppColors.white,
       border: Border.all(

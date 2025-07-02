@@ -1,31 +1,23 @@
+import 'package:bundlegram/presentation/features/onboarding/notifier/forgot_password_notifier.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
-import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/validators.dart';
-import 'package:bundlegram/gen/assets.gen.dart';
-import 'package:bundlegram/presentation/features/onboarding/screens/resetpasswordlink_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
-import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
-class ForgetPasswordScreen extends StatefulWidget {
+class ForgetPasswordScreen extends ConsumerWidget {
   const ForgetPasswordScreen({super.key});
 
   @override
-  State<ForgetPasswordScreen> createState() => _ForgetPasswordScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final prov = ref.watch(forgetPasswordProvider);
+    final ctrl = ref.read(forgetPasswordProvider);
 
-class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
-  final bool _isFormValid = false;
-  final _formKey = GlobalKey<FormState>();
-  @override
-  Widget build(BuildContext context) {
-    String userEmail = 'roseowen@gmail.com';
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(),
       sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
@@ -33,10 +25,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         children: [
           Column(
             children: [
-              Text(
-                'Forget Password?',
-                style: context.textTheme.titleMedium,
-              ),
+              Text('Forget Password?', style: context.textTheme.titleMedium),
               Text(
                 'Enter email address used to create account. A code will be sent for verification.',
                 textAlign: TextAlign.center,
@@ -50,26 +39,17 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           40.verticalSpace,
           Expanded(
             child: AppForm(
+              formKey: ctrl.formKey,
               isExpanded: false,
-              isActive: _isFormValid,
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) => ResetPasswordLinkScreen(
-                      title: 'Reset link sent!',
-                      subtitle:
-                          'A password reset link has been sent to your email, ${userEmail}. Check your inbox and click the link to reset your password.',
-                    ),
-                  ),
-                );
-              },
+              isActive: prov.isValid,
+              onPressed: () => ctrl.submit(context),
               buttonText: 'Continue',
-              formKey: _formKey,
               children: [
                 AppTextField(
                   hintText: 'Email',
+                  controller: ctrl.emailCtrl,
                   validateFunction: Validators.email(),
+                  keyboardType: TextInputType.emailAddress,
                 ),
               ],
             ),

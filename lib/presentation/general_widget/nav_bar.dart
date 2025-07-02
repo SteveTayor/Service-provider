@@ -1,6 +1,7 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,29 +13,29 @@ class NavBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final items = [
-{
-  'icon':      Assets.svgs.homeinactive,
-  'active': Assets.svgs.home,
-  'name':'Home',
-
-},
-{
-  'icon':      Assets.svgs.wallet,
-    'active': Assets.svgs.walletactive,
-  'name':'Wallet',
-},
-     {
-  'icon':      Assets.svgs.receipt,
-    'active': Assets.svgs.receiptactive,
-  'name':'Transactions',
-},
       {
-  'icon':      Assets.svgs.userCircleSingleStreamlineCore,
-    'active': Assets.svgs.userActive,
-  'name':'Account',
-},
+        'icon': Assets.svgs.homeinactive,
+        'active': Assets.svgs.home,
+        'name': 'Home',
+      },
+      {
+        'icon': Assets.svgs.wallet,
+        'active': Assets.svgs.walletactive,
+        'name': 'Wallet',
+      },
+      {
+        'icon': Assets.svgs.receipt,
+        'active': Assets.svgs.receiptactive,
+        'name': 'Transactions',
+      },
+      {
+        'icon': Assets.svgs.userCircleSingleStreamlineCore,
+        'active': Assets.svgs.userActive,
+        'name': 'Account',
+      },
     ];
-    final v = ref.watch(currentIndexProvider);
+    final v = ref.watch(dashboardProvider);
+
     return Container(
       padding: EdgeInsets.fromLTRB(
         23.w,
@@ -51,7 +52,9 @@ class NavBar extends ConsumerWidget {
             items.length,
             (index) => InkWell(
               onTap: () {
-                ref.read(currentIndexProvider.notifier).state = index;
+                ref
+                    .read(dashboardProvider.notifier)
+                    .onDestinationSelected(index, context);
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
@@ -61,15 +64,21 @@ class NavBar extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     AppSvgIcon(
-                      path: index == v?
-                      '${items[index]['active']}':'${items[index]['icon']}',
-                    width: 24.w,height: 24.h,fit: BoxFit.scaleDown,
+                      path: index == v
+                          ? '${items[index]['active']}'
+                          : '${items[index]['icon']}',
+                      width: 24.w,
+                      height: 24.h,
+                      fit: BoxFit.scaleDown,
                     ),
                     6.verticalSpace,
-                    Text('${items[index]['name']}',style: context.textTheme.bodySmall!.copyWith(
-                      fontSize: 14.sp,
-                      color: AppColors.black.withOpacity(0.6),
-                    ),),
+                    Text(
+                      '${items[index]['name']}',
+                      style: context.textTheme.bodySmall!.copyWith(
+                        fontSize: 14.sp,
+                        color: AppColors.black.withOpacity(0.6),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -80,5 +89,3 @@ class NavBar extends ConsumerWidget {
     );
   }
 }
-
-final currentIndexProvider = StateProvider.autoDispose<int>((ref) => 0);

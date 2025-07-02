@@ -27,8 +27,8 @@ class LoginProvider extends ChangeNotifier {
   final Ref _ref;
 
   LoginProvider(this._api, this._storage, this._ref) {
-    emailCtrl.addListener(_validate);
-    passwordCtrl.addListener(_validate);
+    emailCtrl.addListener(validate);
+    passwordCtrl.addListener(validate);
     _loadRememberedEmail();
   }
 
@@ -45,6 +45,13 @@ class LoginProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get rememberMe => _rememberMe;
+  bool _showPassword = true;
+  bool get showPassword => _showPassword;
+
+  void togglePasswordVisibility() {
+    _showPassword = !_showPassword;
+    notifyListeners();
+  }
 
   void toggleRememberMe(bool? value) {
     _rememberMe = value ?? false;
@@ -61,7 +68,7 @@ class LoginProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _validate() {
+  void validate() {
     final valid = formKey.currentState?.validate() ?? false;
     if (valid != _isValid) {
       _isValid = valid;
@@ -96,8 +103,8 @@ class LoginProvider extends ChangeNotifier {
     await loginResult.fold(
       (fail) async {
         context.dismissDialog();
-        final message = fail.props.isNotEmpty
-            ? fail.props.first.toString()
+        final message = fail.properties.isNotEmpty
+            ? fail.properties.join('\n')
             : 'Login failed';
         context.showErrorSnackBar(message);
         _setLoading(false);
@@ -113,13 +120,30 @@ class LoginProvider extends ChangeNotifier {
         }
 
         await _storage.setAuthToken(token);
+        await _storage.setPassword(passwordCtrl.text.trim()); // Save password
+
         if (_rememberMe) {
           await _storage.setRememberedEmail(emailCtrl.text.trim());
         } else {
           await _storage.clearRememberedEmail();
         }
 
-        // 1. Fetch profile
+        // Check if username creation is required
+        // final dataStatus = loginData.data;
+        final message = loginData.message;
+        if (message != null &&
+            message == "Please create a username to continue") {
+          context.dismissDialog();
+          _setLoading(false);
+          // Navigate to ChooseUsernameScreen with fromLogin flag
+          context.go(
+            RouteConstants.chooseUsername,
+            extra: {'fromLogin': true},
+          );
+          return;
+        }
+
+        // Proceed with fetching data if username is not required
         context
           ..dismissDialog()
           ..showLoadingDialog(message: 'Fetching profile...');
@@ -132,29 +156,29 @@ class LoginProvider extends ChangeNotifier {
           return;
         }
 
-        // 2. Fetch banks
-        // context..dismissDialog()
-        // ..showLoadingDialog(message: 'Fetching banks...');
-        // final bankRes = await _api.getBanks(token);
-        // if (bankRes.isLeft()) {
-        //   context..dismissDialog()
-        //   ..showErrorSnackBar("Failed to fetch banks");
-        //   _setLoading(false);
-        //   return;
-        // }
-
-        // 3. Fetch wallet
         context
           ..dismissDialog()
-          ..showLoadingDialog(message: 'Fetching wallet...');
-        final walletRes = await _api.getWallet(token);
-        if (walletRes.isLeft()) {
+          ..showLoadingDialog(message: 'Fetching banks...');
+        final bankRes = await _api.getAllBanks(token);
+        if (bankRes.isLeft()) {
           context
             ..dismissDialog()
-            ..showErrorSnackBar("Failed to fetch wallet");
+            ..showErrorSnackBar("Failed to fetch banks");
           _setLoading(false);
           return;
         }
+
+        // context
+        //   ..dismissDialog()
+        //   ..showLoadingDialog(message: 'Fetching wallet...');
+        // final walletRes = await _api.getWallet(token);
+        // if (walletRes.isLeft()) {
+        //   context
+        //     ..dismissDialog()
+        //     ..showErrorSnackBar("Failed to fetch wallet");
+        //   _setLoading(false);
+        //   return;
+        // }
 
         context.dismissDialog();
         _setLoading(false);
@@ -170,5 +194,3 @@ class LoginProvider extends ChangeNotifier {
     super.dispose();
   }
 }
-
-// LoginScreen will be added next

@@ -53,12 +53,29 @@ class VerifyOtpRequest with _$VerifyOtpRequest {
 }
 
 @freezed
+class VerifyEmailRequest with _$VerifyEmailRequest {
+  const factory VerifyEmailRequest({
+    required String otp,
+  }) = _VerifyEmailRequest;
+  factory VerifyEmailRequest.fromJson(Map<String, dynamic> json) =>
+      _$VerifyEmailRequestFromJson(json);
+}
+
+@freezed
+class DeleteAccountRequest with _$DeleteAccountRequest {
+  const factory DeleteAccountRequest({
+    required String pin,
+  }) = _DeleteAccountRequest;
+  factory DeleteAccountRequest.fromJson(Map<String, dynamic> json) =>
+      _$DeleteAccountRequestFromJson(json);
+}
+
+@freezed
 class NewPasswordRequest with _$NewPasswordRequest {
   const factory NewPasswordRequest({
     required String email,
     required String password,
     @JsonKey(name: 'password_confirm') required String passwordConfirm,
-    required String otp,
   }) = _NewPasswordRequest;
 
   factory NewPasswordRequest.fromJson(Map<String, dynamic> json) =>
@@ -83,4 +100,47 @@ class CheckUsernameRequest with _$CheckUsernameRequest {
 
   factory CheckUsernameRequest.fromJson(Map<String, dynamic> json) =>
       _$CheckUsernameRequestFromJson(json);
+}
+
+@freezed
+class ChangePinRequest with _$ChangePinRequest {
+  const factory ChangePinRequest({
+    @JsonKey(name: "oldPin") required String oldPin,
+    @JsonKey(name: "newPin") required String newPin,
+  }) = _ChangePinRequest;
+
+  factory ChangePinRequest.fromJson(Map<String, dynamic> json) =>
+      _$ChangePinRequestFromJson(json);
+}
+
+@freezed
+class ResetPinRequest with _$ResetPinRequest {
+  const factory ResetPinRequest({
+    @JsonKey(name: "password") required String password,
+  }) = _ResetPinRequest;
+
+  factory ResetPinRequest.fromJson(Map<String, dynamic> json) =>
+      _$ResetPinRequestFromJson(json);
+}
+
+@freezed
+class CreatePinRequest with _$CreatePinRequest {
+  const factory CreatePinRequest({
+    @JsonKey(name: "pin") required String pin,
+    @JsonKey(name: "pin_confirmation") required String pinConfirmation,
+  }) = _CreatePinRequest;
+
+  factory CreatePinRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreatePinRequestFromJson(json);
+}
+
+@freezed
+class ChangePasswordRequest with _$ChangePasswordRequest {
+  const factory ChangePasswordRequest({
+    @JsonKey(name: "oldPassword") required String oldPassword,
+    @JsonKey(name: "newPassword") required String newPassword,
+  }) = _ChangePasswordRequest;
+
+  factory ChangePasswordRequest.fromJson(Map<String, dynamic> json) =>
+      _$ChangePasswordRequestFromJson(json);
 }

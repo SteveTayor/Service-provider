@@ -17,12 +17,16 @@ class ApiClient {
       responseType: ResponseType.json,
     );
 
+
     _dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: _onRequest,
-        onError: _onError,
-      ),
-    );
+        LogInterceptor(
+          request: true,
+          requestBody: true,
+          responseBody: true,
+          responseHeader: true,
+          error: true,
+        ),
+      );
   }
 
   Future<void> _onRequest(

@@ -50,26 +50,44 @@ class BundlegramScaffold extends StatelessWidget {
                 showBackButton: false,
               ),
           backgroundColor: backgroundColor,
-          resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+          resizeToAvoidBottomInset: resizeToAvoidBottomInset ?? false,
           body: Padding(
             padding: sidePadding ?? const EdgeInsets.all(16),
-            child: SizedBox(
-              height: context.height,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  if (showBackImage)
-                    // Positioned.fill(
-                    //   child: Image(
-                    //     image:
-                    //         backgroundImage ?? Assets.images.pattern.provider()
-                    //     fit: BoxFit.cover,
-                    //     repeat: ImageRepeat.repeat,
-                    //   ),
-                    // ),
-                    body,
-                ],
-              ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      if (showBackImage)
+                        // Positioned.fill(
+                        //   child: Image(
+                        //     image:
+                        //         backgroundImage ?? Assets.images.pattern.provider()
+                        //     fit: BoxFit.cover,
+                        //     repeat: ImageRepeat.repeat,
+                        //   ),
+                        // ),
+                        // SingleChildScrollView(
+                        //   padding: EdgeInsets.only(
+                        //     bottom: MediaQuery.of(context).viewInsets.bottom,
+                        //   ),
+                        //   child: ConstrainedBox(
+                        //     constraints: BoxConstraints(
+                        //       minHeight: MediaQuery.of(context).size.height -
+                        //           MediaQuery.of(context).padding.top -
+                        //           (appBar?.preferredSize.height ??
+                        //               kToolbarHeight) -
+                        //           (sidePadding?.vertical ?? 32),
+                        //     ),
+                        //     child: IntrinsicHeight(child: body),
+                        //   ),
+                        // ),
+                        body,
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           floatingActionButton: floatingActionButton,

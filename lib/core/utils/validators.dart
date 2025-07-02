@@ -21,8 +21,12 @@ class Validators {
 
   static Validator confirmPass(String passwordToMatch) {
     return (String? value) {
-      if (value == null || value.isEmpty) return 'Required';
-      return value != passwordToMatch ? 'Passwords do not match' : null;
+      // if (value == null || value.isEmpty) return 'Required';
+      // return value != passwordToMatch ? 'Passwords do not match' : null;
+      if (value == null || value.isEmpty) return "required";
+
+      if (value != passwordToMatch) return "must be the same password";
+      return null;
     };
   }
 
@@ -48,6 +52,17 @@ class Validators {
     };
   }
 
+  // static Validator phone([String? text]) {
+  //   return (String? value) {
+  //     if (value == null) {
+  //       return null;
+  //     }
+  //     return !phonePattern.hasMatch(value)
+  //         ? (text ?? 'Invalid phone number')
+  //         : null;
+  //   };
+  // }
+
   static Validator validateNigerianPhoneNumber() {
     return (String? value) {
       if (value == null || value.isEmpty) return 'This field is required';
@@ -57,8 +72,8 @@ class Validators {
       } else {
         if (digitsOnly.length != 10) return 'Must be 10 digits';
       }
-      if (!RegExp(r'^(?:07|08|09)\d{8,9}$').hasMatch(value)) {
-        return 'Enter a valid Nigerian number';
+      if (!phonePattern.hasMatch(value)) {
+        return 'Invalid phone number';
       }
       return null;
     };
@@ -116,7 +131,7 @@ class Validators {
       if (value!.isEmpty) {
         return 'Field cannot be empty.';
       }
-      if (value.length < 3) return 'Input your name as it appears in your id';
+      if (value.length < 3) return "Input your name as it appears in your id";
       return null;
     };
   }

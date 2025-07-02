@@ -58,7 +58,7 @@ class ServiceListItem extends StatelessWidget {
               Text(
                 service.title,
                 style: context.textTheme.bodyMedium!.copyWith(
-                  fontSize: 16.sp,
+                  fontSize: 14.sp,
                 ),
               ),
               SizedBox(height: 4.h),
@@ -68,7 +68,7 @@ class ServiceListItem extends StatelessWidget {
                     child: Text(
                       service.status,
                       style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 14.sp,
+                        fontSize: 12.sp,
                         color: _getStatusColor(),
                       ),
                     ),
@@ -92,7 +92,7 @@ class ServiceListItem extends StatelessWidget {
         Text(
           service.amount,
           style: context.textTheme.bodyMedium!.copyWith(
-            fontSize: 16.sp,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w500,
           ),
         ),

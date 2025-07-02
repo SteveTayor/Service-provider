@@ -37,8 +37,10 @@ class Endpoints {
   static const String resetPin = '/reset-pin';
   static const String linkBvn = '/link-bvn';
   static const String getVirtualAccount = '/get-virtual-account';
+  static const String deleteAccount = '/delete-account';
 
   // Bank management
+  static const String getAllBanks = '/get-banks';
   static const String getUserBank = '/get-user-bank';
   static const String addBank = '/add-bank';
   static const String fetchAccountName = '/fetch-account-name';
@@ -86,8 +88,16 @@ class Endpoints {
   static const String initiateDataAirtimeTransaction =
       '/initiateDataAirtimeTransaction';
 
-  /// Lists electronic PIN transactions.
-  static const String userTransactionsEpin = '/userTransactions/epin';
+  /// Lists transactions, [type], e.g. 'data', 'airtime'.......
+  static String userTransactionsByServiceType(String type) =>
+      '/userTransactions/$type';
+
+  /// Lists all users transactions
+  static const String allUserTransactions = '/userTransactions';
+
+  ///Initiates a single transaction details
+  static const String webhook =
+      'https://api.bundlegram.com/squad/payment/notification/webhook';
 
   // ====================
   // Merchant / Agent

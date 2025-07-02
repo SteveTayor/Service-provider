@@ -66,13 +66,36 @@ Map<String, dynamic> _$$VerifyOtpRequestImplToJson(
       'otp': instance.otp,
     };
 
+_$VerifyEmailRequestImpl _$$VerifyEmailRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$VerifyEmailRequestImpl(
+      otp: json['otp'] as String,
+    );
+
+Map<String, dynamic> _$$VerifyEmailRequestImplToJson(
+        _$VerifyEmailRequestImpl instance) =>
+    <String, dynamic>{
+      'otp': instance.otp,
+    };
+
+_$DeleteAccountRequestImpl _$$DeleteAccountRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$DeleteAccountRequestImpl(
+      pin: json['pin'] as String,
+    );
+
+Map<String, dynamic> _$$DeleteAccountRequestImplToJson(
+        _$DeleteAccountRequestImpl instance) =>
+    <String, dynamic>{
+      'pin': instance.pin,
+    };
+
 _$NewPasswordRequestImpl _$$NewPasswordRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$NewPasswordRequestImpl(
       email: json['email'] as String,
       password: json['password'] as String,
       passwordConfirm: json['password_confirm'] as String,
-      otp: json['otp'] as String,
     );
 
 Map<String, dynamic> _$$NewPasswordRequestImplToJson(
@@ -81,7 +104,6 @@ Map<String, dynamic> _$$NewPasswordRequestImplToJson(
       'email': instance.email,
       'password': instance.password,
       'password_confirm': instance.passwordConfirm,
-      'otp': instance.otp,
     };
 
 _$AddUsernameRequestImpl _$$AddUsernameRequestImplFromJson(
@@ -106,4 +128,58 @@ Map<String, dynamic> _$$CheckUsernameRequestImplToJson(
         _$CheckUsernameRequestImpl instance) =>
     <String, dynamic>{
       'username': instance.username,
+    };
+
+_$ChangePinRequestImpl _$$ChangePinRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ChangePinRequestImpl(
+      oldPin: json['oldPin'] as String,
+      newPin: json['newPin'] as String,
+    );
+
+Map<String, dynamic> _$$ChangePinRequestImplToJson(
+        _$ChangePinRequestImpl instance) =>
+    <String, dynamic>{
+      'oldPin': instance.oldPin,
+      'newPin': instance.newPin,
+    };
+
+_$ResetPinRequestImpl _$$ResetPinRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ResetPinRequestImpl(
+      password: json['password'] as String,
+    );
+
+Map<String, dynamic> _$$ResetPinRequestImplToJson(
+        _$ResetPinRequestImpl instance) =>
+    <String, dynamic>{
+      'password': instance.password,
+    };
+
+_$CreatePinRequestImpl _$$CreatePinRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CreatePinRequestImpl(
+      pin: json['pin'] as String,
+      pinConfirmation: json['pin_confirmation'] as String,
+    );
+
+Map<String, dynamic> _$$CreatePinRequestImplToJson(
+        _$CreatePinRequestImpl instance) =>
+    <String, dynamic>{
+      'pin': instance.pin,
+      'pin_confirmation': instance.pinConfirmation,
+    };
+
+_$ChangePasswordRequestImpl _$$ChangePasswordRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ChangePasswordRequestImpl(
+      oldPassword: json['oldPassword'] as String,
+      newPassword: json['newPassword'] as String,
+    );
+
+Map<String, dynamic> _$$ChangePasswordRequestImplToJson(
+        _$ChangePasswordRequestImpl instance) =>
+    <String, dynamic>{
+      'oldPassword': instance.oldPassword,
+      'newPassword': instance.newPassword,
     };

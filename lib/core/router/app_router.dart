@@ -22,6 +22,7 @@ import 'package:bundlegram/presentation/features/onboarding/screens/walkthrough_
 import 'package:bundlegram/presentation/features/setting/screens/changeaccountpin_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/changepassword_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/notiificationsetting_screen.dart';
+import 'package:bundlegram/presentation/features/setting/screens/pin_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/privacysecurity_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/resetaccountpin.dart';
 import 'package:bundlegram/presentation/features/setting/screens/setting_screen.dart';
@@ -70,7 +71,11 @@ class AppRouter {
       ),
       GoRoute(
         path: RouteConstants.chooseUsername,
-        builder: (context, state) => const ChooseUsernameScreen(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final fromLogin = extra?['fromLogin'] as bool? ?? false;
+          return ChooseUsernameScreen(fromLogin: fromLogin);
+        },
       ),
       GoRoute(
         path: RouteConstants.onboardResult,
@@ -173,6 +178,10 @@ class AppRouter {
       GoRoute(
         path: RouteConstants.walletHistoryScreen,
         builder: (context, state) => const WalletHistoryScreen(),
+      ),
+      GoRoute(
+        path: RouteConstants.pinScreen,
+        builder: (context, state) => const PinScreen(),
       ),
 
       //   ShellRoute(

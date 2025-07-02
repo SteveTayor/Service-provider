@@ -139,7 +139,7 @@ class _AppTextFieldState extends State<AppTextField> {
             style: widget.textStyle ??
                 context.textTheme.bodySmall?.copyWith(
                   fontSize: 14.sp,
-                  color: widget.cursorColor ?? AppColors.grey80,
+                  color: widget.cursorColor ?? AppColors.grey19,
                 ),
             cursorColor: widget.cursorColor ?? AppColors.grey80,
             key: widget.key,
@@ -153,20 +153,20 @@ class _AppTextFieldState extends State<AppTextField> {
             decoration: widget.decoration ??
                 InputDecoration(
                   contentPadding:
-                      EdgeInsets.symmetric(horizontal: 24.w, vertical: 22.h),
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                   // filled: true,
                   constraints: BoxConstraints(
-                    minHeight: 67.h,
+                    minHeight: 56.h,
                   ),
 
                   fillColor: widget.backgroundColor ?? AppColors.white,
                   prefixIconConstraints: BoxConstraints(
-                    minWidth: 64.w,
-                    minHeight: 24.h,
+                    minWidth: 60.w,
+                    minHeight: 18.h,
                   ),
                   prefixIcon: widget.prefixIcon,
                   suffixIconConstraints:
-                      BoxConstraints(minWidth: 50.w, minHeight: 20.h),
+                      BoxConstraints(minWidth: 50.w, minHeight: 18.h),
                   suffixIcon: widget.suffixIcon,
                   enabled: false,
                   errorStyle: context.textTheme.bodySmall!.copyWith(
@@ -177,7 +177,7 @@ class _AppTextFieldState extends State<AppTextField> {
                   errorMaxLines: 1,
                   hintStyle: widget.hintStyle ??
                       context.textTheme.bodySmall!.copyWith(
-                        fontSize: 18.sp,
+                        fontSize: 14.sp,
                         color: AppColors.grey33,
                       ),
                   enabledBorder: OutlineInputBorder(
