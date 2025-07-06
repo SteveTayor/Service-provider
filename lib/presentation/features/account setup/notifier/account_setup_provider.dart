@@ -22,10 +22,10 @@ class AccountSetupProvider extends ChangeNotifier {
   /// Compute which steps are complete based on the global profile
   List<AccountSetupStep> get steps {
     final profileAsync = _ref.watch(globalProvider).profile;
-    bool emailVerified = false;
-    bool basicInfo = false;
-    bool bvnLinked = false;
-    bool bankAdded = false;
+    dynamic emailVerified = false;
+    dynamic basicInfo = false;
+    dynamic bvnLinked = false;
+    dynamic bankAdded = false;
 
     if (profileAsync is AsyncData<ProfileResponse>) {
       final p = profileAsync.value.data!;
@@ -53,7 +53,7 @@ class AccountSetupProvider extends ChangeNotifier {
         label: 'Verify your email for security purpose',
         done: emailVerified,
         isBottomSheet: true,
-        bottomSheet: const VerifyemailWidget(),
+        bottomSheet: const VerifyEmailWidget(),
       ),
       AccountSetupStep(
         asset: Assets.svgs.addbasicinfo,

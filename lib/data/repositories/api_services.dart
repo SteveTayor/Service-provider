@@ -38,6 +38,7 @@ import 'package:bundlegram/data/models/transaction/initiate_transactcion_request
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction/validate_bill_request.dart';
 import 'package:bundlegram/data/models/transaction/validate_bill_response.dart';
+import 'package:bundlegram/data/models/transaction/withdraw_request.dart';
 import 'package:bundlegram/domain/api_definitions/api_definition.dart';
 import 'package:bundlegram/env.dart';
 import 'package:dartz/dartz.dart';
@@ -68,7 +69,7 @@ class ApiService {
   }
 
   Future<Either<Failure, void>> logout(String token) {
-    return handleApi(() => _api.logout('Bearer $token'));
+    return handleApi(() => _api.logout('Bearer $token', _sterilizer));
   }
 
   Future<Either<Failure, UsernameResponse>> checkUsername(String username) {
@@ -111,6 +112,21 @@ class ApiService {
     return handleApi(() {
       final req = ForgotPasswordRequest(email: email);
       return _api.forgetPassword(_sterilizer, req);
+    });
+  }
+
+  Future<Either<Failure, BaseResponse>> sendEmailOtp(
+    String token,
+  ) {
+    return handleApi(() {
+      return _api.resendEmailVerification('Bearer $token', _sterilizer);
+    });
+  }
+
+  Future<Either<Failure, BaseResponse>> verifyEmail(
+      String token, VerifyEmailRequest req) {
+    return handleApi(() {
+      return _api.verifyEmail('Bearer $token', _sterilizer, req);
     });
   }
 
@@ -263,6 +279,12 @@ class ApiService {
       String token, BecomeAMerchantRequest req) {
     return handleApi(
         () => _api.becomeMerchant('Bearer $token', _sterilizer, req));
+  }
+
+  Future<Either<Failure, void>> requestWithdraw(
+      String token, WithdrawRequest req) {
+    return handleApi(
+        () => _api.userWithdraw('Bearer $token', _sterilizer, req));
   }
 
   // other endpoint …

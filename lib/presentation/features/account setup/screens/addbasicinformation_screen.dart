@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -111,6 +112,10 @@ class AddBasicInformationScreen extends ConsumerWidget {
     final titleText = userAction.isCreate
         ? 'Add Basic Information'
         : 'Update Account Details';
+    String phoneNumber = notifier.phone.text; // e.g., "+23490891272181"
+    String localPhoneNumber =
+        phoneNumber.startsWith('+234') ? phoneNumber.substring(4) : phoneNumber;
+    notifier.phone.text = localPhoneNumber;
 
     return BundlegramScaffold(
       appBar: BundlegramAppbar(titleText: titleText),
@@ -148,7 +153,15 @@ class AddBasicInformationScreen extends ConsumerWidget {
             AppTextField(
               controller: notifier.phone,
               hintText: 'Phone Number',
+              prefixIcon: Padding(
+                padding: context.symmetricPadding(16, 0),
+                child: Text('+234', style: context.textTheme.bodyMedium),
+              ),
               validateFunction: notifier.validatePhone,
+              onChange: (value) {
+                // Ensure the controller holds only the local part
+                notifier.phone.text = value;
+              },
             ),
             SizedBox(height: 24.h),
             AppDropdown(
@@ -174,9 +187,11 @@ class AddBasicInformationScreen extends ConsumerWidget {
             SizedBox(height: 32.h),
             BundlegramButton(
               text: userAction.isCreate ? 'Submit' : 'Update',
-              onPressed: () {
-                notifier.submit(context);
-              },
+              onPressed: provider.loading
+                  ? null
+                  : () async {
+                      await provider.submit(context);
+                    },
             ),
           ],
         ),

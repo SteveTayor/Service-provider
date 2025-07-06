@@ -98,10 +98,16 @@ class _ApiDefinition implements ApiDefinition {
   }
 
   @override
-  Future<void> logout(String bearer) async {
+  Future<void> logout(
+    String accessToken,
+    String bearer,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'Authorization': bearer};
+    final _headers = <String, dynamic>{
+      r'AccessToken': accessToken,
+      r'Authorization': bearer,
+    };
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<void>(Options(

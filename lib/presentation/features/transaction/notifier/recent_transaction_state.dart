@@ -1,8 +1,8 @@
-import 'package:bundlegram/data/models/wallet/service_model.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 
 class RecentTransactionsState {
-  final List<ServiceModel> services; // All services/transactions
-  final List<ServiceModel> filteredServices; // Filtered subset
+  final List<UserTransactions> services; // All services/transactions
+  final List<UserTransactions> filteredServices; // Filtered subset
   final String? filterType; // Current filter type
   final bool isLoading; // Loading state
 
@@ -23,8 +23,8 @@ class RecentTransactionsState {
   }
 
   RecentTransactionsState copyWith({
-    List<ServiceModel>? services,
-    List<ServiceModel>? filteredServices,
+    List<UserTransactions>? services,
+    List<UserTransactions>? filteredServices,
     String? filterType,
     bool? isLoading,
   }) {

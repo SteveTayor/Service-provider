@@ -54,14 +54,16 @@ class UserdetailWidget extends ConsumerWidget {
             if (profileProv?.emailVerifiedAt == null &&
                 profileProv?.bvn == null &&
                 profileProv?.bankName == null &&
-                profileProv?.accountNumber == null)
+                profileProv?.accountNumber == null) ...[
               textWithIcon(Assets.svgs.infoCircle1, 'Verification incomplete'),
-            8.verticalSpace,
-            if (profileProv?.userType == "agent")
+              8.verticalSpace,
+            ],
+            if (profileProv?.userType == "agent") ...[
               textWithIcon(
                   Assets.svgs.crownRewardSocialRatingMediaQueenVipKingCrown,
                   'Bundlegram agent'),
-            14.verticalSpace,
+              14.verticalSpace,
+            ],
             if (profileProv?.emailVerifiedAt == null &&
                 profileProv?.bvn == null &&
                 profileProv?.bankName == null &&

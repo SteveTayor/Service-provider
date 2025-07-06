@@ -58,7 +58,10 @@ class WalletoutlookWidget extends ConsumerWidget {
           onPressed: () {
             final bvn = profile.value?.data?.bvn;
             if (bvn == null) {
-              WalletNotifier().showLinkBVNSnackBar(context);
+              WalletNotifier().showLinkBVNSnackBar(
+                  context,
+                  'To ensure that you get a virtual account number, verify your BVN for this feature.',
+                  'Link now');
             } else {
               // ref.read(globalProvider.notifier).fetchVirtualAccount(context);
               WalletNotifier().showAddMoney(context, ref);

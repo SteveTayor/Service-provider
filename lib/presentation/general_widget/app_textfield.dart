@@ -162,7 +162,7 @@ class _AppTextFieldState extends State<AppTextField> {
                   ),
                   fillColor: widget.backgroundColor ?? AppColors.white,
                   prefixIconConstraints: BoxConstraints(
-                    minWidth: 60.w,
+                    minWidth: 40.w,
                     minHeight: 18.h,
                   ),
                   prefixIcon: widget.prefixIcon,

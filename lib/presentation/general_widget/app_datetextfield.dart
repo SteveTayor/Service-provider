@@ -36,6 +36,10 @@ class AppDatetextfield extends StatelessWidget {
           onTap: readOnly && onTap != null ? onTap : null,
           child: TextFormField(
             controller: controller,
+            style: context.textTheme.bodySmall?.copyWith(
+              fontSize: 14.sp,
+              color: AppColors.grey19,
+            ),
             readOnly: readOnly,
             onTap: !readOnly ? onTap : null,
             validator: validator,

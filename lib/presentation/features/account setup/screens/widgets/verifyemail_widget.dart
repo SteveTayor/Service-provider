@@ -1,62 +1,83 @@
+// lib/presentation/features/account_setup/screens/verify_email_widget.dart
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
-import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
-import 'package:bundlegram/presentation/features/onboarding/screens/resetpasswordlink_screen.dart';
+import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/email_otp_widget.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:bundlegram/presentation/features/onboarding/notifier/verify_email_provider.dart';
 
-class VerifyemailWidget extends ConsumerWidget {
-  const VerifyemailWidget({super.key});
+class VerifyEmailWidget extends ConsumerStatefulWidget {
+  const VerifyEmailWidget({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final global = ref.watch(globalProvider).profile;
-    final profileProv = global.value?.data;
-    String? userEmail = profileProv?.email;
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Text(
-            'Verify email',
-            style: context.textTheme.headlineMedium!.copyWith(
-              color: AppColors.black,
-            ),
+  ConsumerState<VerifyEmailWidget> createState() => _VerifyEmailWidgetState();
+}
+
+class _VerifyEmailWidgetState extends ConsumerState<VerifyEmailWidget> {
+  late TextEditingController _emailCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    final profile = ref.read(globalProvider).profile;
+    final userEmail = profile.value?.data?.email ?? '';
+    _emailCtrl = TextEditingController(text: userEmail);
+  }
+
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (BuildContext innerContext) {
+        final provider = ref.watch(verifyEmailProvider);
+        final notifier = ref.read(verifyEmailProvider.notifier);
+
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Text(
+                'Verify email',
+                style: innerContext.textTheme.headlineMedium!
+                    .copyWith(color: AppColors.black),
+              ),
+              12.verticalSpace,
+              Text(
+                'Please, confirm your email address to receive a verification code.',
+                textAlign: TextAlign.center,
+                style: innerContext.textTheme.bodySmall,
+              ),
+              24.verticalSpace,
+              AppTextField(
+                controller: _emailCtrl,
+                readOnly: true,
+              ),
+              40.verticalSpace,
+              BundlegramButton(
+                text: provider.sending ? 'Sending...' : 'Confirm email',
+                onPressed: provider.sending
+                    ? null
+                    : () async {
+                        await notifier.sendEmailOtp(context, ref);
+                      },
+              ),
+              24.verticalSpace,
+            ],
           ),
-          12.verticalSpace,
-          Text(
-            textAlign: TextAlign.center,
-            'Please, confirm your email address before we will send a verification link.',
-            style: context.textTheme.bodySmall,
-          ),
-          24.verticalSpace,
-          const AppTextField(
-            hintText: 'Email',
-          ),
-          40.verticalSpace,
-          BundlegramButton(
-            text: 'Confirm email',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (ctx) => ResetPasswordLinkScreen(
-                    title: 'Verification link sent!',
-                    subtitle:
-                        'Verify your email, ${userEmail}, to start paying your bills with Bundlegram.',
-                  ),
-                ),
-              );
-            },
-          ),
-          24.verticalSpace,
-        ],
-      ),
+        );
+      },
     );
   }
 }

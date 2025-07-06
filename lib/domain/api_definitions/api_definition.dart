@@ -60,6 +60,7 @@ abstract class ApiDefinition {
 
   @POST(Endpoints.logout)
   Future<void> logout(
+    @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
   );
 

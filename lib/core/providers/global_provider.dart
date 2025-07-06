@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:bundlegram/core/error/failures.dart';
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/state/global_state.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
@@ -8,6 +9,7 @@ import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
+import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/features/setting/screens/pin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,7 +66,10 @@ class GlobalProvider extends StateNotifier<GlobalState> {
         failure.properties.contains(
             'Your session has expired or you are already logged in on another device.')) {
       await _storage.clearAll();
-      if (context.mounted) context.go(RouteConstants.login);
+      final ctx = navigatorKey.currentContext;
+      if (ctx != null) {
+        ctx.go(RouteConstants.login);
+      }
     } else {
       context.showErrorSnackBar(message);
     }
@@ -72,8 +77,9 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
   Future<void> fetchProfile(BuildContext context) async {
     final token = await _storage.getAuthToken();
-    if (token == null)
+    if (token == null) {
       return _handleError('Authentication token missing', context);
+    }
 
     final result = await _api.getProfile(token);
     result.fold(
@@ -92,8 +98,9 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
   Future<void> fetchWalletBalance(BuildContext context) async {
     final token = await _storage.getAuthToken();
-    if (token == null)
+    if (token == null) {
       return _handleError('Authentication token missing', context);
+    }
 
     final result = await _api.getWallet(token);
     result.fold(
@@ -138,8 +145,9 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
   Future<void> fetchBanks(BuildContext context) async {
     final token = await _storage.getAuthToken();
-    if (token == null)
+    if (token == null) {
       return _handleError('Authentication token missing', context);
+    }
 
     final result = await _api.getAllBanks(token);
     result.fold(
@@ -153,20 +161,28 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
   Future<void> fetchUserBanks(BuildContext context) async {
     final token = await _storage.getAuthToken();
-    if (token == null)
+    if (token == null) {
       return _handleError('Authentication token missing', context);
+    }
 
     final result = await _api.getUserBanks(token);
     result.fold(
-      (fail) => _handleFailure(fail, context),
-      (data) => log('Fetched user banks: ${data.data?.length}'),
+      (fail) {
+        state = state.copyWith(userBanks: AsyncError(fail, StackTrace.current));
+        _handleFailure(fail, context);
+      },
+      (data) {
+        state = state.copyWith(userBanks: AsyncData(data));
+        log('Fetched user banks: ${data.data?.length}');
+      },
     );
   }
 
   Future<void> fetchVirtualAccount(BuildContext context) async {
     final token = await _storage.getAuthToken();
-    if (token == null)
+    if (token == null) {
       return _handleError('Authentication token missing', context);
+    }
 
     state = state.copyWith(virtualAccounts: const AsyncLoading());
     final result = await _api.getVirtualAccount(token);
@@ -182,11 +198,17 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
   Future<void> fetchUsersTransactions(BuildContext context) async {
     final token = await _storage.getAuthToken();
-    if (token == null)
+    if (token == null) {
       return _handleError('Authentication token missing', context);
+    }
 
+    unawaited(context.showLoadingDialog(message: 'Fetching transactions...'));
     state = state.copyWith(usersTransactions: const AsyncLoading());
+
     final result = await _api.getAllTransactions(token);
+
+    context.dismissDialog();
+
     result.fold(
       (fail) {
         _handleFailure(fail, context);

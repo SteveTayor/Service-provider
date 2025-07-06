@@ -1,52 +1,50 @@
 import 'package:bundlegram/core/extensions/string_extensions.dart';
-import 'package:bundlegram/data/dummy_datda.dart';
-import 'package:bundlegram/data/models/wallet/service_model.dart';
-import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_state.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
+import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TransactionHistoryNotifier extends StateNotifier<ServiceHistoryState> {
-  TransactionHistoryNotifier() : super(ServiceHistoryState());
+class TransactionHistoryNotifier
+    extends StateNotifier<RecentTransactionsState> {
+  final Ref ref;
 
-  Future<void> loadServices() async {
-    state = state.copyWith(isLoading: true);
-    try {
-      final services = await _fetchAllTransactions();
-      print('Fetched All Transactions: ${services.length}'); // Debug
+  TransactionHistoryNotifier(this.ref)
+      : super(RecentTransactionsState.initial()) {
+    loadServices();
+  }
+
+  void loadServices() {
+    final txns = ref.read(globalProvider).usersTransactions;
+    txns.whenData((data) {
+      final all = data?.data ?? [];
+
       state = state.copyWith(
-        services: services,
-        filteredServices: services,
+        services: all,
+        filteredServices: all,
         isLoading: false,
       );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-    }
+    });
+  }
+
+  void refresh() {
+    loadServices();
   }
 
   void search(String query) {
     if (query.isEmpty) {
-      state = state.copyWith(
-        filteredServices: state.services,
-        searchQuery: '',
-      );
+      state = state.copyWith(filteredServices: state.services);
       return;
     }
-    final filtered = state.services.where((service) {
-      final titleLower = service.title.toLowerCase();
-      final statusLower = service.status.toLowerCase();
-      final q = query.toLowerCase();
-      return titleLower.contains(q) || statusLower.contains(q);
-    }).toList();
-    state = state.copyWith(
-      filteredServices: filtered,
-      searchQuery: query,
-    );
-  }
 
-  Future<void> refresh() async {
-    await loadServices();
+    final q = query.toLowerCase();
+    final filtered = state.services.where((txn) {
+      final name = txn.subProduct?.subName?.toLowerCase() ?? '';
+      final status = txn.status?.toLowerCase() ?? '';
+      final type = txn.transType?.toLowerCase() ?? '';
+      return name.contains(q) || status.contains(q) || type.contains(q);
+    }).toList();
+
+    state = state.copyWith(filteredServices: filtered);
   }
 
   void applyFilters({
@@ -55,31 +53,42 @@ class TransactionHistoryNotifier extends StateNotifier<ServiceHistoryState> {
     required String sortBy,
     required String amountBy,
   }) {
-    var temp = List<ServiceModel>.from(state.services);
+    var temp = [...state.services];
+
     if (typeSet.isNotEmpty) {
-      temp = temp.where((s) => typeSet.contains(s.type.toLowerCase())).toList();
-    }
-    if (statusSet.isNotEmpty) {
       temp = temp
-          .where((s) => statusSet.contains(s.status.toLowerCase()))
+          .where((txn) =>
+              typeSet.contains(txn.transType?.toLowerCase() ?? 'unknown'))
           .toList();
     }
-    temp
-      ..sort((a, b) {
-        final da = a.date.toDateTime() ?? DateTime(1970);
-        final db = b.date.toDateTime() ?? DateTime(1970);
-        return sortBy == 'newest' ? db.compareTo(da) : da.compareTo(db);
-      })
-      ..sort((a, b) {
-        final aa = a.amount.toNumericValue();
-        final bb = b.amount.toNumericValue();
-        return amountBy == 'largest' ? bb.compareTo(aa) : aa.compareTo(bb);
-      });
-    print('Filtered Transactions: ${temp.length}'); // Debug
-    state = state.copyWith(filteredServices: temp);
-  }
 
-  Future<List<ServiceModel>> _fetchAllTransactions() async {
-    return Future.value(dummyTransactions);
+    if (statusSet.isNotEmpty) {
+      temp = temp
+          .where((txn) =>
+              statusSet.contains(txn.status?.toLowerCase() ?? 'unknown'))
+          .toList();
+    }
+
+    if (sortBy.isNotEmpty) {
+      temp.sort((a, b) {
+        final aDate = a.createdAt;
+        final bDate = b.createdAt;
+        return sortBy == 'newest'
+            ? bDate!.compareTo(aDate!)
+            : aDate!.compareTo(bDate!);
+      });
+    }
+
+    if (amountBy.isNotEmpty) {
+      temp.sort((a, b) {
+        final aAmt = double.tryParse(a.amount ?? '') ?? 0;
+        final bAmt = double.tryParse(b.amount ?? '') ?? 0;
+        return amountBy == 'largest'
+            ? bAmt.compareTo(aAmt)
+            : aAmt.compareTo(bAmt);
+      });
+    }
+
+    state = state.copyWith(filteredServices: temp);
   }
 }

@@ -3,6 +3,7 @@ import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/data/models/wallet/service_model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
@@ -41,11 +42,11 @@ class _BettingHistoryScreenState extends ConsumerState<BettingHistoryScreen> {
         showBackButton: true,
         title: const Text('Betting History'),
       ),
-      body: CustomListView<ServiceModel>(
-        items: bettingState.services,
+      body: CustomListView<UserTransactions>(
+        items: bettingState.filteredTransactions,
         isLoading: bettingState.isLoading,
         onRefresh: () => ref.read(bettingHistoryProvider.notifier).refresh(),
-        itemBuilder: (service, index) => ServiceListItem(service: service),
+        itemBuilder: (service, index) => ServiceListItem(transaction: service),
         onItemTap: (service, index) {
           _showBettingDetails(context, service);
         },
@@ -71,17 +72,17 @@ class _BettingHistoryScreenState extends ConsumerState<BettingHistoryScreen> {
     );
   }
 
-  void _showBettingDetails(BuildContext context, ServiceModel service) {
+  void _showBettingDetails(BuildContext context, UserTransactions service) {
     final transactionData = TransactionReceiptData(
-      transactionId: service.id,
-      date: _formatTransactionDate(service.date),
-      time: _formatTransactionTime(service.date),
-      type: service.type,
+      transactionId: service.transRef,
+      date: _formatTransactionDate(service.createdAt.toString()),
+      time: _formatTransactionTime(service.createdAt.toString()),
+      type: service.transType,
       amount: service.amount,
-      bankName: service.bankName as String,
-      accountNumber: service.accountNumber ?? '21830217312',
-      status: service.status,
-      description: service.title,
+      bankName: service.bank as String,
+      accountNumber: service.crAcc ?? '21830217312',
+      status: service.status!,
+      description: service.subProduct?.product?.productDescription,
     );
     context.showPopUp(
       color: Colors.transparent,

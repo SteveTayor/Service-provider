@@ -369,7 +369,7 @@ class _PlatformproductScreenState extends State<PlatformproductScreen> {
                         context.pop(); // Close the bottom sheet
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (ctx) => EnterPinScreen(onVerified: () {
+                            builder: (ctx) => EnterPinScreen(onVerified: (pin) {
                               String size = '';
                               String amount = '';
 

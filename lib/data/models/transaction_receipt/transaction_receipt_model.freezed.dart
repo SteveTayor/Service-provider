@@ -21,11 +21,11 @@ TransactionReceiptData _$TransactionReceiptDataFromJson(
 
 /// @nodoc
 mixin _$TransactionReceiptData {
-  String get transactionId => throw _privateConstructorUsedError;
-  String get date => throw _privateConstructorUsedError;
-  String get time => throw _privateConstructorUsedError;
-  String get type => throw _privateConstructorUsedError;
-  String get amount => throw _privateConstructorUsedError;
+  String? get transactionId => throw _privateConstructorUsedError;
+  String? get date => throw _privateConstructorUsedError;
+  String? get time => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  String? get amount => throw _privateConstructorUsedError;
   String? get bankName => throw _privateConstructorUsedError;
   String? get accountNumber => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
@@ -82,11 +82,11 @@ abstract class $TransactionReceiptDataCopyWith<$Res> {
       _$TransactionReceiptDataCopyWithImpl<$Res, TransactionReceiptData>;
   @useResult
   $Res call(
-      {String transactionId,
-      String date,
-      String time,
-      String type,
-      String amount,
+      {String? transactionId,
+      String? date,
+      String? time,
+      String? type,
+      String? amount,
       String? bankName,
       String? accountNumber,
       String status,
@@ -127,11 +127,11 @@ class _$TransactionReceiptDataCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? transactionId = null,
-    Object? date = null,
-    Object? time = null,
-    Object? type = null,
-    Object? amount = null,
+    Object? transactionId = freezed,
+    Object? date = freezed,
+    Object? time = freezed,
+    Object? type = freezed,
+    Object? amount = freezed,
     Object? bankName = freezed,
     Object? accountNumber = freezed,
     Object? status = null,
@@ -156,26 +156,26 @@ class _$TransactionReceiptDataCopyWithImpl<$Res,
     Object? phoneNumber = freezed,
   }) {
     return _then(_value.copyWith(
-      transactionId: null == transactionId
+      transactionId: freezed == transactionId
           ? _value.transactionId
           : transactionId // ignore: cast_nullable_to_non_nullable
-              as String,
-      date: null == date
+              as String?,
+      date: freezed == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
-              as String,
-      time: null == time
+              as String?,
+      time: freezed == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
+              as String?,
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      amount: null == amount
+              as String?,
+      amount: freezed == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       bankName: freezed == bankName
           ? _value.bankName
           : bankName // ignore: cast_nullable_to_non_nullable
@@ -278,11 +278,11 @@ abstract class _$$TransactionReceiptDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String transactionId,
-      String date,
-      String time,
-      String type,
-      String amount,
+      {String? transactionId,
+      String? date,
+      String? time,
+      String? type,
+      String? amount,
       String? bankName,
       String? accountNumber,
       String status,
@@ -322,11 +322,11 @@ class __$$TransactionReceiptDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? transactionId = null,
-    Object? date = null,
-    Object? time = null,
-    Object? type = null,
-    Object? amount = null,
+    Object? transactionId = freezed,
+    Object? date = freezed,
+    Object? time = freezed,
+    Object? type = freezed,
+    Object? amount = freezed,
     Object? bankName = freezed,
     Object? accountNumber = freezed,
     Object? status = null,
@@ -351,26 +351,26 @@ class __$$TransactionReceiptDataImplCopyWithImpl<$Res>
     Object? phoneNumber = freezed,
   }) {
     return _then(_$TransactionReceiptDataImpl(
-      transactionId: null == transactionId
+      transactionId: freezed == transactionId
           ? _value.transactionId
           : transactionId // ignore: cast_nullable_to_non_nullable
-              as String,
-      date: null == date
+              as String?,
+      date: freezed == date
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
-              as String,
-      time: null == time
+              as String?,
+      time: freezed == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
+              as String?,
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      amount: null == amount
+              as String?,
+      amount: freezed == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       bankName: freezed == bankName
           ? _value.bankName
           : bankName // ignore: cast_nullable_to_non_nullable
@@ -499,15 +499,15 @@ class _$TransactionReceiptDataImpl implements _TransactionReceiptData {
       _$$TransactionReceiptDataImplFromJson(json);
 
   @override
-  final String transactionId;
+  final String? transactionId;
   @override
-  final String date;
+  final String? date;
   @override
-  final String time;
+  final String? time;
   @override
-  final String type;
+  final String? type;
   @override
-  final String amount;
+  final String? amount;
   @override
   final String? bankName;
   @override
@@ -680,11 +680,11 @@ class _$TransactionReceiptDataImpl implements _TransactionReceiptData {
 
 abstract class _TransactionReceiptData implements TransactionReceiptData {
   const factory _TransactionReceiptData(
-      {required final String transactionId,
-      required final String date,
-      required final String time,
-      required final String type,
-      required final String amount,
+      {required final String? transactionId,
+      required final String? date,
+      required final String? time,
+      required final String? type,
+      required final String? amount,
       final String? bankName,
       final String? accountNumber,
       required final String status,
@@ -712,15 +712,15 @@ abstract class _TransactionReceiptData implements TransactionReceiptData {
       _$TransactionReceiptDataImpl.fromJson;
 
   @override
-  String get transactionId;
+  String? get transactionId;
   @override
-  String get date;
+  String? get date;
   @override
-  String get time;
+  String? get time;
   @override
-  String get type;
+  String? get type;
   @override
-  String get amount;
+  String? get amount;
   @override
   String? get bankName;
   @override

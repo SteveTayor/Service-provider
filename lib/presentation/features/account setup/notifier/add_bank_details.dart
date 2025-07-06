@@ -43,18 +43,32 @@ class AddBankProvider extends ChangeNotifier {
 
   List<BankDetails> get _banks {
     final banksAsync = _ref.read(globalProvider).banks;
+    debugPrint('banksAsync state: $banksAsync');
     if (banksAsync is AsyncData<GetAllBanksResponse?>) {
       return banksAsync.value!.data ?? [];
     }
     return [];
   }
 
-  List<String> get bankOptions => _banks.map((d) => d.bankName ?? '').toList();
+  List<String> get bankOptions {
+    final options = _banks.map((d) => d.bankName ?? '').toList();
+    debugPrint('Bank options: $options');
+    return options;
+  }
 
   void setBank(String? bankName) {
-    _selectedBankName = bankName!;
-    _selectedBankCode =
-        _banks.firstWhere((d) => d.bankName == bankName).bankCode;
+    if (bankName == null || _banks.isEmpty) {
+      _selectedBankName = '';
+      _selectedBankCode = null;
+      notifyListeners();
+      return;
+    }
+    _selectedBankName = bankName;
+    final bank = _banks.firstWhere(
+      (d) => d.bankName == bankName,
+      orElse: () => BankDetails(bankName: '', bankCode: ''),
+    );
+    _selectedBankCode = bank.bankCode;
     notifyListeners();
   }
 
@@ -102,9 +116,34 @@ class AddBankProvider extends ChangeNotifier {
         accountNumber: _acct.text.trim(),
         accountName: _acctName,
       );
-      await _api.addBank(token!, req);
-      await _ref.read(globalProvider.notifier).fetchProfile(context);
-      context.go(RouteConstants.dashboard);
+      final result = await _api.addBank(token!, req);
+      result.fold(
+        (fail) {
+          context.showErrorSnackBar(
+            fail.properties.isNotEmpty
+                ? fail.properties.join('\n')
+                : 'Failed to add bank',
+          );
+          _setLoading(false);
+          return false;
+        },
+        (resp) {
+          if (resp.status == 'success') {
+            _ref.read(globalProvider.notifier).fetchProfile(context);
+            context
+              ..showSuccessSnackBar(
+                resp.message ?? 'Bank details added successfully',
+              )
+              ..go(RouteConstants.dashboard);
+            _setLoading(false);
+            return true;
+          } else {
+            context.showErrorSnackBar(resp.message ?? 'Failed to add bank');
+            _setLoading(false);
+            return false;
+          }
+        },
+      );
     } catch (e) {
       context.showErrorSnackBar(e.toString());
     } finally {

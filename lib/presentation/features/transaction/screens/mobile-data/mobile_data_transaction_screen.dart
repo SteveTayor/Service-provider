@@ -3,6 +3,7 @@ import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/data/models/wallet/service_model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
@@ -44,9 +45,9 @@ class _MobileDataHistoryScreenState
   @override
   Widget build(BuildContext context) {
     final mobileDataState = ref.watch(mobileDataHistoryProvider);
-    return HistoryScreen<ServiceModel>(
+    return HistoryScreen<UserTransactions>(
       titleText: 'History',
-      items: mobileDataState.filteredServices,
+      items: mobileDataState.filteredTransactions,
       isLoading: mobileDataState.isLoading,
       onSearchChanged: (query) {
         ref.read(mobileDataHistoryProvider.notifier).search(query);
@@ -82,7 +83,7 @@ class _MobileDataHistoryScreenState
           ),
         );
       },
-      itemBuilder: (ctx, txn, index) => ServiceListItem(service: txn),
+      itemBuilder: (ctx, txn, index) => ServiceListItem(transaction: txn),
       onItemTap: (txn) => _showProviderDetails(context, txn),
       emptyWidget: const Padding(
         padding: EdgeInsets.all(20),
@@ -96,17 +97,17 @@ class _MobileDataHistoryScreenState
     );
   }
 
-  void _showProviderDetails(BuildContext context, ServiceModel service) {
+  void _showProviderDetails(BuildContext context, UserTransactions service) {
     final transactionData = TransactionReceiptData(
-      transactionId: service.id,
-      date: _formatTransactionDate(service.date),
-      time: _formatTransactionTime(service.date),
-      type: service.type,
+      transactionId: service.transRef.toString(),
+      date: _formatTransactionDate(service.createdAt.toString()),
+      time: _formatTransactionTime(service.createdAt.toString()),
+      type: service.transType,
       amount: service.amount,
-      bankName: service.bankName as String,
-      accountNumber: service.accountNumber ?? '21830217312',
-      status: service.status,
-      description: service.title,
+      bankName: service.bank as String,
+      accountNumber: service.crAcc ?? '21830217312',
+      status: service.status!,
+      description: service.subProduct!.subName,
     );
     context.showPopUp(
       color: Colors.transparent,

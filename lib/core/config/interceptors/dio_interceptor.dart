@@ -6,6 +6,7 @@ import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/env.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bundlegram/data/datasources/remote/endpoints.dart';
 import 'package:go_router/go_router.dart';
@@ -51,16 +52,21 @@ final dioProvider = Provider<Dio>((ref) {
 
         final resData = error.response?.data;
         if (error.response?.statusCode == 401 &&
-            resData is Map &&
-            resData['status'] == 'logout') {
+            (resData is Map &&
+                (resData['status']?.toString().toLowerCase() == 'logout' ||
+                    resData['message']
+                            ?.toString()
+                            .toLowerCase()
+                            .contains('expired') ==
+                        true))) {
           // Clear local storage
           await secureStorage.deleteAuthToken();
 
           final context = navigatorKey.currentContext;
           if (context != null) {
-            final currentPath = GoRouterState.of(context).uri.toString();
+            final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
 
-            if (!currentPath.contains(RouteConstants.login)) {
+            if (!currentRoute.contains(RouteConstants.login)) {
               //Clear token
               await secureStorage.deleteAuthToken();
               // Show snackbar
@@ -68,7 +74,9 @@ final dioProvider = Provider<Dio>((ref) {
                   ("Session expired. Please log in again."));
 
               // Navigate to login
-              context.go(RouteConstants.login);
+              Future.microtask(() {
+                context.go(RouteConstants.login);
+              });
             }
           }
         }

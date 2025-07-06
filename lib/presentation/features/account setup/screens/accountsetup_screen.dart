@@ -61,7 +61,7 @@ class _AccountsetupScreenState extends ConsumerState<AccountsetupScreen> {
                       margin: EdgeInsets.symmetric(horizontal: 4.w),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(6),
-                        color: step.done
+                        color: step.done != null
                             ? AppColors.primaryColor
                             : AppColors.greyd9,
                       ),
@@ -94,7 +94,7 @@ class _AccountsetupScreenState extends ConsumerState<AccountsetupScreen> {
                         ),
                       ),
                       AppSvgIcon(
-                        path: step.done
+                        path: step.done != null
                             ? Assets.svgs.check
                             : Assets.svgs.unveirifycheck,
                       ),

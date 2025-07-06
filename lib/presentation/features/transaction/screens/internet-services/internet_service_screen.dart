@@ -149,7 +149,7 @@ class _InternetServiceProviderScreenState
                         context.pop(); // Close the bottom sheet
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (ctx) => EnterPinScreen(onVerified: () {
+                            builder: (ctx) => EnterPinScreen(onVerified: (pin) {
                               final amount =
                                   '₦' + amountController.text + '.00';
                               final beneficiary =

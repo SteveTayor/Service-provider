@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
@@ -38,11 +39,9 @@ class VisualReceiptCard extends StatelessWidget {
         ],
       ),
       child: Column(
-        spacing: 40,
         children: [
-          // Receipt header
-          Container(
-            width: double.infinity,
+          // Header section
+          Padding(
             padding: EdgeInsets.all(15.w),
             child: Column(
               children: [
@@ -54,14 +53,11 @@ class VisualReceiptCard extends StatelessWidget {
                     color: AppColors.black,
                   ),
                 ),
-                Container(
-                  height: 1,
-                  color: AppColors.greyD0.withOpacity(0.3),
-                  margin: EdgeInsets.symmetric(vertical: 12.h),
-                ),
-                // SizedBox(height: 10.h),
+                SizedBox(height: 12.h),
+                Divider(color: AppColors.greyD0.withOpacity(0.3), thickness: 1),
+                SizedBox(height: 12.h),
                 Text(
-                  data.amount,
+                  data.amount.toCurrency(),
                   style: context.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                     fontSize: 40.sp,
@@ -76,47 +72,28 @@ class VisualReceiptCard extends StatelessWidget {
 
           // Transaction details
           Expanded(
-            child: Container(
-              width: double.infinity,
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: ListView(
                 children: [
-                  _buildDetailRow(
-                    context,
-                    'Transaction type',
-                    data.type,
-                  ),
-                  SizedBox(height: 16.h),
+                  _buildDetailRow(context, 'Transaction type', data.type!),
+                  16.verticalSpace,
                   if (data.accountNumber != null)
                     _buildDetailRow(
-                      context,
-                      'Beneficiary',
-                      data.accountNumber!,
-                    ),
-                  SizedBox(height: 16.h),
+                        context, 'Beneficiary', data.accountNumber!),
+                  16.verticalSpace,
                   _buildDetailRow(
-                    context,
-                    'Transaction ID',
-                    data.transactionId,
-                  ),
-                  SizedBox(height: 16.h),
-                  _buildDetailRow(
-                    context,
-                    'Date',
-                    data.date,
-                  ),
-                  SizedBox(height: 16.h),
-                  _buildDetailRow(
-                    context,
-                    'Time',
-                    data.time,
-                  ),
+                      context, 'Transaction ID', data.transactionId!),
+                  16.verticalSpace,
+                  _buildDetailRow(context, 'Date', data.date!),
+                  16.verticalSpace,
+                  _buildDetailRow(context, 'Time', data.time!),
                 ],
               ),
             ),
           ),
 
-          // Bottom branding
+          // Branding
           ReceiptBrandingWidget(
             logoWidget: Image(
               image: Assets.images.bBundlegram.provider(),
@@ -124,58 +101,17 @@ class VisualReceiptCard extends StatelessWidget {
             ).withContainer(
               width: 160.w,
               height: 39.h,
-              // borderRadius: BorderRadius.circular(4.r),
             ),
-            // brandName: 'bundlegram',
-            // brandColor: const Color(0xFFE53E3E),
           ),
-
-          16.verticalSpace
+          16.verticalSpace,
         ],
       ),
     );
   }
 
-  Widget _buildStatusIndicator() {
-    final status = _getStatusInfo();
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        // color: status['backgroundColor'] as Color,
-        borderRadius: BorderRadius.circular(24.r),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 24.w,
-            height: 24.h,
-            decoration: BoxDecoration(
-              // color: status['iconColor'] as Color,
-              shape: BoxShape.circle,
-            ),
-            child: _getStatusIcon(),
-          ),
-          SizedBox(width: 8.w),
-          Text(
-            status['text'] as String,
-            style: TextStyle(
-              color: status['textColor'] as Color,
-              fontWeight: FontWeight.w600,
-              fontSize: 18.sp,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(
-    BuildContext context,
-    String label,
-    String value,
-  ) {
+  Widget _buildDetailRow(BuildContext context, String label, String value) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
@@ -185,6 +121,7 @@ class VisualReceiptCard extends StatelessWidget {
             fontSize: 14.sp,
           ),
         ),
+        SizedBox(width: 8.w),
         Flexible(
           child: Text(
             value,
@@ -194,77 +131,77 @@ class VisualReceiptCard extends StatelessWidget {
               fontSize: 14.sp,
             ),
             textAlign: TextAlign.right,
+            overflow: TextOverflow.visible,
           ),
         ),
       ],
     );
   }
 
-  Widget _getStatusIcon() {
-    switch (data.status.toLowerCase()) {
-      case 'successful':
-      case 'completed':
-      case 'success':
-        return AppSvgIcon(
-          path: Assets.svgs.check,
-          // color: Colors.white,
-        );
-      case 'failed':
-      case 'declined':
-      case 'error':
-        return AppSvgIcon(
-          path: Assets.svgs.closeCircle,
-          // color: Colors.white,
-        );
-      case 'pending':
-      case 'processing':
-        return AppSvgIcon(
-          path: Assets.svgs.pending,
-          // color: Colors.white,
-        );
-      default:
-        return AppSvgIcon(
-          path: Assets.svgs.infoCircle,
-          // color: Colors.white,
-        );
-    }
+  Widget _buildStatusIndicator() {
+    final statusInfo = _getStatusInfo();
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: statusInfo['backgroundColor'] as Color,
+        borderRadius: BorderRadius.circular(24.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppSvgIcon(
+            path: statusInfo['icon'] as String,
+            color: statusInfo['iconColor'] as Color,
+          ),
+          SizedBox(width: 8.w),
+          Text(
+            statusInfo['text'] as String,
+            style: TextStyle(
+              color: statusInfo['textColor'] as Color,
+              fontWeight: FontWeight.w600,
+              fontSize: 16.sp,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Map<String, dynamic> _getStatusInfo() {
-    switch (data.status.toLowerCase()) {
-      case 'successful':
-      case 'completed':
-      case 'success':
-        return {
-          'text': 'Successful',
-          'backgroundColor': const Color(0xFFE8F5E8),
-          'textColor': AppColors.success,
-          'iconColor': const Color(0xFFFFFFF),
-        };
-      case 'failed':
-      case 'declined':
-      case 'error':
-        return {
-          'text': 'Failed',
-          'backgroundColor': const Color(0xFFFFEBEE),
-          'textColor': AppColors.errorText,
-          'iconColor': AppColors.error,
-        };
-      case 'pending':
-      case 'processing':
-        return {
-          'text': 'Pending',
-          'backgroundColor': const Color(0xFFF5F5F5),
-          'textColor': AppColors.pending,
-          'iconColor': AppColors.pending,
-        };
-      default:
-        return {
-          'text': data.status,
-          'backgroundColor': const Color(0xFFF5F5F5),
-          'textColor': const Color(0xFF616161),
-          'iconColor': const Color(0xFF9E9E9E),
-        };
+    final status = data.status.toLowerCase();
+
+    if (['success', 'successful', 'completed'].contains(status)) {
+      return {
+        'text': 'Successful',
+        'icon': Assets.svgs.check,
+        'iconColor': AppColors.success,
+        'textColor': AppColors.success,
+        'backgroundColor': const Color(0xFFE8F5E8),
+      };
+    } else if (['failed', 'declined', 'error'].contains(status)) {
+      return {
+        'text': 'Failed',
+        'icon': Assets.svgs.closeCircle,
+        'iconColor': AppColors.error,
+        'textColor': AppColors.errorText,
+        'backgroundColor': const Color(0xFFFFEBEE),
+      };
+    } else if (['pending', 'processing'].contains(status)) {
+      return {
+        'text': 'Pending',
+        'icon': Assets.svgs.pending,
+        'iconColor': AppColors.pending,
+        'textColor': AppColors.pending,
+        'backgroundColor': const Color(0xFFF5F5F5),
+      };
+    } else {
+      return {
+        'text': data.status,
+        'icon': Assets.svgs.infoCircle,
+        'iconColor': AppColors.grey33,
+        'textColor': AppColors.grey33,
+        'backgroundColor': const Color(0xFFF5F5F5),
+      };
     }
   }
 }

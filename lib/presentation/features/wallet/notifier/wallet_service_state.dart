@@ -1,30 +1,30 @@
-import 'package:bundlegram/data/models/wallet/service_model.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 
 class ServiceHistoryState {
-  final List<ServiceModel> services;
-  final List<ServiceModel> filteredServices;
+  final List<UserTransactions> allTransactions;
+  final List<UserTransactions> filteredTransactions;
   final bool isLoading;
   final String? error;
   final String searchQuery;
 
   ServiceHistoryState({
-    this.services = const [],
-    List<ServiceModel>? filteredServices,
+    this.allTransactions = const [],
+    List<UserTransactions>? filteredTransactions,
     this.isLoading = false,
     this.error,
     this.searchQuery = '',
-  }) : filteredServices = filteredServices ?? services;
+  }) : filteredTransactions = filteredTransactions ?? allTransactions;
 
   ServiceHistoryState copyWith({
-    List<ServiceModel>? services,
-    List<ServiceModel>? filteredServices,
+    List<UserTransactions>? allTransactions,
+    List<UserTransactions>? filteredTransactions,
     bool? isLoading,
     String? error,
     String? searchQuery,
   }) {
     return ServiceHistoryState(
-      services: services ?? this.services,
-      filteredServices: filteredServices ?? this.filteredServices,
+      allTransactions: allTransactions ?? this.allTransactions,
+      filteredTransactions: filteredTransactions ?? this.filteredTransactions,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
       searchQuery: searchQuery ?? this.searchQuery,

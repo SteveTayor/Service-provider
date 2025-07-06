@@ -101,7 +101,7 @@ class BecomeagentScreen extends StatelessWidget {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (ctx) => EnterPinScreen(
-                                onVerified: () {
+                                onVerified: (pin) {
                                   // Handle verification
                                   Navigator.pushReplacement(
                                     context,

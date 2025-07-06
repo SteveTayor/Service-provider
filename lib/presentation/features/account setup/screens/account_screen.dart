@@ -18,7 +18,7 @@ class AccountScreen extends ConsumerWidget {
             child: Column(
               children: [
                 const UserdetailWidget(),
-                40.verticalSpace,
+                20.verticalSpace,
                 const AccountitemWidget(),
               ],
             ),

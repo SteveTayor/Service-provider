@@ -124,12 +124,12 @@ class _AddfundWidgetState extends ConsumerState<AddfundWidget> {
           ),
           24.verticalSpace,
           _bankDetailWidget(
-            selectedAccount?.bankName ?? 'Unavailable',
+            selectedAccount?.bankName ?? 'Not available yet',
             'Bank name',
           ),
           32.verticalSpace,
           _bankDetailWidget(
-            selectedAccount?.accountNum ?? 'Unavailable',
+            selectedAccount?.accountNum ?? 'Not available yet',
             'Account number',
           ),
           28.verticalSpace,

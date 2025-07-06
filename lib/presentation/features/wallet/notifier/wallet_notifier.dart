@@ -26,7 +26,6 @@ class WalletNotifier {
         );
       },
       loading: () {
-        // Optional: show a spinner/snackbar while it’s loading
         AppLoader();
       },
       error: (_, __) {
@@ -41,15 +40,15 @@ class WalletNotifier {
     );
   }
 
-  void showLinkBVNSnackBar(BuildContext context) {
+  void showLinkBVNSnackBar(BuildContext context, String? msg, String? label) {
     final snackBar = SnackBar(
-      content: const Text(
-        'To ensure that you get a virtual account number, verify your BVN for this feature.',
+      content: Text(
+        msg!,
         style: TextStyle(color: Colors.white),
       ),
       backgroundColor: AppColors.primaryColor,
       action: SnackBarAction(
-        label: 'Link now',
+        label: label!,
         textColor: Colors.white,
         onPressed: () {
           context.push(RouteConstants.accountSetup);

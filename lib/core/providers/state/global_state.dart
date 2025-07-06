@@ -1,3 +1,4 @@
+import 'package:bundlegram/data/models/banks/get_all_users_banks_response.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bundlegram/data/models/auth/wallet/get_wallet_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_data_response.dart';
@@ -13,6 +14,7 @@ class GlobalState {
   final AsyncValue<GetAllBanksResponse?> banks;
   final AsyncValue<GetVirtualAccountsResponse?> virtualAccounts;
   final AsyncValue<GetAllUserTransactionResponse?> usersTransactions;
+  final AsyncValue<GetAllUserBanksResponse?> userBanks;
 
   GlobalState({
     this.profile = const AsyncData(null),
@@ -21,6 +23,7 @@ class GlobalState {
     this.banks = const AsyncData(null),
     this.virtualAccounts = const AsyncData(null),
     this.usersTransactions = const AsyncData(null),
+    this.userBanks = const AsyncData(null),
   });
 
   GlobalState copyWith({
@@ -30,6 +33,7 @@ class GlobalState {
     AsyncValue<GetAllBanksResponse?>? banks,
     AsyncValue<GetVirtualAccountsResponse?>? virtualAccounts,
     AsyncValue<GetAllUserTransactionResponse?>? usersTransactions,
+    AsyncValue<GetAllUserBanksResponse?>? userBanks,
   }) {
     return GlobalState(
       profile: profile ?? this.profile,
@@ -38,6 +42,7 @@ class GlobalState {
       banks: banks ?? this.banks,
       virtualAccounts: virtualAccounts ?? this.virtualAccounts,
       usersTransactions: usersTransactions ?? this.usersTransactions,
+      userBanks: userBanks ?? this.userBanks,
     );
   }
 
@@ -51,7 +56,8 @@ class GlobalState {
           dashboardData == other.dashboardData &&
           banks == other.banks &&
           virtualAccounts == other.virtualAccounts &&
-          usersTransactions == other.usersTransactions;
+          usersTransactions == other.usersTransactions &&
+          userBanks == other.userBanks;
 
   @override
   int get hashCode =>
@@ -60,5 +66,6 @@ class GlobalState {
       dashboardData.hashCode ^
       banks.hashCode ^
       virtualAccounts.hashCode ^
-      usersTransactions.hashCode;
+      usersTransactions.hashCode ^
+      userBanks.hashCode;
 }

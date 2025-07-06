@@ -5,7 +5,7 @@ class AccountSetupStep {
   final String asset;
   final String title;
   final String label;
-  final bool done;
+  final dynamic done;
   final String? route;
   final bool isBottomSheet;
   final Widget? bottomSheet;

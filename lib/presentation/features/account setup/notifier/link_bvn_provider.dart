@@ -134,17 +134,37 @@ class LinkBvnProvider extends ChangeNotifier {
         accountNumber: _acct.text.trim(),
         accountName: _acctName,
       );
-      await _api.linkBvn(token!, req);
-      await _ref.read(globalProvider.notifier).fetchProfile(context);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const TransactionSuccessful(
-            title: 'BVN Linked!',
-            subTitle:
-                'Your BVN has been successfully linked to your account. We will notify you once verified.',
-          ),
-        ),
+
+      final result = await _api.linkBvn(token!, req);
+      result.fold(
+        (fail) {
+          context.showErrorSnackBar(fail.properties.isNotEmpty
+              ? fail.properties.join('\n')
+              : 'Failed to link BVN');
+          _setLoading(false);
+          return false;
+        },
+        (resp) {
+          if (resp.status == 'success') {
+            _ref.read(globalProvider.notifier).fetchProfile(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const TransactionSuccessful(
+                  title: 'BVN Linked!',
+                  subTitle:
+                      'Your BVN has been successfully linked to your account. We will notify you once verified.',
+                ),
+              ),
+            );
+            _setLoading(false);
+            return true;
+          } else {
+            context.showErrorSnackBar(resp.message ?? 'Failed to link BVN');
+            _setLoading(false);
+            return false;
+          }
+        },
       );
     } catch (e) {
       context.showErrorSnackBar(e.toString());

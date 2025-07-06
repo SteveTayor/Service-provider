@@ -47,7 +47,7 @@ class ChangeaccountpinScreen extends ConsumerWidget {
                   MaterialPageRoute(
                     builder: (ctx) => EnterPinScreen(
                       isChangedAccountPin: true,
-                      onVerified: () {
+                      onVerified: (pin) {
                         pinCtrl.start(
                           PinScreenMode.create,
                           context: context,

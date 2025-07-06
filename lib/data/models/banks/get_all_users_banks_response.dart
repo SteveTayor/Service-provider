@@ -1,6 +1,6 @@
 class GetAllUserBanksResponse {
   final String? status;
-  final List<Datum>? data;
+  final List<UserBanksDetails>? data;
   final String? message;
 
   GetAllUserBanksResponse({
@@ -14,8 +14,8 @@ class GetAllUserBanksResponse {
         status: json["status"] as String?,
         data: json["data"] == null
             ? []
-            : List<Datum>.from((json["data"] as List)
-                .map((x) => Datum.fromJson(x as Map<String, dynamic>))),
+            : List<UserBanksDetails>.from((json["data"] as List).map(
+                (x) => UserBanksDetails.fromJson(x as Map<String, dynamic>))),
         message: json["message"] as String?,
       );
 
@@ -28,7 +28,7 @@ class GetAllUserBanksResponse {
       };
 }
 
-class Datum {
+class UserBanksDetails {
   final int? id;
   final int? userId;
   final String? bankName;
@@ -38,7 +38,7 @@ class Datum {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  Datum({
+  UserBanksDetails({
     this.id,
     this.userId,
     this.bankName,
@@ -49,7 +49,8 @@ class Datum {
     this.updatedAt,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory UserBanksDetails.fromJson(Map<String, dynamic> json) =>
+      UserBanksDetails(
         id: json["id"] as int?,
         userId: json["user_id"] as int?,
         bankName: json["bank_name"] as String?,
