@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
@@ -18,26 +19,26 @@ class AccountSetupProvider extends ChangeNotifier {
   final Ref _ref;
 
   AccountSetupProvider(this._ref);
+  bool bvnLinked = false;
 
   /// Compute which steps are complete based on the global profile
   List<AccountSetupStep> get steps {
     final profileAsync = _ref.watch(globalProvider).profile;
-    dynamic emailVerified = false;
-    dynamic basicInfo = false;
-    dynamic bvnLinked = false;
-    dynamic bankAdded = false;
+    bool emailVerified = false;
+    bool basicInfo = false;
+    bool bankAdded = false;
 
-    if (profileAsync is AsyncData<ProfileResponse>) {
-      final p = profileAsync.value.data!;
-      emailVerified = p.emailVerifiedAt != null;
-      basicInfo = (p.firstName?.isNotEmpty == true) &&
-          (p.lastName?.isNotEmpty == true) &&
+    if (profileAsync is AsyncData<ProfileResponse?>) {
+      final p = profileAsync.value?.data!;
+      emailVerified = p!.emailVerifiedAt != null;
+      basicInfo = (p.firstName?.isNotEmpty ?? false) &&
+          (p.lastName?.isNotEmpty ?? false) &&
           p.dob != null &&
-          (p.gender?.isNotEmpty == true) &&
-          (p.address?.isNotEmpty == true);
-      bvnLinked = p.bvn?.isNotEmpty == true;
-      bankAdded = (p.bankName?.isNotEmpty == true) &&
-          (p.accountNumber?.isNotEmpty == true);
+          (p.gender?.toString().isNotEmpty ?? false) &&
+          (p.address?.toString().isNotEmpty ?? false);
+      bvnLinked = p.bvn?.toString().isNotEmpty ?? false;
+      bankAdded = (p.bankName?.toString().isNotEmpty ?? false) &&
+          (p.accountNumber?.toString().isNotEmpty ?? false);
     }
 
     return [
@@ -81,10 +82,51 @@ class AccountSetupProvider extends ChangeNotifier {
 
   /// Handle tap on a step: either show a bottom sheet or navigate
   void onStepTap(AccountSetupStep step, BuildContext context) {
+    final profile = _ref.read(globalProvider).profile.value?.data;
+
+    // Allow email verification anytime
+    if (step.title.toLowerCase().contains('verify email')) {
+      if (step.isBottomSheet && step.bottomSheet != null) {
+        context.showBottomSheet(child: step.bottomSheet!);
+      } else if (step.route != null) {
+        context.push(step.route!);
+      }
+      return;
+    }
+
+    final isBvnLinked = (profile?.bvn?.isNotEmpty ?? false);
+
+    // Prevent navigation if BVN not linked, except for Verify Email and Link BVN
+    if (!bvnLinked &&
+        step.title != 'Link your BVN' &&
+        step.title != 'Verify email') {
+      context.showErrorSnackBar("Please link your BVN before continuing.");
+      return;
+    }
+
+    // Navigate or show bottom sheet if BVN is linked or if it's the BVN step
     if (step.isBottomSheet && step.bottomSheet != null) {
       context.showBottomSheet(child: step.bottomSheet!);
     } else if (step.route != null) {
       context.push(step.route!);
     }
+  }
+
+  /// Handle: function to check if the accountsetup is complete to remove from the carousel in dashboard
+  bool get isAccountSetupComplete {
+    final profileAsync = _ref.watch(globalProvider).profile;
+    if (profileAsync is AsyncData<ProfileResponse?>) {
+      final p = profileAsync.value?.data!;
+      return (p?.emailVerifiedAt != null) &&
+          (p?.firstName?.isNotEmpty == true) &&
+          (p?.lastName?.isNotEmpty == true) &&
+          (p?.dob != null) &&
+          (p?.gender != null) &&
+          (p?.address != null) &&
+          (p?.bvn != null) &&
+          (p?.bankName != null) &&
+          (p?.accountNumber != null);
+    }
+    return false;
   }
 }

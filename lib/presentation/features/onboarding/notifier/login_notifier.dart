@@ -182,7 +182,44 @@ class LoginProvider extends ChangeNotifier {
 
         context.dismissDialog();
         _setLoading(false);
-        context.go(RouteConstants.dashboard);
+        context.pushReplacement(RouteConstants.dashboard);
+      },
+    );
+  }
+
+  Future<void> logoutUser(BuildContext context) async {
+    final token = await _storage.getAuthToken();
+
+    if (token == null) {
+      context.showErrorSnackBar('No token found.');
+      return;
+    }
+
+    // Optional: Show a loading dialog
+    unawaited(context.showLoadingDialog(message: 'Logging out...'));
+
+    final result = await _api.logout('Bearer $token');
+
+    context.dismissDialog();
+
+    result.fold(
+      (failure) {
+        context.showErrorSnackBar(
+          failure.properties.join('\n') ?? 'Logout failed',
+        );
+      },
+      (response) async {
+        if (response.success) {
+          // Clear secure storage
+          await _storage.clearAll();
+
+          // Navigate to login
+          context
+            ..go(RouteConstants.login)
+            ..showSuccessSnackBar(response.message ?? 'Logged out');
+        } else {
+          context.showErrorSnackBar(response.message ?? 'Logout failed');
+        }
       },
     );
   }

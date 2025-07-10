@@ -1,17 +1,20 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
-import 'package:bundlegram/presentation/features/wallet/screen/wallet_screen.dart';
+import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class TransactionSummary extends StatelessWidget {
+class TransactionSummary extends ConsumerWidget {
   const TransactionSummary({
     required this.amount,
     required this.paymentMethod,
@@ -78,7 +81,11 @@ class TransactionSummary extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final walletBalanceAsync =
+        ref.watch(globalProvider.select((s) => s.walletBalance));
+    final walletBalance = walletBalanceAsync.value?.wallet ?? 0.0;
+
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -162,17 +169,13 @@ class TransactionSummary extends StatelessWidget {
               children: [
                 AppSvgIcon(path: Assets.svgs.balance),
                 16.horizontalSpace,
-                Text('Balance (₦20,000)', style: context.textTheme.bodySmall),
+                Text('Balance (${CurrencyFormatter.format(walletBalance)})',
+                    style: context.textTheme.bodySmall),
                 const Spacer(),
                 Flexible(
                   child: InkWell(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const WalletScreen(),
-                        ),
-                      );
+                      context.go(RouteConstants.dashboard);
                     },
                     child: Text(
                       'Top-up >',

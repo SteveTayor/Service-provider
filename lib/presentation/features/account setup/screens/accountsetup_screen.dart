@@ -1,4 +1,3 @@
-// lib/presentation/features/account_setup/screens/account_setup_screen.dart
 import 'package:bundlegram/presentation/features/account%20setup/notifier/account_setup_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +26,7 @@ class _AccountsetupScreenState extends ConsumerState<AccountsetupScreen> {
     // fetch banks once on screen load
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(globalProvider.notifier).fetchBanks(context);
+      ref.read(globalProvider.notifier).fetchProfile(context);
     });
   }
 
@@ -61,7 +61,7 @@ class _AccountsetupScreenState extends ConsumerState<AccountsetupScreen> {
                       margin: EdgeInsets.symmetric(horizontal: 4.w),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(6),
-                        color: step.done != null
+                        color: step.done
                             ? AppColors.primaryColor
                             : AppColors.greyd9,
                       ),
@@ -94,7 +94,7 @@ class _AccountsetupScreenState extends ConsumerState<AccountsetupScreen> {
                         ),
                       ),
                       AppSvgIcon(
-                        path: step.done != null
+                        path: step.done
                             ? Assets.svgs.check
                             : Assets.svgs.unveirifycheck,
                       ),

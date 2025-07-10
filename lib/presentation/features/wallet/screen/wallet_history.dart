@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_widget.dart';
@@ -130,8 +131,8 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
       transactionId: txn.transRef.toString(),
       date: _formatDate(txn.createdAt.toString() ?? ''),
       time: _formatTime(txn.createdAt.toString()),
-      type: txn.subProduct?.product?.productName.toString(),
-      amount: txn.amount?.toCurrency() ?? '0',
+      type: txn.transType.toString(),
+      amount: CurrencyFormatter.format(txn.amount),
       phoneNumber: txn.crAcc,
       status: txn.status ?? '',
       description: txn.subProduct?.subName ?? '',

@@ -68,7 +68,7 @@ class ApiService {
     return handleApi(() => _api.login(_sterilizer, req));
   }
 
-  Future<Either<Failure, void>> logout(String token) {
+  Future<Either<Failure, BaseResponse>> logout(String token) {
     return handleApi(() => _api.logout('Bearer $token', _sterilizer));
   }
 

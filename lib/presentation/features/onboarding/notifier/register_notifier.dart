@@ -165,7 +165,7 @@ class RegisterProvider extends ChangeNotifier {
       (data) async {
         await _storage.setAuthToken(data.data!.token!);
         _setLoading(false);
-        context.go(RouteConstants.chooseUsername);
+        context.pushReplacement(RouteConstants.chooseUsername);
       },
     );
   }

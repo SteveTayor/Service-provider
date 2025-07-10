@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,17 +11,40 @@ class RecentTransactionsNotifier
 
   RecentTransactionsNotifier(this.ref)
       : super(RecentTransactionsState.initial()) {
-    loadServices();
+    ref.listen<AsyncValue<GetAllUserTransactionResponse?>>(
+      globalProvider.select((s) => s.usersTransactions),
+      (prev, next) {
+        next.whenData((wrapper) {
+          final now = DateTime.now();
+          final last7Days = now.subtract(const Duration(days: 7));
+
+          final recent = (wrapper?.data ?? []).where((txn) {
+            final txnDate = txn.createdAt;
+            if (txnDate == null) return false;
+            return txnDate.isAfter(last7Days);
+          }).toList();
+
+          state = state.copyWith(
+            services: recent,
+            filteredServices: recent,
+            isLoading: false,
+          );
+        });
+      },
+    );
   }
 
-  void loadServices() {
-    ref.read(globalProvider).usersTransactions.whenData((data) {
+  void refresh() {
+    // Will trigger update when usersTransactions is refreshed externally
+    final wrapper = ref.read(globalProvider).usersTransactions;
+    wrapper.whenData((data) {
       final now = DateTime.now();
       final last7Days = now.subtract(const Duration(days: 7));
 
       final recent = (data?.data ?? []).where((txn) {
         final txnDate = txn.createdAt;
-        return txnDate != null && txnDate.isAfter(last7Days);
+        if (txnDate == null) return false;
+        return txnDate.isAfter(last7Days);
       }).toList();
 
       state = state.copyWith(
@@ -29,10 +53,6 @@ class RecentTransactionsNotifier
         isLoading: false,
       );
     });
-  }
-
-  void refresh() {
-    loadServices();
   }
 
   void search(String query) {

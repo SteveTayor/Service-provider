@@ -4,6 +4,7 @@ import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/enums.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platform_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';

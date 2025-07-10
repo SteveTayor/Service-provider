@@ -29,7 +29,9 @@ class ChooseUsernameScreen extends ConsumerWidget {
     });
 
     return BundlegramScaffold(
-      appBar: const BundlegramAppbar(),
+      appBar: const BundlegramAppbar(
+        showBackButton: false,
+      ),
       sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
       body: Column(
         children: [

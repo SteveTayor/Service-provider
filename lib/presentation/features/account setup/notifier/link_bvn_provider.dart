@@ -1,6 +1,7 @@
 // lib/presentation/features/account_setup/providers/link_bvn_provider.dart
 import 'dart:async';
 
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/banks/fetch_account_name_request.dart';
@@ -86,7 +87,7 @@ class LinkBvnProvider extends ChangeNotifier {
   /// Fetch account name when account number changes
   Future<void> onAccountNumberChanged(String v) async {
     _acct.text = v;
-    if (_selectedBankCode == null) return;
+    if (v.trim().length != 10 && _selectedBankCode == null) return;
     _fetchingName = true;
     notifyListeners();
     try {
@@ -123,6 +124,7 @@ class LinkBvnProvider extends ChangeNotifier {
   Future<void> submit(BuildContext context) async {
     if (!formKey.currentState!.validate()) return;
     _setLoading(true);
+    unawaited(context.showLoadingDialog(message: 'Submitting Bvn details...'));
     try {
       final token = await _ref.read(secureStorageHelperProvider).getAuthToken();
       final req = LinkBvnRequest(
@@ -138,6 +140,7 @@ class LinkBvnProvider extends ChangeNotifier {
       final result = await _api.linkBvn(token!, req);
       result.fold(
         (fail) {
+          context.dismissDialog();
           context.showErrorSnackBar(fail.properties.isNotEmpty
               ? fail.properties.join('\n')
               : 'Failed to link BVN');
@@ -147,6 +150,7 @@ class LinkBvnProvider extends ChangeNotifier {
         (resp) {
           if (resp.status == 'success') {
             _ref.read(globalProvider.notifier).fetchProfile(context);
+            context.dismissDialog();
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -160,6 +164,7 @@ class LinkBvnProvider extends ChangeNotifier {
             _setLoading(false);
             return true;
           } else {
+            context.dismissDialog();
             context.showErrorSnackBar(resp.message ?? 'Failed to link BVN');
             _setLoading(false);
             return false;
@@ -167,8 +172,10 @@ class LinkBvnProvider extends ChangeNotifier {
         },
       );
     } catch (e) {
+      context.dismissDialog();
       context.showErrorSnackBar(e.toString());
     } finally {
+      context.dismissDialog();
       _setLoading(false);
     }
   }

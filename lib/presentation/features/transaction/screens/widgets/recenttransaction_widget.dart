@@ -1,6 +1,7 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
@@ -10,15 +11,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 
-class RecenttransactionWidget extends ConsumerWidget {
+class RecentTransactionWidget extends ConsumerWidget {
   final Widget? spacing;
-  const RecenttransactionWidget(this.spacing, {super.key});
+  const RecentTransactionWidget(this.spacing, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recentState = ref.watch(recentTransactionsProvider);
-    final recentTransactions =
-        _getRecentTransactions(recentState.filteredServices);
+    final recentTransactions = recentState.filteredServices.take(5).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,19 +50,17 @@ class RecenttransactionWidget extends ConsumerWidget {
       );
     }
 
-    final limited = transactions.take(5).toList();
-
     return ListView.separated(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: limited.length,
+      itemCount: transactions.length,
       separatorBuilder: (_, __) => Container(
         height: 1,
         color: AppColors.greyD0.withOpacity(0.1),
         margin: EdgeInsets.symmetric(vertical: 12.h),
       ),
       itemBuilder: (context, index) {
-        final transaction = limited[index];
+        final transaction = transactions[index];
         return ServiceListItem(transaction: transaction);
       },
     );
@@ -135,21 +133,5 @@ class RecenttransactionWidget extends ConsumerWidget {
         },
       ),
     );
-  }
-
-  List<UserTransactions> _getRecentTransactions(List<UserTransactions> txns) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-
-    return txns.where((txn) {
-      try {
-        final dt = txn.createdAt ?? DateTime(1970);
-        final txnDate = DateTime(dt.year, dt.month, dt.day);
-        return txnDate == today || txnDate == yesterday;
-      } catch (e) {
-        return false;
-      }
-    }).toList();
   }
 }

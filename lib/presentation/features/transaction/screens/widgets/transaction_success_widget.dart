@@ -36,7 +36,7 @@ class TransactionSuccessful extends StatelessWidget {
                 ? 'Continue'
                 : 'Go to home',
         onPressed: () {
-          context.push(RouteConstants.dashboard);
+          context.pushReplacement(RouteConstants.dashboard);
         },
       ),
     );

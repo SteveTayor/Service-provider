@@ -3,6 +3,7 @@ import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/core/utils/enums.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/statisticvisual.dart';
@@ -66,7 +67,7 @@ class PlatformProvider extends ChangeNotifier {
   String get userName {
     final profile = _ref.read(globalProvider).profile;
     if (profile is AsyncData) {
-      return profile.value?.data?.firstName ?? 'User';
+      return profile.value?.data?.username ?? 'User';
     }
     return 'User';
   }

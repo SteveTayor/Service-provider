@@ -1,68 +1,53 @@
-// lib/presentation/features/Bundlegram_Platform/screens/widget/PlatformphonenumberformWidget_widget.dart
-
+import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/general_widget/app_loader.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
-import 'package:bundlegram/core/utils/enums.dart';
-import 'package:bundlegram/gen/assets.gen.dart';
-import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/choosebiller.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_product_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_dropdown.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class PlatformphonenumberformWidget extends StatefulWidget {
-  const PlatformphonenumberformWidget({
-    super.key,
+class PlatformPhoneNumberFormWidget extends ConsumerStatefulWidget {
+  const PlatformPhoneNumberFormWidget({
+    Key? key,
     this.inputHint,
     this.secondaryInputHint,
     this.dropdownHint,
-    this.onProviderSelected,
-    this.initialProviderImage,
-    this.secondaryInputfieldController,
-    this.firstInputfieldController,
-    this.dropdownOptions,
-    this.onPaymentTypeSelected,
     required this.serviceType,
-  });
+  }) : super(key: key);
 
   final String? inputHint;
   final String? secondaryInputHint;
   final String? dropdownHint;
-  final Function(String?)? onProviderSelected;
-  final String? initialProviderImage;
-  final TextEditingController? secondaryInputfieldController;
-  final TextEditingController? firstInputfieldController;
   final PlatformProductType serviceType;
-  final List<String>? dropdownOptions;
-  final Function(String?)? onPaymentTypeSelected;
 
   @override
-  State<PlatformphonenumberformWidget> createState() =>
-      _PlatformphonenumberformWidgetState();
+  ConsumerState<PlatformPhoneNumberFormWidget> createState() =>
+      _PlatformPhoneNumberFormWidgetState();
 }
 
-class _PlatformphonenumberformWidgetState
-    extends State<PlatformphonenumberformWidget>
+class _PlatformPhoneNumberFormWidgetState
+    extends ConsumerState<PlatformPhoneNumberFormWidget>
     with SingleTickerProviderStateMixin {
-  String? _selectedProviderImage;
-  String? _selectedProviderName;
-  String? _selectedDropdown;
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    final opts = widget.dropdownOptions;
-    _selectedDropdown = (opts != null && opts.isNotEmpty) ? opts.first : null;
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
-      final selectedType = _tabController.index == 0 ? 'prepaid' : 'postpaid';
-      widget.onPaymentTypeSelected?.call(selectedType);
+      if (_tabController.indexIsChanging) {
+        final type = _tabController.index == 0 ? 'prepaid' : 'postpaid';
+        ref
+            .read(platformProductProvider(widget.serviceType).notifier)
+            .selectPaymentType(type);
+      }
     });
-    _selectedProviderImage = widget.initialProviderImage;
-    _selectedProviderName = null;
   }
 
   @override
@@ -73,134 +58,141 @@ class _PlatformphonenumberformWidgetState
     super.dispose();
   }
 
-  bool get _allowsFreeText =>
-      widget.serviceType == PlatformProductType.airtime ||
-      widget.serviceType == PlatformProductType.mobileData;
-
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(platformProductProvider(widget.serviceType));
+    final notifier =
+        ref.read(platformProductProvider(widget.serviceType).notifier);
+
+    final allowsFreeText = widget.serviceType == PlatformProductType.airtime ||
+        widget.serviceType == PlatformProductType.mobileData;
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppTextField(
-          hintText: _allowsFreeText
+          hintText: allowsFreeText
               ? widget.inputHint
-              : (_selectedProviderName ?? 'Select biller'),
-          readOnly: !_allowsFreeText,
-          autofocus: false,
-          controller: widget.firstInputfieldController,
-          onTap: !_allowsFreeText ? () => _showBillerPicker(context) : null,
-          prefixIcon: SizedBox(
-            child: GestureDetector(
-              onTap: _showBillerPicker,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  16.horizontalSpace,
-                  if (_selectedProviderImage != null)
-                    _selectedProviderImage!.endsWith('.svg')
-                        ? CircleAvatar(
-                            radius: 15,
-                            child: ClipOval(
-                              child: AppSvgIcon(
-                                path: _selectedProviderImage!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                        : Image.asset(_selectedProviderImage!, width: 24)
-                  else
-                    // (_allowsFreeText == true)
-                    //     ? SizedBox(
-                    //         width: 24,
-                    //         height: 24,
-                    //         child: CircleAvatar(
-                    //           child: AppSvgIcon(
-                    //               path: Assets.svgs.call, fit: BoxFit.fill),
-                    //         ),
-                    //       )
-                    //     :
-                    SizedBox.shrink(),
-                  8.horizontalSpace,
-                  AppSvgIcon(path: Assets.svgs.chevronDown),
-                  8.horizontalSpace,
-                ],
-              ),
+              : (state.selectedProduct?.productName ?? 'Select biller'),
+          readOnly: !allowsFreeText,
+          controller: state.firstInputController,
+          onTap:
+              allowsFreeText ? null : () => notifier.showBillerPicker(context),
+          prefixIcon: GestureDetector(
+            onTap: () => notifier.showBillerPicker(context),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                16.horizontalSpace,
+                _buildIcon(state.selectedProviderIcon),
+                8.horizontalSpace,
+                AppSvgIcon(path: Assets.svgs.chevronDown),
+                8.horizontalSpace,
+              ],
             ),
           ),
         ),
-        if (widget.serviceType == PlatformProductType.electricity)
-          Padding(
-            padding: EdgeInsets.only(top: 24.h),
-            child: Container(
-              child: TabBar(
-                controller: _tabController,
-                indicator: BoxDecoration(
-                  color: Color(0xFFE8EFFF),
-                  border: Border.all(
-                    width: 1,
-                    color: AppColors.primaryColor,
-                  ),
-                ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent, // Remove default divider
-                labelColor: AppColors.primaryColor, // Active tab text color
-
-                labelStyle: context.textTheme.bodySmall,
-                unselectedLabelStyle: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14.sp,
-                  color: AppColors.black,
-                ),
-                tabs: [
-                  Container(
-                      width: 263.w,
-                      height: 58.h,
-                      decoration: BoxDecoration(),
-                      child: Tab(text: 'Prepaid')),
-                  Tab(text: 'Postpaid'),
-                ],
+        if (widget.serviceType == PlatformProductType.betting) ...[
+          24.verticalSpace,
+          AppTextField(
+            hintText: 'Enter User ID',
+            controller: state.secondaryInputController,
+            onChange: (val) {
+              notifier.validateBill(
+                context,
+                val,
+                state.selectedSubProduct?.id ?? state.selectedProduct?.id,
+                state.selectedSubProduct?.autoSubProdId,
+              );
+            },
+            suffixIcon: state.isValidating
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : state.billValidated
+                    ? const Icon(Icons.check_circle, color: Colors.green)
+                    : null,
+          ),
+          if (state.validatedName != null) ...[
+            8.verticalSpace,
+            Text(
+              'Validated: ${state.validatedName}',
+              style: context.textTheme.bodySmall!.copyWith(
+                color: AppColors.primaryColor,
               ),
             ),
-          ),
-        if (widget.dropdownOptions != null &&
-            widget.dropdownOptions!.isNotEmpty)
-          Padding(
-            padding: EdgeInsets.only(top: 24.h),
-            child: AppDropdown(
-              title: _selectedDropdown ?? widget.dropdownHint!,
-              options: widget.dropdownOptions!,
-              selected: _selectedDropdown,
-              onChanged: (val) {
-                setState(() => _selectedDropdown = val);
-                widget.onProviderSelected?.call(val);
-              },
+          ],
+        ],
+        if (widget.serviceType == PlatformProductType.electricity) ...[
+          24.verticalSpace,
+          TabBar(
+            controller: _tabController,
+            indicator: BoxDecoration(
+              color: const Color(0xFFE8EFFF),
+              border: Border.all(width: 1, color: AppColors.primaryColor),
             ),
-          ),
-        if (widget.secondaryInputHint != null)
-          Padding(
-            padding: EdgeInsets.only(top: 24.h),
-            child: AppTextField(
-              hintText: widget.secondaryInputHint,
-              hintStyle: InputDecoration().hintStyle,
-              controller: widget.secondaryInputfieldController,
+            indicatorSize: TabBarIndicatorSize.tab,
+            labelColor: AppColors.primaryColor,
+            labelStyle: context.textTheme.bodySmall,
+            unselectedLabelStyle: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 14.sp,
+              color: AppColors.black,
             ),
+            tabs: const [Tab(text: 'Prepaid'), Tab(text: 'Postpaid')],
           ),
+        ],
+        if (state.dropdownOptions.isNotEmpty) ...[
+          24.verticalSpace,
+          AppDropdown(
+            title: state.selectedDataType ?? widget.dropdownHint!,
+            options: state.dropdownOptions,
+            selected: state.selectedDataType,
+            onChanged: (val) => notifier.selectDataType(val!),
+          ),
+        ],
+        if (
+            // widget.secondaryInputHint != null &&
+            widget.serviceType != PlatformProductType.airtime &&
+                widget.serviceType != PlatformProductType.mobileData) ...[
+          24.verticalSpace,
+          AppTextField(
+            hintText: widget.secondaryInputHint!,
+            controller: state.secondaryInputController,
+          ),
+        ],
       ],
     );
   }
 
-  void _showBillerPicker([_]) {
-    context.showBottomSheet(
-      child: ChoosebillerWidget(
-        serviceType: widget.serviceType,
-        onProviderSelected: (path, name) {
-          setState(() {
-            _selectedProviderImage = path;
-            _selectedProviderName = name;
-          });
-          widget.onProviderSelected?.call(name);
-        },
-      ),
+  Widget _buildIcon(String? rawPath) {
+    final assetName = ref
+        .read(platformProductProvider(widget.serviceType).notifier)
+        .normalizeAssetName(rawPath);
+
+    if (assetName != null) {
+      if (assetName.endsWith('.svg')) {
+        return CircleAvatar(
+          radius: 15,
+          child: ClipOval(
+            child: AppSvgIcon(path: assetName, fit: BoxFit.cover),
+          ),
+        );
+      }
+      return Image.asset(assetName,
+          width: 24,
+          errorBuilder: (_, __, ___) => const Icon(Icons.broken_image));
+    }
+
+    if (rawPath != null && rawPath.startsWith('http')) {
+      return CircleAvatar(radius: 15, backgroundImage: NetworkImage(rawPath));
+    }
+
+    return const CircleAvatar(
+      radius: 15,
+      child: Icon(Icons.device_unknown, size: 16),
     );
   }
 }

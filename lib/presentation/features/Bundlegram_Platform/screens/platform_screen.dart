@@ -47,7 +47,7 @@ class _PlatformScreenState extends ConsumerState<PlatformScreen> {
             40.verticalSpace,
             Padding(
               padding: context.symmetricPadding(20, 0),
-              child: RecenttransactionWidget(
+              child: RecentTransactionWidget(
                 SizedBox(
                   height: 0.h,
                 ),

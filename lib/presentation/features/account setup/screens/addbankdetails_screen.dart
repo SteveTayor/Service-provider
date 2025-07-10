@@ -51,6 +51,7 @@ class AddBankDetailsScreen extends ConsumerWidget {
                 ),
                 SizedBox(height: 24.h),
                 AppTextField(
+                  label: 'Account Number',
                   controller: provider.acct,
                   hintText: 'Account number',
                   keyboardType: TextInputType.number,
@@ -63,6 +64,7 @@ class AddBankDetailsScreen extends ConsumerWidget {
                 ],
                 SizedBox(height: 16.h),
                 AppTextField(
+                  label: 'Account Name',
                   controller: TextEditingController(text: provider.acctName),
                   hintText: 'Account name',
                   readOnly: true,

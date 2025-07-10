@@ -26,7 +26,7 @@ class WalletServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
       ..whenData((txns) {
         final filtered = txns?.data?.where((txn) {
           final type = txn.transType?.toLowerCase() ?? '';
-          return type.contains('top-up') || type.contains('withdrawal');
+          return type.contains('fund_wallet') || type.contains('withdrawal');
         }).toList();
 
         state = state.copyWith(

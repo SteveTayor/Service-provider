@@ -4,6 +4,7 @@ import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/enums.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
@@ -17,12 +18,10 @@ class PlatFormData {
   static final List<String> advert = [
     Assets.svgs.accountsetup,
     Assets.svgs.bundlegramagent,
-    Assets.svgs.completesetup,
   ];
   static List<VoidCallback> advertFunction(BuildContext context) => [
         () => context.push(RouteConstants.accountSetup),
         () => context.push(RouteConstants.becomeagent),
-        () => context.push(RouteConstants.accountSetup),
       ];
   static final List<Widget> payBillWidget = [
     Builder(builder: (context) {
@@ -128,7 +127,7 @@ class PlatFormData {
       showSubtitle: true,
       // assetPath: 'assets/svgs/mtn_logo.svg',
       imagePath: Assets.images.mtn.path,
-      title: 'MTN Nigeria',
+      title: 'MTN ',
       subtitle: '@mtnng',
       onPressed: () {},
     ),
@@ -136,20 +135,22 @@ class PlatFormData {
       showSubtitle: true,
       // assetPath: Assets.svgs.airtel,
       imagePath: Assets.images.airtel.path,
-      title: 'Airtel Nigeria',
+      title: 'Airtel',
       subtitle: '@airtelnigeria',
     ),
     AppListTile(
       showSubtitle: true,
       // assetPath: Assets.svgs.glo,
       imagePath: Assets.images.glo.path,
-      title: 'Glo Nigeria',
+      title: 'Glo',
       subtitle: '@globacomlimited',
     ),
     AppListTile(
       showSubtitle: true,
       // assetPath: Assets.svgs.a9mobile,
-      imagePath: Assets.images.a9mobile.path, title: '9mobile Nigeria',
+
+      imagePath: Assets.images.a9mobile.path,
+      title: '9mobile ',
       subtitle: '@9mobileng',
     ),
   ];
@@ -176,7 +177,7 @@ class PlatFormData {
       showSubtitle: true,
       // assetPath: Assets.svgs.ekoElectricity,
       imagePath: Assets.images.ekoPhcn.path,
-      title: 'Eko PHCN',
+      title: 'Eko ',
       subtitle: 'EDEDC',
     ),
     AppListTile(
@@ -184,7 +185,7 @@ class PlatFormData {
       // assetPath: Assets.svgs.ibedc,
       imagePath: Assets.images.ibedc.path,
 
-      title: 'Ibadan Electricity',
+      title: 'Ibadan',
       subtitle: 'IBEDC',
     ),
     AppListTile(
@@ -192,7 +193,7 @@ class PlatFormData {
       // assetPath: Assets.svgs.eedc,
       imagePath: Assets.images.enuguPhcn.path,
 
-      title: 'Enugu PHCN',
+      title: 'Enugu ',
       subtitle: 'EEDC',
     ),
     AppListTile(
@@ -200,7 +201,7 @@ class PlatFormData {
       // assetPath: Assets.svgs.ikejaElectricity,
       imagePath: Assets.images.ikejaPhcn.path,
 
-      title: 'Ikeja Electricity',
+      title: 'Ikeja',
       subtitle: 'Ikeja Electricity',
     ),
   ];
@@ -211,7 +212,7 @@ class PlatFormData {
       // assetPath: Assets.svgs.smile,
       imagePath: Assets.images.smile.path,
 
-      title: 'Smile Bundle',
+      title: 'Smile',
       subtitle: 'Smile',
     ),
     AppListTile(

@@ -48,26 +48,10 @@ class PinController extends ChangeNotifier {
     PinScreenMode m, {
     String? initialPin,
     VoidCallback? onComplete,
-    BuildContext? context,
-    bool navigateToSuccess = false,
   }) {
     mode = m;
     this.initialPin = initialPin;
-    onCompleted = () {
-      if (navigateToSuccess && context != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (ctx) => const TransactionSuccessful(
-              title: 'Account pin changed!',
-              subTitle: 'You can now use your new PIN.',
-            ),
-          ),
-        );
-      } else {
-        onComplete?.call();
-      }
-    };
+    onCompleted = onComplete;
     reset();
   }
 
@@ -112,26 +96,17 @@ class PinController extends ChangeNotifier {
         mode = PinScreenMode.confirm;
         reset();
         unawaited(context.push(RouteConstants.pinScreen));
-
         break;
 
       case PinScreenMode.confirm:
         if (entered == initialPin) {
-          mode = PinScreenMode.validate;
-          reset();
-          unawaited(context.push(RouteConstants.pinScreen));
+          await _createPinOnServer(context, entered);
         } else {
           showError("PIN does not match. Try again.");
         }
         break;
 
-      case PinScreenMode.validate:
-        if (entered == initialPin) {
-          await _createPinOnServer(context, entered);
-        } else {
-          showError("Incorrect PIN.");
-        }
-        break;
+      // ✅ Removed validate stage completely
     }
   }
 
@@ -152,12 +127,44 @@ class PinController extends ChangeNotifier {
         );
       },
       (data) {
-        context.showSuccessSnackBar("PIN created successfully");
-        onCompleted?.call(); // Final callback
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const TransactionSuccessful(
+              title: 'Account pin created!',
+              subTitle:
+                  'You can now use your account PIN when performing transactions.',
+              isBasicInfo: true,
+            ),
+          ),
+        );
       },
     );
   }
 
+  Future<bool> resetPinWithPassword(
+      String password, BuildContext context) async {
+    final token = await _storage.getAuthToken();
+    if (token == null) {
+      context.showErrorSnackBar("Token missing. Please log in again.");
+      return false;
+    }
+
+    final res = await _api.resetPin(token, password);
+    return res.fold(
+      (failure) {
+        context.showErrorSnackBar(
+          failure.properties.isNotEmpty
+              ? failure.properties.join('\n')
+              : "Failed to reset PIN",
+        );
+        return false;
+      },
+      (_) => true,
+    );
+  }
+
+  // Password validation utilities
   String? validatePassword(String? input) {
     if (input == null || input.trim().isEmpty) return 'Password required';
     return null;

@@ -8,8 +8,10 @@ import 'package:go_router/go_router.dart';
 
 class FailedResultScreen extends StatelessWidget {
   final String serviceContent;
+  final String title;
   const FailedResultScreen({
     super.key,
+    this.title = 'Purchase failed!',
     required this.serviceContent,
   });
 
@@ -21,7 +23,7 @@ class FailedResultScreen extends StatelessWidget {
         appIcon: AppSvgIcon(
           path: Assets.svgs.failedIllustration,
         ),
-        title: 'Top-up failed!',
+        title: title,
         subText:
             'Your ${serviceContent} failed. Please, check your connection and try again..',
         buttonText: 'Retry',

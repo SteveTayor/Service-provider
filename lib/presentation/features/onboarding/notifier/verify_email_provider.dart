@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/data/models/base/base_response.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/email_otp_widget.dart';
 import 'package:flutter/material.dart';
@@ -52,14 +53,17 @@ class VerifyEmailProvider extends ChangeNotifier {
         return false;
       },
       (BaseResponse resp) {
-        if (resp.success == true) {
+        if (resp.success) {
           context.showSuccessSnackBar(resp.message ?? 'OTP sent');
           _sending = false;
+          otpCtrl.clear();
           notifyListeners();
-          // Handle routing here
           context.pop();
-          EmailOtpDialogNotifier().showOtpInputDialog(context, ref);
+          EmailOtpDialogNotifier().showOtpInputDialog(
+              context, _ref.read(verifyEmailProvider.notifier));
 
+          // Fetch profile to ensure UI updates
+          _ref.read(globalProvider.notifier).fetchProfile(context);
           return true;
         } else {
           context.pop();
@@ -100,10 +104,14 @@ class VerifyEmailProvider extends ChangeNotifier {
       },
       (BaseResponse resp) {
         // Check if the response indicates actual success
-        if (resp.success == true) {
-          context.showSuccessSnackBar(resp.message ?? 'Email verified');
+        if (resp.success) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.showPopUp(Text('${resp.message}'));
+            context.showSuccessSnackBar(resp.message ?? 'Email verified');
+          });
           _ref.read(globalProvider.notifier).fetchProfile(context);
           _verifying = false;
+          otpCtrl.clear();
           notifyListeners();
           return true;
         } else {

@@ -3,6 +3,7 @@ import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
@@ -32,13 +33,40 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
   String _amountBy = 'largest';
   final Set<String> _statusSet = {};
   final Set<String> _typeSet = {};
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref
+          .read(globalProvider.notifier)
+          .fetchUsersTransactions(context, force: true);
       ref.read(transactionHistoryProvider.notifier).loadServices();
     });
+
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      // Avoid triggering multiple times while loading
+      if (!_isLoadingMore) {
+        _isLoadingMore = true;
+        Future.microtask(() {
+          ref.read(transactionHistoryProvider.notifier).loadMoreTransactions();
+          _isLoadingMore = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -88,44 +116,60 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
           ),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: AppTextField(
-              decoration: const InputDecoration().search(),
-              onChange: (value) {
-                ref.read(transactionHistoryProvider.notifier).search(value);
-              },
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await ref
+              .read(globalProvider.notifier)
+              .fetchUsersTransactions(context, force: true);
+          ref.read(transactionHistoryProvider.notifier).refresh();
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: AppTextField(
+                decoration: const InputDecoration().search(),
+                onChange: (value) {
+                  ref.read(transactionHistoryProvider.notifier).search(value);
+                },
+              ),
             ),
-          ),
-          20.verticalSpace,
-          Expanded(
-            child: allTxns.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Center(child: EmptytransactionWidget()),
-                  )
-                : ListView.separated(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 25),
-                    itemCount: allTxns.length,
-                    separatorBuilder: (ctx, idx) => Container(
-                      height: 1,
-                      color: AppColors.greyD0.withOpacity(0.1),
-                      margin: EdgeInsets.symmetric(vertical: 12.h),
+            20.verticalSpace,
+            Expanded(
+              child: allTxns.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Center(child: EmptytransactionWidget()),
+                    )
+                  : ListView.separated(
+                      controller: _scrollController,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10.w, vertical: 25),
+                      itemCount: allTxns.length + 1,
+                      separatorBuilder: (_, __) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8, top: 10),
+                        child: Divider(color: AppColors.divider),
+                      ),
+                      itemBuilder: (ctx, index) {
+                        if (index == allTxns.length) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        }
+                        final txn = allTxns[index];
+                        return GestureDetector(
+                          onTap: () => _showTransactionDetails(txn),
+                          child: ServiceListItem(transaction: txn),
+                        );
+                      },
                     ),
-                    itemBuilder: (ctx, index) {
-                      final txn = allTxns[index];
-                      return GestureDetector(
-                        onTap: () => _showTransactionDetails(txn),
-                        child: ServiceListItem(transaction: txn), // ✅ Updated
-                      );
-                    },
-                  ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -135,9 +179,10 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
       transactionId: txn.transRef ?? 'BNG-${txn.id}',
       date: _formatDate(txn.createdAt),
       time: _formatTime(txn.createdAt),
-      type: txn.transType ?? 'N/A',
+      type: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
+          ? txn.subProduct?.product?.productName
+          : txn.transType ?? 'N/A',
       amount: txn.amount?.toCurrency() ?? '₦0.00',
-      bankName: txn.bank.toString() ?? _getDefaultBankName(txn.transType ?? ''),
       accountNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
       status: txn.status ?? 'Unknown',
       description:
@@ -168,11 +213,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
     final yesterday = today.subtract(const Duration(days: 1));
     final txnDate = DateTime(date.year, date.month, date.day);
 
-    if (txnDate.isAtSameMomentAs(today)) {
-      return 'Today';
-    } else if (txnDate.isAtSameMomentAs(yesterday)) {
-      return 'Yesterday';
-    }
+    if (txnDate.isAtSameMomentAs(today)) return 'Today';
+    if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
     return date.toLocal().toIso8601String();
   }
 
@@ -181,29 +223,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
     final hour = date.hour;
     final minute = date.minute;
     final period = hour >= 12 ? 'pm' : 'am';
-    final displayHour = hour > 12
-        ? hour - 12
-        : hour == 0
-            ? 12
-            : hour;
+    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
     return '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}$period';
-  }
-
-  String _getDefaultBankName(String type) {
-    switch (type.toLowerCase()) {
-      case 'airtime':
-        return 'MTN Nigeria';
-      case 'top-up':
-        return 'Bundlegram Wallet';
-      case 'withdrawal':
-        return 'Opay';
-      case 'betting':
-        return 'SportyBet';
-      case 'education':
-        return 'JAMB';
-      default:
-        return 'Bundlegram Wallet';
-    }
   }
 
   String _getDefaultAccountNumber(String type) {

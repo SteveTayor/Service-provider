@@ -50,10 +50,10 @@ class ChangeaccountpinScreen extends ConsumerWidget {
                       onVerified: (pin) {
                         pinCtrl.start(
                           PinScreenMode.create,
-                          context: context,
-                          navigateToSuccess: true,
+                          initialPin: pinCtrl.initialPin,
+                          onComplete: () =>
+                              context.push(RouteConstants.pinScreen),
                         );
-                        context.push(RouteConstants.pinScreen);
                       },
                     ),
                   ),

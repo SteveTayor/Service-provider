@@ -90,12 +90,14 @@ class LinkYourBvnScreen extends ConsumerWidget {
           child: Column(
             children: [
               AppTextField(
+                label: 'Bank Verification Number (BVN)',
                 controller: notifier.bvn,
                 hintText: 'Bank Verification Number (BVN)',
                 validateFunction: notifier.validateBVN,
               ),
               SizedBox(height: 24.h),
               AppTextField(
+                label: 'Phone Number',
                 controller: notifier.phone,
                 hintText: 'Phone Number linked to BVN',
                 validateFunction: notifier.validatePhone,
@@ -119,6 +121,7 @@ class LinkYourBvnScreen extends ConsumerWidget {
               ),
               SizedBox(height: 24.h),
               AppTextField(
+                label: 'Account Number',
                 controller: notifier.acct,
                 hintText: 'Account number',
                 validateFunction: notifier.validateAccount,
@@ -130,6 +133,7 @@ class LinkYourBvnScreen extends ConsumerWidget {
               ],
               SizedBox(height: 16.h),
               AppTextField(
+                label: 'Account Name',
                 controller: TextEditingController(text: provider.acctName),
                 hintText: 'Account name',
                 readOnly: true,

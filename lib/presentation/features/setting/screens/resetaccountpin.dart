@@ -1,29 +1,34 @@
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
-import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/resetpasswordlink_screen.dart';
+import 'package:bundlegram/presentation/features/setting/provider/create_pin_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
-class Resetaccountpin extends StatefulWidget {
-  const Resetaccountpin({super.key});
+class ResetAccountPin extends ConsumerStatefulWidget {
+  const ResetAccountPin({super.key});
 
   @override
-  State<Resetaccountpin> createState() => _ResetaccountpinState();
+  ConsumerState<ResetAccountPin> createState() => _ResetAccountPinState();
 }
 
-class _ResetaccountpinState extends State<Resetaccountpin> {
+class _ResetAccountPinState extends ConsumerState<ResetAccountPin> {
   final _formKey = GlobalKey<FormState>();
-  final bool _isFormValid = false;
+  final _passwordController = TextEditingController();
+  bool _isSubmitting = false;
 
   @override
   Widget build(BuildContext context) {
-    String userEmail = 'roseowen@gmail.com';
+    final userEmail = ref.watch(globalProvider).profile.value?.data?.email;
+
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(
         titleText: 'Enter your password',
@@ -34,26 +39,39 @@ class _ResetaccountpinState extends State<Resetaccountpin> {
           Flexible(
             child: AppForm(
               isExpanded: false,
-              isActive: _isFormValid,
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (ctx) => ResetPasswordLinkScreen(
-                        title: 'Reset link sent!',
-                        subtitle:
-                            'Your account pin reset link has been sent to your email - ${userEmail}. Check your inbox and click the link to reset your pin.',
+              isActive: !_isSubmitting,
+              onPressed: () async {
+                if (!_formKey.currentState!.validate()) return;
+
+                setState(() => _isSubmitting = true);
+
+                final password = _passwordController.text.trim();
+                final controller = ref.read(pinControllerProvider.notifier);
+
+                await controller
+                    .resetPinWithPassword(password, context)
+                    .then((success) {
+                  if (success) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ResetPasswordLinkScreen(
+                          title: 'Reset link sent!',
+                          subtitle:
+                              'Your account pin reset link has been sent to your email - $userEmail. Check your inbox and click the link to reset your pin.',
+                        ),
                       ),
-                    ),
-                  );
-                }
+                    );
+                  }
+                });
+
+                setState(() => _isSubmitting = false);
               },
               buttonText: 'Continue',
               formKey: _formKey,
               children: [
                 AppTextField(
+                  controller: _passwordController,
                   obscureText: true,
                   hintText: 'Password',
                   validateFunction: Validators.passcode(),
@@ -64,5 +82,11 @@ class _ResetaccountpinState extends State<Resetaccountpin> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
   }
 }

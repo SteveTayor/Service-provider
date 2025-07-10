@@ -1,9 +1,11 @@
 import 'package:bundlegram/core/extensions/currency_extension.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/styles.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/customizable.row.dart';
@@ -148,13 +150,12 @@ class TransactionReceiptWidget extends StatelessWidget {
       _TransactionDetailItem(label: 'Type', value: data.type!),
       _TransactionDetailItem(
         label: 'Amount',
-        value: data.amount.toCurrency(),
+        value: data.amount!,
       ),
       if (data.bankName != null)
         _TransactionDetailItem(label: 'Bank name', value: data.bankName!),
       if (data.accountNumber != null)
-        _TransactionDetailItem(
-            label: 'Account number', value: data.accountNumber!),
+        _TransactionDetailItem(label: 'Account', value: data.accountNumber!),
       _TransactionDetailItem(
         label: 'Transaction status',
         value: data.status,
@@ -244,7 +245,12 @@ class _TransactionDetailItem extends StatelessWidget {
               if (showCopyIcon) ...[
                 8.horizontalSpace,
                 GestureDetector(
-                  onTap: () => Clipboard.setData(ClipboardData(text: value)),
+                  onTap: () {
+                    Clipboard.setData(ClipboardData(text: value));
+
+                    navigatorKey.currentState!.context
+                        .showCustomSnackBar("Copied Transaction ID");
+                  },
                   child: AppSvgIcon(path: Assets.svgs.copy),
                 ),
               ],

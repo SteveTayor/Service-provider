@@ -1,13 +1,19 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
+import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:intl/intl.dart';
 
 class ServiceListItem extends StatelessWidget {
@@ -20,50 +26,43 @@ class ServiceListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = transaction.subProduct?.subName ?? 'Unknown';
-    final type = transaction.subProduct?.product?.productName ?? 'unknown';
-    final status = transaction.status?.capitalizeFullname ?? '';
-    final date = _formatDate(transaction.createdAt.toString());
-    final amount = transaction.amount?.toCurrency() ?? '₦0.00';
+    final title = transaction.transType == "fund_wallet"
+        ? "Top-up"
+        : transaction.transType == "withdrawal"
+            ? transaction.transType
+            : transaction.subProduct?.subName?.capitalizeFullname ?? 'Unknown';
+    final type = transaction.transType == "fund_wallet"
+        ? "Top-up"
+        : transaction.transType == "withdrawal"
+            ? transaction.transType
+            : transaction.subProduct?.product?.productName?.toLowerCase() ??
+                'unknown';
+    final status = transaction.status?.capitalizeFirst ?? 'Unknown';
+    final date = _formatDate(transaction.createdAt);
+    final amount = CurrencyFormatter.format(transaction.amount);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Icon (network or fallback SVG)
         Container(
-          width: 40.w,
-          height: 40.w,
+          width: 30.w,
+          height: 30.w,
           decoration: BoxDecoration(
-            color: _getServiceColor(type).withOpacity(0.15),
+            color: _getServiceColor(type!).withOpacity(0.15),
             shape: BoxShape.circle,
           ),
-          child:
-              // iconUrl != null && iconUrl.isNotEmpty
-              //     ? ClipRRect(
-              //         borderRadius: BorderRadius.circular(80.w),
-              //         child: Image.network(
-              //           iconUrl,
-              //           width: 40.w,
-              //           height: 40.w,
-              //           fit: BoxFit.cover,
-              //           errorBuilder: (_, __, ___) => _getServiceIcon(type),
-              //         ),
-              //       )
-              // :
-              _getServiceIcon(type),
+          child: _getServiceIcon(type),
         ),
         12.horizontalSpace,
-
-        // Details
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                title.capitalizeFullname,
+                title!,
                 style: context.textTheme.bodyMedium!.copyWith(fontSize: 14.sp),
               ),
-              4.verticalSpace,
+              6.verticalSpace,
               Row(
                 children: [
                   Flexible(
@@ -75,13 +74,11 @@ class ServiceListItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Text(
-                      '  -  $date',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: AppColors.dateColor,
-                      ),
+                  Text(
+                    '  -  $date',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.dateColor,
                     ),
                   ),
                 ],
@@ -89,8 +86,6 @@ class ServiceListItem extends StatelessWidget {
             ],
           ),
         ),
-
-        // Amount
         Text(
           amount,
           style: context.textTheme.bodyMedium!.copyWith(
@@ -102,19 +97,18 @@ class ServiceListItem extends StatelessWidget {
     );
   }
 
-  String _formatDate(String? dateStr) {
-    final dt = dateStr?.toDateTime();
-    if (dt == null) return '--';
-
+  String _formatDate(DateTime? date) {
+    if (date == null) {
+      print('Invalid date: null'); // Debug
+      return '--';
+    }
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
-    final txnDate = DateTime(dt.year, dt.month, dt.day);
-
+    final txnDate = DateTime(date.year, date.month, date.day);
     if (txnDate == today) return 'Today';
     if (txnDate == yesterday) return 'Yesterday';
-
-    return DateFormat('MM d, yy').format(dt); // ➤ e.g., July 6, 2025
+    return DateFormat('MMMM d, yyyy').format(date);
   }
 
   Widget _getServiceIcon(String type) {

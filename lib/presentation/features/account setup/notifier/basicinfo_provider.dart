@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
@@ -32,7 +33,6 @@ class BasicInfoProvider extends ChangeNotifier {
   BasicInfoProvider(this._ref, this._api, this.userAction) {
     final profile = (_ref.read(globalProvider).profile).value!.data!;
 
-    _firstName.text = profile.firstName ?? '';
     _lastName.text = profile.lastName ?? '';
     _email.text = profile.email ?? '';
     _phone.text = profile.phone ?? '';
@@ -103,7 +103,7 @@ class BasicInfoProvider extends ChangeNotifier {
   Future<void> submit(BuildContext context) async {
     if (!formKey.currentState!.validate()) return;
     _setLoading(true);
-
+    unawaited(context.showLoadingDialog(message: 'Adding Basic info...'));
     try {
       final parsed = DateFormat('dd/MM/yyyy').parse(_dob.text);
       final iso = DateFormat('yyyy-MM-dd').format(parsed);
@@ -131,6 +131,7 @@ class BasicInfoProvider extends ChangeNotifier {
         (resp) {
           if (resp.status == 'success') {
             _ref.read(globalProvider.notifier).fetchProfile(context);
+            context.dismissDialog();
             if (userAction.isCreate) {
               Navigator.push(
                 context,
@@ -148,18 +149,25 @@ class BasicInfoProvider extends ChangeNotifier {
               context.pop();
             }
             _setLoading(false);
+            context.dismissDialog();
+
             return true;
           } else {
             context
                 .showErrorSnackBar(resp.message ?? 'Failed to update profile');
             _setLoading(false);
+            context.dismissDialog();
+
             return false;
           }
         },
       );
     } catch (e) {
       context.showErrorSnackBar(e.toString());
+      context.dismissDialog();
     } finally {
+      context.dismissDialog();
+
       _setLoading(false);
     }
   }

@@ -86,10 +86,26 @@ class Product {
         autoProdId: json["auto_prod_id"] as String?,
         autoType: json["auto_type"] as String?,
         status: json["status"] as String?,
-        createdAt: json["created_at"],
-        updatedAt: json["updated_at"],
+        createdAt: json['created_at'] == null
+            ? null
+            : _parseDateTime(json['created_at']),
+        updatedAt: json['updated_at'] == null
+            ? null
+            : _parseDateTime(json['updated_at']),
         transDesc: json["trans_desc"] as String?,
       );
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null || value is! String) {
+      print('Invalid date format: $value');
+      return null;
+    }
+    try {
+      return DateTime.parse(value);
+    } catch (e) {
+      print('Error parsing date: $value, $e');
+      return null;
+    }
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,

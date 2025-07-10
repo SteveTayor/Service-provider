@@ -38,11 +38,11 @@ class BankdetailWidget extends StatelessWidget {
             ),
           ],
         ),
-        22.verticalSpace,
+        12.verticalSpace,
         Text(
           bank?.accountNumber ?? 'N/A',
           style: context.textTheme.titleLarge!.copyWith(
-            fontSize: 40.sp,
+            fontSize: 30.sp,
             fontWeight: FontWeight.w500,
           ),
         ),

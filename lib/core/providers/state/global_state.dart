@@ -15,6 +15,7 @@ class GlobalState {
   final AsyncValue<GetVirtualAccountsResponse?> virtualAccounts;
   final AsyncValue<GetAllUserTransactionResponse?> usersTransactions;
   final AsyncValue<GetAllUserBanksResponse?> userBanks;
+  final DateTime? lastTransactionFetch;
 
   GlobalState({
     this.profile = const AsyncData(null),
@@ -24,6 +25,7 @@ class GlobalState {
     this.virtualAccounts = const AsyncData(null),
     this.usersTransactions = const AsyncData(null),
     this.userBanks = const AsyncData(null),
+    this.lastTransactionFetch,
   });
 
   GlobalState copyWith({
@@ -34,6 +36,7 @@ class GlobalState {
     AsyncValue<GetVirtualAccountsResponse?>? virtualAccounts,
     AsyncValue<GetAllUserTransactionResponse?>? usersTransactions,
     AsyncValue<GetAllUserBanksResponse?>? userBanks,
+    DateTime? lastTransactionFetch,
   }) {
     return GlobalState(
       profile: profile ?? this.profile,
@@ -43,6 +46,7 @@ class GlobalState {
       virtualAccounts: virtualAccounts ?? this.virtualAccounts,
       usersTransactions: usersTransactions ?? this.usersTransactions,
       userBanks: userBanks ?? this.userBanks,
+      lastTransactionFetch: lastTransactionFetch ?? this.lastTransactionFetch,
     );
   }
 
@@ -57,7 +61,8 @@ class GlobalState {
           banks == other.banks &&
           virtualAccounts == other.virtualAccounts &&
           usersTransactions == other.usersTransactions &&
-          userBanks == other.userBanks;
+          userBanks == other.userBanks &&
+          lastTransactionFetch == other.lastTransactionFetch;
 
   @override
   int get hashCode =>
@@ -67,5 +72,6 @@ class GlobalState {
       banks.hashCode ^
       virtualAccounts.hashCode ^
       usersTransactions.hashCode ^
-      userBanks.hashCode;
+      userBanks.hashCode ^
+      lastTransactionFetch.hashCode;
 }

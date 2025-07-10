@@ -37,10 +37,12 @@ class SubProduct {
   final String? subName;
   final String? subPrice;
   final String? userPercent;
+  final int? agentPercent;
   final String? optionalParam;
   final dynamic dataId;
   final String? dataType;
   final double? dataSize;
+  final String? duration;
   final dynamic planId;
   final String? autoSubProdId;
   final dynamic addonCode;
@@ -55,6 +57,7 @@ class SubProduct {
     this.subName,
     this.subPrice,
     this.userPercent,
+    this.agentPercent,
     this.optionalParam,
     this.dataId,
     this.dataType,
@@ -65,22 +68,24 @@ class SubProduct {
     this.status,
     this.createdAt,
     this.updatedAt,
+    this.duration,
     this.product,
   });
 
   factory SubProduct.fromJson(Map<String, dynamic> json) => SubProduct(
         id: json["id"] != null ? json["id"] as int : null,
         productEntityId: json["product_entity_id"] != null
-            ? json["product_entity_id"] as int
+            ? json["product_entity_id"] as int?
             : null,
-        subName: json["sub_name"] != null ? json["sub_name"] as String : null,
+        subName: json["sub_name"] != null ? json["sub_name"] as String? : null,
         subPrice:
-            json["sub_price"] != null ? json["sub_price"] as String : null,
+            json["sub_price"] != null ? json["sub_price"] as String? : null,
         userPercent: json["user_percent"] != null
-            ? json["user_percent"] as String
+            ? json["user_percent"] as String?
             : null,
+        agentPercent: json["agent_percent"] as int?,
         optionalParam: json["optional_param"] != null
-            ? json["optional_param"] as String
+            ? json["optional_param"] as String?
             : null,
         dataId: json["data_id"],
         dataType: json["data_type"] as String?,
@@ -89,16 +94,30 @@ class SubProduct {
         autoSubProdId: json["auto_sub_prod_id"] as String?,
         addonCode: json["addon_code"],
         status: json["status"] as String?,
-        createdAt: json["created_at"] == null
+        duration: json["duration"] as String?,
+        createdAt: json['created_at'] == null
             ? null
-            : DateTime.parse(json["created_at"] as String),
-        updatedAt: json["updated_at"] == null
+            : _parseDateTime(json['created_at']),
+        updatedAt: json['updated_at'] == null
             ? null
-            : DateTime.parse(json["updated_at"] as String),
+            : _parseDateTime(json['updated_at']),
         product: json["product"] == null
             ? null
             : Product.fromJson(json["product"] as Map<String, dynamic>),
       );
+
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null || value is! String) {
+      print('Invalid date format: $value');
+      return null;
+    }
+    try {
+      return DateTime.parse(value);
+    } catch (e) {
+      print('Error parsing date: $value, $e');
+      return null;
+    }
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -106,9 +125,11 @@ class SubProduct {
         "sub_name": subName,
         "sub_price": subPrice,
         "user_percent": userPercent,
+        "agent_percent": agentPercent,
         "optional_param": optionalParam,
         "data_id": dataId,
         "data_type": dataType,
+        "duration": duration,
         "data_size": dataSize,
         "plan_id": planId,
         "auto_sub_prod_id": autoSubProdId,

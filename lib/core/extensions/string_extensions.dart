@@ -123,14 +123,20 @@ extension CharacterValidation on String {
 
   DateTime? toDateTime() {
     try {
-      // Try parsing DD-MM-YYYY format
-      return DateFormat('dd-MM-yyyy').parse(this);
+      // Parse ISO 8601 format (e.g., 2025-07-06T21:24:38.000000Z)
+      return DateTime.parse(this).toLocal();
     } catch (e) {
       try {
-        // Fallback to DD/MM/YYYY format
-        return DateFormat('dd/MM/yyyy').parse(this);
+        // Fallback to DD-MM-YYYY format
+        return DateFormat('dd-MM-yyyy').parse(this);
       } catch (e) {
-        return null;
+        try {
+          // Fallback to DD/MM/YYYY format
+          return DateFormat('dd/MM/yyyy').parse(this);
+        } catch (e) {
+          print('Date parse error: $e for $this'); // Debug
+          return null;
+        }
       }
     }
   }

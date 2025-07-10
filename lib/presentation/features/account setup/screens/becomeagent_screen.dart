@@ -4,6 +4,7 @@ import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/account%20setup/notifier/become_a_merchant_provider.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/verifyemail_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transactionsummary_widget.dart';
@@ -13,14 +14,15 @@ import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class BecomeagentScreen extends StatelessWidget {
+class BecomeagentScreen extends ConsumerWidget {
   const BecomeagentScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Helper method to build each benefit row
     Widget buildItemRow(
       String asset,
@@ -96,28 +98,35 @@ class BecomeagentScreen extends StatelessWidget {
                         amount: '₦10,000.00',
                         paymentMethod: 'Wallet',
                         onPay: () {
-                          // Handle payment
-                          context.pop(); // Close the bottom sheet
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (ctx) => EnterPinScreen(
-                                onVerified: (pin) {
-                                  // Handle verification
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (ctx) => TransactionSuccessful(
-                                        title: 'Congratulations!',
-                                        subTitle:
-                                            'You are now officially a Bundlegram agent.',
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          );
+                          context.pop(); // Close the sheet first
+                          ref
+                              .read(becomeAgentProvider.notifier)
+                              .checkAndInitiatePayment(context);
                         },
+
+                        // onPay: () {
+                        //   // Handle payment
+                        //   context.pop(); // Close the bottom sheet
+                        //   Navigator.of(context).push(
+                        //     MaterialPageRoute(
+                        //       builder: (ctx) => EnterPinScreen(
+                        //         onVerified: (pin) {
+                        //           // Handle verification
+                        //           Navigator.pushReplacement(
+                        //             context,
+                        //             MaterialPageRoute(
+                        //               builder: (ctx) => TransactionSuccessful(
+                        //                 title: 'Congratulations!',
+                        //                 subTitle:
+                        //                     'You are now officially a Bundlegram agent.',
+                        //               ),
+                        //             ),
+                        //           );
+                        //         },
+                        //       ),
+                        //     ),
+                        //   );
+                        // },
                       ),
                     );
                   },

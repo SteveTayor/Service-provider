@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
+import 'package:flutter/material.dart';
 
 class GetAllUserTransactionResponse {
   final String? status;
@@ -13,14 +17,13 @@ class GetAllUserTransactionResponse {
 
   factory GetAllUserTransactionResponse.fromJson(Map<String, dynamic> json) =>
       GetAllUserTransactionResponse(
-        status: json["status"] as String,
-        data: json["data"] == null
-            ? []
-            : (json['data'] as List<dynamic>)
-                .map(
+        status: json["status"] as String?, // ← nullable cast
+        data: (json["data"] as List<dynamic>?) // ← nullable list
+                ?.map(
                     (e) => UserTransactions.fromJson(e as Map<String, dynamic>))
-                .toList(),
-        message: json["message"] as String,
+                .toList() ??
+            [], // ← default to empty list
+        message: json["message"] as String?, // ← nullable cast
       );
 
   Map<String, dynamic> toJson() => {
@@ -94,45 +97,114 @@ class UserTransactions {
     this.subProduct,
     this.bank,
   });
-
-  factory UserTransactions.fromJson(Map<String, dynamic> json) =>
-      UserTransactions(
-        id: json["id"] as int?,
-        userId: json["user_id"] as int?,
-        subProdId: json["sub_prod_id"] as String?,
-        transType: json["trans_type"] as String?,
-        amount: json["amount"] as String?,
-        crAcc: json["cr_acc"] as String?,
-        trxFrom: json["trx_from"] as String?,
-        deductAmount: json["deduct_amount"]?.toDouble() as double?,
-        transRef: json["trans_ref"] as String?,
-        autoRef: json["auto_ref"] as String?,
-        token: json["token"] as String?,
-        unit: json["unit"]?.toDouble() as double?,
-        cardPin: json["cardPin"] as String?,
-        cardSerialNo: json["cardSerialNo"] as String?,
-        status: json["status"] as String?,
-        isActive: json["is_active"] as int?,
-        balanceBefore: json["balance_before"] as String?,
-        balanceAfter: json["balance_after"] as String?,
-        paymentType: json["payment_type"] as String?,
-        channel: json["channel"] as String?,
-        platform: json["platform"] as String?,
-        macAddress: json["mac_address"] as String?,
-        ipAddress: json["ip_address"] as String?,
-        longitude: json["longitude"] as String?,
-        latitude: json["latitude"] as String?,
-        createdAt: json["created_at"] == null
+  factory UserTransactions.fromJson(Map<String, dynamic> json) {
+    try {
+      return UserTransactions(
+        id: json['id'] as int?,
+        userId: json['user_id'] as int?,
+        subProdId: json['sub_prod_id'] as String?,
+        transType: json['trans_type'] as String?,
+        amount: json['amount']?.toString(),
+        crAcc: json['cr_acc'] as String?,
+        trxFrom: json['trx_from'] as String?,
+        deductAmount: (json['deduct_amount'] as num?)?.toDouble(),
+        transRef: json['trans_ref'] as String?,
+        autoRef: json['auto_ref'] as String?,
+        token: json['token'] as String?,
+        unit: (json['unit'] as num?)?.toDouble(),
+        cardPin: json['cardPin'] as String?,
+        cardSerialNo: json['cardSerialNo'] as String?,
+        status: json['status'] as String?,
+        isActive: json['is_active'] as int?,
+        balanceBefore: json['balance_before'] as String?,
+        balanceAfter: json['balance_after'] as String?,
+        paymentType: json['payment_type'] as String?,
+        channel: json['channel'] as String?,
+        platform: json['platform'] as String?,
+        macAddress: json['mac_address'] as String?,
+        ipAddress: json['ip_address'] as String?,
+        longitude: json['longitude'] as String?,
+        latitude: json['latitude'] as String?,
+        createdAt: json['created_at'] == null
             ? null
-            : DateTime.parse(json["created_at"] as String),
-        updatedAt: json["updated_at"] == null
+            : _parseDateTime(json['created_at']),
+        updatedAt: json['updated_at'] == null
             ? null
-            : DateTime.parse(json["updated_at"] as String),
-        subProduct: json["sub_product"] == null
+            : _parseDateTime(json['updated_at']),
+        subProduct: json['sub_product'] == null
             ? null
-            : SubProduct.fromJson(json["sub_product"] as Map<String, dynamic>),
-        bank: json["bank"],
+            : SubProduct.fromJson(json['sub_product'] as Map<String, dynamic>),
+        bank: json['bank'],
       );
+    } catch (e, st) {
+      // Pretty-print just this one JSON block
+      final pretty = const JsonEncoder.withIndent('  ').convert(json);
+      debugPrint(
+        '🔥 [TOP_LEVEL_PARSE_ERROR] failed parsing GetAllUserTransactionResponse:\n'
+        '$pretty',
+        wrapWidth: 2000,
+      );
+      log(
+        'Error: $e',
+        name: 'TOP_LEVEL_PARSER_ERROR',
+        error: e,
+        stackTrace: st,
+      );
+      rethrow;
+    }
+  }
+
+  // factory UserTransactions.fromJson(Map<String, dynamic> json) =>
+  //     UserTransactions(
+  //       id: json["id"] as int?,
+  //       userId: json["user_id"] as int?,
+  //       subProdId: json["sub_prod_id"] as String?,
+  //       transType: json["trans_type"] as String?,
+  //       amount: json["amount"]?.toString(), // Convert to String safely
+  //       crAcc: json["cr_acc"] as String?,
+  //       trxFrom: json["trx_from"] as String?,
+  //       deductAmount: (json["deduct_amount"] as num?)?.toDouble(),
+  //       transRef: json["trans_ref"] as String?,
+  //       autoRef: json["auto_ref"] as String?,
+  //       token: json["token"] as String?,
+  //       unit: (json["unit"] as num?)?.toDouble(),
+  //       cardPin: json["cardPin"] as String?,
+  //       cardSerialNo: json["cardSerialNo"] as String?,
+  //       status: json["status"] as String?,
+  //       isActive: json["is_active"] as int?,
+  //       balanceBefore: json["balance_before"] as String?,
+  //       balanceAfter: json["balance_after"] as String?,
+  //       paymentType: json["payment_type"] as String?,
+  //       channel: json["channel"] as String?,
+  //       platform: json["platform"] as String?,
+  //       macAddress: json["mac_address"] as String?,
+  //       ipAddress: json["ip_address"] as String?,
+  //       longitude: json["longitude"] as String?,
+  //       latitude: json["latitude"] as String?,
+  //       createdAt: json["created_at"] == null
+  //           ? null
+  //           : _parseDateTime(json["created_at"]),
+  //       updatedAt: json["updated_at"] == null
+  //           ? null
+  //           : _parseDateTime(json["updated_at"]),
+  //       subProduct: json["sub_product"] == null
+  //           ? null
+  //           : SubProduct.fromJson(json["sub_product"] as Map<String, dynamic>),
+  //       bank: json["bank"],
+  //     );
+
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null || value is! String) {
+      print('Invalid date format: $value');
+      return null;
+    }
+    try {
+      return DateTime.parse(value);
+    } catch (e) {
+      print('Error parsing date: $value, $e');
+      return null;
+    }
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,

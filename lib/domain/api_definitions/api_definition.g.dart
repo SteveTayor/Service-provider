@@ -98,7 +98,7 @@ class _ApiDefinition implements ApiDefinition {
   }
 
   @override
-  Future<void> logout(
+  Future<BaseResponse<dynamic>> logout(
     String accessToken,
     String bearer,
   ) async {
@@ -110,7 +110,7 @@ class _ApiDefinition implements ApiDefinition {
     };
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(Options(
+    final _options = _setStreamType<BaseResponse<dynamic>>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -126,7 +126,18 @@ class _ApiDefinition implements ApiDefinition {
           _dio.options.baseUrl,
           baseUrl,
         )));
-    await _dio.fetch<void>(_options);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<dynamic> _value;
+    try {
+      _value = BaseResponse<dynamic>.fromJson(
+        _result.data!,
+        (json) => json as dynamic,
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override

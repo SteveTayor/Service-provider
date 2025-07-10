@@ -1,28 +1,53 @@
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
+import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TransactionHistoryNotifier
     extends StateNotifier<RecentTransactionsState> {
   final Ref ref;
+  static const int _batchSize = 20;
+  List<UserTransactions> _allTransactions = [];
 
   TransactionHistoryNotifier(this.ref)
       : super(RecentTransactionsState.initial()) {
-    loadServices();
+    ref.listen<AsyncValue<GetAllUserTransactionResponse?>>(
+      globalProvider.select((s) => s.usersTransactions),
+      (prev, next) {
+        next.whenData((wrapper) {
+          _allTransactions = wrapper?.data ?? [];
+          _resetVisibleTransactions();
+        });
+      },
+    );
+  }
+
+  void _resetVisibleTransactions() {
+    final initialBatch = _allTransactions.take(_batchSize).toList();
+    state = state.copyWith(
+      services: _allTransactions,
+      filteredServices: initialBatch,
+      isLoading: false,
+    );
+  }
+
+  void loadMoreTransactions() {
+    final current = state.filteredServices.length;
+    if (current >= _allTransactions.length) return; // all loaded
+
+    final nextBatch = _allTransactions.skip(current).take(_batchSize).toList();
+
+    final updated = [...state.filteredServices, ...nextBatch];
+    state = state.copyWith(filteredServices: updated);
   }
 
   void loadServices() {
-    final txns = ref.read(globalProvider).usersTransactions;
-    txns.whenData((data) {
-      final all = data?.data ?? [];
-
-      state = state.copyWith(
-        services: all,
-        filteredServices: all,
-        isLoading: false,
-      );
+    ref.read(globalProvider).usersTransactions.whenData((data) {
+      _allTransactions = data?.data ?? [];
+      _resetVisibleTransactions();
     });
   }
 
@@ -32,12 +57,12 @@ class TransactionHistoryNotifier
 
   void search(String query) {
     if (query.isEmpty) {
-      state = state.copyWith(filteredServices: state.services);
+      _resetVisibleTransactions();
       return;
     }
 
     final q = query.toLowerCase();
-    final filtered = state.services.where((txn) {
+    final filtered = _allTransactions.where((txn) {
       final name = txn.subProduct?.subName?.toLowerCase() ?? '';
       final status = txn.status?.toLowerCase() ?? '';
       final type = txn.transType?.toLowerCase() ?? '';
@@ -53,12 +78,12 @@ class TransactionHistoryNotifier
     required String sortBy,
     required String amountBy,
   }) {
-    var temp = [...state.services];
+    var temp = [..._allTransactions];
 
     if (typeSet.isNotEmpty) {
       temp = temp
-          .where((txn) =>
-              typeSet.contains(txn.transType?.toLowerCase() ?? 'unknown'))
+          .where((txn) => typeSet.contains(
+              txn.subProduct?.product?.type?.toLowerCase() ?? 'unknown'))
           .toList();
     }
 
@@ -71,11 +96,11 @@ class TransactionHistoryNotifier
 
     if (sortBy.isNotEmpty) {
       temp.sort((a, b) {
-        final aDate = a.createdAt;
-        final bDate = b.createdAt;
+        final aDate = a.createdAt ?? DateTime(1970);
+        final bDate = b.createdAt ?? DateTime(1970);
         return sortBy == 'newest'
-            ? bDate!.compareTo(aDate!)
-            : aDate!.compareTo(bDate!);
+            ? bDate.compareTo(aDate)
+            : aDate.compareTo(bDate);
       });
     }
 
@@ -89,6 +114,7 @@ class TransactionHistoryNotifier
       });
     }
 
-    state = state.copyWith(filteredServices: temp);
+    _allTransactions = temp;
+    _resetVisibleTransactions();
   }
 }

@@ -44,8 +44,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
         ref.watch(globalProvider.select((g) => g.usersTransactions));
 
     final walletTxns = transactions.value?.data?.where((txn) {
-      final type = txn.subProduct?.product?.productName?.toLowerCase() ?? '';
-      return type == 'top-up' || type == 'withdrawal';
+      final type = txn.transType?.toLowerCase() ?? '';
+      return type == 'fund_wallet' || type == 'withdrawal';
     }).toList();
 
     return BundlegramScaffold(
@@ -154,7 +154,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 child: Center(child: EmptytransactionWidget()),
               )
             else
-              RecenttransactionWidget(
+              RecentTransactionWidget(
                 SizedBox(height: 20),
               ),
           ],

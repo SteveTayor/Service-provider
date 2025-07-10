@@ -91,9 +91,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
       appBar: BundlegramAppbar(
         titleText: controller.mode == PinScreenMode.create
             ? 'Create new pin'
-            : controller.mode == PinScreenMode.confirm
-                ? 'Confirm pin'
-                : 'Validate pin',
+            : 'Confirm pin',
         showBackButton: true,
         onTap: () {
           if (controller.mode == PinScreenMode.create) {
@@ -116,9 +114,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
               children: [
                 10.verticalSpace,
                 Text(
-                  controller.mode == PinScreenMode.validate
-                      ? 'Input the pin you just created to confirm'
-                      : 'The PIN will be used to authorize transactions.',
+                  'The PIN will be used to authorize transactions.',
                   textAlign: TextAlign.center,
                   style: context.textTheme.bodySmall!.copyWith(
                     color: AppColors.grey33,
@@ -182,26 +178,11 @@ class _PinScreenState extends ConsumerState<PinScreen>
               ),
             ),
           ),
-          if (controller.mode == PinScreenMode.validate) ...[
-            20.verticalSpace,
-            TextButton(
-              onPressed: () => context.push(RouteConstants.forgetPassword),
-              child: Text(
-                'Forgot PIN?',
-                style: context.textTheme.bodyMedium!.copyWith(
-                  fontSize: 16.sp,
-                  color: AppColors.black,
-                ),
-              ),
-            ),
-          ],
         ],
       ),
     );
   }
 }
-
-// import 'dart:math';
 
 // import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 // import 'package:bundlegram/core/router/route_constants.dart';

@@ -125,6 +125,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
           children: [
             AppTextField(
+              label: "First Name",
               controller: notifier.firstName,
               hintText: 'First Name',
               validateFunction: notifier.validateName,
@@ -134,6 +135,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
             ),
             SizedBox(height: 24.h),
             AppTextField(
+              label: 'Last Name',
               controller: notifier.lastName,
               hintText: 'Last Name',
               validateFunction: notifier.validateName,
@@ -143,6 +145,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
             ),
             SizedBox(height: 24.h),
             AppTextField(
+              label: "Email",
               controller: notifier.email,
               hintText: 'Email',
               readOnly: true,
@@ -151,6 +154,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
             ),
             SizedBox(height: 24.h),
             AppTextField(
+              label: 'Phone Number',
               controller: notifier.phone,
               hintText: 'Phone Number',
               prefixIcon: Padding(
@@ -172,8 +176,9 @@ class AddBasicInformationScreen extends ConsumerWidget {
             ),
             SizedBox(height: 24.h),
             AppTextField(
+              label: 'Address',
               controller: notifier.address,
-              hintText: 'Address',
+              hintText: 'Enter Address',
               validateFunction: notifier.validateNotEmpty,
             ),
             SizedBox(height: 24.h),

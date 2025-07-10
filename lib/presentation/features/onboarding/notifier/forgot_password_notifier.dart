@@ -38,9 +38,7 @@ class ForgetPasswordProvider extends ChangeNotifier {
     if (await canLaunchUrl(emailUri)) {
       await launchUrl(emailUri);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No email app found')),
-      );
+      context.showCustomSnackBar('No email app found');
     }
   }
 

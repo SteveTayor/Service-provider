@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/utils/enums.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/accountsetup_screen.dart';
@@ -117,8 +118,13 @@ class AppRouter {
       ),
       GoRoute(
         path: RouteConstants.platformProduct,
-        builder: (context, state) => const PlatformproductScreen(),
+        builder: (context, state) {
+          // Expect that you called `context.go(path, extra: someServiceType)`
+          final serviceType = state.extra! as PlatformProductType;
+          return PlatformproductScreen(serviceType: serviceType);
+        },
       ),
+
       GoRoute(
         path: RouteConstants.setting,
         builder: (context, state) => const SettingScreen(),
@@ -133,7 +139,7 @@ class AppRouter {
       ),
       GoRoute(
         path: RouteConstants.resetAccountPin,
-        builder: (context, state) => const Resetaccountpin(),
+        builder: (context, state) => const ResetAccountPin(),
       ),
       GoRoute(
         path: RouteConstants.notificationsetting,

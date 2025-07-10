@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/banks/add_bank_request.dart';
@@ -74,8 +75,10 @@ class AddBankProvider extends ChangeNotifier {
 
   Future<void> onAccountNumberChanged(String v) async {
     _acct.text = v;
-    if (_selectedBankCode == null) return;
+    // Only proceed if input is exactly 10 digits and bank is selected
+    if (v.trim().length != 10 || _selectedBankCode == null) return;
     _fetchingName = true;
+
     notifyListeners();
     try {
       final token = await _ref.read(secureStorageHelperProvider).getAuthToken();
@@ -109,6 +112,7 @@ class AddBankProvider extends ChangeNotifier {
   Future<void> submit(BuildContext context) async {
     if (!formKey.currentState!.validate()) return;
     _setLoading(true);
+    unawaited(context.showLoadingDialog(message: 'Submitting details...'));
     try {
       final token = await _ref.read(secureStorageHelperProvider).getAuthToken();
       final req = AddBankRequest(
@@ -135,19 +139,23 @@ class AddBankProvider extends ChangeNotifier {
                 resp.message ?? 'Bank details added successfully',
               )
               ..go(RouteConstants.dashboard);
+            context.dismissDialog();
             _setLoading(false);
             return true;
           } else {
             context.showErrorSnackBar(resp.message ?? 'Failed to add bank');
             _setLoading(false);
+            context.dismissDialog();
             return false;
           }
         },
       );
     } catch (e) {
+      context.dismissDialog();
       context.showErrorSnackBar(e.toString());
     } finally {
       _setLoading(false);
+      context.dismissDialog();
     }
   }
 

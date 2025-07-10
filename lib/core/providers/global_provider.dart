@@ -196,26 +196,59 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     );
   }
 
-  Future<void> fetchUsersTransactions(BuildContext context) async {
+  // Future<void> fetchUsersTransactions(BuildContext context) async {
+  //   final token = await _storage.getAuthToken();
+  //   if (token == null) {
+  //     return _handleError('Authentication token missing', context);
+  //   }
+
+  //   unawaited(context.showLoadingDialog(message: 'Fetching transactions...'));
+  //   state = state.copyWith(usersTransactions: const AsyncLoading());
+
+  //   final result = await _api.getAllTransactions(token);
+
+  //   context.dismissDialog();
+
+  //   result.fold(
+  //     (fail) {
+  //       _handleFailure(fail, context);
+  //       state = state.copyWith(
+  //           usersTransactions: AsyncError(fail, StackTrace.current));
+  //     },
+  //     (data) => state = state.copyWith(usersTransactions: AsyncData(data)),
+  //   );
+  // }
+
+  Future<void> fetchUsersTransactions(BuildContext context,
+      {bool force = false}) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
       return _handleError('Authentication token missing', context);
     }
-
+    final now = DateTime.now();
+    if (!force && state.lastTransactionFetch != null) {
+      final difference = now.difference(state.lastTransactionFetch!);
+      if (difference.inMinutes < 5) {
+        // Cache valid for 5 minutes
+        return;
+      }
+    }
     unawaited(context.showLoadingDialog(message: 'Fetching transactions...'));
     state = state.copyWith(usersTransactions: const AsyncLoading());
 
     final result = await _api.getAllTransactions(token);
 
     context.dismissDialog();
-
     result.fold(
       (fail) {
         _handleFailure(fail, context);
         state = state.copyWith(
             usersTransactions: AsyncError(fail, StackTrace.current));
       },
-      (data) => state = state.copyWith(usersTransactions: AsyncData(data)),
+      (data) => state = state.copyWith(
+        usersTransactions: AsyncData(data),
+        lastTransactionFetch: now,
+      ),
     );
   }
 }

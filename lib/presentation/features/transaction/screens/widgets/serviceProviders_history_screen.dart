@@ -1,12 +1,11 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
-import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
-import 'package:bundlegram/data/models/wallet/service_model.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/all_service_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_state.dart';
@@ -20,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class ServiceHistoryScreen extends ConsumerStatefulWidget {
   const ServiceHistoryScreen({
@@ -145,7 +145,25 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
     if (txnDate == today) return 'Today';
     if (txnDate == yesterday) return 'Yesterday';
 
-    return date.toIso8601String();
+    final month = DateFormat('MMMM').format(date);
+    final day = date.day;
+    final year = date.year;
+    final ordinal = _getOrdinalSuffix(day);
+    return '$month ${day}$ordinal, $year';
+  }
+
+  String _getOrdinalSuffix(int day) {
+    if (day >= 11 && day <= 13) return 'th';
+    switch (day % 10) {
+      case 1:
+        return 'st';
+      case 2:
+        return 'nd';
+      case 3:
+        return 'rd';
+      default:
+        return 'th';
+    }
   }
 
   String _formatTime(DateTime dateTime) {
