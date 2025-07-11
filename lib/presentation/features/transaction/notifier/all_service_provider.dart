@@ -1,29 +1,34 @@
-import 'package:bundlegram/core/extensions/string_extensions.dart';
-import 'package:bundlegram/data/dummy_datda.dart';
-import 'package:bundlegram/data/models/wallet/service_model.dart';
-import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:bundlegram/core/extensions/string_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
+import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_state.dart';
 
 class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
-  AllServiceHistoryNotifier(this.serviceType) : super(ServiceHistoryState());
+  AllServiceHistoryNotifier(this.ref, this.serviceType)
+      : super(ServiceHistoryState());
 
+  final Ref ref;
   final String serviceType;
 
   Future<void> loadServices() async {
     state = state.copyWith(isLoading: true);
 
     try {
-      final services = await _fetchServices();
-      print('Fetched $serviceType Services: ${services.length}'); // Debug
-      print(
-          'All types in dummy: ${dummyTransactions.map((t) => t.type).toSet()}');
+      final all = ref.read(globalProvider).usersTransactions.value?.data ?? [];
+
+      final filtered = all.where((txn) {
+        final type =
+            txn.subProduct?.product?.productName?.toLowerCase().trim() ?? '';
+        return type == serviceType.toLowerCase();
+      }).toList();
+
       state = state.copyWith(
-        services: services,
-        filteredServices: services,
+        allTransactions: filtered,
+        filteredTransactions: filtered,
         isLoading: false,
       );
     } catch (e) {
-      print('Error loading $serviceType services: $e'); // Debug
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -34,29 +39,27 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
   void search(String query) {
     if (query.isEmpty) {
       state = state.copyWith(
-        filteredServices: state.services,
+        filteredTransactions: state.allTransactions,
         searchQuery: '',
       );
-      print(
-          'Search cleared for $serviceType, showing all: ${state.services.length}'); // Debug
       return;
     }
-    final filtered = state.services.where((service) {
-      final titleLower = service.title.toLowerCase();
-      final statusLower = service.status.toLowerCase();
-      final q = query.toLowerCase();
-      return titleLower.contains(q) || statusLower.contains(q);
+
+    final q = query.toLowerCase();
+    final filtered = state.allTransactions.where((txn) {
+      final status = txn.status?.toLowerCase() ?? '';
+      final product = txn.subProduct?.product?.productName?.toLowerCase() ?? '';
+      return product.contains(q) || status.contains(q);
     }).toList();
-    print('Searched $serviceType Services: ${filtered.length}'); // Debug
+
     state = state.copyWith(
-      filteredServices: filtered,
+      filteredTransactions: filtered,
       searchQuery: query,
     );
   }
 
   Future<void> refresh() async {
     await loadServices();
-    print('Refreshed $serviceType Services'); // Debug
   }
 
   void applyFilters({
@@ -65,106 +68,34 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
     required String sortBy,
     required String amountBy,
   }) {
-    var temp = List<ServiceModel>.from(state.services);
+    var temp = List<UserTransactions>.from(state.allTransactions);
+
     if (typeSet.isNotEmpty) {
-      temp = temp.where((s) => typeSet.contains(s.type.toLowerCase())).toList();
+      temp = temp.where((txn) {
+        final type = txn.subProduct?.product?.productName?.toLowerCase() ?? '';
+        return typeSet.contains(type);
+      }).toList();
     }
+
     if (statusSet.isNotEmpty) {
       temp = temp
-          .where((s) => statusSet.contains(s.status.toLowerCase()))
+          .where((txn) =>
+              statusSet.contains(txn.status?.toLowerCase() ?? 'unknown'))
           .toList();
     }
+
     temp
       ..sort((a, b) {
-        final da = a.date.toDateTime() ?? DateTime.now();
-        final db = b.date.toDateTime() ?? DateTime.now();
+        final da = a.createdAt ?? DateTime.now();
+        final db = b.createdAt ?? DateTime.now();
         return sortBy == 'newest' ? db.compareTo(da) : da.compareTo(db);
       })
       ..sort((a, b) {
-        final aa = a.amount.toNumericValue();
-        final bb = b.amount.toNumericValue();
-        return amountBy == 'largest' ? bb.compareTo(aa) : aa.compareTo(bb);
+        final aa = a.amount?.toNumericValue();
+        final bb = b.amount?.toNumericValue();
+        return amountBy == 'largest' ? bb!.compareTo(aa!) : aa!.compareTo(bb!);
       });
-    print('Filtered $serviceType Services: ${temp.length}'); // Debug
-    state = state.copyWith(filteredServices: temp);
-  }
 
-  Future<List<ServiceModel>> _fetchServices() async {
-    switch (serviceType) {
-      case 'betting':
-        return await _fetchBettingHistory();
-      case 'mobile_data':
-        return await _fetchMobileDataHistory();
-      case 'education':
-        return await _fetchEducationHistory();
-      case 'cable_tv':
-        return await _fetchCableTvHistory();
-      case 'electricity':
-        return await _fetchElectricityHistory();
-      case 'airtime':
-        return await _fetchAirtimeHistory();
-      case 'e-pin':
-        return await _fetchEPinHistory();
-      case 'internet_service':
-        return await _fetchInternetServiceHistory();
-      default:
-        throw UnimplementedError('Service type $serviceType not implemented');
-    }
-  }
-
-  Future<List<ServiceModel>> _fetchBettingHistory() async {
-    final bettingTransactions = dummyTransactions
-        .where((transaction) => transaction.type == 'betting')
-        .toList();
-    return Future.value(bettingTransactions);
-  }
-
-  Future<List<ServiceModel>> _fetchMobileDataHistory() async {
-    final mobileDataTransactions = dummyTransactions
-        .where((transaction) => transaction.type == 'mobile data')
-        .toList();
-    return Future.value(mobileDataTransactions);
-  }
-
-  Future<List<ServiceModel>> _fetchEducationHistory() async {
-    final educationTransactions = dummyTransactions
-        .where((transaction) => transaction.type == 'education')
-        .toList();
-    return Future.value(educationTransactions);
-  }
-
-  Future<List<ServiceModel>> _fetchInternetServiceHistory() async {
-    final internetServiceTransactions = dummyTransactions
-        .where((transaction) => transaction.type == 'internet service')
-        .toList();
-    return Future.value(internetServiceTransactions);
-  }
-
-  Future<List<ServiceModel>> _fetchCableTvHistory() async {
-    final cableTvTransactions = dummyTransactions
-        .where((transaction) => transaction.type == 'cable tv')
-        .toList();
-    return Future.value(cableTvTransactions);
-  }
-
-  Future<List<ServiceModel>> _fetchElectricityHistory() async {
-    final electricityTransactions = dummyTransactions
-        .where((transaction) => transaction.type == 'electricity')
-        .toList();
-    return Future.value(electricityTransactions);
-  }
-
-  Future<List<ServiceModel>> _fetchAirtimeHistory() async {
-    final airtimeTransactions = dummyTransactions
-        .where((transaction) => transaction.type == 'airtime')
-        .toList();
-    return Future.value(airtimeTransactions);
-  }
-
-  Future<List<ServiceModel>> _fetchEPinHistory() async {
-    final ePinTransactions = dummyTransactions
-        .where((transaction) => transaction.type == 'e-pin voucher')
-        .toList();
-    return Future.value(ePinTransactions);
+    state = state.copyWith(filteredTransactions: temp);
   }
 }

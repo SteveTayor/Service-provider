@@ -1,47 +1,64 @@
-import 'package:bundlegram/core/config/service_config.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/core/utils/enums.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
+import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
-import 'package:bundlegram/presentation/features/Bundlegram_Platform/data/platform_data.dart';
+import 'package:bundlegram/gen/fonts.gen.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_product_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformphonenumberform_widget.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformproductitem_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/internet-services/widget/internetservice_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/serviceProviders_history_screen.dart';
-import 'package:bundlegram/presentation/features/transaction/screens/widgets/transactionsummary_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
-import 'package:bundlegram/presentation/features/wallet/screen/wallet_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
-import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class InternetServiceProviderScreen extends StatefulWidget {
-  const InternetServiceProviderScreen({super.key});
+class InternetServiceProviderScreen extends ConsumerStatefulWidget {
+  static const String routeName = '/internetService';
+  const InternetServiceProviderScreen({Key? key}) : super(key: key);
 
   @override
-  State<InternetServiceProviderScreen> createState() =>
+  ConsumerState<InternetServiceProviderScreen> createState() =>
       _InternetServiceProviderScreenState();
 }
 
 class _InternetServiceProviderScreenState
-    extends State<InternetServiceProviderScreen> {
-  final TextEditingController amountController = TextEditingController();
-  final TextEditingController _secondaryInputFieldController =
-      TextEditingController();
-  String? selectedProvider;
+    extends ConsumerState<InternetServiceProviderScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(platformProductProvider(PlatformProductType.internetServices)
+              .notifier)
+          .fetchProducts(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final serviceType = PlatformProductType.internetServices;
-    final config = ServiceConfigs.configs[serviceType]!;
-    bool isProviderApplicable =
-        [PlatformProductType.internetServices].contains(serviceType);
+    final state = ref.watch(platformProductProvider(serviceType));
+    final notifier = ref.read(platformProductProvider(serviceType).notifier);
+    final walletBalance = ref
+            .watch(globalProvider.select((s) => s.walletBalance))
+            .value
+            ?.wallet ??
+        0.0;
 
     return BundlegramScaffold(
       appBar: BundlegramAppbar(
@@ -64,129 +81,95 @@ class _InternetServiceProviderScreenState
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            PlatformphonenumberformWidget(
-              serviceType: PlatformProductType.internetServices,
-              secondaryInputHint: config.secondaryInputHint,
-              secondaryInputfieldController: _secondaryInputFieldController,
-              inputHint: config.inputHint,
-              dropdownHint: config.dropdownHint,
-              onProviderSelected: isProviderApplicable
-                  ? (provider) => setState(() => selectedProvider = provider)
-                  : null,
-              initialProviderImage: Assets.images.smile.path,
-              dropdownOptions: config.dropdownOptions ?? [],
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 24.h),
-              child: AppTextField(
-                hintText: "Amount",
-                controller: amountController,
-                prefixIcon: Padding(
-                  padding: context.symmetricPadding(24, 0),
-                  child: Text('₦', style: context.textTheme.bodyMedium),
-                ),
-              ),
-            ),
-            24.verticalSpace,
-            Row(
-              children: [
-                AppSvgIcon(path: Assets.svgs.balance),
-                16.horizontalSpace,
-                Text('Balance (₦20,000)', style: context.textTheme.bodySmall),
-                const Spacer(),
-                Flexible(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const WalletScreen(),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'Top-up >',
-                      style: context.textTheme.bodySmall!
-                          .copyWith(color: AppColors.primaryColor),
+      body: state.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: context.symmetricPadding(16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Phone/Meter + Provider picker + dropdown
+                  PlatformPhoneNumberFormWidget(
+                    serviceType: serviceType,
+                    inputHint: state.selectedProduct?.instruct1 ??
+                        'Enter phone number or account ID',
+                    secondaryInputHint: state.selectedProduct?.instruct2 ??
+                        'Enter account number',
+                    dropdownHint: 'Select plan',
+                  ),
+
+                  // Amount field (populated from selected subproduct price)
+                  24.verticalSpace,
+                  AppTextField(
+                    hintText: 'Amount',
+                    controller: state.amountController,
+                    readOnly: true, // Price is set from dropdown selection
+                    prefixIcon: Padding(
+                      padding: context.symmetricPadding(24, 0),
+                      child: Text('₦', style: context.textTheme.bodyMedium),
                     ),
                   ),
-                ),
-              ],
-            ).withContainer(
-              color: const Color(0xffEEF3FF),
-              padding: context.symmetricPadding(16, 12),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            40.verticalSpace,
-            BundlegramButton(
-              text: 'Continue',
-              onPressed: () {
-                bool isValid = true;
-                if (isProviderApplicable) isValid = selectedProvider != null;
-                if (isValid) {
-                  String? discountedPriceString;
 
-                  final rawPrice = amountController.text.trim();
-                  final numeric =
-                      int.tryParse(rawPrice.replaceAll(RegExp(r'[^\d]'), '')) ??
-                          0;
-                  final discounted = numeric - 500;
-                  discountedPriceString = '₦$discounted.00';
+                  24.verticalSpace,
 
-                  context.showBottomSheet(
-                    showIcon: true,
-                    child: TransactionSummary(
-                      assetPath: _getImage(selectedProvider!),
-                      transactionType: selectedProvider,
-                      amount: '₦' + amountController.text.trim(),
-                      discountedPrice: discountedPriceString,
-                      paymentMethod: 'Wallet',
-                      beneficiary: _secondaryInputFieldController.text,
-                      onPay: () {
-                        context.pop(); // Close the bottom sheet
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (ctx) => EnterPinScreen(onVerified: () {
-                              final amount =
-                                  '₦' + amountController.text + '.00';
-                              final beneficiary =
-                                  _secondaryInputFieldController.text.trim();
-                              final biller = selectedProvider!;
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      InternetServicesSuccessResultScreen(
-                                    amount: amount,
-                                    biller: biller,
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
+                  // Wallet balance & top-up link
+                  Row(
+                    children: [
+                      AppSvgIcon(path: Assets.svgs.balance),
+                      16.horizontalSpace,
+                      Text(
+                        'Balance (${CurrencyFormatter.format(walletBalance)})',
+                        style: context.textTheme.bodySmall,
+                      ),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () => context.go(RouteConstants.dashboard),
+                        child: Text(
+                          'Top-up >',
+                          style: context.textTheme.bodySmall!
+                              .copyWith(color: AppColors.primaryColor),
+                        ),
+                      ),
+                    ],
+                  ).withContainer(
+                    color: const Color(0xffEEF3FF),
+                    padding: context.symmetricPadding(16, 12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+
+                  40.verticalSpace,
+
+                  // Continue / Validate
+                  BundlegramButton(
+                    text: 'Continue',
+                    isLoading: state.isLoading,
+                    onPressed: () {
+                      if (notifier.requiresValidation) {
+                        final accountNumber =
+                            state.secondaryInputController.text.trim();
+                        if (accountNumber.isEmpty) {
+                          context.showErrorSnackBar(
+                              'Please enter a valid account number');
+                          return;
+                        }
+                        notifier.validateBill(
+                          context,
+                          accountNumber,
+                          state.selectedProduct?.id,
+                          state.selectedSubProduct?.autoSubProdId,
                         );
-                      },
-                    ),
-                  );
-                }
-              },
+                        // Proceed if validated
+                        if (state.isValidated) {
+                          notifier.showTransactionSummary(context);
+                        }
+                      } else {
+                        notifier.showTransactionSummary(context);
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
-  }
-
-  String? _getImage(String provider) {
-    final serviceProvider = PlatFormData.internetServiceProviderWidget;
-    final tile = serviceProvider.firstWhere(
-      (widget) =>
-          (widget as AppListTile).title.toLowerCase().contains(provider),
-      orElse: () => serviceProvider[0],
-    ) as AppListTile;
-    final imgPath = tile.imagePath ?? tile.assetPath;
-    return (imgPath);
   }
 }

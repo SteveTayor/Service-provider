@@ -31,11 +31,13 @@ class AppDropdown extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: context.textTheme.bodyMedium),
+          Text(title,
+              style: context.textTheme.bodyMedium
+                  ?.copyWith(fontSize: 16, overflow: TextOverflow.ellipsis)),
           AppSvgIcon(path: Assets.svgs.chevronDown),
         ],
       ).withContainer(
-        padding: context.symmetricPadding(16, 23),
+        padding: context.symmetricPadding(16, 16),
         borderRadius: BorderRadius.circular(6.r),
         color: AppColors.white,
         border: Border.all(color: AppColors.greyD0),
@@ -44,32 +46,70 @@ class AppDropdown extends StatelessWidget {
   }
 
   void _showMenu(BuildContext context) {
+    String filter = '';
+    final filtered = ValueNotifier<List<String>>(options);
     context.showBottomSheet(
       child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: ListView(
-          shrinkWrap: true,
-          children: options.map((o) {
-            return Column(
-              children: [
-                ListTile(
-                  title: Text(
-                    o,
-                    style: context.textTheme.bodyMedium!.copyWith(
-                      color: AppColors.black,
-                    ),
-                  ),
-                  selected: o == selected,
-                  onTap: () {
-                    context.pop();
-                    onChanged?.call(o);
-                  },
-                ),
-                24.verticalSpace,
-              ],
-            );
-          }).toList(),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
+        child: StatefulBuilder(builder: (context, setState) {
+          return SizedBox(
+            height: 400.h,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search...',
+                      hintStyle: context.textTheme.bodySmall!
+                          .copyWith(color: AppColors.grey33),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6.r),
+                      ),
+                      prefixIcon: Icon(Icons.search),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6.r),
+                        borderSide: BorderSide(color: AppColors.greyD0),
+                      ),
+                    ),
+                    onChanged: (val) {
+                      filter = val.toLowerCase();
+                      setState(() {
+                        filtered.value = options
+                            .where((o) => o.toLowerCase().contains(filter))
+                            .toList();
+                      });
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: ValueListenableBuilder<List<String>>(
+                    valueListenable: filtered,
+                    builder: (context, list, _) {
+                      return ListView.separated(
+                        itemCount: list.length,
+                        separatorBuilder: (_, __) => SizedBox(height: 8.h),
+                        itemBuilder: (context, i) {
+                          final o = list[i];
+                          return ListTile(
+                            title: Text(o, style: context.textTheme.bodyMedium),
+                            selected: o == selected,
+                            onTap: () {
+                              Navigator.pop(context);
+                              onChanged?.call(o);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }

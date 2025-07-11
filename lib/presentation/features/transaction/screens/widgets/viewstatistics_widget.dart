@@ -3,20 +3,22 @@ import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/statisticvisual.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ViewStatisticsWidget extends StatelessWidget {
+class ViewStatisticsWidget extends ConsumerWidget {
   const ViewStatisticsWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final platform = ref.read(platformProvider);
+
     return GestureDetector(
-      onTap: () {
-        context.showBottomSheet(child: const StatisticsDashboard());
-      },
+      onTap: () => platform.openStatisticsBottomSheet(context),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

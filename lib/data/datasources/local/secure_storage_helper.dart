@@ -6,6 +6,8 @@ part 'secure_storage_helper.g.dart';
 class SecureStorageHelper {
   final FlutterSecureStorage _storage;
   static const _tokenKey = 'auth_token';
+  static const _rememberedEmailKey = 'remembered_email';
+  static const _password = 'sign_in_password';
 
   SecureStorageHelper(this._storage);
 
@@ -21,6 +23,27 @@ class SecureStorageHelper {
     await _storage.delete(key: _tokenKey);
   }
 
+  Future<void> setPassword(String password) async {
+    await _storage.write(key: _password, value: password);
+  }
+
+  Future<String?> getPassword() async {
+    return await _storage.read(key: _password);
+  }
+
+  // Remembered email
+  Future<void> setRememberedEmail(String email) async {
+    await _storage.write(key: _rememberedEmailKey, value: email);
+  }
+
+  Future<String?> getRememberedEmail() async {
+    return await _storage.read(key: _rememberedEmailKey);
+  }
+
+  Future<void> clearRememberedEmail() async {
+    await _storage.delete(key: _rememberedEmailKey);
+  }
+
   Future<void> clearAll() async {
     await _storage.deleteAll();
   }
@@ -30,4 +53,4 @@ class SecureStorageHelper {
 SecureStorageHelper secureStorageHelper(SecureStorageHelperRef ref) {
   const storage = FlutterSecureStorage();
   return SecureStorageHelper(storage);
-} 
+}

@@ -1,16 +1,18 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/styles.dart';
+import 'package:bundlegram/presentation/features/onboarding/notifier/login_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class LogoutWidget extends StatelessWidget {
+class LogoutWidget extends ConsumerWidget {
   const LogoutWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -30,7 +32,12 @@ class LogoutWidget extends StatelessWidget {
           ),
           28.verticalSpace,
           BundlegramButton(
-              text: 'Log out', color: AppColors.logOut, onPressed: () {}),
+            text: 'Log out',
+            color: AppColors.logOut,
+            onPressed: () {
+              ref.read(loginProvider.notifier).logoutUser(context);
+            },
+          ),
           24.verticalSpace,
           BundlegramButton(
             isOutline: true,

@@ -8,18 +8,19 @@ import 'package:bundlegram/presentation/features/transaction/screens/widgets/vie
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class PlatformScreen extends StatefulWidget {
+class PlatformScreen extends ConsumerStatefulWidget {
   const PlatformScreen({super.key});
 
   @override
-  State<PlatformScreen> createState() => _PlatformScreenState();
+  ConsumerState<PlatformScreen> createState() => _PlatformScreenState();
 }
 
 final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-class _PlatformScreenState extends State<PlatformScreen> {
+class _PlatformScreenState extends ConsumerState<PlatformScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +47,7 @@ class _PlatformScreenState extends State<PlatformScreen> {
             40.verticalSpace,
             Padding(
               padding: context.symmetricPadding(20, 0),
-              child: RecenttransactionWidget(
+              child: RecentTransactionWidget(
                 SizedBox(
                   height: 0.h,
                 ),

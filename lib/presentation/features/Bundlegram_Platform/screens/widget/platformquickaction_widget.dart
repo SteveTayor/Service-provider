@@ -4,6 +4,8 @@ import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/enums.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platform_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
@@ -15,14 +17,16 @@ import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class PlatformQuickActionWidget extends StatelessWidget {
+class PlatformQuickActionWidget extends ConsumerWidget {
   const PlatformQuickActionWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final platform = ref.read(platformProvider);
     return Container(
       height: 480.h,
       width: context.width,
@@ -44,9 +48,7 @@ class PlatformQuickActionWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   AppSvgIcon(
-                    onTap: () {
-                      scaffoldKey.currentState?.openDrawer();
-                    },
+                    onTap: () => platform.openDrawer(scaffoldKey),
                     path: Assets.svgs.bars3,
                     width: 24.w,
                     fit: BoxFit.scaleDown,
@@ -58,9 +60,7 @@ class PlatformQuickActionWidget extends StatelessWidget {
                         .copyWith(fontSize: 20.sp, color: AppColors.white),
                   ),
                   AppSvgIcon(
-                    onTap: () {
-                      context.push('/notification');
-                    },
+                    onTap: () => platform.goToNotification(context),
                     path: Assets.svgs.notification,
                     width: 24.w,
                     fit: BoxFit.scaleDown,
@@ -77,46 +77,24 @@ class PlatformQuickActionWidget extends StatelessWidget {
                   PlatformItemWidget(
                     title: 'Buy data',
                     icon: Assets.svgs.mobile,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PlatformproductScreen(
-                            serviceType: PlatformProductType.mobileData,
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: () => platform.goToProduct(
+                        context, PlatformProductType.mobileData),
                   ),
                   PlatformItemWidget(
                     title: 'Buy airtime',
                     icon: Assets.svgs.simcard2,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PlatformproductScreen(
-                            serviceType: PlatformProductType.airtime,
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: () => platform.goToProduct(
+                        context, PlatformProductType.airtime),
                   ),
                   PlatformItemWidget(
                     title: 'Pay bills',
                     icon: Assets.svgs.walletMinus,
-                    onPressed: () {
-                      context.showBottomSheet(
-                        child: const PlatformbillsWidget(),
-                      );
-                    },
+                    onPressed: () => platform.openBillBottomSheet(context),
                   ),
                   PlatformItemWidget(
                     title: 'Withdraw',
                     icon: Assets.svgs.walletMoneyPaymentFinanceWallet,
-                    onPressed: () {
-                      context.push(RouteConstants.withdrawFund);
-                    },
+                    onPressed: () => platform.goToWithdrawFund(context),
                   ),
                 ],
               ),

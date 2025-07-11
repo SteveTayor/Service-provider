@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/utils/enums.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 
 class ServiceConfig {
   final String title;

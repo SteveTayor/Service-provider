@@ -1,24 +1,20 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class WalletoutlookWidget extends StatefulWidget {
+class WalletoutlookWidget extends ConsumerWidget {
   const WalletoutlookWidget({super.key});
 
   @override
-  State<WalletoutlookWidget> createState() => _WalletoutlookWidgetState();
-}
-
-class _WalletoutlookWidgetState extends State<WalletoutlookWidget> {
-  bool _isBalanceVisible = false;
-  final String _actualBalance =
-      '₦0.00'; // You can make this dynamic based on actual wallet balance
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(platformProvider);
+    final profile = ref.watch(globalProvider).profile;
     return Column(
       children: [
         Row(
@@ -30,13 +26,12 @@ class _WalletoutlookWidgetState extends State<WalletoutlookWidget> {
                   .copyWith(fontSize: 16.sp, color: AppColors.white),
             ),
             GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isBalanceVisible = !_isBalanceVisible;
-                });
-              },
+              onTap: () =>
+                  ref.read(platformProvider.notifier).toggleBalanceVisibility(),
               child: Icon(
-                _isBalanceVisible ? Icons.visibility : Icons.visibility_off,
+                provider.isBalanceVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off,
                 color: AppColors.white,
                 size: 24,
               ),
@@ -45,23 +40,32 @@ class _WalletoutlookWidgetState extends State<WalletoutlookWidget> {
         ),
         16.verticalSpace,
         Text(
-          _isBalanceVisible ? _actualBalance : '⁕⁕⁕⁕',
+          provider.isBalanceVisible ? provider.formattedBalance : '⁕⁕⁕⁕',
           style: context.textTheme.bodyMedium!.copyWith(
-            fontSize: _isBalanceVisible ? 40.sp : 24.sp,
+            fontSize: provider.isBalanceVisible ? 36.sp : 24.sp,
             color: AppColors.white,
           ),
         ),
         16.verticalSpace,
         BundlegramButton(
           width: 130.w,
-          height: 50.h,
+          height: 40.h,
           color: AppColors.white,
           cornerRadius: 4.r,
           text: 'Fund wallet',
           textStyle: context.textTheme.bodyMedium!
               .copyWith(color: AppColors.primaryColor),
           onPressed: () {
-            WalletNotifier().showAddMoney(context);
+            final bvn = profile.value?.data?.bvn;
+            if (bvn == null) {
+              WalletNotifier().showLinkBVNSnackBar(
+                  context,
+                  'To ensure that you get a virtual account number, verify your BVN for this feature.',
+                  'Link now');
+            } else {
+              // ref.read(globalProvider.notifier).fetchVirtualAccount(context);
+              WalletNotifier().showAddMoney(context, ref);
+            }
           },
         ),
       ],

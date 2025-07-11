@@ -12,9 +12,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class EnterPinScreen extends StatefulWidget {
-  const EnterPinScreen(
-      {super.key, this.onVerified, this.isChangedAccountPin = false});
-  final VoidCallback? onVerified;
+  const EnterPinScreen({
+    super.key,
+    this.onVerified,
+    this.isChangedAccountPin = false,
+  });
+
+  final Function(String)? onVerified;
   final bool isChangedAccountPin;
 
   @override
@@ -55,21 +59,10 @@ class _EnterPinScreenState extends State<EnterPinScreen>
         _pin[_currentIndex] = value;
         _currentIndex++;
       });
-      if (_currentIndex == 4) _checkPin();
-    }
-  }
-
-  void _checkPin() {
-    final entered = _pin.join();
-    if (entered == '1234') {
-      widget.onVerified?.call();
-    } else {
-      _shakeController.forward(from: 0);
-      setState(() {
-        _errorMessage = 'Incorrect PIN';
-        _pin.setAll(0, ['', '', '', '']);
-        _currentIndex = 0;
-      });
+      if (_currentIndex == 4) {
+        final entered = _pin.join();
+        widget.onVerified?.call(entered);
+      }
     }
   }
 
@@ -104,9 +97,11 @@ class _EnterPinScreenState extends State<EnterPinScreen>
         _updatePin(number);
       },
       style: TextButton.styleFrom(padding: EdgeInsets.all(20.w)),
-      child: Text(number,
-          style: context.textTheme.titleLarge!
-              .copyWith(fontSize: 24.sp, fontWeight: FontWeight.w500)),
+      child: Text(
+        number,
+        style: context.textTheme.titleLarge!
+            .copyWith(fontSize: 24.sp, fontWeight: FontWeight.w500),
+      ),
     );
   }
 
@@ -171,7 +166,9 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                 childAspectRatio: 1.5,
                 children: [
                   ...List.generate(
-                      9, (index) => _buildNumberButton('${index + 1}')),
+                    9,
+                    (index) => _buildNumberButton('${index + 1}'),
+                  ),
                   if (!widget.isChangedAccountPin) ...[
                     SizedBox(
                       width: 24,
@@ -182,7 +179,7 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                         width: 24,
                         height: 24,
                       ),
-                    ), // Empty space for layout
+                    ),
                   ] else ...[
                     24.verticalSpace
                   ],

@@ -1,6 +1,7 @@
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platform_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/account_screen.dart';
+import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/transaction_screen.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/wallet_screen.dart';
 import 'package:bundlegram/presentation/general_widget/nav_bar.dart';
@@ -16,11 +17,18 @@ class Dashboard extends ConsumerStatefulWidget {
 
 class _DashboardState extends ConsumerState<Dashboard> {
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(
+      () => ref.read(dashboardProvider.notifier).initDashboard(context),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: IndexedStack(
-        index: ref.watch(currentIndexProvider),
+        index: ref.watch(dashboardProvider.select((p) => p.currentIndex)),
         children: const [
           PlatformScreen(),
           WalletScreen(),

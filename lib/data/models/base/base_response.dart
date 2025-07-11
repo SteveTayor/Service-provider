@@ -7,7 +7,7 @@ part 'base_response.g.dart';
 class BaseResponse<T> {
   /// Constructor
   const BaseResponse({
-    required this.success,
+    required this.status,
     required this.message,
     this.data,
     this.error,
@@ -20,8 +20,9 @@ class BaseResponse<T> {
   ) =>
       _$BaseResponseFromJson(json, fromJsonT);
 
-  /// Whether the request was successful
-  final bool success;
+  /// Status from API (e.g., "success" or "error")
+  @JsonKey(name: 'status')
+  final String status;
 
   /// Response message
   final String message;
@@ -32,19 +33,22 @@ class BaseResponse<T> {
   /// Error details if request failed
   final String? error;
 
+  /// Whether the request was successful
+  bool get success => status == 'success';
+
   /// Convert response to JSON map
   Map<String, dynamic> toJson(Object? Function(T value) toJsonT) =>
       _$BaseResponseToJson(this, toJsonT);
 
   /// Create a copy of the response with some fields replaced
   BaseResponse<T> copyWith({
-    bool? success,
+    String? status,
     String? message,
     T? data,
     String? error,
   }) {
     return BaseResponse<T>(
-      success: success ?? this.success,
+      status: status ?? this.status,
       message: message ?? this.message,
       data: data ?? this.data,
       error: error ?? this.error,
@@ -54,7 +58,7 @@ class BaseResponse<T> {
   /// Convert response to string representation
   @override
   String toString() {
-    return 'BaseResponse{success: $success, message: $message, data: $data, error: $error}';
+    return 'BaseResponse{status: $status, success: $success, message: $message, data: $data, error: $error}';
   }
 
   /// Compare two responses for equality
@@ -62,7 +66,7 @@ class BaseResponse<T> {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is BaseResponse<T> &&
-        other.success == success &&
+        other.status == status &&
         other.message == message &&
         other.data == data &&
         other.error == error;
@@ -71,9 +75,6 @@ class BaseResponse<T> {
   /// Generate hash code for response
   @override
   int get hashCode {
-    return success.hashCode ^
-        message.hashCode ^
-        data.hashCode ^
-        error.hashCode;
+    return status.hashCode ^ message.hashCode ^ data.hashCode ^ error.hashCode;
   }
-} 
+}

@@ -1,11 +1,13 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
-import 'package:bundlegram/data/models/wallet/service_model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_widget.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
@@ -20,32 +22,57 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class TransactionScreen extends ConsumerStatefulWidget {
-  const TransactionScreen({Key? key}) : super(key: key);
+  const TransactionScreen({super.key});
 
   @override
   ConsumerState<TransactionScreen> createState() => _TransactionScreenState();
 }
 
 class _TransactionScreenState extends ConsumerState<TransactionScreen> {
-  bool isDismissed = false;
   String _sortBy = 'newest';
   String _amountBy = 'largest';
   final Set<String> _statusSet = {};
   final Set<String> _typeSet = {};
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref
+          .read(globalProvider.notifier)
+          .fetchUsersTransactions(context, force: true);
       ref.read(transactionHistoryProvider.notifier).loadServices();
     });
+
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      // Avoid triggering multiple times while loading
+      if (!_isLoadingMore) {
+        _isLoadingMore = true;
+        Future.microtask(() {
+          ref.read(transactionHistoryProvider.notifier).loadMoreTransactions();
+          _isLoadingMore = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(transactionHistoryProvider);
     final allTxns = state.filteredServices;
-    print('Displayed Transactions: ${allTxns.length}'); // Debug
 
     return BundlegramScaffold(
       appBar: BundlegramAppbar(
@@ -69,8 +96,6 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
                   _typeSet
                     ..clear()
                     ..addAll(typeSet);
-                  print(
-                      'Applied Filters: typeSet=$_typeSet, statusSet=$_statusSet');
 
                   ref.read(transactionHistoryProvider.notifier).applyFilters(
                         typeSet: _typeSet,
@@ -91,60 +116,79 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
           ),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: AppTextField(
-              decoration: const InputDecoration().search(),
-              onChange: (value) {
-                ref.read(transactionHistoryProvider.notifier).search(value);
-              },
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await ref
+              .read(globalProvider.notifier)
+              .fetchUsersTransactions(context, force: true);
+          ref.read(transactionHistoryProvider.notifier).refresh();
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: AppTextField(
+                decoration: const InputDecoration().search(),
+                onChange: (value) {
+                  ref.read(transactionHistoryProvider.notifier).search(value);
+                },
+              ),
             ),
-          ),
-          20.horizontalSpace,
-          Expanded(
-            child: allTxns.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Center(child: EmptytransactionWidget()),
-                  )
-                : ListView.separated(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 25),
-                    itemCount: allTxns.length,
-                    separatorBuilder: (ctx, idx) => Container(
-                      height: 1,
-                      color: AppColors.greyD0.withOpacity(0.1),
-                      margin: EdgeInsets.symmetric(vertical: 12.h),
+            20.verticalSpace,
+            Expanded(
+              child: allTxns.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Center(child: EmptytransactionWidget()),
+                    )
+                  : ListView.separated(
+                      controller: _scrollController,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10.w, vertical: 25),
+                      itemCount: allTxns.length + 1,
+                      separatorBuilder: (_, __) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8, top: 10),
+                        child: Divider(color: AppColors.divider),
+                      ),
+                      itemBuilder: (ctx, index) {
+                        if (index == allTxns.length) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        }
+                        final txn = allTxns[index];
+                        return GestureDetector(
+                          onTap: () => _showTransactionDetails(txn),
+                          child: ServiceListItem(transaction: txn),
+                        );
+                      },
                     ),
-                    itemBuilder: (ctx, index) {
-                      final txn = allTxns[index];
-                      return GestureDetector(
-                        onTap: () => _showTransactionDetails(txn),
-                        child: ServiceListItem(service: txn),
-                      );
-                    },
-                  ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  void _showTransactionDetails(ServiceModel txn) {
+  void _showTransactionDetails(UserTransactions txn) {
     final data = TransactionReceiptData(
-      transactionId: txn.id,
-      date: _formatDate(txn.date),
-      time: _formatTime(txn.date),
-      type: txn.type,
-      amount: txn.amount,
-      bankName: txn.bankName,
-      accountNumber: txn.accountNumber,
-      status: txn.status,
-      description: txn.title,
+      transactionId: txn.transRef ?? 'BNG-${txn.id}',
+      date: _formatDate(txn.createdAt),
+      time: _formatTime(txn.createdAt),
+      type: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
+          ? txn.subProduct?.product?.productName
+          : txn.transType ?? 'N/A',
+      amount: txn.amount?.toCurrency() ?? '₦0.00',
+      accountNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+      status: txn.status ?? 'Unknown',
+      description:
+          txn.subProduct?.subName ?? txn.subProduct?.product?.productName ?? '',
     );
+
     context.showPopUp(
       color: Colors.transparent,
       TransactionReceiptWidget(
@@ -162,79 +206,37 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
     );
   }
 
-  String _formatDate(String date) {
-    try {
-      final dt = date.toDateTime() ?? DateTime.now();
-      final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
-      final yesterday = today.subtract(const Duration(days: 1));
-      final txnDate = DateTime(dt.year, dt.month, dt.day);
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'Unknown Date';
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final txnDate = DateTime(date.year, date.month, date.day);
 
-      if (txnDate.isAtSameMomentAs(today)) {
-        return 'Today';
-      } else if (txnDate.isAtSameMomentAs(yesterday)) {
-        return 'Yesterday';
-      }
-      return date.toFullDateString();
-    } catch (e) {
-      print('Error formattng date $date :$e');
-      final now = DateTime.now();
-      return '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
-    }
+    if (txnDate.isAtSameMomentAs(today)) return 'Today';
+    if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
+    return date.toLocal().toIso8601String();
   }
 
-  String _formatTime(String date) {
-    final now = DateTime.now();
-    final hour = now.hour;
-    final minute = now.minute;
+  String _formatTime(DateTime? date) {
+    if (date == null) return '--:--';
+    final hour = date.hour;
+    final minute = date.minute;
     final period = hour >= 12 ? 'pm' : 'am';
-    final displayHour = hour > 12
-        ? hour - 12
-        : hour == 0
-            ? 12
-            : hour;
+    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
     return '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}$period';
   }
 
-  String _getDefaultBankName(String transactionType) {
-    switch (transactionType.toLowerCase()) {
-      case 'betting':
-        return 'Sportybet';
-      case 'mobile data':
-      case 'internet service':
-        return 'MTN Nigeria';
+  String _getDefaultAccountNumber(String type) {
+    switch (type.toLowerCase()) {
       case 'airtime':
-      case 'top-up':
-        return 'Airtel Nigeria';
-      case 'electricity':
-        return 'EKEDC';
-      case 'cable tv':
-        return 'DSTV';
-      case 'education':
-        return 'JAMB';
-      case 'e-pin voucher':
-        return 'Recharge Card';
-      default:
-        return 'Bundlegram Wallet';
-    }
-  }
-
-  String _getDefaultAccountNumber(String transactionType) {
-    switch (transactionType.toLowerCase()) {
-      case 'betting':
-        return '********';
-      case 'mobile data':
-      case 'internet service':
-      case 'airtime':
-      case 'top-up':
+      case 'data':
         return '080********';
       case 'electricity':
-        return '12345678';
-      case 'cable tv':
         return '1234567890';
-      case 'education':
-        return 'JAMB2025';
-      case 'e-pin voucher':
+      case 'withdrawal':
+        return '305**********';
+      case 'betting':
         return '********';
       default:
         return '0821971234';
@@ -242,8 +244,6 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
   }
 
   Widget generateShareableReceipt(TransactionReceiptData data) {
-    return Container(
-      child: VisualReceiptCard(data: data),
-    );
+    return VisualReceiptCard(data: data);
   }
 }

@@ -1,4 +1,7 @@
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_widget.dart';
 import 'package:bundlegram/presentation/general_widget/history_widget.dart';
@@ -15,6 +18,7 @@ import 'package:bundlegram/presentation/features/transaction/screens/widgets/emp
 import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class WalletHistoryScreen extends ConsumerStatefulWidget {
   const WalletHistoryScreen({Key? key}) : super(key: key);
@@ -34,21 +38,21 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(walletHistoryProvider.notifier).loadServices();
+      ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(walletHistoryProvider);
-    final allTxns = state.filteredServices;
+    final state = ref.watch(walletServiceHistoryProvider('wallet'));
+    final allTxns = state.filteredTransactions;
 
-    return HistoryScreen<ServiceModel>(
-      titleText: 'History',
+    return HistoryScreen<UserTransactions>(
+      titleText: 'Wallet History',
       items: allTxns,
       isLoading: state.isLoading,
       onSearchChanged: (query) {
-        ref.read(walletHistoryProvider.notifier).search(query);
+        ref.read(walletServiceHistoryProvider('wallet').notifier).search(query);
       },
       onFilterPressed: (ctx) {
         ctx.showBottomSheet(
@@ -68,8 +72,9 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
                 ..clear()
                 ..addAll(typeSet);
 
-              // Apply filters on "wallet" history: only 'top-up' and 'withdrawal'
-              ref.read(walletHistoryProvider.notifier).applyFilters(
+              ref
+                  .read(walletServiceHistoryProvider('wallet').notifier)
+                  .applyFilters(
                     typeSet: _typeSet,
                     statusSet: _statusSet,
                     sortBy: _sortBy,
@@ -81,8 +86,8 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
           ),
         );
       },
-      itemBuilder: (ctx, txn, index) => ServiceListItem(service: txn),
-      onItemTap: (txn) => _showTransactionDetails(txn),
+      itemBuilder: (ctx, txn, index) => ServiceListItem(transaction: txn),
+      onItemTap: _showTransactionDetails,
       emptyWidget: const Padding(
         padding: EdgeInsets.all(20),
         child: Center(child: EmptytransactionWidget()),
@@ -95,58 +100,47 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
     );
   }
 
-  List<ServiceModel> _getRecentTransactions(List<ServiceModel> all) {
+  String _formatDate(String? dateStr) {
+    final dt = dateStr?.toDateTime();
+    if (dt == null) return '--';
+
     final now = DateTime.now();
-    final sevenDaysAgo = now.subtract(const Duration(days: 7));
-    return all.where((txn) {
-      try {
-        final dt = _formatDate(txn.date) as DateTime;
-        return dt.isAfter(sevenDaysAgo);
-      } catch (_) {
-        return false;
-      }
-    }).toList();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final txnDate = DateTime(dt.year, dt.month, dt.day);
+
+    if (txnDate == today) return 'Today';
+    if (txnDate == yesterday) return 'Yesterday';
+
+    return DateFormat('MMMM d, yyyy').format(dt); // ➤ e.g., July 6, 2025
   }
 
-  String _formatDate(String date) {
+  String _formatTime(String? createdAt) {
     try {
-      final dt = date.toDateTime() ?? DateTime.now();
-      final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
-      final yesterday = today.subtract(const Duration(days: 1));
-      final txnDate = DateTime(dt.year, dt.month, dt.day);
-
-      if (txnDate.isAtSameMomentAs(today)) {
-        return 'Today';
-      } else if (txnDate.isAtSameMomentAs(yesterday)) {
-        return 'Yesterday';
-      }
-      return date.toFullDateString();
+      final time = createdAt!.toDateTime()?.toLocal();
+      return time == null
+          ? '--:--'
+          : '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
     } catch (e) {
-      print('Error formattng date $date :$e');
-      final now = DateTime.now();
-      return '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}';
+      return '--:--';
     }
   }
 
-  void _showTransactionDetails(ServiceModel txn) {
-    // Show a bottom sheet or dialog with transaction details
+  void _showTransactionDetails(UserTransactions txn) {
     final transactionData = TransactionReceiptData(
-      transactionId: txn.id,
-      date: _formatDate(txn.date),
-      time: (txn.date),
-      type: txn.type,
-      amount: txn.amount,
-      bankName: txn.bankName,
-      accountNumber: txn.accountNumber,
-      status: txn.status,
-      description: txn.title,
+      transactionId: txn.transRef.toString(),
+      date: _formatDate(txn.createdAt.toString() ?? ''),
+      time: _formatTime(txn.createdAt.toString()),
+      type: txn.transType.toString(),
+      amount: CurrencyFormatter.format(txn.amount),
+      phoneNumber: txn.crAcc,
+      status: txn.status ?? '',
+      description: txn.subProduct?.subName ?? '',
     );
+
     context.showPopUp(
       color: Colors.transparent,
-      TransactionReceiptWidget(
-        data: transactionData,
-      ),
+      TransactionReceiptWidget(data: transactionData),
       isDismissable: true,
     );
   }

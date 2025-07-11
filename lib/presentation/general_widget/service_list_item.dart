@@ -1,85 +1,84 @@
+import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
+import 'package:bundlegram/core/extensions/string_extensions.dart';
+import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
-import 'package:bundlegram/data/models/wallet/service_model.dart';
+import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';
 
 class ServiceListItem extends StatelessWidget {
   const ServiceListItem({
     super.key,
-    required this.service,
+    required this.transaction,
   });
 
-  final ServiceModel service;
+  final UserTransactions transaction;
 
   @override
   Widget build(BuildContext context) {
+    final title = transaction.transType == "fund_wallet"
+        ? "Top-up"
+        : transaction.transType == "withdrawal"
+            ? transaction.transType
+            : transaction.subProduct?.subName?.capitalizeFullname ?? 'Unknown';
+    final type = transaction.transType == "fund_wallet"
+        ? "Top-up"
+        : transaction.transType == "withdrawal"
+            ? transaction.transType
+            : transaction.subProduct?.product?.productName?.toLowerCase() ??
+                'unknown';
+    final status = transaction.status?.capitalizeFirst ?? 'Unknown';
+    final date = _formatDate(transaction.createdAt);
+    final amount = CurrencyFormatter.format(transaction.amount);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Service Icon
         Container(
-          width: 40.w,
-          height: 40.w,
+          width: 30.w,
+          height: 30.w,
           decoration: BoxDecoration(
-            color: _getServiceColor().withOpacity(0.15),
+            color: _getServiceColor(type!).withOpacity(0.15),
             shape: BoxShape.circle,
           ),
-          child: service.iconUrl != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(80.w),
-                  child: Image.network(
-                    service.iconUrl!,
-                    width: 40.w,
-                    height: 40.w,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => SizedBox(
-                      width: 40.w,
-                      height: 40.w,
-                      child: _getServiceIcon(),
-                    ),
-                  ),
-                )
-              : SizedBox(
-                  width: 40.w,
-                  height: 40.w,
-                  child: _getServiceIcon(),
-                ),
+          child: _getServiceIcon(type),
         ),
-        SizedBox(width: 12.w),
-
-        // Service Details
+        12.horizontalSpace,
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                service.title,
-                style: context.textTheme.bodyMedium!.copyWith(
-                  fontSize: 16.sp,
-                ),
+                title!,
+                style: context.textTheme.bodyMedium!.copyWith(fontSize: 14.sp),
               ),
-              SizedBox(height: 4.h),
+              6.verticalSpace,
               Row(
                 children: [
                   Flexible(
                     child: Text(
-                      service.status,
+                      status,
                       style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 14.sp,
-                        color: _getStatusColor(),
+                        fontSize: 12.sp,
+                        color: _getStatusColor(status),
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Text(
-                      '  -  ${service.date}',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: AppColors.dateColor,
-                      ),
+                  Text(
+                    '  -  $date',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.dateColor,
                     ),
                   ),
                 ],
@@ -87,12 +86,10 @@ class ServiceListItem extends StatelessWidget {
             ],
           ),
         ),
-
-        // Service Amount
         Text(
-          service.amount,
+          amount,
           style: context.textTheme.bodyMedium!.copyWith(
-            fontSize: 16.sp,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -100,59 +97,86 @@ class ServiceListItem extends StatelessWidget {
     );
   }
 
-  Color _getServiceColor() {
-    switch (service.type.toLowerCase()) {
-      case 'top-up':
-      case 'airtime':
-        return const Color(0xFFE53E3E); // Red
-      case 'cable tv':
-        return const Color(0xFF2D3748); // Dark gray
-      case 'betting':
-        return const Color(0xFF553C9A); // Purple
-      case 'education':
-        return const Color(0xFF9F7AEA); // Light purple
-      case 'mobile data':
-      case 'internet':
-        return const Color(0xFF3182CE); // Blue
-      case 'electricity':
-        return const Color(0xFFD69E2E); // Orange/Yellow
-      case 'e-pin voucher':
-        return const Color(0xFF38A169); // Green
-      default:
-        return AppColors.primaryColor;
+  String _formatDate(DateTime? date) {
+    if (date == null) {
+      print('Invalid date: null'); // Debug
+      return '--';
     }
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final txnDate = DateTime(date.year, date.month, date.day);
+    if (txnDate == today) return 'Today';
+    if (txnDate == yesterday) return 'Yesterday';
+    return DateFormat('MMMM d, yyyy').format(date);
   }
 
-  Widget _getServiceIcon() {
-    switch (service.type.toLowerCase()) {
-      case 'top-up':
-        return AppSvgIcon(path: Assets.svgs.topup);
-      case 'airtime':
-        return AppSvgIcon(path: Assets.svgs.airtime);
-      case 'cable tv':
-        return AppSvgIcon(path: Assets.svgs.cableTv);
-      case 'betting':
-        return AppSvgIcon(path: Assets.svgs.betting);
-      case 'education':
-        return AppSvgIcon(path: Assets.svgs.educationSvg);
-      case 'mobile data':
-        return AppSvgIcon(path: Assets.svgs.mobileData);
-      case 'internet':
-        return AppSvgIcon(path: Assets.svgs.internetservice);
-      case 'electricity':
-        return AppSvgIcon(path: Assets.svgs.electricity);
-      case 'e-pin voucher':
-        return AppSvgIcon(path: Assets.svgs.ePin);
-      case 'withdrawal':
-        return AppSvgIcon(path: Assets.svgs.topup);
-      default:
-        return AppSvgIcon(path: Assets.svgs.wallet);
+  Widget _getServiceIcon(String type) {
+    final key = type.toLowerCase().trim();
+
+    if (key.contains('top') || key.contains('wallet') || key.contains('fund')) {
+      return AppSvgIcon(path: Assets.svgs.topup);
     }
+    if (key.contains('airtime')) {
+      return AppSvgIcon(path: Assets.svgs.airtime);
+    }
+    if (key.contains('data') || key.contains('internet')) {
+      return AppSvgIcon(path: Assets.svgs.mobileData);
+    }
+    if (key.contains('cable')) {
+      return AppSvgIcon(path: Assets.svgs.cableTv);
+    }
+    if (key.contains('bet')) {
+      return AppSvgIcon(path: Assets.svgs.betting);
+    }
+    if (key.contains('education') ||
+        key.contains('exam') ||
+        key.contains('school')) {
+      return AppSvgIcon(path: Assets.svgs.educationSvg);
+    }
+    if (key.contains('electricity') || key.contains('power')) {
+      return AppSvgIcon(path: Assets.svgs.electricity);
+    }
+    if (key.contains('voucher') || key.contains('e-pin')) {
+      return AppSvgIcon(path: Assets.svgs.ePin);
+    }
+    if (key.contains('withdraw') || key.contains('transfer')) {
+      return AppSvgIcon(path: Assets.svgs.topup);
+    }
+
+    return AppSvgIcon(path: Assets.svgs.wallet);
   }
 
-  Color _getStatusColor() {
-    switch (service.status.toLowerCase()) {
+  Color _getServiceColor(String type) {
+    final key = type.toLowerCase();
+
+    final serviceColorMap = <String, Color>{
+      'top-up': const Color(0xFFE53E3E),
+      'airtime': const Color(0xFFE53E3E),
+      'cable tv': const Color(0xFF2D3748),
+      'betting': const Color(0xFF553C9A),
+      'education': const Color(0xFF9F7AEA),
+      'mobile data': const Color(0xFF3182CE),
+      'internet': const Color(0xFF3182CE),
+      'electricity': const Color(0xFFD69E2E),
+      'e-pin voucher': const Color(0xFF38A169),
+    };
+
+    // Partial match check
+    for (final entry in serviceColorMap.entries) {
+      if (key.contains(entry.key)) {
+        return entry.value;
+      }
+    }
+
+    return AppColors.primaryColor;
+  }
+
+  Color _getStatusColor(String status) {
+    final key = status.toLowerCase();
+    switch (key) {
       case 'successful':
+      case 'success':
         return AppColors.success;
       case 'failed':
         return AppColors.error;

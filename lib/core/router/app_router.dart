@@ -1,4 +1,6 @@
 import 'package:bundlegram/core/utils/enums.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
+import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/accountsetup_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/addbankdetails_screen.dart';
@@ -22,6 +24,7 @@ import 'package:bundlegram/presentation/features/onboarding/screens/walkthrough_
 import 'package:bundlegram/presentation/features/setting/screens/changeaccountpin_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/changepassword_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/notiificationsetting_screen.dart';
+import 'package:bundlegram/presentation/features/setting/screens/pin_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/privacysecurity_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/resetaccountpin.dart';
 import 'package:bundlegram/presentation/features/setting/screens/setting_screen.dart';
@@ -45,6 +48,7 @@ class AppRouter {
 
   /// Router instance
   static final GoRouter router = GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: RouteConstants.splash,
     debugLogDiagnostics: true,
     routes: [
@@ -70,7 +74,11 @@ class AppRouter {
       ),
       GoRoute(
         path: RouteConstants.chooseUsername,
-        builder: (context, state) => const ChooseUsernameScreen(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final fromLogin = extra?['fromLogin'] as bool? ?? false;
+          return ChooseUsernameScreen(fromLogin: fromLogin);
+        },
       ),
       GoRoute(
         path: RouteConstants.onboardResult,
@@ -110,8 +118,13 @@ class AppRouter {
       ),
       GoRoute(
         path: RouteConstants.platformProduct,
-        builder: (context, state) => const PlatformproductScreen(),
+        builder: (context, state) {
+          // Expect that you called `context.go(path, extra: someServiceType)`
+          final serviceType = state.extra! as PlatformProductType;
+          return PlatformproductScreen(serviceType: serviceType);
+        },
       ),
+
       GoRoute(
         path: RouteConstants.setting,
         builder: (context, state) => const SettingScreen(),
@@ -126,7 +139,7 @@ class AppRouter {
       ),
       GoRoute(
         path: RouteConstants.resetAccountPin,
-        builder: (context, state) => const Resetaccountpin(),
+        builder: (context, state) => const ResetAccountPin(),
       ),
       GoRoute(
         path: RouteConstants.notificationsetting,
@@ -142,21 +155,21 @@ class AppRouter {
       ),
       GoRoute(
         path: RouteConstants.addbasicinformation,
-        builder: (context, state) => const AddbasicinformationScreen(),
+        builder: (context, state) => const AddBasicInformationScreen(),
       ),
       GoRoute(
         path: RouteConstants.updatebasicinformation,
-        builder: (context, state) => const AddbasicinformationScreen(
+        builder: (context, state) => const AddBasicInformationScreen(
           userAction: UserAction.update,
         ),
       ),
       GoRoute(
         path: RouteConstants.linkyourbvn,
-        builder: (context, state) => const LinkyourbvnScreen(),
+        builder: (context, state) => const LinkYourBvnScreen(),
       ),
       GoRoute(
         path: RouteConstants.addbankdetail,
-        builder: (context, state) => const AddbankdetailsScreen(),
+        builder: (context, state) => const AddBankDetailsScreen(),
       ),
       GoRoute(
         path: RouteConstants.withdrawalAccount,
@@ -173,6 +186,10 @@ class AppRouter {
       GoRoute(
         path: RouteConstants.walletHistoryScreen,
         builder: (context, state) => const WalletHistoryScreen(),
+      ),
+      GoRoute(
+        path: RouteConstants.pinScreen,
+        builder: (context, state) => const PinScreen(),
       ),
 
       //   ShellRoute(

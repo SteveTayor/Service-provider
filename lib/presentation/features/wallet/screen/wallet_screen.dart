@@ -1,23 +1,21 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
-import 'package:bundlegram/core/providers/service_provider.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
-import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
-import 'package:bundlegram/data/models/wallet/service_model.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/recenttransaction_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
+import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
-import 'package:bundlegram/presentation/general_widget/receipt_widget.dart';
-import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
-import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,26 +29,33 @@ class WalletScreen extends ConsumerStatefulWidget {
 }
 
 class _WalletScreenState extends ConsumerState<WalletScreen> {
-  bool isDismissed = false;
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(walletHistoryProvider.notifier).loadServices();
+      ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = ref.watch(platformProvider);
+    final wallet = ref.watch(globalProvider.select((g) => g.walletBalance));
+    final profile = ref.watch(globalProvider.select((g) => g.profile));
+    final transactions =
+        ref.watch(globalProvider.select((g) => g.usersTransactions));
+
+    final walletTxns = transactions.value?.data?.where((txn) {
+      final type = txn.transType?.toLowerCase() ?? '';
+      return type == 'fund_wallet' || type == 'withdrawal';
+    }).toList();
+
     return BundlegramScaffold(
       appBar: BundlegramAppbar(
         showBackButton: false,
         titleText: 'Wallet',
         trailing: GestureDetector(
-          onTap: () {
-            context.push('/walletHistoryScreen');
-          },
+          onTap: () => context.push(RouteConstants.walletHistoryScreen),
           child: Text(
             'History',
             style: context.textTheme.bodySmall!
@@ -78,21 +83,29 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                             ),
                           ),
                           8.horizontalSpace,
-                          const Icon(
-                            Icons.visibility,
-                            size: 20,
-                            color: AppColors.white,
+                          GestureDetector(
+                            onTap: () => ref
+                                .read(platformProvider.notifier)
+                                .toggleBalanceVisibility(),
+                            child: Icon(
+                              provider.isBalanceVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: AppColors.white,
+                              size: 20,
+                            ),
                           ),
                           const Spacer(),
                           Flexible(
                             child: BundlegramButton(
                               width: 105.w,
-                              height: 50.h,
+                              height: 40.h,
                               color: AppColors.white,
                               cornerRadius: 4.r,
                               text: 'Withdraw',
-                              textStyle: context.textTheme.bodyMedium!
-                                  .copyWith(color: AppColors.primaryColor),
+                              textStyle: context.textTheme.bodyMedium!.copyWith(
+                                color: AppColors.primaryColor,
+                              ),
                               onPressed: () {
                                 context.push(RouteConstants.withdrawFund);
                               },
@@ -101,9 +114,12 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         ],
                       ),
                       Text(
-                        'N40,000',
+                        provider.isBalanceVisible
+                            ? provider.formattedBalance
+                            : '⁕⁕⁕⁕',
+                        // wallet.value?.wallet.toCurrency() ?? '₦0.00',
                         style: context.textTheme.bodyLarge!.copyWith(
-                          fontSize: 40.sp,
+                          fontSize: 30.sp,
                           color: AppColors.white,
                           fontWeight: FontWeight.w500,
                         ),
@@ -128,16 +144,31 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               leading: Assets.svgs.walletAdd,
               text: 'Top-up wallet',
               onPressed: () {
-                WalletNotifier().showAddMoney(context);
+                if (profile.value?.data?.bvn == null) {
+                  WalletNotifier().showLinkBVNSnackBar(
+                    context,
+                    'Complete account setup before funding wallet.',
+                    'Setup',
+                  );
+                  return;
+                }
+
+                WalletNotifier().showAddMoney(
+                  context,
+                  ref,
+                );
               },
             ),
             45.verticalSpace,
-            RecenttransactionWidget(
-              SizedBox(
-                height: 20.h,
+            if (walletTxns == null || walletTxns.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 32),
+                child: Center(child: EmptytransactionWidget()),
+              )
+            else
+              RecentTransactionWidget(
+                SizedBox(height: 20),
               ),
-            ),
-            // ..._buildWalletRecentTransactions(),
           ],
         ),
       ),

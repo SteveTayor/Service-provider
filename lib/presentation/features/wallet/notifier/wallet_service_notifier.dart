@@ -3,52 +3,64 @@ import 'package:bundlegram/data/dummy_datda.dart';
 import 'package:bundlegram/data/models/wallet/service_model.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
+
+final walletServiceHistoryProvider = StateNotifierProvider.family<
+    WalletServiceHistoryNotifier,
+    ServiceHistoryState,
+    String>((ref, serviceType) {
+  return WalletServiceHistoryNotifier(ref, serviceType);
+});
 
 class WalletServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
-  WalletServiceHistoryNotifier(this.serviceType) : super(ServiceHistoryState());
-
+  final Ref ref;
   final String serviceType;
 
-  Future<void> loadServices() async {
-    state = state.copyWith(isLoading: true);
-    try {
-      final services = await _fetchServices();
-      print('Fetched $serviceType Services: ${services.length}'); // Debug
-      state = state.copyWith(
-        services: services,
-        filteredServices: services,
-        isLoading: false,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-    }
+  WalletServiceHistoryNotifier(this.ref, this.serviceType)
+      : super(ServiceHistoryState()) {
+    _loadFromGlobal();
+  }
+
+  void _loadFromGlobal() {
+    final data = ref.read(globalProvider).usersTransactions
+      ..whenData((txns) {
+        final filtered = txns?.data?.where((txn) {
+          final type = txn.transType?.toLowerCase() ?? '';
+          return type.contains('fund_wallet') || type.contains('withdrawal');
+        }).toList();
+
+        state = state.copyWith(
+          allTransactions: filtered,
+          filteredTransactions: filtered,
+        );
+      });
+  }
+
+  void refresh() {
+    _loadFromGlobal();
   }
 
   void search(String query) {
     if (query.isEmpty) {
       state = state.copyWith(
-        filteredServices: state.services,
+        filteredTransactions: state.allTransactions,
         searchQuery: '',
       );
       return;
     }
-    final filtered = state.services.where((service) {
-      final titleLower = service.title.toLowerCase();
-      final statusLower = service.status.toLowerCase();
-      final q = query.toLowerCase();
-      return titleLower.contains(q) || statusLower.contains(q);
+
+    final q = query.toLowerCase();
+    final filtered = state.allTransactions.where((txn) {
+      final type = txn.transType?.toLowerCase() ?? '';
+      final status = txn.status?.toLowerCase() ?? '';
+      final name = txn.subProduct?.subName?.toLowerCase() ?? '';
+      return type.contains(q) || status.contains(q) || name.contains(q);
     }).toList();
+
     state = state.copyWith(
-      filteredServices: filtered,
+      filteredTransactions: filtered,
       searchQuery: query,
     );
-  }
-
-  Future<void> refresh() async {
-    await loadServices();
   }
 
   void applyFilters({
@@ -57,43 +69,42 @@ class WalletServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
     required String sortBy,
     required String amountBy,
   }) {
-    var temp = List<ServiceModel>.from(state.services);
+    var temp = [...state.allTransactions];
+
     if (typeSet.isNotEmpty) {
-      temp = temp.where((s) => typeSet.contains(s.type.toLowerCase())).toList();
-    }
-    if (statusSet.isNotEmpty) {
       temp = temp
-          .where((s) => statusSet.contains(s.status.toLowerCase()))
+          .where((txn) =>
+              typeSet.contains(txn.transType?.toLowerCase() ?? 'unknown'))
           .toList();
     }
-    temp
-      ..sort((a, b) {
-        final da = a.date.toDateTime() ?? DateTime(1970);
-        final db = b.date.toDateTime() ?? DateTime(1970);
-        return sortBy == 'newest' ? db.compareTo(da) : da.compareTo(db);
-      })
-      ..sort((a, b) {
-        final aa = a.amount.toNumericValue();
-        final bb = b.amount.toNumericValue();
-        return amountBy == 'largest' ? bb.compareTo(aa) : aa.compareTo(bb);
-      });
-    print('Filtered $serviceType Services: ${temp.length}'); // Debug
-    state = state.copyWith(filteredServices: temp);
-  }
 
-  Future<List<ServiceModel>> _fetchServices() async {
-    switch (serviceType) {
-      case 'wallet':
-        return await _fetchWalletHistory();
-      default:
-        throw UnimplementedError('Service type $serviceType not implemented');
+    if (statusSet.isNotEmpty) {
+      temp = temp
+          .where((txn) =>
+              statusSet.contains(txn.status?.toLowerCase() ?? 'unknown'))
+          .toList();
     }
-  }
 
-  Future<List<ServiceModel>> _fetchWalletHistory() async {
-    return dummyTransactions.where((transaction) {
-      final type = transaction.type.toLowerCase();
-      return type.contains('top-up') || type.contains('withdrawal');
-    }).toList();
+    if (sortBy.isNotEmpty) {
+      temp.sort((a, b) {
+        final aDate = a.createdAt ?? DateTime(1970);
+        final bDate = b.createdAt ?? DateTime(1970);
+        return sortBy == 'newest'
+            ? bDate.compareTo(aDate)
+            : aDate.compareTo(bDate);
+      });
+    }
+
+    if (amountBy.isNotEmpty) {
+      temp.sort((a, b) {
+        final aAmt = double.tryParse(a.amount ?? '') ?? 0;
+        final bAmt = double.tryParse(b.amount ?? '') ?? 0;
+        return amountBy == 'largest'
+            ? bAmt.compareTo(aAmt)
+            : aAmt.compareTo(bAmt);
+      });
+    }
+
+    state = state.copyWith(filteredTransactions: temp);
   }
 }

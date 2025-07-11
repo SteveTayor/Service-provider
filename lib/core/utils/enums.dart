@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 
 enum LoadState { loading, idle, success, error, loadmore, done }
@@ -11,7 +12,6 @@ enum HomeSessionState {
 enum PinScreenMode {
   create,
   confirm,
-  validate,
 }
 
 enum SecurityToggleType {
@@ -35,20 +35,6 @@ enum MessageType {
   warning,
   info
 } // Added warning and info for more feedback types
-
-enum PlatformProductType {
-  mobileData,
-  airtime,
-  betting,
-  electricity,
-  education,
-  cableTv,
-  internetServices,
-  ePinVoucher,
-  bulkEPin,
-  // userPrice,
-  // platformPrice,
-}
 
 enum UserAction { create, update, delete, read } // Added read for completeness
 
@@ -83,22 +69,6 @@ extension UserActionExtension on UserAction {
   bool get isUpdate => this == UserAction.update;
   bool get isDelete => this == UserAction.delete;
   bool get isRead => this == UserAction.read;
-}
-
-extension PlatformProductTypeExtension on PlatformProductType {
-  // bool get isUserPrice => this == PlatformProductType.userPrice;
-  // bool get isPlatformPrice => this == PlatformProductType.platformPrice;
-  bool get requiresProviderSelection => [
-        PlatformProductType.mobileData,
-        PlatformProductType.airtime,
-        PlatformProductType.ePinVoucher,
-        PlatformProductType.bulkEPin,
-        PlatformProductType.internetServices,
-        PlatformProductType.betting,
-        PlatformProductType.electricity,
-        PlatformProductType.cableTv,
-        PlatformProductType.education,
-      ].contains(this);
 }
 
 extension WalletTransactionTypeExtension on WalletTransactionType {

@@ -39,7 +39,7 @@ class CloseaccountWidget extends StatelessWidget {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => EnterPinScreen(
-                      onVerified: () {
+                      onVerified: (pin) {
                         // TODO: implement onVerified callback
                         Navigator.pushReplacement(
                           context,

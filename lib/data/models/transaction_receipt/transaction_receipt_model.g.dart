@@ -9,11 +9,11 @@ part of 'transaction_receipt_model.dart';
 _$TransactionReceiptDataImpl _$$TransactionReceiptDataImplFromJson(
         Map<String, dynamic> json) =>
     _$TransactionReceiptDataImpl(
-      transactionId: json['transactionId'] as String,
-      date: json['date'] as String,
-      time: json['time'] as String,
-      type: json['type'] as String,
-      amount: json['amount'] as String,
+      transactionId: json['transactionId'] as String?,
+      date: json['date'] as String?,
+      time: json['time'] as String?,
+      type: json['type'] as String?,
+      amount: json['amount'] as String?,
       bankName: json['bankName'] as String?,
       accountNumber: json['accountNumber'] as String?,
       status: json['status'] as String,

@@ -49,7 +49,7 @@ class _AppFormState extends State<AppForm> {
               child: Column(
                 children: List.generate(widget.children.length, (index) {
                   return widget.children[index]
-                      .withContainer(padding: EdgeInsets.only(bottom: 28.h));
+                      .withContainer(padding: EdgeInsets.only(bottom: 20.h));
                 }),
               ),
             ),

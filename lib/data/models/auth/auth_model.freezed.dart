@@ -14,1142 +14,6 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-RegisterResponse _$RegisterResponseFromJson(Map<String, dynamic> json) {
-  return _RegisterResponse.fromJson(json);
-}
-
-/// @nodoc
-mixin _$RegisterResponse {
-  @JsonKey(name: "user")
-  User get user => throw _privateConstructorUsedError;
-  @JsonKey(name: "operations")
-  List<Operation> get operations => throw _privateConstructorUsedError;
-
-  /// Serializes this RegisterResponse to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of RegisterResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $RegisterResponseCopyWith<RegisterResponse> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $RegisterResponseCopyWith<$Res> {
-  factory $RegisterResponseCopyWith(
-          RegisterResponse value, $Res Function(RegisterResponse) then) =
-      _$RegisterResponseCopyWithImpl<$Res, RegisterResponse>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: "user") User user,
-      @JsonKey(name: "operations") List<Operation> operations});
-
-  $UserCopyWith<$Res> get user;
-}
-
-/// @nodoc
-class _$RegisterResponseCopyWithImpl<$Res, $Val extends RegisterResponse>
-    implements $RegisterResponseCopyWith<$Res> {
-  _$RegisterResponseCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of RegisterResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? user = null,
-    Object? operations = null,
-  }) {
-    return _then(_value.copyWith(
-      user: null == user
-          ? _value.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as User,
-      operations: null == operations
-          ? _value.operations
-          : operations // ignore: cast_nullable_to_non_nullable
-              as List<Operation>,
-    ) as $Val);
-  }
-
-  /// Create a copy of RegisterResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $UserCopyWith<$Res> get user {
-    return $UserCopyWith<$Res>(_value.user, (value) {
-      return _then(_value.copyWith(user: value) as $Val);
-    });
-  }
-}
-
-/// @nodoc
-abstract class _$$RegisterResponseImplCopyWith<$Res>
-    implements $RegisterResponseCopyWith<$Res> {
-  factory _$$RegisterResponseImplCopyWith(_$RegisterResponseImpl value,
-          $Res Function(_$RegisterResponseImpl) then) =
-      __$$RegisterResponseImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: "user") User user,
-      @JsonKey(name: "operations") List<Operation> operations});
-
-  @override
-  $UserCopyWith<$Res> get user;
-}
-
-/// @nodoc
-class __$$RegisterResponseImplCopyWithImpl<$Res>
-    extends _$RegisterResponseCopyWithImpl<$Res, _$RegisterResponseImpl>
-    implements _$$RegisterResponseImplCopyWith<$Res> {
-  __$$RegisterResponseImplCopyWithImpl(_$RegisterResponseImpl _value,
-      $Res Function(_$RegisterResponseImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of RegisterResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? user = null,
-    Object? operations = null,
-  }) {
-    return _then(_$RegisterResponseImpl(
-      user: null == user
-          ? _value.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as User,
-      operations: null == operations
-          ? _value._operations
-          : operations // ignore: cast_nullable_to_non_nullable
-              as List<Operation>,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$RegisterResponseImpl
-    with DiagnosticableTreeMixin
-    implements _RegisterResponse {
-  const _$RegisterResponseImpl(
-      {@JsonKey(name: "user") required this.user,
-      @JsonKey(name: "operations") required final List<Operation> operations})
-      : _operations = operations;
-
-  factory _$RegisterResponseImpl.fromJson(Map<String, dynamic> json) =>
-      _$$RegisterResponseImplFromJson(json);
-
-  @override
-  @JsonKey(name: "user")
-  final User user;
-  final List<Operation> _operations;
-  @override
-  @JsonKey(name: "operations")
-  List<Operation> get operations {
-    if (_operations is EqualUnmodifiableListView) return _operations;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_operations);
-  }
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'RegisterResponse(user: $user, operations: $operations)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'RegisterResponse'))
-      ..add(DiagnosticsProperty('user', user))
-      ..add(DiagnosticsProperty('operations', operations));
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$RegisterResponseImpl &&
-            (identical(other.user, user) || other.user == user) &&
-            const DeepCollectionEquality()
-                .equals(other._operations, _operations));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, user, const DeepCollectionEquality().hash(_operations));
-
-  /// Create a copy of RegisterResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$RegisterResponseImplCopyWith<_$RegisterResponseImpl> get copyWith =>
-      __$$RegisterResponseImplCopyWithImpl<_$RegisterResponseImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$RegisterResponseImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _RegisterResponse implements RegisterResponse {
-  const factory _RegisterResponse(
-      {@JsonKey(name: "user") required final User user,
-      @JsonKey(name: "operations")
-      required final List<Operation> operations}) = _$RegisterResponseImpl;
-
-  factory _RegisterResponse.fromJson(Map<String, dynamic> json) =
-      _$RegisterResponseImpl.fromJson;
-
-  @override
-  @JsonKey(name: "user")
-  User get user;
-  @override
-  @JsonKey(name: "operations")
-  List<Operation> get operations;
-
-  /// Create a copy of RegisterResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$RegisterResponseImplCopyWith<_$RegisterResponseImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-Operation _$OperationFromJson(Map<String, dynamic> json) {
-  return _Operation.fromJson(json);
-}
-
-/// @nodoc
-mixin _$Operation {
-  @JsonKey(name: "name")
-  String get name => throw _privateConstructorUsedError;
-  @JsonKey(name: "limit")
-  int get limit => throw _privateConstructorUsedError;
-  @JsonKey(name: "usage")
-  int get usage => throw _privateConstructorUsedError;
-  @JsonKey(name: "overage")
-  int get overage => throw _privateConstructorUsedError;
-
-  /// Serializes this Operation to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of Operation
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $OperationCopyWith<Operation> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $OperationCopyWith<$Res> {
-  factory $OperationCopyWith(Operation value, $Res Function(Operation) then) =
-      _$OperationCopyWithImpl<$Res, Operation>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: "name") String name,
-      @JsonKey(name: "limit") int limit,
-      @JsonKey(name: "usage") int usage,
-      @JsonKey(name: "overage") int overage});
-}
-
-/// @nodoc
-class _$OperationCopyWithImpl<$Res, $Val extends Operation>
-    implements $OperationCopyWith<$Res> {
-  _$OperationCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of Operation
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = null,
-    Object? limit = null,
-    Object? usage = null,
-    Object? overage = null,
-  }) {
-    return _then(_value.copyWith(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      limit: null == limit
-          ? _value.limit
-          : limit // ignore: cast_nullable_to_non_nullable
-              as int,
-      usage: null == usage
-          ? _value.usage
-          : usage // ignore: cast_nullable_to_non_nullable
-              as int,
-      overage: null == overage
-          ? _value.overage
-          : overage // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$OperationImplCopyWith<$Res>
-    implements $OperationCopyWith<$Res> {
-  factory _$$OperationImplCopyWith(
-          _$OperationImpl value, $Res Function(_$OperationImpl) then) =
-      __$$OperationImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: "name") String name,
-      @JsonKey(name: "limit") int limit,
-      @JsonKey(name: "usage") int usage,
-      @JsonKey(name: "overage") int overage});
-}
-
-/// @nodoc
-class __$$OperationImplCopyWithImpl<$Res>
-    extends _$OperationCopyWithImpl<$Res, _$OperationImpl>
-    implements _$$OperationImplCopyWith<$Res> {
-  __$$OperationImplCopyWithImpl(
-      _$OperationImpl _value, $Res Function(_$OperationImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of Operation
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = null,
-    Object? limit = null,
-    Object? usage = null,
-    Object? overage = null,
-  }) {
-    return _then(_$OperationImpl(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      limit: null == limit
-          ? _value.limit
-          : limit // ignore: cast_nullable_to_non_nullable
-              as int,
-      usage: null == usage
-          ? _value.usage
-          : usage // ignore: cast_nullable_to_non_nullable
-              as int,
-      overage: null == overage
-          ? _value.overage
-          : overage // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$OperationImpl with DiagnosticableTreeMixin implements _Operation {
-  const _$OperationImpl(
-      {@JsonKey(name: "name") required this.name,
-      @JsonKey(name: "limit") required this.limit,
-      @JsonKey(name: "usage") required this.usage,
-      @JsonKey(name: "overage") required this.overage});
-
-  factory _$OperationImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OperationImplFromJson(json);
-
-  @override
-  @JsonKey(name: "name")
-  final String name;
-  @override
-  @JsonKey(name: "limit")
-  final int limit;
-  @override
-  @JsonKey(name: "usage")
-  final int usage;
-  @override
-  @JsonKey(name: "overage")
-  final int overage;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Operation(name: $name, limit: $limit, usage: $usage, overage: $overage)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'Operation'))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('limit', limit))
-      ..add(DiagnosticsProperty('usage', usage))
-      ..add(DiagnosticsProperty('overage', overage));
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$OperationImpl &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.limit, limit) || other.limit == limit) &&
-            (identical(other.usage, usage) || other.usage == usage) &&
-            (identical(other.overage, overage) || other.overage == overage));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, name, limit, usage, overage);
-
-  /// Create a copy of Operation
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$OperationImplCopyWith<_$OperationImpl> get copyWith =>
-      __$$OperationImplCopyWithImpl<_$OperationImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OperationImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _Operation implements Operation {
-  const factory _Operation(
-      {@JsonKey(name: "name") required final String name,
-      @JsonKey(name: "limit") required final int limit,
-      @JsonKey(name: "usage") required final int usage,
-      @JsonKey(name: "overage") required final int overage}) = _$OperationImpl;
-
-  factory _Operation.fromJson(Map<String, dynamic> json) =
-      _$OperationImpl.fromJson;
-
-  @override
-  @JsonKey(name: "name")
-  String get name;
-  @override
-  @JsonKey(name: "limit")
-  int get limit;
-  @override
-  @JsonKey(name: "usage")
-  int get usage;
-  @override
-  @JsonKey(name: "overage")
-  int get overage;
-
-  /// Create a copy of Operation
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$OperationImplCopyWith<_$OperationImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-User _$UserFromJson(Map<String, dynamic> json) {
-  return _User.fromJson(json);
-}
-
-/// @nodoc
-mixin _$User {
-  @JsonKey(name: "id")
-  int get id => throw _privateConstructorUsedError;
-  @JsonKey(name: "username")
-  String get username => throw _privateConstructorUsedError;
-  @JsonKey(name: "email")
-  String get email => throw _privateConstructorUsedError;
-  @JsonKey(name: "fullName")
-  String get fullName => throw _privateConstructorUsedError;
-  @JsonKey(name: "avatar")
-  String get avatar => throw _privateConstructorUsedError;
-  @JsonKey(name: "isPublic")
-  bool get isPublic => throw _privateConstructorUsedError;
-
-  /// Serializes this User to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of User
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $UserCopyWith<User> get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $UserCopyWith<$Res> {
-  factory $UserCopyWith(User value, $Res Function(User) then) =
-      _$UserCopyWithImpl<$Res, User>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: "id") int id,
-      @JsonKey(name: "username") String username,
-      @JsonKey(name: "email") String email,
-      @JsonKey(name: "fullName") String fullName,
-      @JsonKey(name: "avatar") String avatar,
-      @JsonKey(name: "isPublic") bool isPublic});
-}
-
-/// @nodoc
-class _$UserCopyWithImpl<$Res, $Val extends User>
-    implements $UserCopyWith<$Res> {
-  _$UserCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of User
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? username = null,
-    Object? email = null,
-    Object? fullName = null,
-    Object? avatar = null,
-    Object? isPublic = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int,
-      username: null == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      fullName: null == fullName
-          ? _value.fullName
-          : fullName // ignore: cast_nullable_to_non_nullable
-              as String,
-      avatar: null == avatar
-          ? _value.avatar
-          : avatar // ignore: cast_nullable_to_non_nullable
-              as String,
-      isPublic: null == isPublic
-          ? _value.isPublic
-          : isPublic // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
-  factory _$$UserImplCopyWith(
-          _$UserImpl value, $Res Function(_$UserImpl) then) =
-      __$$UserImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: "id") int id,
-      @JsonKey(name: "username") String username,
-      @JsonKey(name: "email") String email,
-      @JsonKey(name: "fullName") String fullName,
-      @JsonKey(name: "avatar") String avatar,
-      @JsonKey(name: "isPublic") bool isPublic});
-}
-
-/// @nodoc
-class __$$UserImplCopyWithImpl<$Res>
-    extends _$UserCopyWithImpl<$Res, _$UserImpl>
-    implements _$$UserImplCopyWith<$Res> {
-  __$$UserImplCopyWithImpl(_$UserImpl _value, $Res Function(_$UserImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of User
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? username = null,
-    Object? email = null,
-    Object? fullName = null,
-    Object? avatar = null,
-    Object? isPublic = null,
-  }) {
-    return _then(_$UserImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int,
-      username: null == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      fullName: null == fullName
-          ? _value.fullName
-          : fullName // ignore: cast_nullable_to_non_nullable
-              as String,
-      avatar: null == avatar
-          ? _value.avatar
-          : avatar // ignore: cast_nullable_to_non_nullable
-              as String,
-      isPublic: null == isPublic
-          ? _value.isPublic
-          : isPublic // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$UserImpl with DiagnosticableTreeMixin implements _User {
-  const _$UserImpl(
-      {@JsonKey(name: "id") required this.id,
-      @JsonKey(name: "username") required this.username,
-      @JsonKey(name: "email") required this.email,
-      @JsonKey(name: "fullName") required this.fullName,
-      @JsonKey(name: "avatar") required this.avatar,
-      @JsonKey(name: "isPublic") required this.isPublic});
-
-  factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
-      _$$UserImplFromJson(json);
-
-  @override
-  @JsonKey(name: "id")
-  final int id;
-  @override
-  @JsonKey(name: "username")
-  final String username;
-  @override
-  @JsonKey(name: "email")
-  final String email;
-  @override
-  @JsonKey(name: "fullName")
-  final String fullName;
-  @override
-  @JsonKey(name: "avatar")
-  final String avatar;
-  @override
-  @JsonKey(name: "isPublic")
-  final bool isPublic;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'User(id: $id, username: $username, email: $email, fullName: $fullName, avatar: $avatar, isPublic: $isPublic)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'User'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('username', username))
-      ..add(DiagnosticsProperty('email', email))
-      ..add(DiagnosticsProperty('fullName', fullName))
-      ..add(DiagnosticsProperty('avatar', avatar))
-      ..add(DiagnosticsProperty('isPublic', isPublic));
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UserImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.username, username) ||
-                other.username == username) &&
-            (identical(other.email, email) || other.email == email) &&
-            (identical(other.fullName, fullName) ||
-                other.fullName == fullName) &&
-            (identical(other.avatar, avatar) || other.avatar == avatar) &&
-            (identical(other.isPublic, isPublic) ||
-                other.isPublic == isPublic));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, username, email, fullName, avatar, isPublic);
-
-  /// Create a copy of User
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UserImplCopyWith<_$UserImpl> get copyWith =>
-      __$$UserImplCopyWithImpl<_$UserImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$UserImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _User implements User {
-  const factory _User(
-      {@JsonKey(name: "id") required final int id,
-      @JsonKey(name: "username") required final String username,
-      @JsonKey(name: "email") required final String email,
-      @JsonKey(name: "fullName") required final String fullName,
-      @JsonKey(name: "avatar") required final String avatar,
-      @JsonKey(name: "isPublic") required final bool isPublic}) = _$UserImpl;
-
-  factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
-
-  @override
-  @JsonKey(name: "id")
-  int get id;
-  @override
-  @JsonKey(name: "username")
-  String get username;
-  @override
-  @JsonKey(name: "email")
-  String get email;
-  @override
-  @JsonKey(name: "fullName")
-  String get fullName;
-  @override
-  @JsonKey(name: "avatar")
-  String get avatar;
-  @override
-  @JsonKey(name: "isPublic")
-  bool get isPublic;
-
-  /// Create a copy of User
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserImplCopyWith<_$UserImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-BaseResponse _$BaseResponseFromJson(Map<String, dynamic> json) {
-  return _BaseResponse.fromJson(json);
-}
-
-/// @nodoc
-mixin _$BaseResponse {
-  bool get success => throw _privateConstructorUsedError;
-  String get message => throw _privateConstructorUsedError;
-  dynamic get data => throw _privateConstructorUsedError;
-  String? get error => throw _privateConstructorUsedError;
-
-  /// Serializes this BaseResponse to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of BaseResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $BaseResponseCopyWith<BaseResponse> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $BaseResponseCopyWith<$Res> {
-  factory $BaseResponseCopyWith(
-          BaseResponse value, $Res Function(BaseResponse) then) =
-      _$BaseResponseCopyWithImpl<$Res, BaseResponse>;
-  @useResult
-  $Res call({bool success, String message, dynamic data, String? error});
-}
-
-/// @nodoc
-class _$BaseResponseCopyWithImpl<$Res, $Val extends BaseResponse>
-    implements $BaseResponseCopyWith<$Res> {
-  _$BaseResponseCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of BaseResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? success = null,
-    Object? message = null,
-    Object? data = freezed,
-    Object? error = freezed,
-  }) {
-    return _then(_value.copyWith(
-      success: null == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool,
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-      data: freezed == data
-          ? _value.data
-          : data // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$BaseResponseImplCopyWith<$Res>
-    implements $BaseResponseCopyWith<$Res> {
-  factory _$$BaseResponseImplCopyWith(
-          _$BaseResponseImpl value, $Res Function(_$BaseResponseImpl) then) =
-      __$$BaseResponseImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({bool success, String message, dynamic data, String? error});
-}
-
-/// @nodoc
-class __$$BaseResponseImplCopyWithImpl<$Res>
-    extends _$BaseResponseCopyWithImpl<$Res, _$BaseResponseImpl>
-    implements _$$BaseResponseImplCopyWith<$Res> {
-  __$$BaseResponseImplCopyWithImpl(
-      _$BaseResponseImpl _value, $Res Function(_$BaseResponseImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of BaseResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? success = null,
-    Object? message = null,
-    Object? data = freezed,
-    Object? error = freezed,
-  }) {
-    return _then(_$BaseResponseImpl(
-      success: null == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool,
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-      data: freezed == data
-          ? _value.data
-          : data // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$BaseResponseImpl with DiagnosticableTreeMixin implements _BaseResponse {
-  const _$BaseResponseImpl(
-      {required this.success, required this.message, this.data, this.error});
-
-  factory _$BaseResponseImpl.fromJson(Map<String, dynamic> json) =>
-      _$$BaseResponseImplFromJson(json);
-
-  @override
-  final bool success;
-  @override
-  final String message;
-  @override
-  final dynamic data;
-  @override
-  final String? error;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'BaseResponse(success: $success, message: $message, data: $data, error: $error)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'BaseResponse'))
-      ..add(DiagnosticsProperty('success', success))
-      ..add(DiagnosticsProperty('message', message))
-      ..add(DiagnosticsProperty('data', data))
-      ..add(DiagnosticsProperty('error', error));
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$BaseResponseImpl &&
-            (identical(other.success, success) || other.success == success) &&
-            (identical(other.message, message) || other.message == message) &&
-            const DeepCollectionEquality().equals(other.data, data) &&
-            (identical(other.error, error) || other.error == error));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, success, message,
-      const DeepCollectionEquality().hash(data), error);
-
-  /// Create a copy of BaseResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$BaseResponseImplCopyWith<_$BaseResponseImpl> get copyWith =>
-      __$$BaseResponseImplCopyWithImpl<_$BaseResponseImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$BaseResponseImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _BaseResponse implements BaseResponse {
-  const factory _BaseResponse(
-      {required final bool success,
-      required final String message,
-      final dynamic data,
-      final String? error}) = _$BaseResponseImpl;
-
-  factory _BaseResponse.fromJson(Map<String, dynamic> json) =
-      _$BaseResponseImpl.fromJson;
-
-  @override
-  bool get success;
-  @override
-  String get message;
-  @override
-  dynamic get data;
-  @override
-  String? get error;
-
-  /// Create a copy of BaseResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$BaseResponseImplCopyWith<_$BaseResponseImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-AuthData _$AuthDataFromJson(Map<String, dynamic> json) {
-  return _AuthData.fromJson(json);
-}
-
-/// @nodoc
-mixin _$AuthData {
-  User get user => throw _privateConstructorUsedError;
-  String get token => throw _privateConstructorUsedError;
-
-  /// Serializes this AuthData to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of AuthData
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $AuthDataCopyWith<AuthData> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $AuthDataCopyWith<$Res> {
-  factory $AuthDataCopyWith(AuthData value, $Res Function(AuthData) then) =
-      _$AuthDataCopyWithImpl<$Res, AuthData>;
-  @useResult
-  $Res call({User user, String token});
-
-  $UserCopyWith<$Res> get user;
-}
-
-/// @nodoc
-class _$AuthDataCopyWithImpl<$Res, $Val extends AuthData>
-    implements $AuthDataCopyWith<$Res> {
-  _$AuthDataCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of AuthData
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? user = null,
-    Object? token = null,
-  }) {
-    return _then(_value.copyWith(
-      user: null == user
-          ? _value.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as User,
-      token: null == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
-
-  /// Create a copy of AuthData
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $UserCopyWith<$Res> get user {
-    return $UserCopyWith<$Res>(_value.user, (value) {
-      return _then(_value.copyWith(user: value) as $Val);
-    });
-  }
-}
-
-/// @nodoc
-abstract class _$$AuthDataImplCopyWith<$Res>
-    implements $AuthDataCopyWith<$Res> {
-  factory _$$AuthDataImplCopyWith(
-          _$AuthDataImpl value, $Res Function(_$AuthDataImpl) then) =
-      __$$AuthDataImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({User user, String token});
-
-  @override
-  $UserCopyWith<$Res> get user;
-}
-
-/// @nodoc
-class __$$AuthDataImplCopyWithImpl<$Res>
-    extends _$AuthDataCopyWithImpl<$Res, _$AuthDataImpl>
-    implements _$$AuthDataImplCopyWith<$Res> {
-  __$$AuthDataImplCopyWithImpl(
-      _$AuthDataImpl _value, $Res Function(_$AuthDataImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of AuthData
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? user = null,
-    Object? token = null,
-  }) {
-    return _then(_$AuthDataImpl(
-      user: null == user
-          ? _value.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as User,
-      token: null == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$AuthDataImpl with DiagnosticableTreeMixin implements _AuthData {
-  const _$AuthDataImpl({required this.user, required this.token});
-
-  factory _$AuthDataImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AuthDataImplFromJson(json);
-
-  @override
-  final User user;
-  @override
-  final String token;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthData(user: $user, token: $token)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AuthData'))
-      ..add(DiagnosticsProperty('user', user))
-      ..add(DiagnosticsProperty('token', token));
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$AuthDataImpl &&
-            (identical(other.user, user) || other.user == user) &&
-            (identical(other.token, token) || other.token == token));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, user, token);
-
-  /// Create a copy of AuthData
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$AuthDataImplCopyWith<_$AuthDataImpl> get copyWith =>
-      __$$AuthDataImplCopyWithImpl<_$AuthDataImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$AuthDataImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _AuthData implements AuthData {
-  const factory _AuthData(
-      {required final User user, required final String token}) = _$AuthDataImpl;
-
-  factory _AuthData.fromJson(Map<String, dynamic> json) =
-      _$AuthDataImpl.fromJson;
-
-  @override
-  User get user;
-  @override
-  String get token;
-
-  /// Create a copy of AuthData
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$AuthDataImplCopyWith<_$AuthDataImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
 LoginRequest _$LoginRequestFromJson(Map<String, dynamic> json) {
   return _LoginRequest.fromJson(json);
 }
@@ -1955,6 +819,330 @@ abstract class _VerifyOtpRequest implements VerifyOtpRequest {
       throw _privateConstructorUsedError;
 }
 
+VerifyEmailRequest _$VerifyEmailRequestFromJson(Map<String, dynamic> json) {
+  return _VerifyEmailRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$VerifyEmailRequest {
+  String get otp => throw _privateConstructorUsedError;
+
+  /// Serializes this VerifyEmailRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of VerifyEmailRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $VerifyEmailRequestCopyWith<VerifyEmailRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $VerifyEmailRequestCopyWith<$Res> {
+  factory $VerifyEmailRequestCopyWith(
+          VerifyEmailRequest value, $Res Function(VerifyEmailRequest) then) =
+      _$VerifyEmailRequestCopyWithImpl<$Res, VerifyEmailRequest>;
+  @useResult
+  $Res call({String otp});
+}
+
+/// @nodoc
+class _$VerifyEmailRequestCopyWithImpl<$Res, $Val extends VerifyEmailRequest>
+    implements $VerifyEmailRequestCopyWith<$Res> {
+  _$VerifyEmailRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of VerifyEmailRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? otp = null,
+  }) {
+    return _then(_value.copyWith(
+      otp: null == otp
+          ? _value.otp
+          : otp // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$VerifyEmailRequestImplCopyWith<$Res>
+    implements $VerifyEmailRequestCopyWith<$Res> {
+  factory _$$VerifyEmailRequestImplCopyWith(_$VerifyEmailRequestImpl value,
+          $Res Function(_$VerifyEmailRequestImpl) then) =
+      __$$VerifyEmailRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String otp});
+}
+
+/// @nodoc
+class __$$VerifyEmailRequestImplCopyWithImpl<$Res>
+    extends _$VerifyEmailRequestCopyWithImpl<$Res, _$VerifyEmailRequestImpl>
+    implements _$$VerifyEmailRequestImplCopyWith<$Res> {
+  __$$VerifyEmailRequestImplCopyWithImpl(_$VerifyEmailRequestImpl _value,
+      $Res Function(_$VerifyEmailRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VerifyEmailRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? otp = null,
+  }) {
+    return _then(_$VerifyEmailRequestImpl(
+      otp: null == otp
+          ? _value.otp
+          : otp // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$VerifyEmailRequestImpl
+    with DiagnosticableTreeMixin
+    implements _VerifyEmailRequest {
+  const _$VerifyEmailRequestImpl({required this.otp});
+
+  factory _$VerifyEmailRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$VerifyEmailRequestImplFromJson(json);
+
+  @override
+  final String otp;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'VerifyEmailRequest(otp: $otp)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'VerifyEmailRequest'))
+      ..add(DiagnosticsProperty('otp', otp));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$VerifyEmailRequestImpl &&
+            (identical(other.otp, otp) || other.otp == otp));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, otp);
+
+  /// Create a copy of VerifyEmailRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$VerifyEmailRequestImplCopyWith<_$VerifyEmailRequestImpl> get copyWith =>
+      __$$VerifyEmailRequestImplCopyWithImpl<_$VerifyEmailRequestImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$VerifyEmailRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _VerifyEmailRequest implements VerifyEmailRequest {
+  const factory _VerifyEmailRequest({required final String otp}) =
+      _$VerifyEmailRequestImpl;
+
+  factory _VerifyEmailRequest.fromJson(Map<String, dynamic> json) =
+      _$VerifyEmailRequestImpl.fromJson;
+
+  @override
+  String get otp;
+
+  /// Create a copy of VerifyEmailRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$VerifyEmailRequestImplCopyWith<_$VerifyEmailRequestImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+DeleteAccountRequest _$DeleteAccountRequestFromJson(Map<String, dynamic> json) {
+  return _DeleteAccountRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$DeleteAccountRequest {
+  String get pin => throw _privateConstructorUsedError;
+
+  /// Serializes this DeleteAccountRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of DeleteAccountRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $DeleteAccountRequestCopyWith<DeleteAccountRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $DeleteAccountRequestCopyWith<$Res> {
+  factory $DeleteAccountRequestCopyWith(DeleteAccountRequest value,
+          $Res Function(DeleteAccountRequest) then) =
+      _$DeleteAccountRequestCopyWithImpl<$Res, DeleteAccountRequest>;
+  @useResult
+  $Res call({String pin});
+}
+
+/// @nodoc
+class _$DeleteAccountRequestCopyWithImpl<$Res,
+        $Val extends DeleteAccountRequest>
+    implements $DeleteAccountRequestCopyWith<$Res> {
+  _$DeleteAccountRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of DeleteAccountRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pin = null,
+  }) {
+    return _then(_value.copyWith(
+      pin: null == pin
+          ? _value.pin
+          : pin // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$DeleteAccountRequestImplCopyWith<$Res>
+    implements $DeleteAccountRequestCopyWith<$Res> {
+  factory _$$DeleteAccountRequestImplCopyWith(_$DeleteAccountRequestImpl value,
+          $Res Function(_$DeleteAccountRequestImpl) then) =
+      __$$DeleteAccountRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String pin});
+}
+
+/// @nodoc
+class __$$DeleteAccountRequestImplCopyWithImpl<$Res>
+    extends _$DeleteAccountRequestCopyWithImpl<$Res, _$DeleteAccountRequestImpl>
+    implements _$$DeleteAccountRequestImplCopyWith<$Res> {
+  __$$DeleteAccountRequestImplCopyWithImpl(_$DeleteAccountRequestImpl _value,
+      $Res Function(_$DeleteAccountRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of DeleteAccountRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pin = null,
+  }) {
+    return _then(_$DeleteAccountRequestImpl(
+      pin: null == pin
+          ? _value.pin
+          : pin // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$DeleteAccountRequestImpl
+    with DiagnosticableTreeMixin
+    implements _DeleteAccountRequest {
+  const _$DeleteAccountRequestImpl({required this.pin});
+
+  factory _$DeleteAccountRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DeleteAccountRequestImplFromJson(json);
+
+  @override
+  final String pin;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'DeleteAccountRequest(pin: $pin)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'DeleteAccountRequest'))
+      ..add(DiagnosticsProperty('pin', pin));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeleteAccountRequestImpl &&
+            (identical(other.pin, pin) || other.pin == pin));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, pin);
+
+  /// Create a copy of DeleteAccountRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeleteAccountRequestImplCopyWith<_$DeleteAccountRequestImpl>
+      get copyWith =>
+          __$$DeleteAccountRequestImplCopyWithImpl<_$DeleteAccountRequestImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$DeleteAccountRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _DeleteAccountRequest implements DeleteAccountRequest {
+  const factory _DeleteAccountRequest({required final String pin}) =
+      _$DeleteAccountRequestImpl;
+
+  factory _DeleteAccountRequest.fromJson(Map<String, dynamic> json) =
+      _$DeleteAccountRequestImpl.fromJson;
+
+  @override
+  String get pin;
+
+  /// Create a copy of DeleteAccountRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DeleteAccountRequestImplCopyWith<_$DeleteAccountRequestImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 NewPasswordRequest _$NewPasswordRequestFromJson(Map<String, dynamic> json) {
   return _NewPasswordRequest.fromJson(json);
 }
@@ -1965,7 +1153,6 @@ mixin _$NewPasswordRequest {
   String get password => throw _privateConstructorUsedError;
   @JsonKey(name: 'password_confirm')
   String get passwordConfirm => throw _privateConstructorUsedError;
-  String get otp => throw _privateConstructorUsedError;
 
   /// Serializes this NewPasswordRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1986,8 +1173,7 @@ abstract class $NewPasswordRequestCopyWith<$Res> {
   $Res call(
       {String email,
       String password,
-      @JsonKey(name: 'password_confirm') String passwordConfirm,
-      String otp});
+      @JsonKey(name: 'password_confirm') String passwordConfirm});
 }
 
 /// @nodoc
@@ -2008,7 +1194,6 @@ class _$NewPasswordRequestCopyWithImpl<$Res, $Val extends NewPasswordRequest>
     Object? email = null,
     Object? password = null,
     Object? passwordConfirm = null,
-    Object? otp = null,
   }) {
     return _then(_value.copyWith(
       email: null == email
@@ -2022,10 +1207,6 @@ class _$NewPasswordRequestCopyWithImpl<$Res, $Val extends NewPasswordRequest>
       passwordConfirm: null == passwordConfirm
           ? _value.passwordConfirm
           : passwordConfirm // ignore: cast_nullable_to_non_nullable
-              as String,
-      otp: null == otp
-          ? _value.otp
-          : otp // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -2042,8 +1223,7 @@ abstract class _$$NewPasswordRequestImplCopyWith<$Res>
   $Res call(
       {String email,
       String password,
-      @JsonKey(name: 'password_confirm') String passwordConfirm,
-      String otp});
+      @JsonKey(name: 'password_confirm') String passwordConfirm});
 }
 
 /// @nodoc
@@ -2062,7 +1242,6 @@ class __$$NewPasswordRequestImplCopyWithImpl<$Res>
     Object? email = null,
     Object? password = null,
     Object? passwordConfirm = null,
-    Object? otp = null,
   }) {
     return _then(_$NewPasswordRequestImpl(
       email: null == email
@@ -2077,10 +1256,6 @@ class __$$NewPasswordRequestImplCopyWithImpl<$Res>
           ? _value.passwordConfirm
           : passwordConfirm // ignore: cast_nullable_to_non_nullable
               as String,
-      otp: null == otp
-          ? _value.otp
-          : otp // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }
@@ -2093,8 +1268,7 @@ class _$NewPasswordRequestImpl
   const _$NewPasswordRequestImpl(
       {required this.email,
       required this.password,
-      @JsonKey(name: 'password_confirm') required this.passwordConfirm,
-      required this.otp});
+      @JsonKey(name: 'password_confirm') required this.passwordConfirm});
 
   factory _$NewPasswordRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$NewPasswordRequestImplFromJson(json);
@@ -2106,12 +1280,10 @@ class _$NewPasswordRequestImpl
   @override
   @JsonKey(name: 'password_confirm')
   final String passwordConfirm;
-  @override
-  final String otp;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NewPasswordRequest(email: $email, password: $password, passwordConfirm: $passwordConfirm, otp: $otp)';
+    return 'NewPasswordRequest(email: $email, password: $password, passwordConfirm: $passwordConfirm)';
   }
 
   @override
@@ -2121,8 +1293,7 @@ class _$NewPasswordRequestImpl
       ..add(DiagnosticsProperty('type', 'NewPasswordRequest'))
       ..add(DiagnosticsProperty('email', email))
       ..add(DiagnosticsProperty('password', password))
-      ..add(DiagnosticsProperty('passwordConfirm', passwordConfirm))
-      ..add(DiagnosticsProperty('otp', otp));
+      ..add(DiagnosticsProperty('passwordConfirm', passwordConfirm));
   }
 
   @override
@@ -2134,14 +1305,13 @@ class _$NewPasswordRequestImpl
             (identical(other.password, password) ||
                 other.password == password) &&
             (identical(other.passwordConfirm, passwordConfirm) ||
-                other.passwordConfirm == passwordConfirm) &&
-            (identical(other.otp, otp) || other.otp == otp));
+                other.passwordConfirm == passwordConfirm));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, email, password, passwordConfirm, otp);
+      Object.hash(runtimeType, email, password, passwordConfirm);
 
   /// Create a copy of NewPasswordRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -2164,8 +1334,8 @@ abstract class _NewPasswordRequest implements NewPasswordRequest {
   const factory _NewPasswordRequest(
       {required final String email,
       required final String password,
-      @JsonKey(name: 'password_confirm') required final String passwordConfirm,
-      required final String otp}) = _$NewPasswordRequestImpl;
+      @JsonKey(name: 'password_confirm')
+      required final String passwordConfirm}) = _$NewPasswordRequestImpl;
 
   factory _NewPasswordRequest.fromJson(Map<String, dynamic> json) =
       _$NewPasswordRequestImpl.fromJson;
@@ -2177,8 +1347,6 @@ abstract class _NewPasswordRequest implements NewPasswordRequest {
   @override
   @JsonKey(name: 'password_confirm')
   String get passwordConfirm;
-  @override
-  String get otp;
 
   /// Create a copy of NewPasswordRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -2514,197 +1682,752 @@ abstract class _CheckUsernameRequest implements CheckUsernameRequest {
       get copyWith => throw _privateConstructorUsedError;
 }
 
-AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) {
-  return _AuthResponse.fromJson(json);
+ChangePinRequest _$ChangePinRequestFromJson(Map<String, dynamic> json) {
+  return _ChangePinRequest.fromJson(json);
 }
 
 /// @nodoc
-mixin _$AuthResponse {
-  bool get success => throw _privateConstructorUsedError;
-  String? get message => throw _privateConstructorUsedError;
-  dynamic get data => throw _privateConstructorUsedError;
+mixin _$ChangePinRequest {
+  @JsonKey(name: "oldPin")
+  String get oldPin => throw _privateConstructorUsedError;
+  @JsonKey(name: "newPin")
+  String get newPin => throw _privateConstructorUsedError;
 
-  /// Serializes this AuthResponse to a JSON map.
+  /// Serializes this ChangePinRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of AuthResponse
+  /// Create a copy of ChangePinRequest
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $AuthResponseCopyWith<AuthResponse> get copyWith =>
+  $ChangePinRequestCopyWith<ChangePinRequest> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AuthResponseCopyWith<$Res> {
-  factory $AuthResponseCopyWith(
-          AuthResponse value, $Res Function(AuthResponse) then) =
-      _$AuthResponseCopyWithImpl<$Res, AuthResponse>;
+abstract class $ChangePinRequestCopyWith<$Res> {
+  factory $ChangePinRequestCopyWith(
+          ChangePinRequest value, $Res Function(ChangePinRequest) then) =
+      _$ChangePinRequestCopyWithImpl<$Res, ChangePinRequest>;
   @useResult
-  $Res call({bool success, String? message, dynamic data});
+  $Res call(
+      {@JsonKey(name: "oldPin") String oldPin,
+      @JsonKey(name: "newPin") String newPin});
 }
 
 /// @nodoc
-class _$AuthResponseCopyWithImpl<$Res, $Val extends AuthResponse>
-    implements $AuthResponseCopyWith<$Res> {
-  _$AuthResponseCopyWithImpl(this._value, this._then);
+class _$ChangePinRequestCopyWithImpl<$Res, $Val extends ChangePinRequest>
+    implements $ChangePinRequestCopyWith<$Res> {
+  _$ChangePinRequestCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of AuthResponse
+  /// Create a copy of ChangePinRequest
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? success = null,
-    Object? message = freezed,
-    Object? data = freezed,
+    Object? oldPin = null,
+    Object? newPin = null,
   }) {
     return _then(_value.copyWith(
-      success: null == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool,
-      message: freezed == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-      data: freezed == data
-          ? _value.data
-          : data // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+      oldPin: null == oldPin
+          ? _value.oldPin
+          : oldPin // ignore: cast_nullable_to_non_nullable
+              as String,
+      newPin: null == newPin
+          ? _value.newPin
+          : newPin // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$AuthResponseImplCopyWith<$Res>
-    implements $AuthResponseCopyWith<$Res> {
-  factory _$$AuthResponseImplCopyWith(
-          _$AuthResponseImpl value, $Res Function(_$AuthResponseImpl) then) =
-      __$$AuthResponseImplCopyWithImpl<$Res>;
+abstract class _$$ChangePinRequestImplCopyWith<$Res>
+    implements $ChangePinRequestCopyWith<$Res> {
+  factory _$$ChangePinRequestImplCopyWith(_$ChangePinRequestImpl value,
+          $Res Function(_$ChangePinRequestImpl) then) =
+      __$$ChangePinRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool success, String? message, dynamic data});
+  $Res call(
+      {@JsonKey(name: "oldPin") String oldPin,
+      @JsonKey(name: "newPin") String newPin});
 }
 
 /// @nodoc
-class __$$AuthResponseImplCopyWithImpl<$Res>
-    extends _$AuthResponseCopyWithImpl<$Res, _$AuthResponseImpl>
-    implements _$$AuthResponseImplCopyWith<$Res> {
-  __$$AuthResponseImplCopyWithImpl(
-      _$AuthResponseImpl _value, $Res Function(_$AuthResponseImpl) _then)
+class __$$ChangePinRequestImplCopyWithImpl<$Res>
+    extends _$ChangePinRequestCopyWithImpl<$Res, _$ChangePinRequestImpl>
+    implements _$$ChangePinRequestImplCopyWith<$Res> {
+  __$$ChangePinRequestImplCopyWithImpl(_$ChangePinRequestImpl _value,
+      $Res Function(_$ChangePinRequestImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of AuthResponse
+  /// Create a copy of ChangePinRequest
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? success = null,
-    Object? message = freezed,
-    Object? data = freezed,
+    Object? oldPin = null,
+    Object? newPin = null,
   }) {
-    return _then(_$AuthResponseImpl(
-      success: null == success
-          ? _value.success
-          : success // ignore: cast_nullable_to_non_nullable
-              as bool,
-      message: freezed == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-      data: freezed == data
-          ? _value.data
-          : data // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+    return _then(_$ChangePinRequestImpl(
+      oldPin: null == oldPin
+          ? _value.oldPin
+          : oldPin // ignore: cast_nullable_to_non_nullable
+              as String,
+      newPin: null == newPin
+          ? _value.newPin
+          : newPin // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$AuthResponseImpl with DiagnosticableTreeMixin implements _AuthResponse {
-  const _$AuthResponseImpl({required this.success, this.message, this.data});
+class _$ChangePinRequestImpl
+    with DiagnosticableTreeMixin
+    implements _ChangePinRequest {
+  const _$ChangePinRequestImpl(
+      {@JsonKey(name: "oldPin") required this.oldPin,
+      @JsonKey(name: "newPin") required this.newPin});
 
-  factory _$AuthResponseImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AuthResponseImplFromJson(json);
+  factory _$ChangePinRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ChangePinRequestImplFromJson(json);
 
   @override
-  final bool success;
+  @JsonKey(name: "oldPin")
+  final String oldPin;
   @override
-  final String? message;
-  @override
-  final dynamic data;
+  @JsonKey(name: "newPin")
+  final String newPin;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthResponse(success: $success, message: $message, data: $data)';
+    return 'ChangePinRequest(oldPin: $oldPin, newPin: $newPin)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'AuthResponse'))
-      ..add(DiagnosticsProperty('success', success))
-      ..add(DiagnosticsProperty('message', message))
-      ..add(DiagnosticsProperty('data', data));
+      ..add(DiagnosticsProperty('type', 'ChangePinRequest'))
+      ..add(DiagnosticsProperty('oldPin', oldPin))
+      ..add(DiagnosticsProperty('newPin', newPin));
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AuthResponseImpl &&
-            (identical(other.success, success) || other.success == success) &&
-            (identical(other.message, message) || other.message == message) &&
-            const DeepCollectionEquality().equals(other.data, data));
+            other is _$ChangePinRequestImpl &&
+            (identical(other.oldPin, oldPin) || other.oldPin == oldPin) &&
+            (identical(other.newPin, newPin) || other.newPin == newPin));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, success, message, const DeepCollectionEquality().hash(data));
+  int get hashCode => Object.hash(runtimeType, oldPin, newPin);
 
-  /// Create a copy of AuthResponse
+  /// Create a copy of ChangePinRequest
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$AuthResponseImplCopyWith<_$AuthResponseImpl> get copyWith =>
-      __$$AuthResponseImplCopyWithImpl<_$AuthResponseImpl>(this, _$identity);
+  _$$ChangePinRequestImplCopyWith<_$ChangePinRequestImpl> get copyWith =>
+      __$$ChangePinRequestImplCopyWithImpl<_$ChangePinRequestImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AuthResponseImplToJson(
+    return _$$ChangePinRequestImplToJson(
       this,
     );
   }
 }
 
-abstract class _AuthResponse implements AuthResponse {
-  const factory _AuthResponse(
-      {required final bool success,
-      final String? message,
-      final dynamic data}) = _$AuthResponseImpl;
+abstract class _ChangePinRequest implements ChangePinRequest {
+  const factory _ChangePinRequest(
+          {@JsonKey(name: "oldPin") required final String oldPin,
+          @JsonKey(name: "newPin") required final String newPin}) =
+      _$ChangePinRequestImpl;
 
-  factory _AuthResponse.fromJson(Map<String, dynamic> json) =
-      _$AuthResponseImpl.fromJson;
+  factory _ChangePinRequest.fromJson(Map<String, dynamic> json) =
+      _$ChangePinRequestImpl.fromJson;
 
   @override
-  bool get success;
+  @JsonKey(name: "oldPin")
+  String get oldPin;
   @override
-  String? get message;
-  @override
-  dynamic get data;
+  @JsonKey(name: "newPin")
+  String get newPin;
 
-  /// Create a copy of AuthResponse
+  /// Create a copy of ChangePinRequest
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$AuthResponseImplCopyWith<_$AuthResponseImpl> get copyWith =>
+  _$$ChangePinRequestImplCopyWith<_$ChangePinRequestImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+ResetPinRequest _$ResetPinRequestFromJson(Map<String, dynamic> json) {
+  return _ResetPinRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ResetPinRequest {
+  @JsonKey(name: "password")
+  String get password => throw _privateConstructorUsedError;
+
+  /// Serializes this ResetPinRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ResetPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ResetPinRequestCopyWith<ResetPinRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ResetPinRequestCopyWith<$Res> {
+  factory $ResetPinRequestCopyWith(
+          ResetPinRequest value, $Res Function(ResetPinRequest) then) =
+      _$ResetPinRequestCopyWithImpl<$Res, ResetPinRequest>;
+  @useResult
+  $Res call({@JsonKey(name: "password") String password});
+}
+
+/// @nodoc
+class _$ResetPinRequestCopyWithImpl<$Res, $Val extends ResetPinRequest>
+    implements $ResetPinRequestCopyWith<$Res> {
+  _$ResetPinRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ResetPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? password = null,
+  }) {
+    return _then(_value.copyWith(
+      password: null == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ResetPinRequestImplCopyWith<$Res>
+    implements $ResetPinRequestCopyWith<$Res> {
+  factory _$$ResetPinRequestImplCopyWith(_$ResetPinRequestImpl value,
+          $Res Function(_$ResetPinRequestImpl) then) =
+      __$$ResetPinRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({@JsonKey(name: "password") String password});
+}
+
+/// @nodoc
+class __$$ResetPinRequestImplCopyWithImpl<$Res>
+    extends _$ResetPinRequestCopyWithImpl<$Res, _$ResetPinRequestImpl>
+    implements _$$ResetPinRequestImplCopyWith<$Res> {
+  __$$ResetPinRequestImplCopyWithImpl(
+      _$ResetPinRequestImpl _value, $Res Function(_$ResetPinRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ResetPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? password = null,
+  }) {
+    return _then(_$ResetPinRequestImpl(
+      password: null == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ResetPinRequestImpl
+    with DiagnosticableTreeMixin
+    implements _ResetPinRequest {
+  const _$ResetPinRequestImpl(
+      {@JsonKey(name: "password") required this.password});
+
+  factory _$ResetPinRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ResetPinRequestImplFromJson(json);
+
+  @override
+  @JsonKey(name: "password")
+  final String password;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ResetPinRequest(password: $password)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ResetPinRequest'))
+      ..add(DiagnosticsProperty('password', password));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ResetPinRequestImpl &&
+            (identical(other.password, password) ||
+                other.password == password));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, password);
+
+  /// Create a copy of ResetPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ResetPinRequestImplCopyWith<_$ResetPinRequestImpl> get copyWith =>
+      __$$ResetPinRequestImplCopyWithImpl<_$ResetPinRequestImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ResetPinRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ResetPinRequest implements ResetPinRequest {
+  const factory _ResetPinRequest(
+          {@JsonKey(name: "password") required final String password}) =
+      _$ResetPinRequestImpl;
+
+  factory _ResetPinRequest.fromJson(Map<String, dynamic> json) =
+      _$ResetPinRequestImpl.fromJson;
+
+  @override
+  @JsonKey(name: "password")
+  String get password;
+
+  /// Create a copy of ResetPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ResetPinRequestImplCopyWith<_$ResetPinRequestImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+CreatePinRequest _$CreatePinRequestFromJson(Map<String, dynamic> json) {
+  return _CreatePinRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$CreatePinRequest {
+  @JsonKey(name: "pin")
+  String get pin => throw _privateConstructorUsedError;
+  @JsonKey(name: "pin_confirmation")
+  String get pinConfirmation => throw _privateConstructorUsedError;
+
+  /// Serializes this CreatePinRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of CreatePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $CreatePinRequestCopyWith<CreatePinRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $CreatePinRequestCopyWith<$Res> {
+  factory $CreatePinRequestCopyWith(
+          CreatePinRequest value, $Res Function(CreatePinRequest) then) =
+      _$CreatePinRequestCopyWithImpl<$Res, CreatePinRequest>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "pin") String pin,
+      @JsonKey(name: "pin_confirmation") String pinConfirmation});
+}
+
+/// @nodoc
+class _$CreatePinRequestCopyWithImpl<$Res, $Val extends CreatePinRequest>
+    implements $CreatePinRequestCopyWith<$Res> {
+  _$CreatePinRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of CreatePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pin = null,
+    Object? pinConfirmation = null,
+  }) {
+    return _then(_value.copyWith(
+      pin: null == pin
+          ? _value.pin
+          : pin // ignore: cast_nullable_to_non_nullable
+              as String,
+      pinConfirmation: null == pinConfirmation
+          ? _value.pinConfirmation
+          : pinConfirmation // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$CreatePinRequestImplCopyWith<$Res>
+    implements $CreatePinRequestCopyWith<$Res> {
+  factory _$$CreatePinRequestImplCopyWith(_$CreatePinRequestImpl value,
+          $Res Function(_$CreatePinRequestImpl) then) =
+      __$$CreatePinRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "pin") String pin,
+      @JsonKey(name: "pin_confirmation") String pinConfirmation});
+}
+
+/// @nodoc
+class __$$CreatePinRequestImplCopyWithImpl<$Res>
+    extends _$CreatePinRequestCopyWithImpl<$Res, _$CreatePinRequestImpl>
+    implements _$$CreatePinRequestImplCopyWith<$Res> {
+  __$$CreatePinRequestImplCopyWithImpl(_$CreatePinRequestImpl _value,
+      $Res Function(_$CreatePinRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of CreatePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pin = null,
+    Object? pinConfirmation = null,
+  }) {
+    return _then(_$CreatePinRequestImpl(
+      pin: null == pin
+          ? _value.pin
+          : pin // ignore: cast_nullable_to_non_nullable
+              as String,
+      pinConfirmation: null == pinConfirmation
+          ? _value.pinConfirmation
+          : pinConfirmation // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$CreatePinRequestImpl
+    with DiagnosticableTreeMixin
+    implements _CreatePinRequest {
+  const _$CreatePinRequestImpl(
+      {@JsonKey(name: "pin") required this.pin,
+      @JsonKey(name: "pin_confirmation") required this.pinConfirmation});
+
+  factory _$CreatePinRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CreatePinRequestImplFromJson(json);
+
+  @override
+  @JsonKey(name: "pin")
+  final String pin;
+  @override
+  @JsonKey(name: "pin_confirmation")
+  final String pinConfirmation;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'CreatePinRequest(pin: $pin, pinConfirmation: $pinConfirmation)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'CreatePinRequest'))
+      ..add(DiagnosticsProperty('pin', pin))
+      ..add(DiagnosticsProperty('pinConfirmation', pinConfirmation));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CreatePinRequestImpl &&
+            (identical(other.pin, pin) || other.pin == pin) &&
+            (identical(other.pinConfirmation, pinConfirmation) ||
+                other.pinConfirmation == pinConfirmation));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, pin, pinConfirmation);
+
+  /// Create a copy of CreatePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CreatePinRequestImplCopyWith<_$CreatePinRequestImpl> get copyWith =>
+      __$$CreatePinRequestImplCopyWithImpl<_$CreatePinRequestImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CreatePinRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _CreatePinRequest implements CreatePinRequest {
+  const factory _CreatePinRequest(
+      {@JsonKey(name: "pin") required final String pin,
+      @JsonKey(name: "pin_confirmation")
+      required final String pinConfirmation}) = _$CreatePinRequestImpl;
+
+  factory _CreatePinRequest.fromJson(Map<String, dynamic> json) =
+      _$CreatePinRequestImpl.fromJson;
+
+  @override
+  @JsonKey(name: "pin")
+  String get pin;
+  @override
+  @JsonKey(name: "pin_confirmation")
+  String get pinConfirmation;
+
+  /// Create a copy of CreatePinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CreatePinRequestImplCopyWith<_$CreatePinRequestImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ChangePasswordRequest _$ChangePasswordRequestFromJson(
+    Map<String, dynamic> json) {
+  return _ChangePasswordRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ChangePasswordRequest {
+  @JsonKey(name: "oldPassword")
+  String get oldPassword => throw _privateConstructorUsedError;
+  @JsonKey(name: "newPassword")
+  String get newPassword => throw _privateConstructorUsedError;
+
+  /// Serializes this ChangePasswordRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ChangePasswordRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ChangePasswordRequestCopyWith<ChangePasswordRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ChangePasswordRequestCopyWith<$Res> {
+  factory $ChangePasswordRequestCopyWith(ChangePasswordRequest value,
+          $Res Function(ChangePasswordRequest) then) =
+      _$ChangePasswordRequestCopyWithImpl<$Res, ChangePasswordRequest>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "oldPassword") String oldPassword,
+      @JsonKey(name: "newPassword") String newPassword});
+}
+
+/// @nodoc
+class _$ChangePasswordRequestCopyWithImpl<$Res,
+        $Val extends ChangePasswordRequest>
+    implements $ChangePasswordRequestCopyWith<$Res> {
+  _$ChangePasswordRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ChangePasswordRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? oldPassword = null,
+    Object? newPassword = null,
+  }) {
+    return _then(_value.copyWith(
+      oldPassword: null == oldPassword
+          ? _value.oldPassword
+          : oldPassword // ignore: cast_nullable_to_non_nullable
+              as String,
+      newPassword: null == newPassword
+          ? _value.newPassword
+          : newPassword // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ChangePasswordRequestImplCopyWith<$Res>
+    implements $ChangePasswordRequestCopyWith<$Res> {
+  factory _$$ChangePasswordRequestImplCopyWith(
+          _$ChangePasswordRequestImpl value,
+          $Res Function(_$ChangePasswordRequestImpl) then) =
+      __$$ChangePasswordRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "oldPassword") String oldPassword,
+      @JsonKey(name: "newPassword") String newPassword});
+}
+
+/// @nodoc
+class __$$ChangePasswordRequestImplCopyWithImpl<$Res>
+    extends _$ChangePasswordRequestCopyWithImpl<$Res,
+        _$ChangePasswordRequestImpl>
+    implements _$$ChangePasswordRequestImplCopyWith<$Res> {
+  __$$ChangePasswordRequestImplCopyWithImpl(_$ChangePasswordRequestImpl _value,
+      $Res Function(_$ChangePasswordRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ChangePasswordRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? oldPassword = null,
+    Object? newPassword = null,
+  }) {
+    return _then(_$ChangePasswordRequestImpl(
+      oldPassword: null == oldPassword
+          ? _value.oldPassword
+          : oldPassword // ignore: cast_nullable_to_non_nullable
+              as String,
+      newPassword: null == newPassword
+          ? _value.newPassword
+          : newPassword // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ChangePasswordRequestImpl
+    with DiagnosticableTreeMixin
+    implements _ChangePasswordRequest {
+  const _$ChangePasswordRequestImpl(
+      {@JsonKey(name: "oldPassword") required this.oldPassword,
+      @JsonKey(name: "newPassword") required this.newPassword});
+
+  factory _$ChangePasswordRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ChangePasswordRequestImplFromJson(json);
+
+  @override
+  @JsonKey(name: "oldPassword")
+  final String oldPassword;
+  @override
+  @JsonKey(name: "newPassword")
+  final String newPassword;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ChangePasswordRequest(oldPassword: $oldPassword, newPassword: $newPassword)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ChangePasswordRequest'))
+      ..add(DiagnosticsProperty('oldPassword', oldPassword))
+      ..add(DiagnosticsProperty('newPassword', newPassword));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ChangePasswordRequestImpl &&
+            (identical(other.oldPassword, oldPassword) ||
+                other.oldPassword == oldPassword) &&
+            (identical(other.newPassword, newPassword) ||
+                other.newPassword == newPassword));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, oldPassword, newPassword);
+
+  /// Create a copy of ChangePasswordRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ChangePasswordRequestImplCopyWith<_$ChangePasswordRequestImpl>
+      get copyWith => __$$ChangePasswordRequestImplCopyWithImpl<
+          _$ChangePasswordRequestImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ChangePasswordRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ChangePasswordRequest implements ChangePasswordRequest {
+  const factory _ChangePasswordRequest(
+          {@JsonKey(name: "oldPassword") required final String oldPassword,
+          @JsonKey(name: "newPassword") required final String newPassword}) =
+      _$ChangePasswordRequestImpl;
+
+  factory _ChangePasswordRequest.fromJson(Map<String, dynamic> json) =
+      _$ChangePasswordRequestImpl.fromJson;
+
+  @override
+  @JsonKey(name: "oldPassword")
+  String get oldPassword;
+  @override
+  @JsonKey(name: "newPassword")
+  String get newPassword;
+
+  /// Create a copy of ChangePasswordRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ChangePasswordRequestImplCopyWith<_$ChangePasswordRequestImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
