@@ -1,6 +1,6 @@
 import 'package:bundlegram/gen/assets.gen.dart';
-import 'package:bundlegram/presentation/general_widget/app_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
@@ -40,9 +40,28 @@ class _PlatformPhoneNumberFormWidgetState
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    final selected = ref
+        .read(platformProductProvider(widget.serviceType))
+        .selectedSubProduct;
+    if (selected?.subName?.toLowerCase().contains('postpaid') ?? false) {
+      _tabController.index = 1;
+    }
     _tabController.addListener(() {
-      if (_tabController.indexIsChanging) {
+      if (!_tabController.indexIsChanging) {
         final type = _tabController.index == 0 ? 'prepaid' : 'postpaid';
+        final subProduct = ref
+            .read(platformProductProvider(widget.serviceType))
+            .subProducts
+            .firstWhere(
+              (e) => e.subName?.toLowerCase().contains(type) ?? false,
+            );
+
+        if (subProduct != null) {
+          ref
+              .read(platformProductProvider(widget.serviceType).notifier)
+              .selectSubProduct(subProduct);
+        }
+
         ref
             .read(platformProductProvider(widget.serviceType).notifier)
             .selectPaymentType(type);
@@ -70,12 +89,20 @@ class _PlatformPhoneNumberFormWidgetState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Biller selection field (read-only)
         AppTextField(
           hintText: allowsFreeText
-              ? widget.inputHint
-              : (state.selectedProduct?.productName ?? 'Select biller'),
+              ? 'Enter phone number'
+              : state.selectedSubProduct != null
+                  ? state.selectedSubProduct?.subName
+                  : state.selectedProduct?.productName ?? 'Select biller',
           readOnly: !allowsFreeText,
           controller: state.firstInputController,
+          keyboardType: TextInputType.number,
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(11),
+            FilteringTextInputFormatter.digitsOnly,
+          ],
           onTap:
               allowsFreeText ? null : () => notifier.showBillerPicker(context),
           prefixIcon: GestureDetector(
@@ -92,39 +119,32 @@ class _PlatformPhoneNumberFormWidgetState
             ),
           ),
         ),
-        if (widget.serviceType == PlatformProductType.betting) ...[
+
+        // Secondary input for betting or cable TV (smart card number)
+        // Secondary input for betting, cable TV, electricity, and internet services
+        if (widget.serviceType == PlatformProductType.betting ||
+            widget.serviceType == PlatformProductType.cableTv ||
+            widget.serviceType == PlatformProductType.electricity ||
+            widget.serviceType == PlatformProductType.internetServices) ...[
           24.verticalSpace,
           AppTextField(
-            hintText: 'Enter User ID',
+            hintText: widget.serviceType == PlatformProductType.betting
+                ? 'Enter User ID'
+                : widget.serviceType == PlatformProductType.cableTv
+                    ? 'Enter Smart Card Number'
+                    : widget.serviceType == PlatformProductType.electricity
+                        ? 'Enter Meter Number'
+                        : 'Enter account number', // For internet services
             controller: state.secondaryInputController,
-            onChange: (val) {
-              notifier.validateBill(
-                context,
-                val,
-                state.selectedSubProduct?.id ?? state.selectedProduct?.id,
-                state.selectedSubProduct?.autoSubProdId,
-              );
-            },
-            suffixIcon: state.isValidating
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : state.billValidated
-                    ? const Icon(Icons.check_circle, color: Colors.green)
-                    : null,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(10),
+              FilteringTextInputFormatter.digitsOnly,
+            ],
           ),
-          if (state.validatedName != null) ...[
-            8.verticalSpace,
-            Text(
-              'Validated: ${state.validatedName}',
-              style: context.textTheme.bodySmall!.copyWith(
-                color: AppColors.primaryColor,
-              ),
-            ),
-          ],
         ],
+
+        // Electricity prepaid/postpaid tabs
         if (widget.serviceType == PlatformProductType.electricity) ...[
           24.verticalSpace,
           TabBar(
@@ -143,7 +163,87 @@ class _PlatformPhoneNumberFormWidgetState
             ),
             tabs: const [Tab(text: 'Prepaid'), Tab(text: 'Postpaid')],
           ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     ChoiceChip(
+          //       label: const Text('Prepaid'),
+          //       selected: state.selectedSubProduct?.subName
+          //               ?.toLowerCase()
+          //               .contains('prepaid') ??
+          //           false,
+          //       onSelected: (selected) {
+          //         if (selected) {
+          //           final prepaidSubProduct = state.subProducts.firstWhere(
+          //             (p) => p.subName!.toLowerCase().contains('prepaid'),
+          //           );
+          //           notifier.selectSubProduct(prepaidSubProduct);
+          //         }
+          //       },
+          //       selectedColor:
+          //           const Color(0xFFE8EFFF), // Background color when selected
+          //       labelStyle: TextStyle(
+          //         color: AppColors.primaryColor,
+          //         fontWeight: FontWeight.w500,
+          //         fontSize: 14.sp,
+          //       ),
+          //       backgroundColor:
+          //           Colors.transparent, // Background when not selected
+          //       side: BorderSide(
+          //         color: state.selectedSubProduct?.subName
+          //                     ?.toLowerCase()
+          //                     .contains('postpaid') ??
+          //                 false
+          //             ? AppColors.primaryColor
+          //             : Colors.grey.shade300,
+          //         width: 1,
+          //       ),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(8), // Adjust as needed
+          //       ),
+          //     ),
+          //     SizedBox(width: 16.w),
+          //     ChoiceChip(
+          //       label: const Text('Postpaid'),
+          //       selected: state.selectedSubProduct?.subName
+          //               ?.toLowerCase()
+          //               .contains('postpaid') ??
+          //           false,
+          //       onSelected: (selected) {
+          //         if (selected) {
+          //           final postpaidSubProduct = state.subProducts.firstWhere(
+          //             (p) => p.subName!.toLowerCase().contains('postpaid'),
+          //           );
+          //           notifier.selectSubProduct(postpaidSubProduct);
+          //         }
+          //       },
+          //       selectedColor:
+          //           const Color(0xFFE8EFFF), // Background color when selected
+          //       labelStyle: TextStyle(
+          //         color: AppColors.primaryColor,
+          //         fontWeight: FontWeight.w500,
+          //         fontSize: 14.sp,
+          //       ),
+          //       backgroundColor:
+          //           Colors.transparent, // Background when not selected
+          //       side: BorderSide(
+          //         color: state.selectedSubProduct?.subName
+          //                     ?.toLowerCase()
+          //                     .contains('postpaid') ??
+          //                 false
+          //             ? AppColors.primaryColor
+          //             : Colors.grey.shade300,
+          //         width: 1,
+          //       ),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(8), // Adjust as needed
+          //       ),
+          //     ),
+          //   ],
+          // ),
         ],
+
+        // Dropdown for dataType (mobile data) or sub_name (cable TV)
         if (state.dropdownOptions.isNotEmpty) ...[
           24.verticalSpace,
           AppDropdown(
@@ -152,15 +252,18 @@ class _PlatformPhoneNumberFormWidgetState
             selected: state.selectedDataType,
             onChanged: (val) => notifier.selectDataType(val!),
           ),
-        ],
-        if (
-            // widget.secondaryInputHint != null &&
-            widget.serviceType != PlatformProductType.airtime &&
-                widget.serviceType != PlatformProductType.mobileData) ...[
+        ] else if (state.subProducts.isNotEmpty &&
+            widget.serviceType != PlatformProductType.electricity) ...[
           24.verticalSpace,
-          AppTextField(
-            hintText: widget.secondaryInputHint!,
-            controller: state.secondaryInputController,
+          AppDropdown(
+            title: state.selectedSubProduct?.subName ?? 'Select package',
+            options: state.subProducts.map((e) => e.subName!).toList(),
+            selected: state.selectedSubProduct?.subName,
+            onChanged: (val) {
+              final selected =
+                  state.subProducts.firstWhere((e) => e.subName == val);
+              notifier.selectSubProduct(selected);
+            },
           ),
         ],
       ],

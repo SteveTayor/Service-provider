@@ -84,6 +84,8 @@ class AccountSetupProvider extends ChangeNotifier {
   void onStepTap(AccountSetupStep step, BuildContext context) {
     final profile = _ref.read(globalProvider).profile.value?.data;
 
+    final bvnLinkedNow = profile?.bvn?.toString().isNotEmpty ?? false;
+
     // Allow email verification anytime
     if (step.title.toLowerCase().contains('verify email')) {
       if (step.isBottomSheet && step.bottomSheet != null) {
@@ -94,17 +96,15 @@ class AccountSetupProvider extends ChangeNotifier {
       return;
     }
 
-    final isBvnLinked = (profile?.bvn?.isNotEmpty ?? false);
-
     // Prevent navigation if BVN not linked, except for Verify Email and Link BVN
-    if (!bvnLinked &&
+    if (!bvnLinkedNow &&
         step.title != 'Link your BVN' &&
         step.title != 'Verify email') {
       context.showErrorSnackBar("Please link your BVN before continuing.");
       return;
     }
 
-    // Navigate or show bottom sheet if BVN is linked or if it's the BVN step
+    // Proceed to bottom sheet or route
     if (step.isBottomSheet && step.bottomSheet != null) {
       context.showBottomSheet(child: step.bottomSheet!);
     } else if (step.route != null) {

@@ -38,44 +38,66 @@ class TransactionSummary extends ConsumerWidget {
   Widget _buildSummaryRow(String label, String value) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: AppColors.grey83,
-              fontSize: 14.sp,
-            ),
-          ),
-          Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (label == 'Transaction type' && assetPath != null)
-                assetPath!.contains('.svg')
-                    ? AppSvgIcon(
-                        path: assetPath!,
-                        fit: BoxFit.scaleDown,
-                      )
-                    : Image.asset(
-                        assetPath!,
-                        width: 24.w,
-                        height: 24.h,
-                        fit: BoxFit.scaleDown,
+              // Label
+              Expanded(
+                flex: 2,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: AppColors.grey83,
+                    fontSize: 14.sp,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+
+              // Value + optional icon
+              Expanded(
+                flex: 3,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (label == 'Transaction type' && assetPath != null)
+                      assetPath!.contains('.svg')
+                          ? AppSvgIcon(
+                              path: assetPath!,
+                              fit: BoxFit.scaleDown,
+                              width: 20.w,
+                              height: 20.h,
+                            )
+                          : Image.asset(
+                              assetPath!,
+                              width: 20.w,
+                              height: 20.h,
+                              fit: BoxFit.scaleDown,
+                            ),
+                    if (label == 'Transaction type' && assetPath != null)
+                      8.horizontalSpace,
+                    Flexible(
+                      child: Text(
+                        value.contains('Buy')
+                            ? value.replaceFirst('Buy', '').trim()
+                            : value,
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: AppColors.grey33,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-              8.horizontalSpace,
-              Text(
-                value.contains('Buy')
-                    ? value.replaceFirst('Buy', '').trim()
-                    : value,
-                style: TextStyle(
-                  color: AppColors.grey33,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -129,7 +151,7 @@ class TransactionSummary extends ConsumerWidget {
             Text(
               discountedPrice ?? amount,
               style: TextStyle(
-                fontSize: 40.sp,
+                fontSize: 32.sp,
                 fontWeight: FontWeight.bold,
                 color: AppColors.grey33,
               ),

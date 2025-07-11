@@ -43,31 +43,38 @@ class UserdetailWidget extends ConsumerWidget {
               ),
             ).withContainer(
               color: AppColors.pink,
-              width: 64,
-              height: 64,
+              width: 60,
+              height: 60,
               alignment: Alignment.center,
               shape: BoxShape.circle,
             ),
             12.verticalSpace,
             Text(globalUserProvider.value!.data!.name!.capiTalizeFirstLast,
-                style: context.textTheme.titleMedium),
-            if (profileProv?.emailVerifiedAt == null &&
-                profileProv?.bvn == null &&
-                profileProv?.bankName == null &&
+                style: context.textTheme.titleSmall),
+            if (profileProv?.emailVerifiedAt == null ||
+                profileProv?.bvn == null ||
+                profileProv?.address == null ||
+                profileProv?.bankName == null ||
                 profileProv?.accountNumber == null) ...[
-              textWithIcon(Assets.svgs.infoCircle1, 'Verification incomplete'),
+              4.verticalSpace,
+              textWithIcon(
+                Assets.svgs.infoCircle1,
+                'Verification incomplete',
+              ),
               8.verticalSpace,
             ],
             if (profileProv?.userType == "agent") ...[
               textWithIcon(
-                  Assets.svgs.crownRewardSocialRatingMediaQueenVipKingCrown,
-                  'Bundlegram agent'),
+                Assets.svgs.crownRewardSocialRatingMediaQueenVipKingCrown,
+                'Bundlegram agent',
+              ),
               14.verticalSpace,
             ],
-            if (profileProv?.emailVerifiedAt == null &&
-                profileProv?.bvn == null &&
-                profileProv?.bankName == null &&
-                profileProv?.accountNumber == null &&
+            if (profileProv?.emailVerifiedAt == null ||
+                profileProv?.bvn == null ||
+                profileProv?.bankName == null ||
+                profileProv?.accountNumber == null ||
+                profileProv?.gender == null ||
                 profileProv?.dob == null)
               InkWell(
                 onTap: () {

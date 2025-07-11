@@ -1,4 +1,6 @@
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/presentation/features/account%20setup/notifier/withdrawal_accounts_provider.dart';
@@ -84,7 +86,15 @@ class _WithdrawalaccountScreenState
                 }).toList(),
                 40.verticalSpace,
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    context.showLoadingDialog(message: 'Fetching details...');
+
+                    await Future.wait([
+                      ref.read(globalProvider.notifier).fetchBanks(context),
+                      ref.read(globalProvider.notifier).fetchProfile(context),
+                    ]);
+
+                    context.dismissDialog();
                     context.push(RouteConstants.addbankdetail);
                   },
                   child: Padding(

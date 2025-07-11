@@ -23,11 +23,6 @@ extension PlatformProductTypeExt on PlatformProductType {
     }
   }
 
-  bool get requiresValidation {
-    return [PlatformProductType.electricity, PlatformProductType.cableTv]
-        .contains(this);
-  }
-
   String get title {
     switch (this) {
       case PlatformProductType.mobileData:

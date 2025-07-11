@@ -28,7 +28,8 @@ class ProductItemGrid extends ConsumerWidget {
     final notifier = ref.read(platformProductProvider(serviceType).notifier);
 
     final isAmountPresetGrid = serviceType == PlatformProductType.airtime ||
-        serviceType == PlatformProductType.betting;
+        serviceType == PlatformProductType.betting ||
+        serviceType == PlatformProductType.electricity;
 
     final validList =
         products.where((e) => e.dataSize != null && e.dataSize! > 0).toList();

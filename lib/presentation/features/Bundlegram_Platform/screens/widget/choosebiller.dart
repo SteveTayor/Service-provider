@@ -260,8 +260,36 @@ class ChoosebillerWidget extends ConsumerWidget {
                                 : imagePath, // Use imagePath for non-SVGs
                             subtitle: item.subName,
                             onPressed: () {
-                              onProviderSelected(imagePath, name, item.id!);
-                              context.pop();
+                              final notifier = ref.read(
+                                  platformProductProvider(serviceType)
+                                      .notifier);
+
+// Manually select the first product (since betting has only one product)
+                              final products = ref
+                                      .read(productsProvider(serviceType))
+                                      .value
+                                      ?.data ??
+                                  [];
+                              final product =
+                                  products.isNotEmpty ? products.first : null;
+
+                              if (product != null) {
+                                notifier
+                                  ..selectProduct(
+                                    product,
+                                    imagePath ?? '',
+                                  )
+                                  ..selectSubProduct(
+                                    item,
+                                  ); // ← this is what was missing
+
+                                onProviderSelected(
+                                  imagePath,
+                                  name,
+                                  product.id!,
+                                );
+                                context.pop();
+                              }
                             },
                             title: name,
                           );

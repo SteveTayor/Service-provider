@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
+import 'package:bundlegram/data/models/base/base_response.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/transaction/initiate_transactcion_requests.dart';
@@ -19,6 +22,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/data/platfo
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/model/platform_product_state.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/choosebiller.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/purchase_bill_wrapper.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/airtime/widget/airtime_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/betting/widget/betting_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/bulk%20e-pin/bulkE-pin_screen.dart';
@@ -40,6 +44,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:network_info_plus/network_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+const List<PlatformProductType> kValidationRequiredServices = [
+  PlatformProductType.betting,
+  PlatformProductType.cableTv,
+  PlatformProductType.electricity,
+  PlatformProductType.education,
+  PlatformProductType.internetServices,
+];
 
 final platformProductProvider = StateNotifierProvider.family<
     PlatformProductNotifier, PlatformProductState, PlatformProductType>((ref,
@@ -78,6 +92,13 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     // Extract unique non-null data types
     final options =
         subs.map((e) => e.dataType).whereType<String>().toSet().toList();
+    if (subs.length == 1) {
+      state = state.copyWith(
+        selectedSubProduct: subs.first,
+        amountController:
+            TextEditingController(text: subs.first.subPrice ?? ''),
+      );
+    }
 
     state = state.copyWith(
       isLoading: false,
@@ -151,7 +172,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   void selectSubProduct(SubProduct subProduct) {
     state = state.copyWith(
       selectedSubProduct: subProduct,
-      amountController: TextEditingController(text: subProduct.subPrice),
+      amountController: _serviceType == PlatformProductType.electricity
+          ? state.amountController // Retain the current user-entered amount
+          : TextEditingController(text: subProduct.subPrice),
     );
   }
 
@@ -196,20 +219,29 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   }
 
   bool get requiresValidation {
-    return [
-      PlatformProductType.betting,
-      PlatformProductType.electricity,
-      PlatformProductType.cableTv,
-    ].contains(_serviceType);
+    return kValidationRequiredServices.contains(_serviceType);
   }
 
   bool validateForm() {
-    return state.selectedProduct != null &&
+    final inputController = _serviceType == PlatformProductType.airtime ||
+            _serviceType == PlatformProductType.mobileData
+        ? state.firstInputController
+        : state.secondaryInputController;
+
+    final baseValidation = state.selectedProduct != null &&
         (_serviceType.hasSubProducts
             ? state.selectedSubProduct != null
             : state.amountController.text.isNotEmpty) &&
-        state.firstInputController.text.isNotEmpty &&
-        (!requiresValidation || (requiresValidation && state.isValidated));
+        inputController.text.isNotEmpty;
+    // &&
+    // (!requiresValidation || (requiresValidation && state.isValidated));
+
+    // if (_serviceType == PlatformProductType.electricity) {
+    //   final amount = double.tryParse(state.amountController.text) ?? 0;
+    //   return baseValidation && state.selectedSubProduct != null && amount > 0;
+    // }
+
+    return baseValidation;
   }
 
   bool _matches(String a, String b) {
@@ -313,59 +345,29 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
   }
 
-  // void onUserIdChanged(BuildContext context, String value) {
-  //   state = state.copyWith(isValidated: true);
-
-  //   _debounce?.cancel();
-  //   _debounce = Timer(const Duration(milliseconds: 600), () async {
-  //     if (value.trim().isEmpty) {
-  //       state = state.copyWith(isValidated: false);
-  //       return;
-  //     }
-
-  //     final productId =
-  //         state.selectedSubProduct?.id ?? state.selectedProduct?.id;
-  //     final autoSubProdId = state.selectedSubProduct?.autoSubProdId;
-
-  //     final isValid = await validateBill(
-  //       context,
-  //       value,
-  //       productId,
-  //       autoSubProdId,
-  //     );
-
-  //     state = state.copyWith(
-  //       isValidated: false,
-  //     );
-  //   });
-  // }
-
-  void validateBill(BuildContext context, String userIdOrNumber,
-      int? prodEntityId, String? autoSubProdId) {
-    // Cancel any previous debounce timer
+  void validateBill(BuildContext context, String number, int? productId,
+      String? autoSubProdId) {
     _debounce?.cancel();
 
-    // Set loading state immediately
-    state = state.copyWith(
-      isValidating: true,
-      billValidated: false,
-      error: null,
-    );
+    final isPrimaryInputReady = number.trim().length == 11;
+    final isSecondaryInputReady =
+        state.secondaryInputController.text.trim().length == 10;
+    final isBillTypeWithSecondary = _serviceType == PlatformProductType.betting;
+    final shouldValidate =
+        isBillTypeWithSecondary ? isSecondaryInputReady : isPrimaryInputReady;
 
-    // Start a new debounce timer (e.g., 700ms delay)
+    if (!shouldValidate || state.selectedProduct == null) return;
+
+    state =
+        state.copyWith(isValidating: true, billValidated: false, error: null);
+
     _debounce = Timer(const Duration(milliseconds: 700), () async {
-      // If validation not required or missing input, cancel
-      if (userIdOrNumber.length != 10 && !requiresValidation ||
-          state.selectedProduct == null) {
-        state = state.copyWith(isValidating: false);
-        return;
-      }
-
       try {
+        unawaited(context.showLoadingDialog(message: 'Validating '));
         final token = await _ref.read(authTokenProvider.future);
         final request = ValidateBillRequest(
-          number: userIdOrNumber,
-          productEntityId: prodEntityId,
+          number: number,
+          productEntityId: productId,
           serviceType: autoSubProdId,
         );
 
@@ -377,23 +379,28 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               billValidated: false,
               error: failure.properties.join('\n'),
             );
+            context.dismissDialog();
             context.showErrorSnackBar(failure.properties.join('\n'));
           },
           (response) {
             final validated = response.status == 'success';
+            context.dismissDialog();
+
             state = state.copyWith(
               isValidating: false,
               billValidated: validated,
               isValidated: validated,
               validatedName: response.data,
             );
-
             if (validated) {
+              context.dismissDialog();
               context.showCustomSnackBar('Validated: ${response.data}');
             }
           },
         );
       } catch (e) {
+        context.dismissDialog();
+
         state = state.copyWith(
           isValidating: false,
           billValidated: false,
@@ -404,15 +411,105 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     });
   }
 
+  // void validateBill(
+  //   BuildContext context,
+  //   String userIdOrNumber,
+  //   int? prodEntityId,
+  //   String? autoSubProdId,
+  // ) {
+  //   // Cancel any previous debounce
+  //   _debounce?.cancel();
+
+  //   // Prevent validation if inputs are not yet complete
+  //   final isPrimaryInputReady = userIdOrNumber.trim().length == 11;
+  //   final isSecondaryInputReady =
+  //       state.secondaryInputController.text.trim().length == 10;
+
+  //   final isBillTypeWithSecondary = requiresValidation &&
+  //       (state.selectedProduct?.productName?.toLowerCase().contains("bet") ??
+  //           false);
+
+  //   final shouldValidate =
+  //       isBillTypeWithSecondary ? isSecondaryInputReady : isPrimaryInputReady;
+
+  //   if (!shouldValidate || state.selectedProduct == null) return;
+
+  //   // Show loading state
+  //   state = state.copyWith(
+  //     isValidating: true,
+  //     billValidated: false,
+  //     error: null,
+  //   );
+
+  //   // Debounce 700ms
+  //   _debounce = Timer(const Duration(milliseconds: 700), () async {
+  //     try {
+  //       final token = await _ref.read(authTokenProvider.future);
+  //       final request = ValidateBillRequest(
+  //         number: userIdOrNumber,
+  //         productEntityId: prodEntityId,
+  //         serviceType: autoSubProdId,
+  //       );
+
+  //       final result = await _apiService.validateBill(token, request);
+  //       result.fold(
+  //         (failure) {
+  //           state = state.copyWith(
+  //             isValidating: false,
+  //             billValidated: false,
+  //             error: failure.properties.join('\n'),
+  //           );
+  //           context.showErrorSnackBar(failure.properties.join('\n'));
+  //         },
+  //         (response) {
+  //           final validated = response.status == 'success';
+  //           state = state.copyWith(
+  //             isValidating: false,
+  //             billValidated: validated,
+  //             isValidated: validated,
+  //             validatedName: response.data,
+  //           );
+  //           if (validated) {
+  //             context.showCustomSnackBar('Validated: ${response.data}');
+  //           }
+  //         },
+  //       );
+  //     } catch (e) {
+  //       state = state.copyWith(
+  //         isValidating: false,
+  //         billValidated: false,
+  //         error: e.toString(),
+  //       );
+  //       context.showErrorSnackBar(e.toString());
+  //     }
+  //   });
+  // }
+
   void showTransactionSummary(BuildContext context) {
     if (!validateForm()) {
+      print('selectedProduct: ${state.selectedProduct}');
+      print('hasSubProducts: ${_serviceType.hasSubProducts}');
+      print('selectedSubProduct: ${state.selectedSubProduct}');
+      print('amountController: ${state.amountController.text}');
+      print('inputController: ${state.secondaryInputController.text}');
+      print('requiresValidation: $requiresValidation');
+      print('isValidated: ${state.isValidated}');
+      // if (state.isValidated == false) {
+      //   context.showErrorSnackBar('Please validate the bill first.');
+      //   if (_serviceType == PlatformProductType.electricity) {
+      //     context.showCustomSnackBar('Unable to validate meter number');
+      //   }
+      // }
       context.showCustomSnackBar('Please fill all required fields');
       return;
     }
 
-    final amount = _serviceType.hasSubProducts
-        ? state.selectedSubProduct!.subPrice
-        : state.amountController.text;
+    final amount = _serviceType == PlatformProductType.electricity
+        ? state.amountController.text
+        : _serviceType.hasSubProducts
+            ? state.selectedSubProduct!.subPrice
+            : state.amountController.text;
+
     final beneficiary = (_serviceType == PlatformProductType.mobileData ||
             _serviceType == PlatformProductType.airtime)
         ? state.firstInputController.text
@@ -422,12 +519,14 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       showIcon: true,
       child: TransactionSummary(
         assetPath: state.selectedProviderIcon,
-        transactionType: state.selectedProduct!.productName,
+        transactionType: state.selectedSubProduct?.subName ??
+            state.selectedProduct?.productName,
         amount: '₦$amount',
         beneficiary: beneficiary,
-        // customerName: state.validatedName,
-        onPay: () => initiatePurchase(context, amount.toString(), beneficiary),
-        paymentMethod: '',
+        onPay: () {
+          initiatePurchase(context, amount.toString(), beneficiary);
+        },
+        paymentMethod: 'Wallet',
       ),
     );
   }
@@ -435,29 +534,27 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   Future<void> initiatePurchase(
       BuildContext context, String amount, String beneficiary) async {
     context.pop(); // Close the bottom sheet
-    unawaited(Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (ctx) => EnterPinScreen(
-          onVerified: (pin) async {
-            final result = await purchase(context,
-                pin: pin, amount: amount, beneficiary: beneficiary);
-            // unawaited(Navigator.of(context).pushReplacement(
-            //   MaterialPageRoute(
-            //     builder: (context) => result.fold(
-            //       (failure) => FailedResultScreen(
-            //         title: _serviceType.title.toLowerCase(),
-            //         serviceContent: failure.properties.join('\n').toString(),
-            //       ),
-            //       (response) => _buildSuccessScreen(amount, beneficiary),
-            //     ),
-            //   ),
-            // ));
-          },
+    unawaited(
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => EnterPinScreen(
+            onVerified: (pin) async {
+              final result = await purchase(
+                ctx,
+                pin: pin,
+                amount: amount,
+                beneficiary: beneficiary,
+              );
+            },
+          ),
         ),
       ),
-    ));
+    );
   }
 
+  final deviceInfo = DeviceInfoPlugin();
+  String macAddress = 'unknown';
   Future<dynamic> purchase(
     BuildContext context, {
     required String pin,
@@ -465,18 +562,40 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     required String beneficiary,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
+
     try {
       final token = await _ref.read(authTokenProvider.future);
-      // Fetch device info and location
-      final deviceInfo = await DeviceInfoPlugin().deviceInfo;
-      final macAddress = deviceInfo is AndroidDeviceInfo
-          ? deviceInfo.id
-          : 'unknown'; // Adjust as needed
-      final ipAddress = '192.168.23.1'; // Replace with actual IP retrieval
-      final position = await Geolocator.getCurrentPosition();
+
+      // Requesting Location Permission
+      unawaited(context.showLoadingDialog(message: ' Please wait...'));
+      final locationStatus = await Permission.location.request();
+      if (!locationStatus.isGranted) {
+        throw Exception('Location permission denied');
+      }
+
+      // Get Device Info
+      unawaited(context.showLoadingDialog(message: 'Getting device info...'));
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        macAddress = androidInfo.id ?? 'unknown'; // Use Android ID
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        macAddress = iosInfo.identifierForVendor ?? 'unknown';
+      }
+
+      // Get IP Address using network_info_plus
+      final info = NetworkInfo();
+      final ipAddress = await info.getWifiIP() ?? '0.0.0.0';
+
+      //  Get Geolocation
+      final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
       final latitude = position.latitude.toString();
       final longitude = position.longitude.toString();
 
+      final platform = Platform.isAndroid ? 'android' : 'iOS';
+
+      unawaited(context.showLoadingDialog(message: "Initiating payment..."));
       final request = InitiateTransactionRequest(
         amount: amount,
         macAddress: macAddress,
@@ -485,26 +604,80 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         longitude: longitude,
         crAcc:
             _serviceType == PlatformProductType.ePinVoucher ? '' : beneficiary,
-        platform: 'APP',
+        platform: platform,
         subProdId: state.selectedSubProduct?.id ?? 0,
         serviceId: state.selectedProduct?.serviceId ?? '',
         pin: pin,
       );
 
+      // 📡 API call
       final result = _serviceType == PlatformProductType.mobileData ||
               _serviceType == PlatformProductType.airtime
           ? await _apiService.initiateDataAirtimeTransaction(token, request)
-          : await _apiService.initiateBillTransaction(token, request);
-
-      state = state.copyWith(isLoading: false);
-      return result;
+          : await _apiService.initiateBillTransaction(token, request)
+        ..fold(
+          (failure) {
+            context.dismissDialog();
+            final message = failure.properties.join('\n');
+            context.showErrorSnackBar(
+                message.isNotEmpty ? message : 'Transaction failed');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) => FailedResultScreen(
+                  serviceContent: 'transaction',
+                  errorMessage: message,
+                ),
+              ),
+            );
+          },
+          (response) {
+            if (response.success) {
+              final screen = _buildSuccessScreen(amount, beneficiary);
+              context.dismissDialog();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (ctx) => screen),
+              );
+            } else {
+              context
+                ..showErrorSnackBar(response.message)
+                ..dismissDialog();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => FailedResultScreen(
+                    serviceContent: 'transaction',
+                    errorMessage: response.message,
+                    // onRetry: () {
+                    //   Navigator.of(ctx)
+                    //       .popUntil(ModalRoute.withName('/platformProduct'));
+                    //   // initiatePurchase(context, amount, beneficiary);
+                    // },
+                  ),
+                ),
+              );
+            }
+          },
+        );
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
-      context.showErrorSnackBar(e.toString());
-      // context.showCustomSnackBar((
-      //   SnackBar(content: Text(e.toString())),
-      // );
-      return null; // Or handle as per your ApiService's failure case
+      context
+        ..dismissDialog()
+        ..showErrorSnackBar(e.toString());
+      unawaited(Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => FailedResultScreen(
+            serviceContent: 'transaction',
+            errorMessage: e.toString(),
+            // onRetry: () {
+            //   context.pop();
+            //   // initiatePurchase(context, amount, beneficiary);
+            // },
+          ),
+        ),
+      ));
     }
   }
 

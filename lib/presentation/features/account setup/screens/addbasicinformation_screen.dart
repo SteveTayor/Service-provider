@@ -107,7 +107,8 @@ class AddBasicInformationScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = ref.watch(basicInfoProvider(userAction));
     final notifier = ref.read(basicInfoProvider(userAction));
-
+    final globalUserProvider = ref.watch(globalProvider).profile;
+    final profileProv = globalUserProvider.value?.data;
     // Configure title based on action
     final titleText = userAction.isCreate
         ? 'Add Basic Information'
@@ -116,6 +117,16 @@ class AddBasicInformationScreen extends ConsumerWidget {
     String localPhoneNumber =
         phoneNumber.startsWith('+234') ? phoneNumber.substring(4) : phoneNumber;
     notifier.phone.text = localPhoneNumber;
+    String fullName = profileProv!.name!;
+
+    List<String> parts = fullName.trim().split(' ');
+
+    String firstName = parts.isNotEmpty ? parts.first : '';
+    String lastName = parts.length > 1 ? parts.last : '';
+
+// Set values into the controllers
+    notifier.firstName.text = firstName;
+    notifier.lastName.text = lastName;
 
     return BundlegramScaffold(
       appBar: BundlegramAppbar(titleText: titleText),
@@ -139,8 +150,9 @@ class AddBasicInformationScreen extends ConsumerWidget {
               controller: notifier.lastName,
               hintText: 'Last Name',
               validateFunction: notifier.validateName,
+              readOnly: true,
               isFilled: true,
-              readOnly: userAction.isCreate ? false : true,
+              // readOnly: userAction.isCreate ? false : true,
               backgroundColor: AppColors.greyD0.withOpacity(0.3),
             ),
             SizedBox(height: 24.h),

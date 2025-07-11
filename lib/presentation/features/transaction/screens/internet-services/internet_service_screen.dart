@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -26,33 +27,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:bundlegram/core/extensions/context_extensions.dart';
-import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
-import 'package:bundlegram/core/extensions/widget_extensions.dart';
-import 'package:bundlegram/core/providers/global_provider.dart';
-import 'package:bundlegram/core/router/route_constants.dart';
-import 'package:bundlegram/core/utils/colors.dart';
-import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
-import 'package:bundlegram/core/utils/platform_provider_enums.dart';
-import 'package:bundlegram/data/models/products/get_all_products_response.dart';
-import 'package:bundlegram/gen/assets.gen.dart';
-import 'package:bundlegram/gen/fonts.gen.dart';
-import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_product_provider.dart';
-import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformphonenumberform_widget.dart';
-import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformproductitem_widget.dart';
-import 'package:bundlegram/presentation/features/transaction/screens/widgets/serviceProviders_history_screen.dart';
-import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
-import 'package:bundlegram/presentation/general_widget/app_bar.dart';
-import 'package:bundlegram/presentation/general_widget/app_button.dart';
-import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
-import 'package:bundlegram/presentation/general_widget/app_svg.dart';
-import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-
 class InternetServiceProviderScreen extends ConsumerStatefulWidget {
+  static const String routeName = '/internetService';
   const InternetServiceProviderScreen({Key? key}) : super(key: key);
 
   @override
@@ -116,35 +92,23 @@ class _InternetServiceProviderScreenState
                   PlatformPhoneNumberFormWidget(
                     serviceType: serviceType,
                     inputHint: state.selectedProduct?.instruct1 ??
-                        'Enter phone number',
+                        'Enter phone number or account ID',
                     secondaryInputHint: state.selectedProduct?.instruct2 ??
                         'Enter account number',
                     dropdownHint: 'Select plan',
                   ),
 
-                  // Bundle grid (data plans)
-                  if (serviceType.hasSubProducts &&
-                      state.selectedProduct != null &&
-                      state.subProducts.isNotEmpty)
-                    ProductItemGrid(
-                      serviceType: PlatformProductType.internetServices,
-                      products: state.subProducts
-                          .where((e) => e.dataType == state.selectedDataType)
-                          .toList(),
+                  // Amount field (populated from selected subproduct price)
+                  24.verticalSpace,
+                  AppTextField(
+                    hintText: 'Amount',
+                    controller: state.amountController,
+                    readOnly: true, // Price is set from dropdown selection
+                    prefixIcon: Padding(
+                      padding: context.symmetricPadding(24, 0),
+                      child: Text('₦', style: context.textTheme.bodyMedium),
                     ),
-
-                  // Amount field for non-subproduct services
-                  if (!serviceType.hasSubProducts) ...[
-                    24.verticalSpace,
-                    AppTextField(
-                      hintText: 'Amount',
-                      controller: state.amountController,
-                      prefixIcon: Padding(
-                        padding: context.symmetricPadding(24, 0),
-                        child: Text('₦', style: context.textTheme.bodyMedium),
-                      ),
-                    ),
-                  ],
+                  ),
 
                   24.verticalSpace,
 
@@ -180,8 +144,24 @@ class _InternetServiceProviderScreenState
                     text: 'Continue',
                     isLoading: state.isLoading,
                     onPressed: () {
-                      if (serviceType.requiresValidation) {
-                        // notifier.validateBill(context);
+                      if (notifier.requiresValidation) {
+                        final accountNumber =
+                            state.secondaryInputController.text.trim();
+                        if (accountNumber.isEmpty) {
+                          context.showErrorSnackBar(
+                              'Please enter a valid account number');
+                          return;
+                        }
+                        notifier.validateBill(
+                          context,
+                          accountNumber,
+                          state.selectedProduct?.id,
+                          state.selectedSubProduct?.autoSubProdId,
+                        );
+                        // Proceed if validated
+                        if (state.isValidated) {
+                          notifier.showTransactionSummary(context);
+                        }
                       } else {
                         notifier.showTransactionSummary(context);
                       }

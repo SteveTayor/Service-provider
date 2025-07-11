@@ -42,7 +42,7 @@ class WalletoutlookWidget extends ConsumerWidget {
         Text(
           provider.isBalanceVisible ? provider.formattedBalance : '⁕⁕⁕⁕',
           style: context.textTheme.bodyMedium!.copyWith(
-            fontSize: provider.isBalanceVisible ? 40.sp : 24.sp,
+            fontSize: provider.isBalanceVisible ? 36.sp : 24.sp,
             color: AppColors.white,
           ),
         ),

@@ -7,6 +7,7 @@ import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/recenttransaction_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
@@ -38,6 +39,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = ref.watch(platformProvider);
     final wallet = ref.watch(globalProvider.select((g) => g.walletBalance));
     final profile = ref.watch(globalProvider.select((g) => g.profile));
     final transactions =
@@ -81,10 +83,17 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                             ),
                           ),
                           8.horizontalSpace,
-                          const Icon(
-                            Icons.visibility,
-                            size: 20,
-                            color: AppColors.white,
+                          GestureDetector(
+                            onTap: () => ref
+                                .read(platformProvider.notifier)
+                                .toggleBalanceVisibility(),
+                            child: Icon(
+                              provider.isBalanceVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: AppColors.white,
+                              size: 20,
+                            ),
                           ),
                           const Spacer(),
                           Flexible(
@@ -105,7 +114,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         ],
                       ),
                       Text(
-                        wallet.value!.wallet.toCurrency() ?? '₦0.00',
+                        provider.isBalanceVisible
+                            ? provider.formattedBalance
+                            : '⁕⁕⁕⁕',
+                        // wallet.value?.wallet.toCurrency() ?? '₦0.00',
                         style: context.textTheme.bodyLarge!.copyWith(
                           fontSize: 30.sp,
                           color: AppColors.white,
