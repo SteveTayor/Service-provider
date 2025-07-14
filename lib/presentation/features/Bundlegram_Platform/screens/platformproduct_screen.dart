@@ -178,46 +178,45 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                     text: 'Continue',
                     isLoading: state.isValidating,
                     onPressed: () {
-                      // if (notifier.requiresValidation) {
-                      //   final input =
-                      //   serviceType ==
-                      //               PlatformProductType.betting ||
-                      //           serviceType == PlatformProductType.cableTv ||
-                      //           serviceType == PlatformProductType.electricity
-                      //       ? state.secondaryInputController.text.trim()
-                      //       : state.firstInputController.text.trim();
+                      if (notifier.requiresValidation) {
+                        final input = serviceType ==
+                                    PlatformProductType.betting ||
+                                serviceType == PlatformProductType.cableTv ||
+                                serviceType == PlatformProductType.electricity
+                            ? state.secondaryInputController.text.trim()
+                            : state.firstInputController.text.trim();
 
-                      //   if (input.isEmpty) {
-                      //     return context.showErrorSnackBar(
-                      //         'Please enter a valid ${serviceType == PlatformProductType.betting ? 'User ID' : serviceType == PlatformProductType.cableTv ? 'Smart Card Number' : 'Meter Number'}');
-                      //   }
+                        if (input.isEmpty) {
+                          return context.showErrorSnackBar(
+                              'Please enter a valid ${serviceType == PlatformProductType.betting ? 'User ID' : serviceType == PlatformProductType.cableTv ? 'Smart Card Number' : 'Meter Number'}');
+                        }
 
-                      //   // Additional validation for electricity
-                      //   if (serviceType == PlatformProductType.electricity) {
-                      //     if (state.selectedSubProduct == null) {
-                      //       return context.showErrorSnackBar(
-                      //           'Please select Prepaid or Postpaid');
-                      //     }
-                      //     final amount = state.amountController.text.trim();
-                      //     if (amount.isEmpty ||
-                      //         double.tryParse(amount) == null ||
-                      //         double.parse(amount) <= 0) {
-                      //       return context.showErrorSnackBar(
-                      //           'Please enter a valid amount');
-                      //     }
-                      //   }
+                        // Additional validation for electricity
+                        if (serviceType == PlatformProductType.electricity) {
+                          if (state.selectedSubProduct == null) {
+                            return context.showErrorSnackBar(
+                                'Please select Prepaid or Postpaid');
+                          }
+                          final amount = state.amountController.text.trim();
+                          if (amount.isEmpty ||
+                              double.tryParse(amount) == null ||
+                              double.parse(amount) <= 0) {
+                            return context.showErrorSnackBar(
+                                'Please enter a valid amount');
+                          }
+                        }
 
-                      //   notifier.validateBill(
-                      //     context,
-                      //     input,
-                      //     state.selectedProduct?.id ??
-                      //         state.selectedSubProduct?.id,
-                      //     state.selectedSubProduct?.autoSubProdId ??
-                      //         state.selectedProduct?.autoProdId,
-                      //   );
-                      // } else {
-                      notifier.showTransactionSummary(context);
-                      // }
+                        notifier.validateBill(
+                          context,
+                          input,
+                          state.selectedProduct?.id ??
+                              state.selectedSubProduct?.id,
+                          state.selectedSubProduct?.autoSubProdId ??
+                              state.selectedProduct?.autoProdId,
+                        );
+                      } else {
+                        notifier.showTransactionSummary(context);
+                      }
                     },
                   ),
                   if (serviceType == PlatformProductType.ePinVoucher)

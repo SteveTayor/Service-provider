@@ -1,10 +1,12 @@
 // 📦 Login Provider with Remember Me
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dartz/dartz.dart';
@@ -13,7 +15,10 @@ import 'package:bundlegram/data/models/auth/auth_model.dart';
 import 'package:bundlegram/data/models/auth/login/login_response.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/core/error/failures.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:network_info_plus/network_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final loginProvider = ChangeNotifierProvider((ref) {
   final api = ref.read(apiServiceProvider);
@@ -76,6 +81,27 @@ class LoginProvider extends ChangeNotifier {
     }
   }
 
+  // Helper method to validate device info
+  bool _isDeviceInfoValid(Map<String, String> deviceInfo) {
+    final macAddress = deviceInfo['macAddress'];
+    final ipAddress = deviceInfo['ipAddress'];
+    final latitude = deviceInfo['latitude'];
+    final longitude = deviceInfo['longitude'];
+    final platform = deviceInfo['platform'];
+
+    // Define validation criteria (adjust as needed)
+    return macAddress != null &&
+        macAddress != 'unknown' &&
+        ipAddress != null &&
+        ipAddress != '0.0.0.0' &&
+        latitude != null &&
+        latitude != '0.0' &&
+        longitude != null &&
+        longitude != '0.0' &&
+        platform != null &&
+        platform != 'unknown';
+  }
+
   Future<void> _loadRememberedEmail() async {
     final remembered = await _storage.getRememberedEmail();
     if (remembered != null) {
@@ -127,26 +153,73 @@ class LoginProvider extends ChangeNotifier {
         } else {
           await _storage.clearRememberedEmail();
         }
+        context.showLoadingDialog(message: 'Collecting device info...');
+        // Check if device info already exists
+        String macAddress = 'unknown';
+        String ipAddress = '0.0.0.0';
+        String latitude = '0.0';
+        String longitude = '0.0';
+        String platform = 'unknown';
 
-        // Check if username creation is required
-        // final dataStatus = loginData.data;
-        final message = loginData.message;
-        if (message != null &&
-            message == "Please create a username to continue") {
-          context.dismissDialog();
-          _setLoading(false);
-          // Navigate to ChooseUsernameScreen with fromLogin flag
-          context.go(
-            RouteConstants.chooseUsername,
-            extra: {'fromLogin': true},
-          );
-          return;
+        final existingDeviceInfo = await _storage.getDeviceInfo();
+        final isDeviceInfoValid = _isDeviceInfoValid(existingDeviceInfo);
+
+        if (!isDeviceInfoValid) {
+          // Collect device info only if not valid or missing
+          unawaited(
+              context.showLoadingDialog(message: 'Collecting device info...'));
+          try {
+            // Request location permission
+            final locationStatus = await Permission.location.request();
+            if (!locationStatus.isGranted) {
+              throw Exception('Location permission denied');
+            }
+
+            // Get device info
+            final deviceInfo = DeviceInfoPlugin();
+            if (Platform.isAndroid) {
+              final androidInfo = await deviceInfo.androidInfo;
+              macAddress = androidInfo.id ?? 'unknown';
+              platform = 'android';
+            } else if (Platform.isIOS) {
+              final iosInfo = await deviceInfo.iosInfo;
+              macAddress = iosInfo.identifierForVendor ?? 'unknown';
+              platform = 'iOS';
+            }
+
+            // Get IP address
+            final info = NetworkInfo();
+            ipAddress = await info.getWifiIP() ?? '0.0.0.0';
+
+            // Get geolocation
+            final position = await Geolocator.getCurrentPosition(
+                desiredAccuracy: LocationAccuracy.high);
+            latitude = position.latitude.toString();
+            longitude = position.longitude.toString();
+
+            // Store device info
+            await _storage.setDeviceInfo(
+              macAddress: macAddress,
+              ipAddress: ipAddress,
+              latitude: latitude,
+              longitude: longitude,
+              platform: platform,
+            );
+          } catch (e) {
+            context.showErrorSnackBar('Failed to collect device info: $e');
+            // Optionally proceed without device info or handle as needed
+          }
+        } else {
+          // Use existing device info
+          macAddress = existingDeviceInfo['macAddress']!;
+          ipAddress = existingDeviceInfo['ipAddress']!;
+          latitude = existingDeviceInfo['latitude']!;
+          longitude = existingDeviceInfo['longitude']!;
+          platform = existingDeviceInfo['platform']!;
         }
 
-        // Proceed with fetching data if username is not required
-        context
-          ..dismissDialog()
-          ..showLoadingDialog(message: 'Fetching profile...');
+        // Proceed with fetching profile and banks
+        unawaited(context.showLoadingDialog(message: 'Fetching profile...'));
         final profileRes = await _api.getProfile(token);
         if (profileRes.isLeft()) {
           context
@@ -156,9 +229,7 @@ class LoginProvider extends ChangeNotifier {
           return;
         }
 
-        context
-          ..dismissDialog()
-          ..showLoadingDialog(message: 'Fetching banks...');
+        unawaited(context.showLoadingDialog(message: 'Fetching banks...'));
         final bankRes = await _api.getAllBanks(token);
         if (bankRes.isLeft()) {
           context
@@ -168,22 +239,67 @@ class LoginProvider extends ChangeNotifier {
           return;
         }
 
-        // context
-        //   ..dismissDialog()
-        //   ..showLoadingDialog(message: 'Fetching wallet...');
-        // final walletRes = await _api.getWallet(token);
-        // if (walletRes.isLeft()) {
-        //   context
-        //     ..dismissDialog()
-        //     ..showErrorSnackBar("Failed to fetch wallet");
-        //   _setLoading(false);
-        //   return;
-        // }
-
         context.dismissDialog();
         _setLoading(false);
         context.pushReplacement(RouteConstants.dashboard);
       },
+
+      // // Check if username creation is required
+      // // final dataStatus = loginData.data;
+      // final message = loginData.message;
+      // if (message != null &&
+      //     message == "Please create a username to continue") {
+      //   context.dismissDialog();
+      //   _setLoading(false);
+      //   // Navigate to ChooseUsernameScreen with fromLogin flag
+      //   context.go(
+      //     RouteConstants.chooseUsername,
+      //     extra: {'fromLogin': true},
+      //   );
+      //   return;
+      // }
+
+      // // Proceed with fetching data if username is not required
+      // context
+      //   ..dismissDialog()
+      //   ..showLoadingDialog(message: 'Fetching profile...');
+      // final profileRes = await _api.getProfile(token);
+      // if (profileRes.isLeft()) {
+      //   context
+      //     ..dismissDialog()
+      //     ..showErrorSnackBar("Failed to fetch profile");
+      //   _setLoading(false);
+      //   return;
+      // }
+
+      // context
+      //   ..dismissDialog()
+      //   ..showLoadingDialog(message: 'Fetching banks...');
+      // final bankRes = await _api.getAllBanks(token);
+      // if (bankRes.isLeft()) {
+      //   context
+      //     ..dismissDialog()
+      //     ..showErrorSnackBar("Failed to fetch banks");
+      //   _setLoading(false);
+      //   return;
+      // }
+
+      // context
+      //   ..dismissDialog()
+      //   ..showLoadingDialog(message: 'Fetching wallet...');
+      // final walletRes = await _api.getWallet(token);
+      // if (walletRes.isLeft()) {
+      //   context
+      //     ..dismissDialog()
+      //     ..showErrorSnackBar("Failed to fetch wallet");
+      //   _setLoading(false);
+      //   return;
+      // }
+
+      // context.dismissDialog();
+      // _setLoading(false);
+      // context.pushReplacement(RouteConstants.dashboard);
+      // },
     );
   }
 
@@ -210,9 +326,8 @@ class LoginProvider extends ChangeNotifier {
       },
       (response) async {
         if (response.success) {
-          // Clear secure storage
+// Clear all secure storage, including device info
           await _storage.clearAll();
-
           // Navigate to login
           context
             ..go(RouteConstants.login)

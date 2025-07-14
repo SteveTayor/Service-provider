@@ -38,10 +38,7 @@ class EmailOtpDialogNotifier {
               onPressed: provider.verifying
                   ? null
                   : () async {
-                      final success = await provider.verifyEmailOtp(context);
-                      if (success) {
-                        context.pop();
-                      }
+                      await provider.verifyEmailOtp(context);
                     },
             ),
           ],

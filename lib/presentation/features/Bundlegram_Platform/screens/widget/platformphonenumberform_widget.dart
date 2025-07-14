@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -100,9 +101,11 @@ class _PlatformPhoneNumberFormWidgetState
           controller: state.firstInputController,
           keyboardType: TextInputType.number,
           inputFormatters: [
-            LengthLimitingTextInputFormatter(11),
+            LengthLimitingTextInputFormatter(11,
+                maxLengthEnforcement: MaxLengthEnforcement.enforced),
             FilteringTextInputFormatter.digitsOnly,
           ],
+          validateFunction: Validators.validateNigerianPhoneNumber(),
           onTap:
               allowsFreeText ? null : () => notifier.showBillerPicker(context),
           prefixIcon: GestureDetector(
@@ -137,6 +140,10 @@ class _PlatformPhoneNumberFormWidgetState
                         : 'Enter account number', // For internet services
             controller: state.secondaryInputController,
             keyboardType: TextInputType.number,
+            validateFunction: (val) {
+              if (val?.length != 10) return 'Must be 10 digits';
+              return null;
+            },
             inputFormatters: [
               LengthLimitingTextInputFormatter(10),
               FilteringTextInputFormatter.digitsOnly,
@@ -159,8 +166,9 @@ class _PlatformPhoneNumberFormWidgetState
             unselectedLabelStyle: TextStyle(
               fontWeight: FontWeight.w400,
               fontSize: 14.sp,
-              color: AppColors.black,
+              color: AppColors.grey2F,
             ),
+            dividerColor: Colors.transparent,
             tabs: const [Tab(text: 'Prepaid'), Tab(text: 'Postpaid')],
           ),
           // Row(

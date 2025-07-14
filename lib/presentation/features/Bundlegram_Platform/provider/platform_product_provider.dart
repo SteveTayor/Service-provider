@@ -6,9 +6,13 @@ import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
+import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/base/base_response.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
@@ -178,6 +182,23 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     );
   }
 
+  double calculateDiscountedPrice(double amount, SubProduct? subProduct) {
+    if (subProduct == null) return amount;
+
+    final profile = _ref.read(globalProvider).profile.value?.data;
+    final isAgent = profile?.userType == "agent";
+
+    double discountPercent;
+
+    if (isAgent) {
+      discountPercent = (subProduct.agentPercent ?? 0).toDouble();
+    } else {
+      discountPercent = double.tryParse(subProduct.userPercent ?? '') ?? 0.0;
+    }
+
+    return amount - (amount * (discountPercent / 100));
+  }
+
   /// Given a raw productIcon string from the server, normalize it down to
   /// just the filename i have under assets/images/, or return null.
   // String? normalizeAssetName(String? raw) {
@@ -232,14 +253,13 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         (_serviceType.hasSubProducts
             ? state.selectedSubProduct != null
             : state.amountController.text.isNotEmpty) &&
-        inputController.text.isNotEmpty;
-    // &&
-    // (!requiresValidation || (requiresValidation && state.isValidated));
+        inputController.text.isNotEmpty &&
+        (!requiresValidation || (requiresValidation && state.isValidated));
 
-    // if (_serviceType == PlatformProductType.electricity) {
-    //   final amount = double.tryParse(state.amountController.text) ?? 0;
-    //   return baseValidation && state.selectedSubProduct != null && amount > 0;
-    // }
+    if (_serviceType == PlatformProductType.electricity) {
+      final amount = double.tryParse(state.amountController.text) ?? 0;
+      return baseValidation && state.selectedSubProduct != null && amount > 0;
+    }
 
     return baseValidation;
   }
@@ -334,9 +354,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       case PlatformProductType.education:
         return Assets.svgs.educationSvg;
       case PlatformProductType.airtime:
-        return Assets.svgs.airtime;
+        return Assets.svgs.mtnnw;
       case PlatformProductType.mobileData:
-        return Assets.svgs.mobileData; // Generic for airtime/data
+        return Assets.svgs.mtnnw; // Generic for airtime/data
       case PlatformProductType.ePinVoucher:
       case PlatformProductType.bulkEPin:
         return Assets.svgs.ePin;
@@ -487,28 +507,21 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
   void showTransactionSummary(BuildContext context) {
     if (!validateForm()) {
-      print('selectedProduct: ${state.selectedProduct}');
-      print('hasSubProducts: ${_serviceType.hasSubProducts}');
-      print('selectedSubProduct: ${state.selectedSubProduct}');
-      print('amountController: ${state.amountController.text}');
-      print('inputController: ${state.secondaryInputController.text}');
-      print('requiresValidation: $requiresValidation');
-      print('isValidated: ${state.isValidated}');
-      // if (state.isValidated == false) {
-      //   context.showErrorSnackBar('Please validate the bill first.');
-      //   if (_serviceType == PlatformProductType.electricity) {
-      //     context.showCustomSnackBar('Unable to validate meter number');
-      //   }
-      // }
       context.showCustomSnackBar('Please fill all required fields');
       return;
     }
 
     final amount = _serviceType == PlatformProductType.electricity
-        ? state.amountController.text
+        ? double.tryParse(state.amountController.text) ?? 0.0
         : _serviceType.hasSubProducts
-            ? state.selectedSubProduct!.subPrice
-            : state.amountController.text;
+            ? double.tryParse(state.selectedSubProduct!.subPrice ?? '') ?? 0.0
+            : double.tryParse(state.amountController.text) ?? 0.0;
+
+    final discountedAmount =
+        calculateDiscountedPrice(amount, state.selectedSubProduct);
+
+    // Update state with discounted amount
+    state = state.copyWith(discountedAmount: discountedAmount);
 
     final beneficiary = (_serviceType == PlatformProductType.mobileData ||
             _serviceType == PlatformProductType.airtime)
@@ -521,10 +534,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         assetPath: state.selectedProviderIcon,
         transactionType: state.selectedSubProduct?.subName ??
             state.selectedProduct?.productName,
-        amount: '₦$amount',
+        amount: CurrencyFormatter.format(amount),
+        discountedPrice: CurrencyFormatter.format(discountedAmount),
         beneficiary: beneficiary,
         onPay: () {
-          initiatePurchase(context, amount.toString(), beneficiary);
+          initiatePurchase(context, discountedAmount.toString(), beneficiary);
         },
         paymentMethod: 'Wallet',
       ),
@@ -553,8 +567,6 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     );
   }
 
-  final deviceInfo = DeviceInfoPlugin();
-  String macAddress = 'unknown';
   Future<dynamic> purchase(
     BuildContext context, {
     required String pin,
@@ -566,34 +578,16 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     try {
       final token = await _ref.read(authTokenProvider.future);
 
-      // Requesting Location Permission
-      unawaited(context.showLoadingDialog(message: ' Please wait...'));
-      final locationStatus = await Permission.location.request();
-      if (!locationStatus.isGranted) {
-        throw Exception('Location permission denied');
-      }
-
-      // Get Device Info
-      unawaited(context.showLoadingDialog(message: 'Getting device info...'));
-      if (Platform.isAndroid) {
-        final androidInfo = await deviceInfo.androidInfo;
-        macAddress = androidInfo.id ?? 'unknown'; // Use Android ID
-      } else if (Platform.isIOS) {
-        final iosInfo = await deviceInfo.iosInfo;
-        macAddress = iosInfo.identifierForVendor ?? 'unknown';
-      }
-
-      // Get IP Address using network_info_plus
-      final info = NetworkInfo();
-      final ipAddress = await info.getWifiIP() ?? '0.0.0.0';
-
-      //  Get Geolocation
-      final position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      final latitude = position.latitude.toString();
-      final longitude = position.longitude.toString();
-
-      final platform = Platform.isAndroid ? 'android' : 'iOS';
+      // Retrieve device info from secure storage
+      unawaited(
+          context.showLoadingDialog(message: 'Retrieving device info...'));
+      final deviceInfo =
+          await _ref.read(secureStorageHelperProvider).getDeviceInfo();
+      final macAddress = deviceInfo['macAddress']!;
+      final ipAddress = deviceInfo['ipAddress']!;
+      final latitude = deviceInfo['latitude']!;
+      final longitude = deviceInfo['longitude']!;
+      final platform = deviceInfo['platform']!;
 
       unawaited(context.showLoadingDialog(message: "Initiating payment..."));
       final request = InitiateTransactionRequest(
@@ -627,6 +621,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                 builder: (ctx) => FailedResultScreen(
                   serviceContent: 'transaction',
                   errorMessage: message,
+                  onRetry: () {
+                    context.pushReplacement(RouteConstants.dashboard);
+                  },
                 ),
               ),
             );
@@ -649,11 +646,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                   builder: (ctx) => FailedResultScreen(
                     serviceContent: 'transaction',
                     errorMessage: response.message,
-                    // onRetry: () {
-                    //   Navigator.of(ctx)
-                    //       .popUntil(ModalRoute.withName('/platformProduct'));
-                    //   // initiatePurchase(context, amount, beneficiary);
-                    // },
+                    onRetry: () {
+                      context.pushReplacement(RouteConstants.dashboard);
+                    },
                   ),
                 ),
               );
@@ -665,19 +660,18 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       context
         ..dismissDialog()
         ..showErrorSnackBar(e.toString());
-      unawaited(Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (ctx) => FailedResultScreen(
             serviceContent: 'transaction',
             errorMessage: e.toString(),
-            // onRetry: () {
-            //   context.pop();
-            //   // initiatePurchase(context, amount, beneficiary);
-            // },
+            onRetry: () {
+              context.pushReplacement(RouteConstants.dashboard);
+            },
           ),
         ),
-      ));
+      );
     }
   }
 

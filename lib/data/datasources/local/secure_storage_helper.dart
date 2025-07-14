@@ -8,6 +8,11 @@ class SecureStorageHelper {
   static const _tokenKey = 'auth_token';
   static const _rememberedEmailKey = 'remembered_email';
   static const _password = 'sign_in_password';
+  static const _macAddressKey = 'mac_address';
+  static const _ipAddressKey = 'ip_address';
+  static const _latitudeKey = 'latitude';
+  static const _longitudeKey = 'longitude';
+  static const _platformKey = 'platform';
 
   SecureStorageHelper(this._storage);
 
@@ -34,6 +39,43 @@ class SecureStorageHelper {
   // Remembered email
   Future<void> setRememberedEmail(String email) async {
     await _storage.write(key: _rememberedEmailKey, value: email);
+  }
+
+  Future<void> setDeviceInfo({
+    required String macAddress,
+    required String ipAddress,
+    required String latitude,
+    required String longitude,
+    required String platform,
+  }) async {
+    await _storage.write(key: _macAddressKey, value: macAddress);
+    await _storage.write(key: _ipAddressKey, value: ipAddress);
+    await _storage.write(key: _latitudeKey, value: latitude);
+    await _storage.write(key: _longitudeKey, value: longitude);
+    await _storage.write(key: _platformKey, value: platform);
+  }
+
+  Future<Map<String, String>> getDeviceInfo() async {
+    final macAddress = await _storage.read(key: _macAddressKey) ?? 'unknown';
+    final ipAddress = await _storage.read(key: _ipAddressKey) ?? '0.0.0.0';
+    final latitude = await _storage.read(key: _latitudeKey) ?? '0.0';
+    final longitude = await _storage.read(key: _longitudeKey) ?? '0.0';
+    final platform = await _storage.read(key: _platformKey) ?? 'unknown';
+    return {
+      'macAddress': macAddress,
+      'ipAddress': ipAddress,
+      'latitude': latitude,
+      'longitude': longitude,
+      'platform': platform,
+    };
+  }
+
+  Future<void> clearDeviceInfo() async {
+    await _storage.delete(key: _macAddressKey);
+    await _storage.delete(key: _ipAddressKey);
+    await _storage.delete(key: _latitudeKey);
+    await _storage.delete(key: _longitudeKey);
+    await _storage.delete(key: _platformKey);
   }
 
   Future<String?> getRememberedEmail() async {
