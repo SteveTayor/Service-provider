@@ -5,6 +5,7 @@ import 'package:bundlegram/data/models/transaction/user_transactions_response.da
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/filter_widget.dart';
 import 'package:bundlegram/presentation/general_widget/history_widget.dart';
+import 'package:bundlegram/presentation/general_widget/receipt_widget.dart';
 import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -140,7 +141,18 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
 
     context.showPopUp(
       color: Colors.transparent,
-      TransactionReceiptWidget(data: transactionData),
+      TransactionReceiptWidget(
+        data: transactionData,
+        onShareReceipt: () {
+          context
+            ..pop()
+            ..showPopUp(
+              color: Colors.transparent,
+              ReceiptShareWrapper(data: transactionData),
+              isDismissable: true,
+            );
+        },
+      ),
       isDismissable: true,
     );
   }

@@ -16,7 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TransactionReceiptWidget extends StatelessWidget {
-  const TransactionReceiptWidget({
+  TransactionReceiptWidget({
     super.key,
     required this.data,
     this.onShareReceipt,
@@ -28,6 +28,7 @@ class TransactionReceiptWidget extends StatelessWidget {
   final VoidCallback? onShareReceipt;
   final VoidCallback? onClose;
   final bool showShareButton;
+  final GlobalKey _shareKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {

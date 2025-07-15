@@ -6,6 +6,7 @@ import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
@@ -182,7 +183,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
       type: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
           ? txn.subProduct?.product?.productName
           : txn.transType ?? 'N/A',
-      amount: txn.amount?.toCurrency() ?? '₦0.00',
+      amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
       accountNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
       status: txn.status ?? 'Unknown',
       description:
@@ -194,12 +195,13 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
       TransactionReceiptWidget(
         data: data,
         onShareReceipt: () {
-          context.pop();
-          context.showPopUp(
-            color: Colors.transparent,
-            generateShareableReceipt(data),
-            isDismissable: true,
-          );
+          context
+            ..pop()
+            ..showPopUp(
+              color: Colors.transparent,
+              ReceiptShareWrapper(data: data),
+              isDismissable: true,
+            );
         },
       ),
       isDismissable: true,
@@ -243,7 +245,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
     }
   }
 
-  Widget generateShareableReceipt(TransactionReceiptData data) {
-    return VisualReceiptCard(data: data);
-  }
+  // Widget generateShareableReceipt(TransactionReceiptData data) {
+  //   return VisualReceiptCard(data: data);
+  // }
 }

@@ -97,13 +97,22 @@ class ProductItemGrid extends ConsumerWidget {
               final item = validList[i];
               final isSelected = state.selectedSubProduct?.id == item.id;
 
-              final formattedData = item.dataSize! < 0.1
-                  ? '${(item.dataSize! * 10000)}MB'
-                  : item.dataSize! < 1
-                      ? '${(item.dataSize! * 1000)}MB'
-                      : item.subName!.contains('TB')
-                          ? '${item.dataSize}TB'
-                          : '${item.dataSize}GB';
+              String formatNumber(double value) {
+                return value.toStringAsFixed(1).endsWith('.0')
+                    ? value.toStringAsFixed(0)
+                    : value.toStringAsFixed(1);
+              }
+
+              String formattedData;
+              if (item.dataSize! < 0.1) {
+                formattedData = '${formatNumber(item.dataSize! * 10000)}MB';
+              } else if (item.dataSize! < 1) {
+                formattedData = '${formatNumber(item.dataSize! * 1000)}MB';
+              } else if (item.subName?.contains('TB') == true) {
+                formattedData = '${formatNumber(item.dataSize!)}TB';
+              } else {
+                formattedData = '${formatNumber(item.dataSize!)}GB';
+              }
 
               return GestureDetector(
                 onTap: () => notifier.selectSubProduct(item),

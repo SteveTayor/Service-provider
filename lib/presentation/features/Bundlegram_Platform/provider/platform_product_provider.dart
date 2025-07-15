@@ -695,7 +695,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
       unawaited(context.showLoadingDialog(message: "Initiating payment..."));
       final request = InitiateTransactionRequest(
-        amount: discountedAmount,
+        amount: _serviceType == PlatformProductType.mobileData
+            ? originalAmount
+            : discountedAmount,
         macAddress: macAddress,
         ipAddress: ipAddress,
         latitude: latitude,
@@ -770,7 +772,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         MaterialPageRoute(
           builder: (ctx) => FailedResultScreen(
             serviceContent: 'transaction',
-            errorMessage: e.toString(),
+            errorMessage: "The purchase was not successful, Try again later",
             onRetry: () {
               context.pushReplacement(RouteConstants.dashboard);
             },
