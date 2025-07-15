@@ -105,7 +105,6 @@ class _PlatformPhoneNumberFormWidgetState
                 maxLengthEnforcement: MaxLengthEnforcement.enforced),
             FilteringTextInputFormatter.digitsOnly,
           ],
-          validateFunction: Validators.validateNigerianPhoneNumber(),
           onTap:
               allowsFreeText ? null : () => notifier.showBillerPicker(context),
           prefixIcon: GestureDetector(
@@ -261,8 +260,8 @@ class _PlatformPhoneNumberFormWidgetState
             onChanged: (val) => notifier.selectDataType(val!),
           ),
         ] else if (state.subProducts.isNotEmpty &&
-            widget.serviceType != PlatformProductType.electricity) ...[
-          24.verticalSpace,
+            widget.serviceType != PlatformProductType.electricity &&
+            widget.serviceType != PlatformProductType.airtime) ...[
           AppDropdown(
             title: state.selectedSubProduct?.subName ?? 'Select package',
             options: state.subProducts.map((e) => e.subName!).toList(),

@@ -96,7 +96,14 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     // Extract unique non-null data types
     final options =
         subs.map((e) => e.dataType).whereType<String>().toSet().toList();
-    if (subs.length == 1) {
+    // For airtime, betting always select the subproduct (even if multiple exist)
+    if (_serviceType == PlatformProductType.airtime ||
+        _serviceType == PlatformProductType.betting) {
+      state = state.copyWith(
+        selectedSubProduct: subs.first,
+        amountController: state.amountController, // Preserve existing amount
+      );
+    } else if (subs.length == 1) {
       state = state.copyWith(
         selectedSubProduct: subs.first,
         amountController:
@@ -243,26 +250,80 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     return kValidationRequiredServices.contains(_serviceType);
   }
 
-  bool validateForm() {
+  String? validateForm() {
+    // Check biller
+    if (state.selectedProduct == null) {
+      return 'Please select a biller';
+    }
+
+    // Check subproduct (if required)
+    if (_serviceType.hasSubProducts && state.selectedSubProduct == null) {
+      return 'Please select a package or plan';
+    }
+
+    // Check amount for airtime, betting, or electricity
+    if (_serviceType == PlatformProductType.airtime ||
+        _serviceType == PlatformProductType.betting ||
+        _serviceType == PlatformProductType.electricity) {
+      if (state.amountController.text.isEmpty) {
+        return 'Please enter or select an amount';
+      }
+      final amount = double.tryParse(state.amountController.text) ?? 0.0;
+      if (amount <= 0) {
+        return 'Please enter a valid amount greater than zero';
+      }
+    }
+
+    // Check input field
     final inputController = _serviceType == PlatformProductType.airtime ||
             _serviceType == PlatformProductType.mobileData
         ? state.firstInputController
         : state.secondaryInputController;
-
-    final baseValidation = state.selectedProduct != null &&
-        (_serviceType.hasSubProducts
-            ? state.selectedSubProduct != null
-            : state.amountController.text.isNotEmpty) &&
-        inputController.text.isNotEmpty &&
-        (!requiresValidation || (requiresValidation && state.isValidated));
-
-    if (_serviceType == PlatformProductType.electricity) {
-      final amount = double.tryParse(state.amountController.text) ?? 0;
-      return baseValidation && state.selectedSubProduct != null && amount > 0;
+    if (inputController.text.isEmpty) {
+      return _serviceType == PlatformProductType.airtime ||
+              _serviceType == PlatformProductType.mobileData
+          ? 'Please enter a phone number'
+          : _serviceType == PlatformProductType.betting
+              ? 'Please enter a user ID'
+              : _serviceType == PlatformProductType.cableTv
+                  ? 'Please enter a smart card number'
+                  : _serviceType == PlatformProductType.electricity
+                      ? 'Please enter a meter number'
+                      : 'Please enter an account number';
     }
 
-    return baseValidation;
+    // Check validation for services requiring it
+    if (requiresValidation && !state.isValidated) {
+      return 'Please validate your ${_serviceType == PlatformProductType.betting ? 'user ID' : _serviceType == PlatformProductType.cableTv ? 'smart card number' : _serviceType == PlatformProductType.electricity ? 'meter number' : 'account number'}';
+    }
+
+    return null;
   }
+  // bool validateForm() {
+  //   final inputController = _serviceType == PlatformProductType.airtime ||
+  //           _serviceType == PlatformProductType.mobileData
+  //       ? state.firstInputController
+  //       : state.secondaryInputController;
+
+  //   final baseValidation = state.selectedProduct != null &&
+  //       (_serviceType.hasSubProducts
+  //           ? state.selectedSubProduct != null
+  //           : true) &&
+  //       (_serviceType == PlatformProductType.airtime ||
+  //               _serviceType == PlatformProductType.betting ||
+  //               _serviceType == PlatformProductType.electricity
+  //           ? state.amountController.text.isNotEmpty
+  //           : true) &&
+  //       inputController.text.isNotEmpty &&
+  //       (!requiresValidation || (requiresValidation && state.isValidated));
+
+  //   if (_serviceType == PlatformProductType.electricity) {
+  //     final amount = double.tryParse(state.amountController.text) ?? 0;
+  //     return baseValidation && state.selectedSubProduct != null && amount > 0;
+  //   }
+
+  //   return baseValidation;
+  // }
 
   bool _matches(String a, String b) {
     final cleanA = a.toLowerCase().replaceAll(RegExp(r'\s+'), '');
@@ -505,18 +566,53 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   //   });
   // }
 
+  double _getTransactionAmount() {
+    if (_serviceType == PlatformProductType.airtime ||
+        _serviceType == PlatformProductType.betting ||
+        _serviceType == PlatformProductType.electricity) {
+      return double.tryParse(state.amountController.text) ?? 0.0;
+    }
+    if (_serviceType.hasSubProducts && state.selectedSubProduct != null) {
+      return double.tryParse(state.selectedSubProduct!.subPrice ?? '') ?? 0.0;
+    }
+    return double.tryParse(state.amountController.text) ?? 0.0;
+  }
+
   void showTransactionSummary(BuildContext context) {
-    if (!validateForm()) {
-      context.showCustomSnackBar('Please fill all required fields');
+    final validationError = validateForm();
+    if (validationError != null) {
+      context.showErrorSnackBar(validationError);
       return;
     }
 
-    final amount = _serviceType == PlatformProductType.electricity
-        ? double.tryParse(state.amountController.text) ?? 0.0
-        : _serviceType.hasSubProducts
-            ? double.tryParse(state.selectedSubProduct!.subPrice ?? '') ?? 0.0
-            : double.tryParse(state.amountController.text) ?? 0.0;
+    // Fetch and validate wallet balance
+    _ref.read(globalProvider.notifier).fetchWalletBalance(context);
+    final walletBalanceString =
+        _ref.read(globalProvider).walletBalance.value?.wallet;
 
+    // Parse wallet balance
+    final walletBalance = double.tryParse(walletBalanceString ?? '') ?? 0.0;
+    if (walletBalanceString == null || walletBalanceString.isEmpty) {
+      context.showErrorSnackBar('Unable to retrieve wallet balance');
+      return;
+    }
+    if (walletBalance < 0) {
+      context.showErrorSnackBar('Invalid wallet balance');
+      return;
+    }
+
+    // Get and validate amount
+    final amount = _getTransactionAmount();
+    if (amount <= 0) {
+      context
+          .showErrorSnackBar('Please enter a valid amount greater than zero');
+      return;
+    }
+    if (amount > walletBalance) {
+      context.showErrorSnackBar(
+          'Insufficient wallet balance: ${CurrencyFormatter.format(walletBalance)} available');
+      return;
+    }
     final discountedAmount =
         calculateDiscountedPrice(amount, state.selectedSubProduct);
 
@@ -538,15 +634,20 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         discountedPrice: CurrencyFormatter.format(discountedAmount),
         beneficiary: beneficiary,
         onPay: () {
-          initiatePurchase(context, discountedAmount.toString(), beneficiary);
+          initiatePurchase(
+            context,
+            amount.toString(),
+            discountedAmount.toString(),
+            beneficiary,
+          );
         },
         paymentMethod: 'Wallet',
       ),
     );
   }
 
-  Future<void> initiatePurchase(
-      BuildContext context, String amount, String beneficiary) async {
+  Future<void> initiatePurchase(BuildContext context, String originalAmount,
+      String discountedAmount, String beneficiary) async {
     context.pop(); // Close the bottom sheet
     unawaited(
       Navigator.push(
@@ -554,10 +655,12 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         MaterialPageRoute(
           builder: (ctx) => EnterPinScreen(
             onVerified: (pin) async {
-              final result = await purchase(
+              // final result =
+              await purchase(
                 ctx,
                 pin: pin,
-                amount: amount,
+                originalAmount: originalAmount,
+                discountedAmount: discountedAmount,
                 beneficiary: beneficiary,
               );
             },
@@ -569,8 +672,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
   Future<dynamic> purchase(
     BuildContext context, {
+    required String originalAmount,
     required String pin,
-    required String amount,
+    required String discountedAmount,
     required String beneficiary,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -591,7 +695,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
       unawaited(context.showLoadingDialog(message: "Initiating payment..."));
       final request = InitiateTransactionRequest(
-        amount: amount,
+        amount: discountedAmount,
         macAddress: macAddress,
         ipAddress: ipAddress,
         latitude: latitude,
@@ -630,7 +734,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
           },
           (response) {
             if (response.success) {
-              final screen = _buildSuccessScreen(amount, beneficiary);
+              final screen = _buildSuccessScreen(
+                  CurrencyFormatter.format(originalAmount), beneficiary);
               context.dismissDialog();
               Navigator.pushReplacement(
                 context,

@@ -29,7 +29,7 @@ class DataSubscriptionSuccessResultScreen extends StatelessWidget {
             'Your data subscription of ${dataValue} to ${beneficiary} was successful.',
         buttonText: 'Go to home',
         onPressed: () {
-          context.push(RouteConstants.dashboard);
+          context.pushReplacement(RouteConstants.dashboard);
         },
       ),
     );

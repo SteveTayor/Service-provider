@@ -70,7 +70,9 @@ class LoginScreen extends ConsumerWidget {
                     value: prov.rememberMe,
                     onChanged: ctrl.toggleRememberMe,
                     activeColor: AppColors.primaryColor,
-                    side: const BorderSide(color: AppColors.primaryColor),
+                    side: const BorderSide(
+                      color: AppColors.primaryColor,
+                    ),
                     checkColor: AppColors.white,
                   ),
                   Text(
@@ -104,6 +106,7 @@ class LoginScreen extends ConsumerWidget {
                   controller: ctrl.emailCtrl,
                   validateFunction: Validators.email(),
                   keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
                 ),
                 AppTextField(
                   obscureText: prov.showPassword,
@@ -115,8 +118,8 @@ class LoginScreen extends ConsumerWidget {
                           fit: BoxFit.scaleDown,
                           onTap: ctrl.togglePasswordVisibility,
                         )
-                      : Padding(
-                          padding: const EdgeInsets.all(8),
+                      : const Padding(
+                          padding: EdgeInsets.all(8),
                           child: Icon(
                             Icons.visibility_off,
                             size: 24,

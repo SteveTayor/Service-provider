@@ -397,11 +397,12 @@ class PlatFormData {
     Builder(
       builder: (context) {
         return AppListTile(
-            onPressed: () {
-              context.push(RouteConstants.becomeagent);
-            },
-            assetPath: Assets.svgs.becomeagent,
-            title: 'Become an agent');
+          onPressed: () {
+            context.push(RouteConstants.becomeagent);
+          },
+          assetPath: Assets.svgs.becomeagent,
+          title: 'Become an agent',
+        );
       },
     ),
     Builder(

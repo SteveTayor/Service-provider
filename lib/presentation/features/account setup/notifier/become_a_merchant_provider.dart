@@ -73,6 +73,16 @@ class BecomeAgentProvider extends ChangeNotifier {
         _setLoading(false);
         return;
       }
+      final globalUserProvider = _ref.watch(globalProvider).profile;
+      final profileProv = globalUserProvider.value?.data;
+      if (profileProv?.userType == "agent") {
+        _setLoading(false);
+        context
+          ..showErrorSnackBar('You are already a Bundlegram agent')
+          ..go(RouteConstants.dashboard); // Route to dashboard
+
+        return;
+      }
 
       // If balance is sufficient, navigate to EnterPinScreen
       context.pop(); // Close the bottom sheet
