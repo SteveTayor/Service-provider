@@ -183,7 +183,9 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
       type: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
           ? txn.subProduct?.product?.productName
           : txn.transType ?? 'N/A',
-      amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
+      amount: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
+          ? CurrencyFormatter.format(txn.deductAmount ?? 0.0)
+          : CurrencyFormatter.format(txn.amount),
       accountNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
       status: txn.status ?? 'Unknown',
       description:

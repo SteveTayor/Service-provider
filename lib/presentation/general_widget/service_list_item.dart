@@ -120,7 +120,10 @@ class ServiceListItem extends ConsumerWidget {
     if (key.contains('data') || key.contains('internet')) {
       return AppSvgIcon(path: Assets.svgs.mobileData);
     }
-    if (key.contains('cable')) {
+    if (key.contains('cable') ||
+        key.contains('dstv') ||
+        key.contains('gotv') ||
+        key.contains('startimes')) {
       return AppSvgIcon(path: Assets.svgs.cableTv);
     }
     if (key.contains('bet')) {

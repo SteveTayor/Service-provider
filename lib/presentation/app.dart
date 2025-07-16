@@ -21,23 +21,23 @@ class App extends ConsumerWidget {
       ensureScreenSize: true,
       useInheritedMediaQuery: true,
       builder: (context, c) {
-        return DevicePreview(
-          builder: (context) {
-            return GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-              child: MaterialApp.router(
-                themeMode: ThemeMode.system,
-                theme: AppTheme.lightTheme,
-                darkTheme: AppTheme.darkTheme,
-                routerConfig: AppRouter.router,
-                debugShowCheckedModeBanner: false,
-              ),
-            );
+        // return DevicePreview(
+        //   builder: (context) {
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
           },
+          child: MaterialApp.router(
+            themeMode: ThemeMode.system,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            routerConfig: AppRouter.router,
+            debugShowCheckedModeBanner: false,
+          ),
         );
+        //   },
+        // );
       },
     );
   }

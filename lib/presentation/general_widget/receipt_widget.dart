@@ -276,7 +276,6 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
         ),
       );
       context.showCustomSnackBar('Transaction receipt downloaded successfully');
-
       if (mounted) Navigator.pop(context); // close the popup after sharing
     } catch (e) {
       context.dismissDialog();
