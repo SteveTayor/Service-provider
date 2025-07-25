@@ -200,24 +200,25 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
 
                             if (input.isEmpty) {
                               return context.showErrorSnackBar(
-                                  'Please enter a valid ${serviceType == PlatformProductType.betting ? 'User ID' : serviceType == PlatformProductType.cableTv ? 'Smart Card Number' : 'Meter Number'}');
+                                'Please enter a valid ${serviceType == PlatformProductType.betting ? 'User ID' : serviceType == PlatformProductType.cableTv ? 'Smart Card Number' : 'Meter Number'}',
+                              );
                             }
 
                             // Additional validation for electricity
-                            if (serviceType ==
-                                PlatformProductType.electricity) {
-                              if (state.selectedSubProduct == null) {
-                                return context.showErrorSnackBar(
-                                    'Please select Prepaid or Postpaid');
-                              }
-                              final amount = state.amountController.text.trim();
-                              if (amount.isEmpty ||
-                                  double.tryParse(amount) == null ||
-                                  double.parse(amount) <= 0) {
-                                return context.showErrorSnackBar(
-                                    'Please enter a valid amount');
-                              }
-                            }
+                            // if (serviceType ==
+                            //     PlatformProductType.electricity) {
+                            //   if (state.selectedSubProduct == null) {
+                            //     return context.showErrorSnackBar(
+                            //         'Please select Prepaid or Postpaid');
+                            //   }
+                            //   final amount = state.amountController.text.trim();
+                            //   if (amount.isEmpty ||
+                            //       double.tryParse(amount) == null ||
+                            //       double.parse(amount) <= 0) {
+                            //     return context.showErrorSnackBar(
+                            //         'Please enter a valid amount');
+                            //   }
+                            // }
 
                             notifier.validateBill(
                               context,

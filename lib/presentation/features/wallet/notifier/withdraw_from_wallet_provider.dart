@@ -1,21 +1,26 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:bundlegram/core/error/failures.dart';
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/auth/wallet/get_wallet_response.dart';
 import 'package:bundlegram/data/models/banks/get_all_users_banks_response.dart';
 import 'package:bundlegram/data/models/transaction/withdraw_request.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
+import 'package:bundlegram/presentation/features/wallet/screen/topup_failed_screen.dart';
 import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 
 final withdrawalProvider = ChangeNotifierProvider<WithdrawalProvider>(
@@ -173,6 +178,7 @@ class WithdrawalProvider extends ChangeNotifier {
     }
 
     _setSubmitting(true);
+    unawaited(context.showLoadingDialog());
     final token = await _storage.getAuthToken();
     if (token == null) {
       context.showErrorSnackBar('Authentication token missing');
@@ -199,15 +205,33 @@ class WithdrawalProvider extends ChangeNotifier {
     final result = await _api.requestWithdraw(token, req);
     return result.fold(
       (fail) {
-        context.showErrorSnackBar(fail.properties.isNotEmpty
-            ? fail.properties.join('\n')
-            : 'Failed to request withdrawal');
-        _setSubmitting(false);
+        context.dismissDialog();
+
+        final message = fail.properties.join('\n');
+        final displayMessage = message.toLowerCase().contains('insufficient') ||
+                message.toLowerCase().contains('incorrect pin')
+            ? message
+            : 'Failed to request withdrawal';
+        context.showErrorSnackBar(
+            message.isNotEmpty ? message : 'Transaction failed');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (ctx) => FailedResultScreen(
+              serviceContent: 'Withdrawal',
+              errorMessage: displayMessage,
+              onRetry: () {
+                context.pushReplacement(RouteConstants.dashboard);
+              },
+            ),
+          ),
+        );
         return false;
       },
       (_) {
         context
-            .showSuccessSnackBar('Withdrawal request submitted successfully');
+          ..dismissDialog()
+          ..showSuccessSnackBar('Withdrawal request submitted successfully');
         _setSubmitting(false);
         return true;
       },

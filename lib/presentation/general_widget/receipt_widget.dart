@@ -40,7 +40,7 @@ class VisualReceiptCard extends ConsumerWidget {
       height: height.h,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(5.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -60,7 +60,7 @@ class VisualReceiptCard extends ConsumerWidget {
                   'Transaction receipt',
                   style: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w500,
-                    fontSize: 18.sp,
+                    // fontSize: 18.sp,
                     color: AppColors.black,
                   ),
                 ),
@@ -71,7 +71,7 @@ class VisualReceiptCard extends ConsumerWidget {
                   data.amount.toString(),
                   style: context.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.w500,
-                    fontSize: 30.sp,
+                    // fontSize: 30.sp,
                     color: AppColors.black,
                   ),
                 ),
@@ -101,6 +101,10 @@ class VisualReceiptCard extends ConsumerWidget {
                   _buildDetailRow(context, 'Date', data.date!),
                   16.verticalSpace,
                   _buildDetailRow(context, 'Time', data.time!),
+                  if (data.token != null) ...[
+                    16.verticalSpace,
+                    _buildDetailRow(context, 'Token', data.token!),
+                  ],
                 ],
               ),
             ),
@@ -130,7 +134,7 @@ class VisualReceiptCard extends ConsumerWidget {
           label,
           style: context.textTheme.bodyMedium?.copyWith(
             color: AppColors.grey33,
-            fontSize: 14.sp,
+            // fontSize: 14.sp,
           ),
         ),
         SizedBox(width: 8.w),
@@ -140,7 +144,7 @@ class VisualReceiptCard extends ConsumerWidget {
             style: context.textTheme.bodyMedium?.copyWith(
               color: AppColors.black,
               fontWeight: FontWeight.w500,
-              fontSize: 14.sp,
+              // fontSize: 14.sp,
             ),
             textAlign: TextAlign.right,
             overflow: TextOverflow.visible,
@@ -173,7 +177,7 @@ class VisualReceiptCard extends ConsumerWidget {
             style: TextStyle(
               color: statusInfo['textColor'] as Color,
               fontWeight: FontWeight.w600,
-              fontSize: 14.sp,
+              // fontSize: 14.sp,
             ),
           ),
         ],

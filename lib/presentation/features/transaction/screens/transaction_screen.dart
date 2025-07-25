@@ -201,10 +201,11 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
-        type: txn.subProduct?.product?.productName,
+        // type: txn.subProduct?.product?.productName,
+        type: txn.transType,
         amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
-        accountNumber:
-            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
@@ -214,6 +215,9 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         userBalance: txn.balanceAfter != null
             ? CurrencyFormatter.format(txn.balanceAfter!)
             : null,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore!)
+            : null,
       );
     } else if (transTypeLower.contains('data')) {
       // Handle data transaction
@@ -221,10 +225,11 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
-        type: txn.subProduct?.product?.productName,
+        // type: txn.subProduct?.product?.productName,
+        type: txn.transType,
         amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
-        accountNumber:
-            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
@@ -233,6 +238,9 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         phoneNumber: txn.crAcc,
         userBalance: txn.balanceAfter != null
             ? CurrencyFormatter.format(txn.balanceAfter!)
+            : null,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore!)
             : null,
       );
     } else if (transTypeLower.contains('withdrawal')) {
@@ -276,6 +284,55 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
             : null,
         balanceBefore: txn.balanceBefore != null
             ? CurrencyFormatter.format(txn.balanceBefore)
+            : null,
+      );
+    } else if (transTypeLower.contains('cable')) {
+      // Handle data transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.transType,
+
+        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+
+        smartCardNumber: txn.crAcc,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore!)
+            : null,
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter!)
+            : null,
+      );
+    } else if (transTypeLower.contains('electricity')) {
+      // Handle data transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.transType,
+
+        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+
+        meterNumber: txn.crAcc,
+        token: txn.token,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore!)
+            : null,
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter!)
             : null,
       );
     } else {

@@ -128,7 +128,7 @@ class _PlatformPhoneNumberFormWidgetState
             widget.serviceType == PlatformProductType.cableTv ||
             widget.serviceType == PlatformProductType.electricity ||
             widget.serviceType == PlatformProductType.internetServices) ...[
-          24.verticalSpace,
+          8.verticalSpace,
           AppTextField(
             hintText: widget.serviceType == PlatformProductType.betting
                 ? 'Enter User ID'
@@ -152,7 +152,7 @@ class _PlatformPhoneNumberFormWidgetState
 
         // Electricity prepaid/postpaid tabs
         if (widget.serviceType == PlatformProductType.electricity) ...[
-          24.verticalSpace,
+          8.verticalSpace,
           TabBar(
             controller: _tabController,
             indicator: BoxDecoration(
@@ -252,7 +252,7 @@ class _PlatformPhoneNumberFormWidgetState
 
         // Dropdown for dataType (mobile data) or sub_name (cable TV)
         if (state.dropdownOptions.isNotEmpty) ...[
-          24.verticalSpace,
+          8.verticalSpace,
           AppDropdown(
             title: state.selectedDataType ?? widget.dropdownHint!,
             options: state.dropdownOptions,
@@ -261,7 +261,9 @@ class _PlatformPhoneNumberFormWidgetState
           ),
         ] else if (state.subProducts.isNotEmpty &&
             widget.serviceType != PlatformProductType.electricity &&
-            widget.serviceType != PlatformProductType.airtime) ...[
+            widget.serviceType != PlatformProductType.airtime &&
+            widget.serviceType != PlatformProductType.betting) ...[
+          8.verticalSpace,
           AppDropdown(
             title: state.selectedSubProduct?.subName ?? 'Select package',
             options: state.subProducts.map((e) => e.subName!).toList(),

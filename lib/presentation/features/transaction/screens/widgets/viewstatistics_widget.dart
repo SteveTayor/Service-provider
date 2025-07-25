@@ -58,7 +58,7 @@ class ViewStatisticsWidget extends ConsumerWidget {
           ),
         ],
         borderRadius: BorderRadius.circular(8.r),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(12),
       ),
     );
   }

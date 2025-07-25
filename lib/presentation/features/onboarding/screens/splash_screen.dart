@@ -30,7 +30,10 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: AppColors.primaryColor,
       body: Center(
           child: AppSvgIcon(
+        width: 150,
+        height: 150,
         path: Assets.svgs.bundlegramWhiteLogo,
+        color: AppColors.background,
       )
           // Image.asset(Assets.images.logo.path),
 

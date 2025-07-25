@@ -34,4 +34,24 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <queries>
+  <!-- for phone calls -->
+  <intent>
+    <action android:name="android.intent.action.DIAL"/>
+    <data android:scheme="tel"/>
+  </intent>
+
+  <!-- for emails -->
+  <intent>
+    <action android:name="android.intent.action.SENDTO"/>
+    <data android:scheme="mailto"/>
+  </intent>
+
+  <!-- if you ever launch https links -->
+  <intent>
+    <action android:name="android.intent.action.VIEW"/>
+    <data android:scheme="https"/>
+  </intent>
+</queries>
+
 </manifest>

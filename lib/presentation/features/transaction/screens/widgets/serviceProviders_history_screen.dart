@@ -260,6 +260,55 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
             ? CurrencyFormatter.format(txn.balanceBefore!)
             : null,
       );
+    } else if (transTypeLower.contains('cable')) {
+      // Handle data transaction
+      receiptData = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(dateTime.toString()),
+        time: _formatTime(dateTime.toString()),
+        type: txn.transType,
+
+        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+
+        smartCardNumber: txn.crAcc,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore!)
+            : null,
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter!)
+            : null,
+      );
+    } else if (transTypeLower.contains('electricity')) {
+      // Handle data transaction
+      receiptData = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(dateTime.toString()),
+        time: _formatTime(dateTime.toString()),
+        type: txn.transType,
+
+        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+
+        meterNumber: txn.crAcc,
+        token: txn.token,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore!)
+            : null,
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter!)
+            : null,
+      );
     } else if (transTypeLower.contains('fund_wallet')) {
       // Handle fund wallet transaction
       receiptData = TransactionReceiptData(
@@ -305,8 +354,8 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
       color: Colors.transparent,
       TransactionReceiptWidget(
         data: receiptData,
-        onShareReceipt: () {
-          context
+        onShareReceipt: () async {
+          await context
             ..pop()
             ..showPopUp(
               color: Colors.transparent,

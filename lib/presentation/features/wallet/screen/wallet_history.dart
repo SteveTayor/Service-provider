@@ -128,16 +128,59 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
   }
 
   void _showTransactionDetails(UserTransactions txn) {
-    final transactionData = TransactionReceiptData(
-      transactionId: txn.transRef.toString(),
-      date: _formatDate(txn.createdAt.toString() ?? ''),
-      time: _formatTime(txn.createdAt.toString()),
-      type: txn.transType.toString(),
-      amount: CurrencyFormatter.format(txn.amount),
-      phoneNumber: txn.crAcc,
-      status: txn.status ?? '',
-      description: txn.subProduct?.subName ?? '',
-    );
+    TransactionReceiptData transactionData;
+    final transTypeLower = (txn.transType ?? '').toLowerCase();
+
+    if (transTypeLower.contains('fund_wallet')) {
+      // Handle fund wallet transaction
+      transactionData = TransactionReceiptData(
+        transactionId: txn.transRef.toString(),
+        date: _formatDate(txn.createdAt.toString() ?? ''),
+        time: _formatTime(txn.createdAt.toString()),
+        type: txn.transType,
+        amount: CurrencyFormatter.format(txn.amount),
+        accountNumber: txn.crAcc,
+        status: txn.status ?? '',
+        description: txn.subProduct?.subName ?? '',
+        paymentMethod: txn.paymentType ?? '',
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter)
+            : null,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore)
+            : null,
+      );
+    } else if (transTypeLower.contains('withdrawal')) {
+      // Handle withdrawal transaction
+      transactionData = TransactionReceiptData(
+        transactionId: txn.transRef.toString(),
+        date: _formatDate(txn.createdAt.toString() ?? ''),
+        time: _formatTime(txn.createdAt.toString()),
+        type: txn.transType,
+        amount: CurrencyFormatter.format(txn.amount),
+        accountNumber: txn.crAcc,
+        status: txn.status ?? '',
+        description: txn.subProduct?.subName ?? '',
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter)
+            : null,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore)
+            : null,
+      );
+    } else {
+      // Default case (should not occur for wallet, but included for robustness)
+      transactionData = TransactionReceiptData(
+        transactionId: txn.transRef.toString(),
+        date: _formatDate(txn.createdAt.toString() ?? ''),
+        time: _formatTime(txn.createdAt.toString()),
+        type: txn.transType.toString(),
+        amount: CurrencyFormatter.format(txn.amount),
+        phoneNumber: txn.crAcc,
+        status: txn.status ?? '',
+        description: txn.subProduct?.subName ?? '',
+      );
+    }
 
     context.showPopUp(
       color: Colors.transparent,

@@ -1,8 +1,10 @@
 // ignore_for_file: inference_failure_on_instance_creation, inference_failure_on_function_invocation
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
@@ -59,13 +61,16 @@ class PlatFormData {
         assetPath: Assets.svgs.ePin,
         title: 'E-pin voucher',
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PlatformproductScreen(
-                  serviceType: PlatformProductType.ePinVoucher),
-            ),
-          );
+          context
+            ..pop()
+            ..showCustomSnackBar("coming soon");
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => const PlatformproductScreen(
+          //         serviceType: PlatformProductType.ePinVoucher),
+          //   ),
+          // );
         },
       );
     }),
@@ -74,13 +79,16 @@ class PlatFormData {
         assetPath: Assets.svgs.educationSvg,
         title: 'Education',
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PlatformproductScreen(
-                  serviceType: PlatformProductType.education),
-            ),
-          );
+          context
+            ..pop()
+            ..showCustomSnackBar("coming soon");
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => const PlatformproductScreen(
+          //         serviceType: PlatformProductType.education),
+          //   ),
+          // );
         },
       );
     }),
@@ -109,12 +117,15 @@ class PlatFormData {
           //         serviceType: PlatformProductType.internetServices),
           //   ),
           // );
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (ctx) => InternetServiceProviderScreen(),
-            ),
-          );
+          context
+            ..pop()
+            ..showCustomSnackBar("coming soon");
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (ctx) => InternetServiceProviderScreen(),
+          //   ),
+          // );
         },
         assetPath: Assets.svgs.internetservice,
         title: 'Internet Provider',
@@ -343,7 +354,8 @@ class PlatFormData {
               ),
             );
           },
-          assetPath: Assets.svgs.buydata,
+          color: AppColors.black,
+          assetPath: Assets.svgs.mobile,
           title: 'Buy data',
         );
       },

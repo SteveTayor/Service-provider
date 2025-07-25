@@ -168,34 +168,55 @@ class TransactionReceiptWidget extends StatelessWidget {
       _TransactionDetailItem(label: 'Transaction type', value: data.type!),
       if (data.paymentMethod != null)
         _TransactionDetailItem(
-            label: 'Payment channel', value: data.paymentMethod!),
+          label: 'Payment channel',
+          value: data.paymentMethod!,
+        ),
       _TransactionDetailItem(label: 'Amount', value: data.amount!),
       if (data.phoneNumber != null)
         _TransactionDetailItem(label: 'Phone Number', value: data.phoneNumber!),
+      if (data.type?.toLowerCase() == 'electricity' && data.token != null)
+        _TransactionDetailItem(
+          label: 'Token',
+          value: data.token!,
+          showCopyIcon: true, // Enable copy for token
+        ),
+      if (data.smartCardNumber != null)
+        _TransactionDetailItem(
+            label: 'Smartcard Number', value: data.smartCardNumber!),
       if (data.network != null)
         _TransactionDetailItem(label: 'Network', value: data.network!),
+      if (data.meterNumber != null)
+        _TransactionDetailItem(label: 'Meter Number', value: data.meterNumber!),
       if (data.accountNumber != null)
         _TransactionDetailItem(label: 'Account', value: data.accountNumber!),
       if (data.balanceBefore != null)
         _TransactionDetailItem(
-            label: 'Balance Before', value: data.balanceBefore!),
+          label: 'Balance Before',
+          value: data.balanceBefore!,
+        ),
       if (data.userBalance != null)
         _TransactionDetailItem(
-            label: 'Balance After', value: data.userBalance!),
+          label: 'Balance After',
+          value: data.userBalance!,
+        ),
       _TransactionDetailItem(
         label: 'Transaction status',
         value: data.status,
         valueColor: _getStatusColor(),
       ),
+      if (data.type?.toLowerCase() == 'electricity' && data.units != null)
+        _TransactionDetailItem(label: 'Units', value: data.units!),
       if (data.reference != null)
         _TransactionDetailItem(label: 'Reference', value: data.reference!),
     ];
 
     return details
-        .map((item) => Padding(
-              padding: EdgeInsets.only(bottom: 16.h),
-              child: item,
-            ))
+        .map(
+          (item) => Padding(
+            padding: EdgeInsets.only(bottom: 16.h),
+            child: item,
+          ),
+        )
         .toList();
   }
 
@@ -273,7 +294,7 @@ class _TransactionDetailItem extends StatelessWidget {
                   onTap: () {
                     Clipboard.setData(ClipboardData(text: value));
                     navigatorKey.currentState!.context
-                        .showCustomSnackBar("Copied Transaction ID");
+                        .showCustomSnackBar("Copied to clipboard");
                   },
                   child: AppSvgIcon(path: Assets.svgs.copy),
                 ),

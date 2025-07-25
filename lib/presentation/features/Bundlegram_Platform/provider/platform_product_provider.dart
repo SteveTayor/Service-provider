@@ -287,22 +287,18 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   /// just the filename i have under assets/images/, or return null.
   // String? normalizeAssetName(String? raw) {
   //   if (raw == null || raw.isEmpty) return null;
-
   //   // 1. Remove any directory parts
   //   final fileName = raw.split(RegExp(r'[\\/]+')).last;
   //   //    e.g. "upload/images/mtn.png" → "mtn.png"
-
   //   // 2. Ensure it has a known extension (png, jpg, jpeg, webp, svg)
   //   final lower = fileName.toLowerCase();
   //   final validExt = ['.png', '.jpg', '.jpeg', '.webp', '.svg'];
   //   final hasValid = validExt.any((ext) => lower.endsWith(ext));
   //   if (!hasValid) return null;
-
   //   // 3.verify that this file actually exists in your assets/
   //   //    — you can maintain a Set<String> of your bundled filenames,
   //   //      or rely on pubspec.yaml audits.
   //   //    For simplicity, we assume it’s there.
-
   //   return fileName;
   // }
 
@@ -386,9 +382,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         if (state.secondaryInputController.text.length != 10) {
           return 'Meter Number must be 10 digits';
         }
-        if (state.selectedSubProduct == null) {
-          return 'Please select Prepaid or Postpaid';
-        }
+        // if (state.selectedSubProduct == null) {
+        //   return 'Please select Prepaid or Postpaid';
+        // }
         if (state.amountController.text.isEmpty ||
             double.tryParse(state.amountController.text) == null ||
             double.parse(state.amountController.text) <= 0) {
@@ -610,33 +606,73 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
   }
 
-  void validateBill(BuildContext context, String number, int? productId,
-      String? autoSubProdId) {
+  void validateBill(
+    BuildContext context,
+    String number,
+    int? productId,
+    String? autoSubProdId, {
+    VoidCallback? onSuccess, // Added for automatic progression
+  }) {
+    debugPrint(
+        'validateBill called: serviceType=${_serviceType}, number=$number, '
+        'productId=$productId, autoSubProdId=$autoSubProdId');
+
     _debounce?.cancel();
 
     final isPrimaryInputReady = number.trim().length == 11;
     final isSecondaryInputReady =
         state.secondaryInputController.text.trim().length == 10;
-    final isBillTypeWithSecondary = _serviceType == PlatformProductType.betting;
+    final isBillTypeWithSecondary =
+        _serviceType == PlatformProductType.betting ||
+            _serviceType == PlatformProductType.cableTv ||
+            _serviceType == PlatformProductType.electricity;
     final shouldValidate =
         isBillTypeWithSecondary ? isSecondaryInputReady : isPrimaryInputReady;
 
-    if (!shouldValidate || state.selectedProduct == null) return;
+    debugPrint('Validation checks: isPrimaryInputReady=$isPrimaryInputReady, '
+        'isSecondaryInputReady=$isSecondaryInputReady, '
+        'isBillTypeWithSecondary=$isBillTypeWithSecondary, '
+        'shouldValidate=$shouldValidate, '
+        'selectedProduct=${state.selectedProduct?.id}');
+
+    if (!shouldValidate || state.selectedProduct == null) {
+      debugPrint('Validation aborted: shouldValidate=$shouldValidate, '
+          'selectedProduct=${state.selectedProduct == null ? 'null' : state.selectedProduct!.id}');
+      context.showErrorSnackBar(
+        'Please enter a valid ${_serviceType == PlatformProductType.airtime || _serviceType == PlatformProductType.mobileData ? 'phone number' : _serviceType == PlatformProductType.betting ? 'user ID' : _serviceType == PlatformProductType.cableTv ? 'smart card number' : 'meter number'}',
+      );
+      return;
+    }
 
     state =
         state.copyWith(isValidating: true, billValidated: false, error: null);
+    debugPrint(
+        'State updated: isValidating=true, billValidated=false, error=null');
 
     _debounce = Timer(const Duration(milliseconds: 700), () async {
       try {
-        unawaited(context.showLoadingDialog(message: 'Validating '));
+        debugPrint('Starting bill validation API call');
+        unawaited(context.showLoadingDialog(message: 'Validating...'));
         final token = await _ref.read(authTokenProvider.future);
+        debugPrint(
+            'Auth token retrieved: ${token.substring(0, 10)}...'); // Log partial token for security
+
         final request = ValidateBillRequest(
           number: number,
           productEntityId: productId,
           serviceType: autoSubProdId,
         );
+        debugPrint('API request: number=${request.number}, '
+            'productEntityId=${request.productEntityId}, '
+            'serviceType=${request.serviceType}');
 
         final result = await _apiService.validateBill(token, request);
+        debugPrint(
+            'API response: status=${result.fold((l) => 'failure', (r) => r.status)}, '
+            'message=${result.fold((l) => l.properties.join('\n'), (r) => r.message)}');
+
+        context.dismissDialog();
+
         result.fold(
           (failure) {
             state = state.copyWith(
@@ -644,33 +680,41 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               billValidated: false,
               error: failure.properties.join('\n'),
             );
-            context.dismissDialog();
+            debugPrint('Validation failed: error=${state.error}');
             context.showErrorSnackBar(failure.properties.join('\n'));
           },
           (response) {
             final validated = response.status == 'success';
-            context.dismissDialog();
-
             state = state.copyWith(
               isValidating: false,
               billValidated: validated,
               isValidated: validated,
               validatedName: response.data,
             );
+            debugPrint('Validation result: validated=$validated, '
+                'validatedName=${response.data}, '
+                'state.isValidated=${state.isValidated}');
+
             if (validated) {
-              context.dismissDialog();
               context.showCustomSnackBar('Validated: ${response.data}');
+              debugPrint('Validation successful, calling onSuccess callback');
+              onSuccess
+                  ?.call(); // Call onSuccess to proceed to transaction summary
+            } else {
+              debugPrint('Validation failed: message=${response.message}');
+              context
+                  .showErrorSnackBar(response.message ?? 'Validation failed');
             }
           },
         );
       } catch (e) {
         context.dismissDialog();
-
         state = state.copyWith(
           isValidating: false,
           billValidated: false,
           error: e.toString(),
         );
+        debugPrint('Exception during validation: $e');
         context.showErrorSnackBar(e.toString());
       }
     });

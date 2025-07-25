@@ -18,42 +18,42 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   // Sample notification data - replace with your actual data source
   List<NotificationItem> notifications = [
-    NotificationItem(
-      id: '1',
-      title: 'Win 1 million naira for free',
-      description:
-          'Enjoy ₦100 discount when you deposit ₦500. Don’t miss the opportunity of a lifetime. Stand a chance to win big our MEGA MILLION JACKPOT event!',
-      time: 'Dec 06, 2024 • 07:35 AM',
-      type: NotificationType.promo,
-      isRead: false,
-    ),
-    NotificationItem(
-      id: '2',
-      title: 'Airtime recharge successful',
-      description:
-          'Your airtime recharge of ₦100 to 07039650430 was successful.',
-      time: 'Dec 06, 2024 • 07:35 AM',
-      type: NotificationType.transaction,
-      isRead: true,
-    ),
-    NotificationItem(
-      id: '3',
-      title: 'Payment successful',
-      description:
-          'Your payment of ₦2,000 to Ibadan Electricity Distribution Company was successful.',
-      time: 'Dec 06, 2024 • 07:35 AM',
-      type: NotificationType.payment,
-      isRead: true,
-    ),
-    NotificationItem(
-      id: '4',
-      title: 'Data subscription successful',
-      description:
-          'Your data subscription of 500MB to 07039650430 was successful.',
-      time: 'Dec 06, 2024 • 07:35 AM',
-      type: NotificationType.transaction,
-      isRead: true,
-    ),
+    // NotificationItem(
+    //   id: '1',
+    //   title: 'Win 1 million naira for free',
+    //   description:
+    //       'Enjoy ₦100 discount when you deposit ₦500. Don’t miss the opportunity of a lifetime. Stand a chance to win big our MEGA MILLION JACKPOT event!',
+    //   time: 'Dec 06, 2024 • 07:35 AM',
+    //   type: NotificationType.promo,
+    //   isRead: false,
+    // ),
+    // NotificationItem(
+    //   id: '2',
+    //   title: 'Airtime recharge successful',
+    //   description:
+    //       'Your airtime recharge of ₦100 to 07039650430 was successful.',
+    //   time: 'Dec 06, 2024 • 07:35 AM',
+    //   type: NotificationType.transaction,
+    //   isRead: true,
+    // ),
+    // NotificationItem(
+    //   id: '3',
+    //   title: 'Payment successful',
+    //   description:
+    //       'Your payment of ₦2,000 to Ibadan Electricity Distribution Company was successful.',
+    //   time: 'Dec 06, 2024 • 07:35 AM',
+    //   type: NotificationType.payment,
+    //   isRead: true,
+    // ),
+    // NotificationItem(
+    //   id: '4',
+    //   title: 'Data subscription successful',
+    //   description:
+    //       'Your data subscription of 500MB to 07039650430 was successful.',
+    //   time: 'Dec 06, 2024 • 07:35 AM',
+    //   type: NotificationType.transaction,
+    //   isRead: true,
+    // ),
   ];
 
   @override

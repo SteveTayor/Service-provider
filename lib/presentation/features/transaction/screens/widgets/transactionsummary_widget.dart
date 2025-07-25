@@ -50,7 +50,7 @@ class TransactionSummary extends ConsumerWidget {
                   label,
                   style: TextStyle(
                     color: AppColors.grey83,
-                    fontSize: 14.sp,
+                    // fontSize: 14.sp,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -87,7 +87,7 @@ class TransactionSummary extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: AppColors.grey33,
-                          fontSize: 14.sp,
+                          // fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -151,24 +151,24 @@ class TransactionSummary extends ConsumerWidget {
             Text(
               discountedPrice ?? amount,
               style: TextStyle(
-                fontSize: 32.sp,
+                fontSize: 26.sp,
                 fontWeight: FontWeight.bold,
                 color: AppColors.grey33,
               ),
             ),
-            40.verticalSpace,
+            32.verticalSpace,
             if (transactionType != null) ...[
               _buildSummaryRow('Transaction type', transactionType!),
-              10.verticalSpace,
+              8.verticalSpace,
             ],
             _buildSummaryRow('Amount', amount),
-            10.verticalSpace,
+            8.verticalSpace,
             if (discountedPrice != null) ...[
               _buildSummaryRow('Discounted price', discountedPrice!),
-              10.verticalSpace,
+              8.verticalSpace,
             ],
             _buildSummaryRow('Payment method', paymentMethod),
-            10.verticalSpace,
+            8.verticalSpace,
             if (beneficiary!.isNotEmpty)
               _buildSummaryRow('Beneficiary', beneficiary!),
           ] else ...[
@@ -180,17 +180,17 @@ class TransactionSummary extends ConsumerWidget {
                 color: AppColors.grey33,
               ),
             ),
-            40.verticalSpace,
+            32.verticalSpace,
             _buildSummaryRow('Transaction type', transactionType!),
-            10.verticalSpace,
+            8.verticalSpace,
             _buildSummaryRow('Amount to pay', amount),
-            10.verticalSpace,
+            8.verticalSpace,
             _buildSummaryRow('Payment method', paymentMethod),
-            18.verticalSpace,
+            16.verticalSpace,
             Row(
               children: [
                 AppSvgIcon(path: Assets.svgs.balance),
-                16.horizontalSpace,
+                8.horizontalSpace,
                 Text('Balance (${CurrencyFormatter.format(walletBalance)})',
                     style: context.textTheme.bodySmall),
                 const Spacer(),
@@ -209,7 +209,7 @@ class TransactionSummary extends ConsumerWidget {
               ],
             ).withContainer(
               color: const Color(0xffEEF3FF),
-              padding: context.symmetricPadding(16, 12),
+              padding: context.symmetricPadding(10, 8),
               borderRadius: BorderRadius.circular(6),
             ),
           ],

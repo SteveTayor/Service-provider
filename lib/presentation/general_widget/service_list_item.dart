@@ -67,7 +67,7 @@ class ServiceListItem extends ConsumerWidget {
                     child: Text(
                       status,
                       style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 12.sp,
+                        // fontSize: 12.sp,
                         color: _getStatusColor(status),
                       ),
                     ),
