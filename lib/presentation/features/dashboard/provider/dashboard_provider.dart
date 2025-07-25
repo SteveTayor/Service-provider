@@ -34,6 +34,11 @@ class DashboardProvider extends ChangeNotifier {
     await _fetchDashboardData(context);
   }
 
+  void resetIndex() {
+    _currentIndex = 0;
+    notifyListeners();
+  }
+
   void onDestinationSelected(int index, BuildContext context) {
     if (_currentIndex != index) {
       _currentIndex = index;

@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
+import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -439,6 +440,7 @@ class LoginProvider extends ChangeNotifier {
         if (response.success) {
 // Clear all secure storage, including device info
           await _storage.clearAll();
+          _ref.read(dashboardProvider).resetIndex();
           // Navigate to login
           context
             ..go(RouteConstants.login)
