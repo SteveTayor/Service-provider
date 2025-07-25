@@ -128,10 +128,20 @@ class Validators {
 
   static Validator name() {
     return (String? value) {
-      if (value!.isEmpty) {
+      if (value == null || value.trim().isEmpty) {
         return 'Field cannot be empty.';
       }
-      if (value.length < 3) return "Input your name as it appears in your id";
+
+      // Check for invalid characters: anything other than a-z, A-Z, or space
+      final hasInvalidChars = RegExp(r'[^a-zA-Z\s]').hasMatch(value);
+      if (hasInvalidChars) {
+        return 'Name must not contain numbers or special characters.';
+      }
+
+      if (value.trim().length < 3) {
+        return 'Input your name as it appears in your ID.';
+      }
+
       return null;
     };
   }

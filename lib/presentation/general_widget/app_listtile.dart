@@ -29,16 +29,20 @@ class AppListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFEEF3FF) : null,
-      ),
-      child: GestureDetector(
-        onTap: onPressed,
+    return GestureDetector(
+      onTap: onPressed,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFEEF3FF) : null,
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment:
+              CrossAxisAlignment.center, // Changed from .end to .center
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment
+                  .center, // Added this for inner row alignment
               children: [
                 if (imagePath != null)
                   Image.asset(
@@ -55,6 +59,8 @@ class AppListTile extends StatelessWidget {
                 16.horizontalSpace,
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment:
+                      MainAxisAlignment.center, // Changed from .end to .center
                   children: [
                     Text(
                       title,

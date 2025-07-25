@@ -52,7 +52,6 @@ class _CloseAccountScreenState extends State<CloseAccountScreen> {
                 AppTextField(
                   obscureText: true,
                   hintText: 'Password',
-                  validateFunction: Validators.passcode(),
                 ),
               ],
             ),

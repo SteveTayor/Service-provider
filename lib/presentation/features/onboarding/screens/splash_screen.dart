@@ -2,6 +2,7 @@ import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,7 +28,13 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
-      body: Center(child: Image.asset(Assets.images.logo.path)),
+      body: Center(
+          child: AppSvgIcon(
+        path: Assets.svgs.bundlegramWhiteLogo,
+      )
+          // Image.asset(Assets.images.logo.path),
+
+          ),
     );
   }
 }

@@ -411,7 +411,7 @@ class PlatFormData {
             onPressed: () {
               context.push(RouteConstants.accountSetup);
             },
-            assetPath: Assets.svgs.setting,
+            assetPath: Assets.svgs.userCircleSingleStreamlineCore,
             title: 'Account');
       },
     ),
@@ -421,7 +421,7 @@ class PlatFormData {
           onPressed: () {
             context.push(RouteConstants.setting);
           },
-          assetPath: Assets.svgs.logout1ArrowExitFrameLeaveLogoutRectangleRight,
+          assetPath: Assets.svgs.cogStreamlineCore,
           title: 'Settings',
         );
       },

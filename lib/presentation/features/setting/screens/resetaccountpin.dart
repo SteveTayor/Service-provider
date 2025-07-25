@@ -74,7 +74,7 @@ class _ResetAccountPinState extends ConsumerState<ResetAccountPin> {
                   controller: _passwordController,
                   obscureText: true,
                   hintText: 'Password',
-                  validateFunction: Validators.passcode(),
+                  // validateFunction: Validators.password(),
                 ),
               ],
             ),

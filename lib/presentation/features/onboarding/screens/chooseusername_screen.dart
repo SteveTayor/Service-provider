@@ -84,7 +84,7 @@ class ChooseUsernameScreen extends ConsumerWidget {
                       ? SizedBox(
                           height: 20.h,
                           width: 20.h,
-                          child: AppLoader(
+                          child: AppLoaderSpinnerKit(
                               size: 20, color: AppColors.primaryColor),
                         )
                       : AppSvgIcon(

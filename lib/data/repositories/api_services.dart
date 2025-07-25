@@ -198,6 +198,12 @@ class ApiService {
         () => _api.fetchAccountName('Bearer $token', _sterilizer, req));
   }
 
+  Future<Either<Failure, BaseResponse>> closeAccount(
+      String token, DeleteAccountRequest req) {
+    return handleApi(
+        () => _api.deleteAccount('Bearer $token', _sterilizer, req));
+  }
+
   Future<Either<Failure, DeleteBankResponse>> deleteBank(
       String token, int bankId) {
     return handleApi(

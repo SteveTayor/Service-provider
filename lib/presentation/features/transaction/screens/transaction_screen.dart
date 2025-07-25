@@ -176,21 +176,126 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
   }
 
   void _showTransactionDetails(UserTransactions txn) {
-    final data = TransactionReceiptData(
-      transactionId: txn.transRef ?? 'BNG-${txn.id}',
-      date: _formatDate(txn.createdAt),
-      time: _formatTime(txn.createdAt),
-      type: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
-          ? txn.subProduct?.product?.productName
-          : txn.transType ?? 'N/A',
-      amount: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
-          ? CurrencyFormatter.format(txn.deductAmount ?? 0.0)
-          : CurrencyFormatter.format(txn.amount),
-      accountNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
-      status: txn.status ?? 'Unknown',
-      description:
-          txn.subProduct?.subName ?? txn.subProduct?.product?.productName ?? '',
-    );
+    // final data = TransactionReceiptData(
+    //   transactionId: txn.transRef ?? 'BNG-${txn.id}',
+    //   date: _formatDate(txn.createdAt),
+    //   time: _formatTime(txn.createdAt),
+    //   type: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
+    //       ? txn.subProduct?.product?.productName
+    //       : txn.transType ?? 'N/A',
+    //   amount: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
+    //       ? CurrencyFormatter.format(txn.deductAmount ?? 0.0)
+    //       : CurrencyFormatter.format(txn.amount),
+    //   accountNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+    //   status: txn.status ?? 'Unknown',
+    //   description:
+    //       txn.subProduct?.subName ?? txn.subProduct?.product?.productName ?? '',
+    // );
+    // Construct receipt data dynamically based on transType contents
+    TransactionReceiptData data;
+    final transTypeLower = (txn.transType ?? '').toLowerCase();
+
+    if (transTypeLower.contains('airtime')) {
+      // Handle airtime transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.subProduct?.product?.productName,
+        amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
+        accountNumber:
+            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+        network: txn.subProduct?.product?.productName,
+        phoneNumber: txn.crAcc,
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter!)
+            : null,
+      );
+    } else if (transTypeLower.contains('data')) {
+      // Handle data transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.subProduct?.product?.productName,
+        amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
+        accountNumber:
+            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+        network: txn.subProduct?.product?.productName,
+        phoneNumber: txn.crAcc,
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter!)
+            : null,
+      );
+    } else if (transTypeLower.contains('withdrawal')) {
+      // Handle withdrawal transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.transType,
+        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        accountNumber:
+            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter!)
+            : null,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore!)
+            : null,
+      );
+    } else if (transTypeLower.contains('fund_wallet')) {
+      // Handle fund wallet transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.transType,
+        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        accountNumber:
+            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+        paymentMethod: txn.paymentType ?? '',
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter)
+            : null,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore)
+            : null,
+      );
+    } else {
+      // Default case for other transaction types
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.transType ?? 'N/A',
+        amount: txn.transType != 'fund_wallet' && txn.transType != 'withdrawal'
+            ? CurrencyFormatter.format(txn.deductAmount ?? 0.0)
+            : CurrencyFormatter.format(txn.amount ?? 0.0),
+        accountNumber:
+            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+      );
+    }
 
     context.showPopUp(
       color: Colors.transparent,
@@ -205,6 +310,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
               isDismissable: true,
             );
         },
+        onClose: () => context.pop(),
       ),
       isDismissable: true,
     );

@@ -57,7 +57,8 @@ class ServiceListItem extends ConsumerWidget {
             children: [
               Text(
                 title!,
-                style: context.textTheme.bodyMedium!.copyWith(fontSize: 14.sp),
+                style: context.textTheme.bodyMedium,
+                // .copyWith(fontSize: 14.sp),
               ),
               6.verticalSpace,
               Row(
@@ -74,7 +75,7 @@ class ServiceListItem extends ConsumerWidget {
                   Text(
                     '  -  $date',
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      // fontSize: 12.sp,
                       color: AppColors.dateColor,
                     ),
                   ),
@@ -86,7 +87,7 @@ class ServiceListItem extends ConsumerWidget {
         Text(
           amount,
           style: context.textTheme.bodyMedium!.copyWith(
-            fontSize: 14.sp,
+            // fontSize: 14.sp,
             fontWeight: FontWeight.w500,
           ),
         ),

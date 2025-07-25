@@ -14,6 +14,7 @@ import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -101,7 +102,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   validateFunction: Validators.validateNigerianPhoneNumber(),
                   keyboardType: TextInputType.phone,
                   textInputAction: TextInputAction.next,
-                  inputFormatters: [NumberInputFormatter()],
+                  inputFormatters: [
+                    NumberInputFormatter(),
+                    LengthLimitingTextInputFormatter(
+                        10), // Limits input to 10 digits
+                  ],
                   prefixIcon: Padding(
                     padding: context.symmetricPadding(24, 12),
                     child: Text('+234', style: context.textTheme.bodyMedium),

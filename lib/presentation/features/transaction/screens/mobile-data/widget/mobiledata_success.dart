@@ -18,19 +18,25 @@ class DataSubscriptionSuccessResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BundlegramScaffold(
-      sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
-      body: ResultWidget(
-        appIcon: AppSvgIcon(
-          path: Assets.svgs.successfulIllustration,
+    return WillPopScope(
+      onWillPop: () async {
+        context.pushReplacement(RouteConstants.dashboard);
+        return false;
+      },
+      child: BundlegramScaffold(
+        sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
+        body: ResultWidget(
+          appIcon: AppSvgIcon(
+            path: Assets.svgs.successfulIllustration,
+          ),
+          title: 'Data subscription successful!',
+          subText:
+              'Your data subscription of ${dataValue} to ${beneficiary} was successful.',
+          buttonText: 'Go to home',
+          onPressed: () {
+            context.pushReplacement(RouteConstants.dashboard);
+          },
         ),
-        title: 'Data subscription successful!',
-        subText:
-            'Your data subscription of ${dataValue} to ${beneficiary} was successful.',
-        buttonText: 'Go to home',
-        onPressed: () {
-          context.pushReplacement(RouteConstants.dashboard);
-        },
       ),
     );
   }

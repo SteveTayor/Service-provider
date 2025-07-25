@@ -74,6 +74,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/ibedc.png
   AssetGenImage get ibedc => const AssetGenImage('assets/images/ibedc.png');
 
+  /// File path: assets/images/ic_launcher-playstore.png
+  AssetGenImage get icLauncherPlaystore =>
+      const AssetGenImage('assets/images/ic_launcher-playstore.png');
+
   /// File path: assets/images/ikejaPhcn.png
   AssetGenImage get ikejaPhcn =>
       const AssetGenImage('assets/images/ikejaPhcn.png');
@@ -146,6 +150,7 @@ class $AssetsImagesGen {
         glo,
         gotv,
         ibedc,
+        icLauncherPlaystore,
         ikejaPhcn,
         jamb,
         logo,
@@ -329,6 +334,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/box.svg
   String get box => 'assets/svgs/box.svg';
+
+  /// File path: assets/svgs/bundlegram_white_logo.svg
+  String get bundlegramWhiteLogo => 'assets/svgs/bundlegram_white_logo.svg';
 
   /// File path: assets/svgs/bundlegramagent.svg
   String get bundlegramagent => 'assets/svgs/bundlegramagent.svg';
@@ -576,6 +584,7 @@ class $AssetsSvgsGen {
         becomeagent,
         betting,
         box,
+        bundlegramWhiteLogo,
         bundlegramagent,
         buydata,
         cableTv,

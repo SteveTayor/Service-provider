@@ -159,7 +159,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 );
               },
             ),
-            45.verticalSpace,
+            40.verticalSpace,
             if (walletTxns == null || walletTxns.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 32),
@@ -169,6 +169,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               RecentTransactionWidget(
                 SizedBox(height: 20),
               ),
+            35.verticalSpace,
           ],
         ),
       ),

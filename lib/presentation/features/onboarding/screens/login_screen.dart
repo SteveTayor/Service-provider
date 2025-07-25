@@ -15,11 +15,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  @override
+  Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     final ctrl = ref.read(loginProvider);
     return BundlegramScaffold(
@@ -40,7 +44,7 @@ class LoginScreen extends ConsumerWidget {
                     'No account yet? ',
                     style: context.textTheme.bodySmall!.copyWith(
                       color: AppColors.grey33,
-                      fontSize: 16.sp,
+                      // fontSize: 16.sp,
                     ),
                   ),
                   InkWell(
@@ -50,7 +54,7 @@ class LoginScreen extends ConsumerWidget {
                     child: Text(
                       'Sign up.',
                       style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 16.sp,
+                        // fontSize: 16.sp,
                         color: AppColors.primaryColor,
                       ),
                     ),
@@ -78,7 +82,7 @@ class LoginScreen extends ConsumerWidget {
                   Text(
                     'Remember me',
                     style: context.textTheme.bodySmall!.copyWith(
-                      fontSize: 16.sp,
+                      // fontSize: 16.sp,
                       color: AppColors.grey83,
                     ),
                   ),
@@ -90,7 +94,7 @@ class LoginScreen extends ConsumerWidget {
                     child: Text(
                       'Forget Password?',
                       style: context.textTheme.bodyMedium!.copyWith(
-                        fontSize: 16.sp,
+                        // fontSize: 16.sp,
                         color: AppColors.primaryColor,
                       ),
                     ),
@@ -109,23 +113,21 @@ class LoginScreen extends ConsumerWidget {
                   textInputAction: TextInputAction.next,
                 ),
                 AppTextField(
-                  obscureText: prov.showPassword,
                   hintText: 'Password',
                   controller: ctrl.passwordCtrl,
-                  suffixIcon: prov.showPassword
-                      ? AppSvgIcon(
-                          path: Assets.svgs.eye,
-                          fit: BoxFit.scaleDown,
-                          onTap: ctrl.togglePasswordVisibility,
-                        )
-                      : const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.visibility_off,
-                            size: 24,
-                          ),
-                        ),
-                  validateFunction: Validators.password(),
+                  obscureText: prov.showPasswrd,
+                  suffixIcon: GestureDetector(
+                    onTap: () =>
+                        setState(() => prov.showPasswrd = !prov.showPasswrd),
+                    // onTap: () => ctrl.togglePasswordVisibility,
+                    child: Icon(
+                      prov.showPasswrd
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColors.grey33,
+                      size: 24,
+                    ),
+                  ),
                   onChange: (value) => ctrl.validate(),
                 ),
               ],

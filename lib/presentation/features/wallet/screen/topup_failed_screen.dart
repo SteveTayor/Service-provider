@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -22,16 +23,23 @@ class FailedResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BundlegramScaffold(
-      sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
-      body: ResultWidget(
-        appIcon: AppSvgIcon(
-          path: Assets.svgs.failedIllustration,
+    return WillPopScope(
+      onWillPop: () async {
+        context.pushReplacement(RouteConstants.dashboard);
+        return false;
+      },
+      child: BundlegramScaffold(
+        sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
+        body: ResultWidget(
+          appIcon: AppSvgIcon(
+            path: Assets.svgs.failedIllustration,
+          ),
+          title: title,
+          subText: 'Your ${serviceContent} failed. $errorMessage',
+          buttonText: 'Retry',
+          onPressed: onRetry ??
+              () => context.pushReplacement(RouteConstants.dashboard),
         ),
-        title: title,
-        subText: 'Your ${serviceContent} failed. $errorMessage',
-        buttonText: 'Retry',
-        onPressed: onRetry ?? () => context.pop(),
       ),
     );
   }

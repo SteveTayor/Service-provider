@@ -21,49 +21,61 @@ TransactionReceiptData _$TransactionReceiptDataFromJson(
 
 /// @nodoc
 mixin _$TransactionReceiptData {
-  String? get transactionId => throw _privateConstructorUsedError;
-  String? get date => throw _privateConstructorUsedError;
-  String? get time => throw _privateConstructorUsedError;
-  String? get type => throw _privateConstructorUsedError;
-  String? get amount => throw _privateConstructorUsedError;
-  String? get bankName => throw _privateConstructorUsedError;
-  String? get accountNumber => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
-  String? get description => throw _privateConstructorUsedError;
-  String? get reference => throw _privateConstructorUsedError;
+  String? get transactionId =>
+      throw _privateConstructorUsedError; // Unique identifier for the transaction
+  String? get date =>
+      throw _privateConstructorUsedError; // Date of the transaction
+  String? get time =>
+      throw _privateConstructorUsedError; // Time of the transaction
+  String? get type =>
+      throw _privateConstructorUsedError; // Type of transaction (e.g., Mobile data, Top-up, Airtime)
+  String? get amount =>
+      throw _privateConstructorUsedError; // Transaction amount
+  String? get bankName =>
+      throw _privateConstructorUsedError; // Name of the bank (if applicable)
+  String? get accountNumber =>
+      throw _privateConstructorUsedError; // Account number or name (e.g., used as account name for withdrawal)
+  String get status =>
+      throw _privateConstructorUsedError; // Status of the transaction (e.g., Successful, Failed)
+  String? get description =>
+      throw _privateConstructorUsedError; // Additional description of the transaction
+  String? get reference =>
+      throw _privateConstructorUsedError; // Reference number for the transaction
   String? get beneficiary =>
-      throw _privateConstructorUsedError; // e.g., phone number for airtime
+      throw _privateConstructorUsedError; // Beneficiary details (e.g., phone number for airtime)
   String? get provider =>
-      throw _privateConstructorUsedError; // e.g., MTN, Startimes, Eko PHCN
+      throw _privateConstructorUsedError; // Service provider (e.g., MTN, Startimes)
   String? get meterType =>
-      throw _privateConstructorUsedError; // e.g., Prepaid/Postpaid for electricity
+      throw _privateConstructorUsedError; // Meter type (e.g., Prepaid/Postpaid for electricity)
   String? get meterNumber =>
-      throw _privateConstructorUsedError; // e.g., electricity meter number
+      throw _privateConstructorUsedError; // Meter number (e.g., for electricity)
   String? get smartCardNumber =>
-      throw _privateConstructorUsedError; // e.g., for cable TV
+      throw _privateConstructorUsedError; // Smart card number (e.g., for cable TV)
   String? get package =>
-      throw _privateConstructorUsedError; // e.g., Startimes Plus WEB ACCESS
+      throw _privateConstructorUsedError; // Package details (e.g., Startimes Plus)
   String? get userBalance =>
-      throw _privateConstructorUsedError; // e.g., user's balance after transaction
+      throw _privateConstructorUsedError; // User's balance after the transaction
   String? get paymentMethod =>
-      throw _privateConstructorUsedError; // e.g., Wallet, Bank Transfer
+      throw _privateConstructorUsedError; // Payment method (e.g., Wallet, Monnify)
   String? get agentName =>
-      throw _privateConstructorUsedError; // e.g., for bulk e-PIN
+      throw _privateConstructorUsedError; // Agent name (e.g., for bulk e-PIN)
   String? get agentEmail =>
-      throw _privateConstructorUsedError; // e.g., for bulk e-PIN
+      throw _privateConstructorUsedError; // Agent email (e.g., for bulk e-PIN)
   String? get agentPhoneNumber =>
-      throw _privateConstructorUsedError; // e.g., for bulk e-PIN
+      throw _privateConstructorUsedError; // Agent phone number (e.g., for bulk e-PIN)
   String? get businessName =>
-      throw _privateConstructorUsedError; // e.g., for bulk e-PIN
+      throw _privateConstructorUsedError; // Business name (e.g., for bulk e-PIN)
   String? get network =>
-      throw _privateConstructorUsedError; // e.g., MTN, Glo for bulk e-PIN or data
+      throw _privateConstructorUsedError; // Network provider (e.g., MTN, Glo)
   String? get quantity =>
-      throw _privateConstructorUsedError; // e.g., for bulk e-PIN
+      throw _privateConstructorUsedError; // Quantity (e.g., for bulk e-PIN)
   String? get subProduct =>
-      throw _privateConstructorUsedError; // e.g., for education transactions
+      throw _privateConstructorUsedError; // Sub-product details
   String? get dataBundle =>
-      throw _privateConstructorUsedError; // e.g., 100MB 1 Day for data purchase
-  String? get phoneNumber => throw _privateConstructorUsedError;
+      throw _privateConstructorUsedError; // Data bundle details (e.g., 100MB 1 Day)
+  String? get phoneNumber =>
+      throw _privateConstructorUsedError; // Phone number (e.g., for data or airtime)
+  String? get balanceBefore => throw _privateConstructorUsedError;
 
   /// Serializes this TransactionReceiptData to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -108,7 +120,8 @@ abstract class $TransactionReceiptDataCopyWith<$Res> {
       String? quantity,
       String? subProduct,
       String? dataBundle,
-      String? phoneNumber});
+      String? phoneNumber,
+      String? balanceBefore});
 }
 
 /// @nodoc
@@ -154,6 +167,7 @@ class _$TransactionReceiptDataCopyWithImpl<$Res,
     Object? subProduct = freezed,
     Object? dataBundle = freezed,
     Object? phoneNumber = freezed,
+    Object? balanceBefore = freezed,
   }) {
     return _then(_value.copyWith(
       transactionId: freezed == transactionId
@@ -264,6 +278,10 @@ class _$TransactionReceiptDataCopyWithImpl<$Res,
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
               as String?,
+      balanceBefore: freezed == balanceBefore
+          ? _value.balanceBefore
+          : balanceBefore // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -304,7 +322,8 @@ abstract class _$$TransactionReceiptDataImplCopyWith<$Res>
       String? quantity,
       String? subProduct,
       String? dataBundle,
-      String? phoneNumber});
+      String? phoneNumber,
+      String? balanceBefore});
 }
 
 /// @nodoc
@@ -349,6 +368,7 @@ class __$$TransactionReceiptDataImplCopyWithImpl<$Res>
     Object? subProduct = freezed,
     Object? dataBundle = freezed,
     Object? phoneNumber = freezed,
+    Object? balanceBefore = freezed,
   }) {
     return _then(_$TransactionReceiptDataImpl(
       transactionId: freezed == transactionId
@@ -459,6 +479,10 @@ class __$$TransactionReceiptDataImplCopyWithImpl<$Res>
           ? _value.phoneNumber
           : phoneNumber // ignore: cast_nullable_to_non_nullable
               as String?,
+      balanceBefore: freezed == balanceBefore
+          ? _value.balanceBefore
+          : balanceBefore // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -493,85 +517,99 @@ class _$TransactionReceiptDataImpl implements _TransactionReceiptData {
       this.quantity,
       this.subProduct,
       this.dataBundle,
-      this.phoneNumber});
+      this.phoneNumber,
+      this.balanceBefore});
 
   factory _$TransactionReceiptDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$TransactionReceiptDataImplFromJson(json);
 
   @override
   final String? transactionId;
+// Unique identifier for the transaction
   @override
   final String? date;
+// Date of the transaction
   @override
   final String? time;
+// Time of the transaction
   @override
   final String? type;
+// Type of transaction (e.g., Mobile data, Top-up, Airtime)
   @override
   final String? amount;
+// Transaction amount
   @override
   final String? bankName;
+// Name of the bank (if applicable)
   @override
   final String? accountNumber;
+// Account number or name (e.g., used as account name for withdrawal)
   @override
   final String status;
+// Status of the transaction (e.g., Successful, Failed)
   @override
   final String? description;
+// Additional description of the transaction
   @override
   final String? reference;
+// Reference number for the transaction
   @override
   final String? beneficiary;
-// e.g., phone number for airtime
+// Beneficiary details (e.g., phone number for airtime)
   @override
   final String? provider;
-// e.g., MTN, Startimes, Eko PHCN
+// Service provider (e.g., MTN, Startimes)
   @override
   final String? meterType;
-// e.g., Prepaid/Postpaid for electricity
+// Meter type (e.g., Prepaid/Postpaid for electricity)
   @override
   final String? meterNumber;
-// e.g., electricity meter number
+// Meter number (e.g., for electricity)
   @override
   final String? smartCardNumber;
-// e.g., for cable TV
+// Smart card number (e.g., for cable TV)
   @override
   final String? package;
-// e.g., Startimes Plus WEB ACCESS
+// Package details (e.g., Startimes Plus)
   @override
   final String? userBalance;
-// e.g., user's balance after transaction
+// User's balance after the transaction
   @override
   final String? paymentMethod;
-// e.g., Wallet, Bank Transfer
+// Payment method (e.g., Wallet, Monnify)
   @override
   final String? agentName;
-// e.g., for bulk e-PIN
+// Agent name (e.g., for bulk e-PIN)
   @override
   final String? agentEmail;
-// e.g., for bulk e-PIN
+// Agent email (e.g., for bulk e-PIN)
   @override
   final String? agentPhoneNumber;
-// e.g., for bulk e-PIN
+// Agent phone number (e.g., for bulk e-PIN)
   @override
   final String? businessName;
-// e.g., for bulk e-PIN
+// Business name (e.g., for bulk e-PIN)
   @override
   final String? network;
-// e.g., MTN, Glo for bulk e-PIN or data
+// Network provider (e.g., MTN, Glo)
   @override
   final String? quantity;
-// e.g., for bulk e-PIN
+// Quantity (e.g., for bulk e-PIN)
   @override
   final String? subProduct;
-// e.g., for education transactions
+// Sub-product details
   @override
   final String? dataBundle;
-// e.g., 100MB 1 Day for data purchase
+// Data bundle details (e.g., 100MB 1 Day)
   @override
   final String? phoneNumber;
+// Phone number (e.g., for data or airtime)
+  @override
+  final String? balanceBefore;
 
   @override
   String toString() {
-    return 'TransactionReceiptData(transactionId: $transactionId, date: $date, time: $time, type: $type, amount: $amount, bankName: $bankName, accountNumber: $accountNumber, status: $status, description: $description, reference: $reference, beneficiary: $beneficiary, provider: $provider, meterType: $meterType, meterNumber: $meterNumber, smartCardNumber: $smartCardNumber, package: $package, userBalance: $userBalance, paymentMethod: $paymentMethod, agentName: $agentName, agentEmail: $agentEmail, agentPhoneNumber: $agentPhoneNumber, businessName: $businessName, network: $network, quantity: $quantity, subProduct: $subProduct, dataBundle: $dataBundle, phoneNumber: $phoneNumber)';
+    return 'TransactionReceiptData(transactionId: $transactionId, date: $date, time: $time, type: $type, amount: $amount, bankName: $bankName, accountNumber: $accountNumber, status: $status, description: $description, reference: $reference, beneficiary: $beneficiary, provider: $provider, meterType: $meterType, meterNumber: $meterNumber, smartCardNumber: $smartCardNumber, package: $package, userBalance: $userBalance, paymentMethod: $paymentMethod, agentName: $agentName, agentEmail: $agentEmail, agentPhoneNumber: $agentPhoneNumber, businessName: $businessName, network: $network, quantity: $quantity, subProduct: $subProduct, dataBundle: $dataBundle, phoneNumber: $phoneNumber, balanceBefore: $balanceBefore)';
   }
 
   @override
@@ -625,7 +663,9 @@ class _$TransactionReceiptDataImpl implements _TransactionReceiptData {
             (identical(other.dataBundle, dataBundle) ||
                 other.dataBundle == dataBundle) &&
             (identical(other.phoneNumber, phoneNumber) ||
-                other.phoneNumber == phoneNumber));
+                other.phoneNumber == phoneNumber) &&
+            (identical(other.balanceBefore, balanceBefore) ||
+                other.balanceBefore == balanceBefore));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -658,7 +698,8 @@ class _$TransactionReceiptDataImpl implements _TransactionReceiptData {
         quantity,
         subProduct,
         dataBundle,
-        phoneNumber
+        phoneNumber,
+        balanceBefore
       ]);
 
   /// Create a copy of TransactionReceiptData
@@ -706,65 +747,70 @@ abstract class _TransactionReceiptData implements TransactionReceiptData {
       final String? quantity,
       final String? subProduct,
       final String? dataBundle,
-      final String? phoneNumber}) = _$TransactionReceiptDataImpl;
+      final String? phoneNumber,
+      final String? balanceBefore}) = _$TransactionReceiptDataImpl;
 
   factory _TransactionReceiptData.fromJson(Map<String, dynamic> json) =
       _$TransactionReceiptDataImpl.fromJson;
 
   @override
-  String? get transactionId;
+  String? get transactionId; // Unique identifier for the transaction
   @override
-  String? get date;
+  String? get date; // Date of the transaction
   @override
-  String? get time;
+  String? get time; // Time of the transaction
   @override
-  String? get type;
+  String? get type; // Type of transaction (e.g., Mobile data, Top-up, Airtime)
   @override
-  String? get amount;
+  String? get amount; // Transaction amount
   @override
-  String? get bankName;
+  String? get bankName; // Name of the bank (if applicable)
   @override
-  String? get accountNumber;
+  String?
+      get accountNumber; // Account number or name (e.g., used as account name for withdrawal)
   @override
-  String get status;
+  String get status; // Status of the transaction (e.g., Successful, Failed)
   @override
-  String? get description;
+  String? get description; // Additional description of the transaction
   @override
-  String? get reference;
+  String? get reference; // Reference number for the transaction
   @override
-  String? get beneficiary; // e.g., phone number for airtime
+  String?
+      get beneficiary; // Beneficiary details (e.g., phone number for airtime)
   @override
-  String? get provider; // e.g., MTN, Startimes, Eko PHCN
+  String? get provider; // Service provider (e.g., MTN, Startimes)
   @override
-  String? get meterType; // e.g., Prepaid/Postpaid for electricity
+  String? get meterType; // Meter type (e.g., Prepaid/Postpaid for electricity)
   @override
-  String? get meterNumber; // e.g., electricity meter number
+  String? get meterNumber; // Meter number (e.g., for electricity)
   @override
-  String? get smartCardNumber; // e.g., for cable TV
+  String? get smartCardNumber; // Smart card number (e.g., for cable TV)
   @override
-  String? get package; // e.g., Startimes Plus WEB ACCESS
+  String? get package; // Package details (e.g., Startimes Plus)
   @override
-  String? get userBalance; // e.g., user's balance after transaction
+  String? get userBalance; // User's balance after the transaction
   @override
-  String? get paymentMethod; // e.g., Wallet, Bank Transfer
+  String? get paymentMethod; // Payment method (e.g., Wallet, Monnify)
   @override
-  String? get agentName; // e.g., for bulk e-PIN
+  String? get agentName; // Agent name (e.g., for bulk e-PIN)
   @override
-  String? get agentEmail; // e.g., for bulk e-PIN
+  String? get agentEmail; // Agent email (e.g., for bulk e-PIN)
   @override
-  String? get agentPhoneNumber; // e.g., for bulk e-PIN
+  String? get agentPhoneNumber; // Agent phone number (e.g., for bulk e-PIN)
   @override
-  String? get businessName; // e.g., for bulk e-PIN
+  String? get businessName; // Business name (e.g., for bulk e-PIN)
   @override
-  String? get network; // e.g., MTN, Glo for bulk e-PIN or data
+  String? get network; // Network provider (e.g., MTN, Glo)
   @override
-  String? get quantity; // e.g., for bulk e-PIN
+  String? get quantity; // Quantity (e.g., for bulk e-PIN)
   @override
-  String? get subProduct; // e.g., for education transactions
+  String? get subProduct; // Sub-product details
   @override
-  String? get dataBundle; // e.g., 100MB 1 Day for data purchase
+  String? get dataBundle; // Data bundle details (e.g., 100MB 1 Day)
   @override
-  String? get phoneNumber;
+  String? get phoneNumber; // Phone number (e.g., for data or airtime)
+  @override
+  String? get balanceBefore;
 
   /// Create a copy of TransactionReceiptData
   /// with the given fields replaced by the non-null parameter values.

@@ -50,11 +50,11 @@ class LoginProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get rememberMe => _rememberMe;
-  bool _showPassword = true;
-  bool get showPassword => _showPassword;
+  bool showPasswrd = true;
+  bool get showPassword => showPasswrd;
 
   void togglePasswordVisibility() {
-    _showPassword = !_showPassword;
+    showPasswrd = !showPasswrd;
     notifyListeners();
   }
 
@@ -146,15 +146,15 @@ class LoginProvider extends ChangeNotifier {
         }
 
         await _storage.setAuthToken(token);
-        await _storage.setPassword(passwordCtrl.text.trim()); // Save password
+        await _storage.setPassword(passwordCtrl.text.trim());
 
         if (_rememberMe) {
           await _storage.setRememberedEmail(emailCtrl.text.trim());
         } else {
           await _storage.clearRememberedEmail();
         }
-        context.showLoadingDialog(message: 'Collecting device info...');
-        // Check if device info already exists
+
+        // Device info collection
         String macAddress = 'unknown';
         String ipAddress = '0.0.0.0';
         String latitude = '0.0';
@@ -165,17 +165,14 @@ class LoginProvider extends ChangeNotifier {
         final isDeviceInfoValid = _isDeviceInfoValid(existingDeviceInfo);
 
         if (!isDeviceInfoValid) {
-          // Collect device info only if not valid or missing
-          unawaited(
-              context.showLoadingDialog(message: 'Collecting device info...'));
+          // unawaited(
+          //     context.showLoadingDialog(message: 'Collecting device info...'));
           try {
-            // Request location permission
             final locationStatus = await Permission.location.request();
             if (!locationStatus.isGranted) {
               throw Exception('Location permission denied');
             }
 
-            // Get device info
             final deviceInfo = DeviceInfoPlugin();
             if (Platform.isAndroid) {
               final androidInfo = await deviceInfo.androidInfo;
@@ -187,17 +184,14 @@ class LoginProvider extends ChangeNotifier {
               platform = 'iOS';
             }
 
-            // Get IP address
             final info = NetworkInfo();
             ipAddress = await info.getWifiIP() ?? '0.0.0.0';
 
-            // Get geolocation
             final position = await Geolocator.getCurrentPosition(
                 desiredAccuracy: LocationAccuracy.high);
             latitude = position.latitude.toString();
             longitude = position.longitude.toString();
 
-            // Store device info
             await _storage.setDeviceInfo(
               macAddress: macAddress,
               ipAddress: ipAddress,
@@ -207,101 +201,218 @@ class LoginProvider extends ChangeNotifier {
             );
           } catch (e) {
             context.showErrorSnackBar('Failed to collect device info: $e');
-            // Optionally proceed without device info or handle as needed
           }
-        } else {
-          // Use existing device info
-          macAddress = existingDeviceInfo['macAddress']!;
-          ipAddress = existingDeviceInfo['ipAddress']!;
-          latitude = existingDeviceInfo['latitude']!;
-          longitude = existingDeviceInfo['longitude']!;
-          platform = existingDeviceInfo['platform']!;
-        }
-
-        // Proceed with fetching profile and banks
-        unawaited(context.showLoadingDialog(message: 'Fetching profile...'));
-        final profileRes = await _api.getProfile(token);
-        if (profileRes.isLeft()) {
-          context
-            ..dismissDialog()
-            ..showErrorSnackBar("Failed to fetch profile");
-          _setLoading(false);
-          return;
-        }
-
-        unawaited(context.showLoadingDialog(message: 'Fetching banks...'));
-        final bankRes = await _api.getAllBanks(token);
-        if (bankRes.isLeft()) {
-          context
-            ..dismissDialog()
-            ..showErrorSnackBar("Failed to fetch banks");
-          _setLoading(false);
-          return;
         }
 
         context.dismissDialog();
         _setLoading(false);
+
+        // Check if username creation is required
+        final message = loginData.message;
+        if (message != null &&
+            message == "Please create a username to continue") {
+          context.go(
+            RouteConstants.chooseUsername,
+            extra: {'fromLogin': true},
+          );
+          return;
+        }
+
+        // Proceed to dashboard if username is not required
         context.pushReplacement(RouteConstants.dashboard);
       },
-
-      // // Check if username creation is required
-      // // final dataStatus = loginData.data;
-      // final message = loginData.message;
-      // if (message != null &&
-      //     message == "Please create a username to continue") {
-      //   context.dismissDialog();
-      //   _setLoading(false);
-      //   // Navigate to ChooseUsernameScreen with fromLogin flag
-      //   context.go(
-      //     RouteConstants.chooseUsername,
-      //     extra: {'fromLogin': true},
-      //   );
-      //   return;
-      // }
-
-      // // Proceed with fetching data if username is not required
-      // context
-      //   ..dismissDialog()
-      //   ..showLoadingDialog(message: 'Fetching profile...');
-      // final profileRes = await _api.getProfile(token);
-      // if (profileRes.isLeft()) {
-      //   context
-      //     ..dismissDialog()
-      //     ..showErrorSnackBar("Failed to fetch profile");
-      //   _setLoading(false);
-      //   return;
-      // }
-
-      // context
-      //   ..dismissDialog()
-      //   ..showLoadingDialog(message: 'Fetching banks...');
-      // final bankRes = await _api.getAllBanks(token);
-      // if (bankRes.isLeft()) {
-      //   context
-      //     ..dismissDialog()
-      //     ..showErrorSnackBar("Failed to fetch banks");
-      //   _setLoading(false);
-      //   return;
-      // }
-
-      // context
-      //   ..dismissDialog()
-      //   ..showLoadingDialog(message: 'Fetching wallet...');
-      // final walletRes = await _api.getWallet(token);
-      // if (walletRes.isLeft()) {
-      //   context
-      //     ..dismissDialog()
-      //     ..showErrorSnackBar("Failed to fetch wallet");
-      //   _setLoading(false);
-      //   return;
-      // }
-
-      // context.dismissDialog();
-      // _setLoading(false);
-      // context.pushReplacement(RouteConstants.dashboard);
-      // },
     );
   }
+  // Future<void> submit(BuildContext context) async {
+  //   if (!_isValid) return;
+
+  //   _setError(null);
+  //   _setLoading(true);
+
+  //   final request = LoginRequest(
+  //     email: emailCtrl.text.trim(),
+  //     password: passwordCtrl.text.trim(),
+  //   );
+
+  //   unawaited(context.showLoadingDialog(message: 'Logging in...'));
+
+  //   final loginResult = await _api.login(request);
+
+  //   await loginResult.fold(
+  //     (fail) async {
+  //       context.dismissDialog();
+  //       final message = fail.properties.isNotEmpty
+  //           ? fail.properties.join('\n')
+  //           : 'Login failed';
+  //       context.showErrorSnackBar(message);
+  //       _setLoading(false);
+  //     },
+  //     (loginData) async {
+  //       final token = loginData.data?.token;
+  //       if (token == null) {
+  //         context
+  //           ..dismissDialog()
+  //           ..showErrorSnackBar("Token missing in response");
+  //         _setLoading(false);
+  //         return;
+  //       }
+
+  //       await _storage.setAuthToken(token);
+  //       await _storage.setPassword(passwordCtrl.text.trim()); // Save password
+
+  //       if (_rememberMe) {
+  //         await _storage.setRememberedEmail(emailCtrl.text.trim());
+  //       } else {
+  //         await _storage.clearRememberedEmail();
+  //       }
+  //       context.showLoadingDialog(message: 'Collecting device info...');
+  //       // Check if device info already exists
+  //       String macAddress = 'unknown';
+  //       String ipAddress = '0.0.0.0';
+  //       String latitude = '0.0';
+  //       String longitude = '0.0';
+  //       String platform = 'unknown';
+
+  //       final existingDeviceInfo = await _storage.getDeviceInfo();
+  //       final isDeviceInfoValid = _isDeviceInfoValid(existingDeviceInfo);
+
+  //       if (!isDeviceInfoValid) {
+  //         // Collect device info only if not valid or missing
+  //         unawaited(
+  //             context.showLoadingDialog(message: 'Collecting device info...'));
+  //         try {
+  //           // Request location permission
+  //           final locationStatus = await Permission.location.request();
+  //           if (!locationStatus.isGranted) {
+  //             throw Exception('Location permission denied');
+  //           }
+
+  //           // Get device info
+  //           final deviceInfo = DeviceInfoPlugin();
+  //           if (Platform.isAndroid) {
+  //             final androidInfo = await deviceInfo.androidInfo;
+  //             macAddress = androidInfo.id ?? 'unknown';
+  //             platform = 'android';
+  //           } else if (Platform.isIOS) {
+  //             final iosInfo = await deviceInfo.iosInfo;
+  //             macAddress = iosInfo.identifierForVendor ?? 'unknown';
+  //             platform = 'iOS';
+  //           }
+
+  //           // Get IP address
+  //           final info = NetworkInfo();
+  //           ipAddress = await info.getWifiIP() ?? '0.0.0.0';
+
+  //           // Get geolocation
+  //           final position = await Geolocator.getCurrentPosition(
+  //               desiredAccuracy: LocationAccuracy.high);
+  //           latitude = position.latitude.toString();
+  //           longitude = position.longitude.toString();
+
+  //           // Store device info
+  //           await _storage.setDeviceInfo(
+  //             macAddress: macAddress,
+  //             ipAddress: ipAddress,
+  //             latitude: latitude,
+  //             longitude: longitude,
+  //             platform: platform,
+  //           );
+  //         } catch (e) {
+  //           context.showErrorSnackBar('Failed to collect device info: $e');
+  //           // Optionally proceed without device info or handle as needed
+  //         }
+  //       } else {
+  //         // Use existing device info
+  //         macAddress = existingDeviceInfo['macAddress']!;
+  //         ipAddress = existingDeviceInfo['ipAddress']!;
+  //         latitude = existingDeviceInfo['latitude']!;
+  //         longitude = existingDeviceInfo['longitude']!;
+  //         platform = existingDeviceInfo['platform']!;
+  //       }
+
+  //       // Proceed with fetching profile and banks
+  //       unawaited(context.showLoadingDialog(message: 'Fetching profile...'));
+  //       final profileRes = await _api.getProfile(token);
+  //       if (profileRes.isLeft()) {
+  //         context
+  //           ..dismissDialog()
+  //           ..showErrorSnackBar("Failed to fetch profile");
+  //         _setLoading(false);
+  //         return;
+  //       }
+  //       // // Check if username creation is required
+  //       final dataStatus = loginData.data;
+  //       final message = loginData.message;
+  //       if (message != null &&
+  //           message == "Please create a username to continue") {
+  //         context.dismissDialog();
+  //         _setLoading(false);
+  //         // Navigate to ChooseUsernameScreen with fromLogin flag
+  //         context.go(
+  //           RouteConstants.chooseUsername,
+  //           extra: {'fromLogin': true},
+  //         );
+  //         return;
+  //       }
+
+  //       unawaited(context.showLoadingDialog(message: 'Fetching banks...'));
+  //       final bankRes = await _api.getAllBanks(token);
+  //       if (bankRes.isLeft()) {
+  //         context
+  //           ..dismissDialog()
+  //           ..showErrorSnackBar("Failed to fetch banks");
+  //         _setLoading(false);
+  //         return;
+  //       }
+
+  //       context.dismissDialog();
+  //       _setLoading(false);
+  //       context.pushReplacement(RouteConstants.dashboard);
+  //     },
+
+  //     // // Proceed with fetching data if username is not required
+  //     // context
+  //     //   ..dismissDialog()
+  //     //   ..showLoadingDialog(message: 'Fetching profile...');
+  //     // final profileRes = await _api.getProfile(token);
+  //     // if (profileRes.isLeft()) {
+  //     //   context
+  //     //     ..dismissDialog()
+  //     //     ..showErrorSnackBar("Failed to fetch profile");
+  //     //   _setLoading(false);
+  //     //   return;
+  //     // }
+
+  //     // context
+  //     //   ..dismissDialog()
+  //     //   ..showLoadingDialog(message: 'Fetching banks...');
+  //     // final bankRes = await _api.getAllBanks(token);
+  //     // if (bankRes.isLeft()) {
+  //     //   context
+  //     //     ..dismissDialog()
+  //     //     ..showErrorSnackBar("Failed to fetch banks");
+  //     //   _setLoading(false);
+  //     //   return;
+  //     // }
+
+  //     // context
+  //     //   ..dismissDialog()
+  //     //   ..showLoadingDialog(message: 'Fetching wallet...');
+  //     // final walletRes = await _api.getWallet(token);
+  //     // if (walletRes.isLeft()) {
+  //     //   context
+  //     //     ..dismissDialog()
+  //     //     ..showErrorSnackBar("Failed to fetch wallet");
+  //     //   _setLoading(false);
+  //     //   return;
+  //     // }
+
+  //     // context.dismissDialog();
+  //     // _setLoading(false);
+  //     // context.pushReplacement(RouteConstants.dashboard);
+  //     // },
+  //   );
+  // }
 
   Future<void> logoutUser(BuildContext context) async {
     final token = await _storage.getAuthToken();

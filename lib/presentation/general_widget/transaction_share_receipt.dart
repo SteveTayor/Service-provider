@@ -32,10 +32,10 @@ class TransactionReceiptWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Main container for the transaction receipt popup
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Main receipt container
         Container(
           width: MediaQuery.of(context).size.width,
           height: 573.h,
@@ -47,7 +47,7 @@ class TransactionReceiptWidget extends StatelessWidget {
           child: Column(
             children: [
               _buildHeader(context),
-              40.verticalSpace,
+              30.verticalSpace,
               Expanded(child: _buildDetailsScrollView(context)),
               _buildBottomAction(),
             ],
@@ -59,6 +59,7 @@ class TransactionReceiptWidget extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    // Header with title and close button
     return Padding(
       padding: EdgeInsets.fromLTRB(24.w, 24.h, 16.w, 0),
       child: Row(
@@ -87,6 +88,7 @@ class TransactionReceiptWidget extends StatelessWidget {
   }
 
   Widget _buildDetailsScrollView(BuildContext context) {
+    // Scrollable area for transaction details
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Column(
@@ -99,28 +101,41 @@ class TransactionReceiptWidget extends StatelessWidget {
   }
 
   Widget _buildBottomAction() {
+    // Bottom section with share and close buttons
     return Column(
       children: [
         _buildDashedDivider(),
         8.verticalSpace,
-        if (showShareButton)
-          Padding(
-            padding: EdgeInsets.fromLTRB(24.w, 32.h, 24.w, 40.h),
-            child: BundlegramButton(
-              text: 'Share receipt',
-              width: double.infinity,
-              height: 48.h,
-              onPressed: onShareReceipt ?? () {},
-              buttonStyle: BundlegramButtonStyle.primary(),
-            ),
-          )
-        else
-          40.verticalSpace,
+        Padding(
+          padding: EdgeInsets.fromLTRB(24.w, 32.h, 24.w, 40.h),
+          child: Column(
+            children: [
+              if (showShareButton)
+                BundlegramButton(
+                  text: 'Share receipt',
+                  width: double.infinity,
+                  height: 35.h,
+                  onPressed: onShareReceipt ?? () {},
+                  buttonStyle: BundlegramButtonStyle.primary(),
+                ),
+              if (onClose != null) 16.verticalSpace,
+              if (onClose != null)
+                BundlegramButton(
+                  text: 'Close',
+                  width: double.infinity,
+                  height: 35.h,
+                  onPressed: onClose,
+                  buttonStyle: BundlegramButtonStyle.primary(),
+                ),
+            ],
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildDashedDivider() {
+    // Dashed line separator
     return SizedBox(
       width: double.infinity,
       height: 1.h,
@@ -129,6 +144,7 @@ class TransactionReceiptWidget extends StatelessWidget {
   }
 
   Widget _buildReceiptCutEdge() {
+    // Cut edge design at the top of the receipt
     return SizedBox(
       height: 10.h,
       width: double.infinity,
@@ -140,6 +156,7 @@ class TransactionReceiptWidget extends StatelessWidget {
   }
 
   List<Widget> _buildTransactionDetails(BuildContext context) {
+    // Build list of transaction detail items based on available data
     final List<Widget> details = [
       _TransactionDetailItem(
         label: 'Transaction ID',
@@ -148,15 +165,23 @@ class TransactionReceiptWidget extends StatelessWidget {
       ),
       _TransactionDetailItem(label: 'Date', value: data.date!),
       _TransactionDetailItem(label: 'Time', value: data.time!),
-      _TransactionDetailItem(label: 'Type', value: data.type!),
-      _TransactionDetailItem(
-        label: 'Amount',
-        value: data.amount!,
-      ),
-      if (data.bankName != null)
-        _TransactionDetailItem(label: 'Bank name', value: data.bankName!),
+      _TransactionDetailItem(label: 'Transaction type', value: data.type!),
+      if (data.paymentMethod != null)
+        _TransactionDetailItem(
+            label: 'Payment channel', value: data.paymentMethod!),
+      _TransactionDetailItem(label: 'Amount', value: data.amount!),
+      if (data.phoneNumber != null)
+        _TransactionDetailItem(label: 'Phone Number', value: data.phoneNumber!),
+      if (data.network != null)
+        _TransactionDetailItem(label: 'Network', value: data.network!),
       if (data.accountNumber != null)
         _TransactionDetailItem(label: 'Account', value: data.accountNumber!),
+      if (data.balanceBefore != null)
+        _TransactionDetailItem(
+            label: 'Balance Before', value: data.balanceBefore!),
+      if (data.userBalance != null)
+        _TransactionDetailItem(
+            label: 'Balance After', value: data.userBalance!),
       _TransactionDetailItem(
         label: 'Transaction status',
         value: data.status,
@@ -168,13 +193,14 @@ class TransactionReceiptWidget extends StatelessWidget {
 
     return details
         .map((item) => Padding(
-              padding: EdgeInsets.only(bottom: 24.h),
+              padding: EdgeInsets.only(bottom: 16.h),
               child: item,
             ))
         .toList();
   }
 
   Color _getStatusColor() {
+    // Determine color based on transaction status
     switch (data.status.toLowerCase()) {
       case 'successful':
       case 'completed':
@@ -209,23 +235,21 @@ class _TransactionDetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Row layout for label and value with optional copy icon
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Label
         Expanded(
           flex: 2,
           child: Text(
             label,
             style: context.textTheme.bodySmall?.copyWith(
-              fontSize: 14.sp,
+              fontSize: 12.sp,
               color: AppColors.grey33,
             ),
           ),
         ),
         16.horizontalSpace,
-
-        // Value + Copy
         Expanded(
           flex: 3,
           child: Row(
@@ -237,7 +261,7 @@ class _TransactionDetailItem extends StatelessWidget {
                   style: valueStyle ??
                       context.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
-                        fontSize: 14.sp,
+                        fontSize: 12.sp,
                         color: valueColor ?? AppColors.black,
                       ),
                   textAlign: TextAlign.right,
@@ -248,7 +272,6 @@ class _TransactionDetailItem extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     Clipboard.setData(ClipboardData(text: value));
-
                     navigatorKey.currentState!.context
                         .showCustomSnackBar("Copied Transaction ID");
                   },

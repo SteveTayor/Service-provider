@@ -1,39 +1,21 @@
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/utils/validators.dart';
+import 'package:bundlegram/presentation/features/setting/provider/change_password_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class ChangepasswordScreen extends StatefulWidget {
+class ChangepasswordScreen extends ConsumerWidget {
   const ChangepasswordScreen({super.key});
 
   @override
-  State<ChangepasswordScreen> createState() => _ChangepasswordScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final controller = ref.watch(changePasswordProvider);
 
-class _ChangepasswordScreenState extends State<ChangepasswordScreen> {
-  final _formKey = GlobalKey<FormState>();
-  bool _isFormValid = false;
-
-  validateform() {
-    setState(() {
-      _isFormValid = _formKey.currentState!.validate();
-    });
-    if (_isFormValid) {
-      // show a green success bar
-      context.showCustomSnackBar("Password has been updated!");
-      context.pop();
-    } else {
-      // show a red error bar
-      context.showErrorSnackBar("Please enter valid passwords.");
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(
         titleText: 'Change password',
@@ -43,28 +25,31 @@ class _ChangepasswordScreenState extends State<ChangepasswordScreen> {
           Flexible(
             child: AppForm(
               isExpanded: false,
-              isActive: _isFormValid,
+              isActive: controller.isFormValid,
               onPressed: () {
-                // context.go(RouteConstants.dashboard);
-                validateform();
+                controller.validateForm(context);
               },
               buttonText: 'Update password',
-              formKey: _formKey,
+              formKey: controller.formKey,
               children: [
                 AppTextField(
+                  controller: controller.currentPasswordController,
                   obscureText: true,
                   hintText: 'Current password',
-                  validateFunction: Validators.passcode(),
+                  // validateFunction: Validators.required(),
                 ),
                 AppTextField(
+                  controller: controller.newPasswordController,
                   obscureText: true,
                   hintText: 'New Password',
                   validateFunction: Validators.password(),
                 ),
                 AppTextField(
+                  controller: controller.confirmPasswordController,
                   obscureText: true,
                   hintText: 'New Password again',
-                  validateFunction: Validators.password(),
+                  validateFunction: Validators.confirmPass(
+                      controller.newPasswordController.text),
                 ),
               ],
             ),

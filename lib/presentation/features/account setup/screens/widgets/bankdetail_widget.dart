@@ -42,7 +42,7 @@ class BankdetailWidget extends StatelessWidget {
         Text(
           bank?.accountNumber ?? 'N/A',
           style: context.textTheme.titleLarge!.copyWith(
-            fontSize: 30.sp,
+            fontSize: 26.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -54,7 +54,7 @@ class BankdetailWidget extends StatelessWidget {
         ),
       ],
     ).withContainer(
-      padding: context.symmetricPadding(24, 24),
+      padding: context.symmetricPadding(20, 12),
       borderRadius: BorderRadius.circular(6.r),
       color: const Color(0xffF1F5FF),
     );
