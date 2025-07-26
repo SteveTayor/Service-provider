@@ -54,28 +54,28 @@ class ServiceListItem extends ConsumerWidget {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4,
             children: [
+              SizedBox(height: 2),
               Text(
                 title!,
-                style: context.textTheme.bodyMedium,
-                // .copyWith(fontSize: 14.sp),
+                style: context.textTheme.bodyMedium?.copyWith(fontSize: 14),
               ),
-              6.verticalSpace,
               Row(
                 children: [
                   Flexible(
                     child: Text(
                       status,
                       style: context.textTheme.bodySmall!.copyWith(
-                        // fontSize: 12.sp,
+                        fontSize: 12,
                         color: _getStatusColor(status),
                       ),
                     ),
                   ),
                   Text(
-                    '  -  $date',
+                    ' - $date',
                     style: TextStyle(
-                      // fontSize: 12.sp,
+                      fontSize: 12,
                       color: AppColors.dateColor,
                     ),
                   ),
@@ -87,7 +87,7 @@ class ServiceListItem extends ConsumerWidget {
         Text(
           amount,
           style: context.textTheme.bodyMedium!.copyWith(
-            // fontSize: 14.sp,
+            fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -106,7 +106,7 @@ class ServiceListItem extends ConsumerWidget {
     final txnDate = DateTime(date.year, date.month, date.day);
     if (txnDate == today) return 'Today';
     if (txnDate == yesterday) return 'Yesterday';
-    return DateFormat('MMMM d, yyyy').format(date);
+    return DateFormat('MMM d, yyyy').format(date); // e.g. Jul 26, 2025
   }
 
   Widget _getServiceIcon(String type) {

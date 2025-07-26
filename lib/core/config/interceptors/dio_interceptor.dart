@@ -80,7 +80,6 @@ final dioProvider = Provider<Dio>((ref) {
             }
           }
         }
-
         handler.next(error);
       },
     ),

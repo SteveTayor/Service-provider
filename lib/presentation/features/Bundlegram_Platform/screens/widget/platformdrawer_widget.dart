@@ -90,7 +90,7 @@ class PlatFormDrawer extends ConsumerWidget {
                       Text(
                         'Bundlegram agent',
                         style: context.textTheme.bodySmall!.copyWith(
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           color: AppColors.greyF5,
                         ),
                       ),

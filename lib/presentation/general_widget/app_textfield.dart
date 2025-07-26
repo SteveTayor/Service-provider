@@ -140,7 +140,7 @@ class _AppTextFieldState extends State<AppTextField> {
             },
             style: widget.textStyle ??
                 context.textTheme.bodySmall?.copyWith(
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   color: widget.cursorColor ?? AppColors.grey19,
                 ),
             cursorColor: widget.cursorColor ?? AppColors.grey80,
@@ -178,7 +178,7 @@ class _AppTextFieldState extends State<AppTextField> {
                   errorMaxLines: 1,
                   hintStyle: widget.hintStyle ??
                       context.textTheme.bodySmall!.copyWith(
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         color: AppColors.grey33,
                       ),
                   enabledBorder: OutlineInputBorder(
@@ -208,7 +208,7 @@ class _AppTextFieldState extends State<AppTextField> {
           Text(
             error!,
             style: context.textTheme.bodySmall?.copyWith(
-              fontSize: 14.sp,
+              fontSize: 14,
               color: AppColors.errorText,
             ),
           ),

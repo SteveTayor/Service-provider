@@ -4,6 +4,7 @@ import 'package:bundlegram/core/utils/themes.dart';
 // import 'package:bundlegram/presentation/features/onboarding/screens/splash_screen.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -34,6 +35,13 @@ class App extends ConsumerWidget {
             darkTheme: AppTheme.darkTheme,
             routerConfig: AppRouter.router,
             debugShowCheckedModeBanner: false,
+            locale: const Locale('en', 'NG'), // Set en_NG locale
+            supportedLocales: const [Locale('en', 'NG')],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
           ),
         );
         //   },

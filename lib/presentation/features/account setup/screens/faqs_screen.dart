@@ -55,12 +55,12 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 hintText: 'Search...',
                 hintStyle: TextStyle(
                   color: AppColors.searchHintColor,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                 ),
                 prefixIcon: Icon(
                   Icons.search,
                   color: AppColors.searchHintColor,
-                  size: 20.sp,
+                  size: 20,
                 ),
                 prefixIconConstraints: BoxConstraints(
                   minWidth: 48.w,
@@ -84,7 +84,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       children: [
                         Icon(
                           Icons.search_off,
-                          size: 64.sp,
+                          size: 64,
                           color: Colors.grey[400],
                         ),
                         16.verticalSpace,
@@ -170,7 +170,7 @@ class FAQExpansionTile extends StatelessWidget {
                     textAlign: TextAlign.justify,
                     style: context.textTheme.bodySmall?.copyWith(
                       height: 1.5,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontWeight: FontWeight.w400,
                     ),
                   ),

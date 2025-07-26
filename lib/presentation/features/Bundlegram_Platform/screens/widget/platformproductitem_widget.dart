@@ -85,7 +85,7 @@ class ProductItemGrid extends ConsumerWidget {
                     '${CurrencyFormatter.format(amount)}',
                     style: context.textTheme.titleMedium!.copyWith(
                       fontWeight: FontWeight.w500,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       color: isSelected
                           ? AppColors.primaryColor
                           : AppColors.grey83,
@@ -137,7 +137,7 @@ class ProductItemGrid extends ConsumerWidget {
                           // textAlign: TextAlign.start,
                           style: context.textTheme.titleMedium!.copyWith(
                             fontWeight: FontWeight.w500,
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             color: isSelected
                                 ? AppColors.primaryColor
                                 : AppColors.grey83,
@@ -148,7 +148,7 @@ class ProductItemGrid extends ConsumerWidget {
                       Text(
                         item.duration ?? '',
                         style: context.textTheme.bodySmall!.copyWith(
-                          fontSize: 10.sp,
+                          fontSize: 10,
                           color: AppColors.grey83,
                         ),
                       ),
@@ -299,7 +299,7 @@ class ProductItemGrid extends ConsumerWidget {
 //                   bundle[dataKey]!,
 //                   style: context.textTheme.titleMedium!.copyWith(
 //                     fontWeight: FontWeight.w500,
-//                     fontSize: 20.sp,
+//                     fontSize: 20,
 //                     color:
 //                         isSelected ? AppColors.primaryColor : AppColors.grey83,
 //                   ),
@@ -311,7 +311,7 @@ class ProductItemGrid extends ConsumerWidget {
 //                   child: Text(
 //                     bundle['duration']!,
 //                     style: context.textTheme.bodySmall!.copyWith(
-//                       fontSize: 12.sp,
+//                       fontSize: 12,
 //                       color: AppColors.grey83,
 //                     ),
 //                   ),

@@ -24,7 +24,7 @@
 //           Text(
 //             'Close account',
 //             style: context.textTheme.bodyMedium!.copyWith(
-//               fontSize: 18.sp,
+//               fontSize: 18,
 //               fontWeight: FontWeight.w500,
 //             ),
 //           ),
@@ -98,7 +98,7 @@ class CloseaccountWidget extends ConsumerWidget {
           Text(
             'Close account',
             style: context.textTheme.bodyMedium!.copyWith(
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.w500,
             ),
           ),

@@ -31,7 +31,7 @@ class RecentTransactionWidget extends ConsumerWidget {
       children: [
         Text(
           'Recent Transactions',
-          style: context.textTheme.displayLarge!.copyWith(),
+          style: context.textTheme.displayLarge!.copyWith(fontSize: 20),
         ),
         spacing ?? 20.verticalSpace,
         _buildRecentTransactionsList(
@@ -88,16 +88,17 @@ class RecentTransactionWidget extends ConsumerWidget {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
-        type: txn.subProduct?.product?.productName,
+        type: getTransactionType(txn),
         amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
-        accountNumber:
-            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         network: txn.subProduct?.product?.productName,
         phoneNumber: txn.crAcc,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore)
+            : null,
         userBalance: txn.balanceAfter != null
             ? CurrencyFormatter.format(txn.balanceAfter!)
             : null,
@@ -108,16 +109,17 @@ class RecentTransactionWidget extends ConsumerWidget {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
-        type: txn.subProduct?.product?.productName,
+        type: getTransactionType(txn),
         amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
-        accountNumber:
-            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         network: txn.subProduct?.product?.productName,
         phoneNumber: txn.crAcc,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore)
+            : null,
         userBalance: txn.balanceAfter != null
             ? CurrencyFormatter.format(txn.balanceAfter!)
             : null,
@@ -128,7 +130,7 @@ class RecentTransactionWidget extends ConsumerWidget {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
-        type: txn.transType,
+        type: getTransactionType(txn),
         amount: CurrencyFormatter.format(txn.amount ?? 0.0),
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
@@ -149,7 +151,7 @@ class RecentTransactionWidget extends ConsumerWidget {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
-        type: txn.transType,
+        type: getTransactionType(txn),
         amount: CurrencyFormatter.format(txn.amount ?? 0.0),
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
@@ -165,13 +167,60 @@ class RecentTransactionWidget extends ConsumerWidget {
             ? CurrencyFormatter.format(txn.balanceBefore)
             : null,
       );
+    } else if (transTypeLower.contains('cable')) {
+      // Handle data transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: getTransactionType(txn),
+        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+        smartCardNumber: txn.crAcc,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore!)
+            : null,
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter!)
+            : null,
+      );
+    } else if (transTypeLower.contains('electricity')) {
+      // Handle data transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: getTransactionType(txn),
+
+        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+
+        meterNumber: txn.crAcc,
+        token: txn.token,
+        balanceBefore: txn.balanceBefore != null
+            ? CurrencyFormatter.format(txn.balanceBefore!)
+            : null,
+        userBalance: txn.balanceAfter != null
+            ? CurrencyFormatter.format(txn.balanceAfter!)
+            : null,
+      );
     } else {
       // Default case for other transaction types
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
-        type: txn.transType ?? 'N/A',
+        type: getTransactionType(txn) ?? 'N/A',
         amount: txn.transType != 'fund_wallet' && txn.transType != 'withdrawal'
             ? CurrencyFormatter.format(txn.deductAmount ?? 0.0)
             : CurrencyFormatter.format(txn.amount ?? 0.0),
@@ -199,6 +248,29 @@ class RecentTransactionWidget extends ConsumerWidget {
       ),
       isDismissable: true,
     );
+  }
+
+  String getTransactionType(UserTransactions data) {
+    switch (data.transType?.toLowerCase()) {
+      case 'mobile_data':
+        return 'Mobile Data';
+      case 'electricity':
+        return 'Electricity';
+      case 'airtime':
+        return 'Airtime';
+      case 'cable_tv':
+        return 'Cable TV';
+      case 'internet_service':
+        return 'Internet Service';
+      case 'fund_wallet':
+        return 'Top-up';
+      case 'withdrawal':
+        return 'Withdrawal';
+      case 'betting':
+        return 'Betting';
+      default:
+        return data.transType!.capiTalizeFirstLast;
+    }
   }
 
   String _formatDate(DateTime? date) {

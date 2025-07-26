@@ -129,9 +129,13 @@ class AppRouter {
         path: RouteConstants.setting,
         builder: (context, state) => const SettingScreen(),
       ),
+
       GoRoute(
         path: RouteConstants.changePassword,
-        builder: (context, state) => const ChangepasswordScreen(),
+        builder: (context, state) {
+          final email = state.extra! as String;
+          return ChangepasswordScreen(email: email);
+        },
       ),
       GoRoute(
         path: RouteConstants.changeAccountPin,

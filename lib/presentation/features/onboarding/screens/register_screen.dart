@@ -50,7 +50,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     'Have an account? ',
                     style: context.textTheme.bodySmall!.copyWith(
                       color: AppColors.grey33,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                     ),
                   ),
                   InkWell(
@@ -60,7 +60,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     child: Text(
                       'Sign in.',
                       style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 16.sp,
+                        fontSize: 16,
                         color: AppColors.primaryColor,
                       ),
                     ),

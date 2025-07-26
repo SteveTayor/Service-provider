@@ -86,7 +86,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen> {
                           textAlign: TextAlign.center,
                           style: context.textTheme.titleLarge,
                         ),
-                        20.verticalSpace,
+                        14.verticalSpace,
                         Text(
                           OnboardingData.walkthrough[index]['subText']!,
                           textAlign: TextAlign.center,
@@ -104,7 +104,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen> {
                   }),
                 ),
               ),
-              30.verticalSpace,
+              20.verticalSpace,
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(3, (index) {
@@ -126,7 +126,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen> {
                 text: 'Create account',
                 onPressed: () => context.go(RouteConstants.register),
               ),
-              16.verticalSpace,
+              25.verticalSpace,
               InkWell(
                 onTap: () => context.push(RouteConstants.login),
                 child: Text(
@@ -134,6 +134,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen> {
                   style: context.textTheme.bodyMedium,
                 ),
               ),
+              20.verticalSpace,
             ],
           ),
         ),

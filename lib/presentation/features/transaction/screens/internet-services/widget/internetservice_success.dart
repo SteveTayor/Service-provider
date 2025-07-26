@@ -29,7 +29,7 @@ class InternetServicesSuccessResultScreen extends StatelessWidget {
         subText: 'Your payment of ${amount} for ${biller} was successful.',
         buttonText: 'Go to home',
         onPressed: () {
-          context.push(RouteConstants.dashboard);
+          context.pushReplacement(RouteConstants.dashboard);
         },
       ),
     );

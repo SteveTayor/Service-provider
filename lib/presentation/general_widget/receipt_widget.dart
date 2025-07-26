@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
@@ -60,7 +61,7 @@ class VisualReceiptCard extends ConsumerWidget {
                   'Transaction receipt',
                   style: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w500,
-                    // fontSize: 18.sp,
+                    // fontSize: 18,
                     color: AppColors.black,
                   ),
                 ),
@@ -71,7 +72,7 @@ class VisualReceiptCard extends ConsumerWidget {
                   data.amount.toString(),
                   style: context.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.w500,
-                    // fontSize: 30.sp,
+                    // fontSize: 30,
                     color: AppColors.black,
                   ),
                 ),
@@ -88,7 +89,12 @@ class VisualReceiptCard extends ConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: ListView(
                 children: [
-                  _buildDetailRow(context, 'Transaction type', data.type!),
+                  if (data.type?.toLowerCase() != 'electricity') ...[
+                    _buildDetailRow(
+                        context, 'Transaction type', getTransactionType()),
+                  ] else ...[
+                    _buildDetailRow(context, 'Transaction type', data.type!),
+                  ],
                   if (data.accountNumber != null) ...[
                     16.verticalSpace,
                     _buildDetailRow(
@@ -125,6 +131,29 @@ class VisualReceiptCard extends ConsumerWidget {
     );
   }
 
+  String getTransactionType() {
+    switch (data.type?.toLowerCase()) {
+      case 'mobile_data':
+        return 'Mobile Data';
+      case 'electricity':
+        return 'Electricity';
+      case 'airtime':
+        return 'Airtime';
+      case 'cable_tv':
+        return 'Cable TV';
+      case 'internet_service':
+        return 'Internet Service';
+      case 'fund_wallet':
+        return 'Top-up';
+      case 'withdrawal':
+        return 'Withdrawal';
+      case 'betting':
+        return 'Betting';
+      default:
+        return data.type!.capiTalizeFirstLast;
+    }
+  }
+
   Widget _buildDetailRow(BuildContext context, String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,7 +163,7 @@ class VisualReceiptCard extends ConsumerWidget {
           label,
           style: context.textTheme.bodyMedium?.copyWith(
             color: AppColors.grey33,
-            // fontSize: 14.sp,
+            // fontSize: 14,
           ),
         ),
         SizedBox(width: 8.w),
@@ -144,7 +173,7 @@ class VisualReceiptCard extends ConsumerWidget {
             style: context.textTheme.bodyMedium?.copyWith(
               color: AppColors.black,
               fontWeight: FontWeight.w500,
-              // fontSize: 14.sp,
+              // fontSize: 14,
             ),
             textAlign: TextAlign.right,
             overflow: TextOverflow.visible,
@@ -177,7 +206,7 @@ class VisualReceiptCard extends ConsumerWidget {
             style: TextStyle(
               color: statusInfo['textColor'] as Color,
               fontWeight: FontWeight.w600,
-              // fontSize: 14.sp,
+              // fontSize: 14,
             ),
           ),
         ],
@@ -240,14 +269,28 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
   @override
   void initState() {
     super.initState();
-    // Wait for render, then capture and share
-    WidgetsBinding.instance.addPostFrameCallback((_) => _captureAndShare());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(
+          const Duration(milliseconds: 400)); // Give the widget time to paint
+      _captureAndShare();
+    });
   }
 
   Future<void> _captureAndShare() async {
     try {
-      final boundary = _boundaryKey.currentContext?.findRenderObject()
-          as RenderRepaintBoundary?;
+      // final boundary = _boundaryKey.currentContext?.findRenderObject()
+      //     as RenderRepaintBoundary?;
+      RenderRepaintBoundary? boundary;
+      int attempts = 0;
+      // Wait until render is complete or max attempts reached
+      while ((boundary = _boundaryKey.currentContext?.findRenderObject()
+                      as RenderRepaintBoundary?)
+                  ?.debugNeedsPaint ==
+              true &&
+          attempts < 5) {
+        await Future.delayed(const Duration(milliseconds: 300));
+        attempts++;
+      }
 
       if (boundary == null) {
         debugPrint("Boundary not ready");
@@ -274,7 +317,7 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
       context.dismissDialog();
       await SharePlus.instance.share(
         ShareParams(
-          text: 'Here is your receipt',
+          text: 'TXN_bundlegram_receipt',
           files: [XFile(file.path)],
           title: 'Transaction Receipt',
         ),

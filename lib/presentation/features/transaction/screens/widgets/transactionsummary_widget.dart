@@ -50,7 +50,7 @@ class TransactionSummary extends ConsumerWidget {
                   label,
                   style: TextStyle(
                     color: AppColors.grey83,
-                    // fontSize: 14.sp,
+                    // fontSize: 14,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -87,7 +87,7 @@ class TransactionSummary extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: AppColors.grey33,
-                          // fontSize: 14.sp,
+                          // fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -151,7 +151,7 @@ class TransactionSummary extends ConsumerWidget {
             Text(
               discountedPrice ?? amount,
               style: TextStyle(
-                fontSize: 26.sp,
+                fontSize: 26,
                 fontWeight: FontWeight.bold,
                 color: AppColors.grey33,
               ),
@@ -175,7 +175,7 @@ class TransactionSummary extends ConsumerWidget {
             Text(
               discountedPrice ?? amount,
               style: TextStyle(
-                fontSize: 40.sp,
+                fontSize: 40,
                 fontWeight: FontWeight.bold,
                 color: AppColors.grey33,
               ),

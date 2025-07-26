@@ -205,7 +205,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(dateTime.toString()),
         time: _formatTime(dateTime.toString()),
-        type: txn.subProduct?.product?.productName,
+        type: getTransactionType(txn),
         amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
         // accountNumber:
         //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
@@ -225,7 +225,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(dateTime.toString()),
         time: _formatTime(dateTime.toString()),
-        type: txn.subProduct?.product?.productName,
+        type: getTransactionType(txn),
         amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
         // accountNumber:
         //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
@@ -245,7 +245,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(dateTime.toString()),
         time: _formatTime(dateTime.toString()),
-        type: txn.transType,
+        type: getTransactionType(txn),
         amount: CurrencyFormatter.format(txn.amount ?? 0.0),
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
@@ -266,7 +266,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(dateTime.toString()),
         time: _formatTime(dateTime.toString()),
-        type: txn.transType,
+        type: getTransactionType(txn),
 
         amount: CurrencyFormatter.format(txn.amount ?? 0.0),
         // accountNumber:
@@ -290,7 +290,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(dateTime.toString()),
         time: _formatTime(dateTime.toString()),
-        type: txn.transType,
+        type: getTransactionType(txn),
 
         amount: CurrencyFormatter.format(txn.amount ?? 0.0),
         // accountNumber:
@@ -315,7 +315,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(dateTime.toString()),
         time: _formatTime(dateTime.toString()),
-        type: txn.transType,
+        type: getTransactionType(txn),
         amount: CurrencyFormatter.format(txn.amount ?? 0.0),
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
@@ -337,7 +337,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(dateTime.toString()),
         time: _formatTime(dateTime.toString()),
-        type: txn.transType ?? 'N/A',
+        type: getTransactionType(txn) ?? 'N/A',
         amount: txn.transType != 'fund_wallet' && txn.transType != 'withdrawal'
             ? CurrencyFormatter.format(txn.deductAmount ?? 0.0)
             : CurrencyFormatter.format(txn.amount ?? 0.0),
@@ -366,6 +366,29 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
       ),
       isDismissable: true,
     );
+  }
+
+  String getTransactionType(UserTransactions data) {
+    switch (data.transType?.toLowerCase()) {
+      case 'mobile_data':
+        return 'Mobile Data';
+      case 'electricity':
+        return 'Electricity';
+      case 'airtime':
+        return 'Airtime';
+      case 'cable_tv':
+        return 'Cable TV';
+      case 'internet_service':
+        return 'Internet Service';
+      case 'fund_wallet':
+        return 'Top-up';
+      case 'withdrawal':
+        return 'Withdrawal';
+      case 'betting':
+        return 'Betting';
+      default:
+        return data.transType!.capiTalizeFirstLast;
+    }
   }
 
   String _formatDate(String dateStr) {

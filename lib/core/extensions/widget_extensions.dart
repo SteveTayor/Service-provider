@@ -97,7 +97,7 @@ extension AppTextFieldDecorationExtension on InputDecoration {
       // Keep the original hintText if it exists, otherwise use null
       hintText: hintText,
       hintStyle: TextStyle(
-        fontSize: 14.sp,
+        fontSize: 14,
         color: AppColors.searchHintColor,
       ),
       focusedBorder: OutlineInputBorder(
@@ -126,7 +126,7 @@ extension AppTextFieldDecorationExtension on InputDecoration {
       filled: true,
       hintText: hintText,
       hintStyle: TextStyle(
-        fontSize: 18.sp,
+        fontSize: 18,
         fontWeight: FontWeight.w400,
         color: AppColors.black,
       ),

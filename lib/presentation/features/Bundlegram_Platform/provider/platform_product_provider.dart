@@ -1076,7 +1076,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               textStyle: context.textTheme.bodyMedium?.copyWith(
                 color: AppColors.grey19,
                 fontFamily: FontFamily.mabryPro,
-                fontSize: 18.sp,
+                fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),
               onPressed: () => context.pop(),

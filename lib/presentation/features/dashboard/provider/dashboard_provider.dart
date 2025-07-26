@@ -31,7 +31,9 @@ class DashboardProvider extends ChangeNotifier {
   String? get error => _error;
 
   Future<void> initDashboard(BuildContext context) async {
-    await _fetchDashboardData(context);
+    if (_currentIndex != 3) {
+      await _fetchDashboardData(context);
+    }
   }
 
   void resetIndex() {
@@ -44,7 +46,9 @@ class DashboardProvider extends ChangeNotifier {
       _currentIndex = index;
       notifyListeners();
     }
-    _fetchDashboardData(context);
+    if (index != 3) {
+      _fetchDashboardData(context);
+    }
   }
 
   Future<void> _fetchDashboardData(BuildContext context) async {
@@ -67,9 +71,8 @@ class DashboardProvider extends ChangeNotifier {
     unawaited(context.showLoadingDialog(message: 'Fetching profile...'));
     final profileRes = await api.getProfile(token);
     if (profileRes.isLeft()) {
-      context
-        ..dismissDialog()
-        ..showErrorSnackBar("Failed to fetch profile");
+      context.dismissDialog();
+      // ..showErrorSnackBar("Failed to fetch profile");
       _setLoading(false);
       return;
     }

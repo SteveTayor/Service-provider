@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/styles.dart';
@@ -69,7 +70,7 @@ class TransactionReceiptWidget extends StatelessWidget {
               child: Text(
                 'Transaction details',
                 style: context.textTheme.headlineMedium?.copyWith(
-                  fontSize: 18.sp,
+                  fontSize: 18,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -165,7 +166,8 @@ class TransactionReceiptWidget extends StatelessWidget {
       ),
       _TransactionDetailItem(label: 'Date', value: data.date!),
       _TransactionDetailItem(label: 'Time', value: data.time!),
-      _TransactionDetailItem(label: 'Transaction type', value: data.type!),
+      _TransactionDetailItem(
+          label: 'Transaction type', value: getTransactionType()),
       if (data.paymentMethod != null)
         _TransactionDetailItem(
           label: 'Payment channel',
@@ -173,7 +175,7 @@ class TransactionReceiptWidget extends StatelessWidget {
         ),
       _TransactionDetailItem(label: 'Amount', value: data.amount!),
       if (data.phoneNumber != null)
-        _TransactionDetailItem(label: 'Phone Number', value: data.phoneNumber!),
+        _TransactionDetailItem(label: 'Beneficiary', value: data.phoneNumber!),
       if (data.type?.toLowerCase() == 'electricity' && data.token != null)
         _TransactionDetailItem(
           label: 'Token',
@@ -220,6 +222,29 @@ class TransactionReceiptWidget extends StatelessWidget {
         .toList();
   }
 
+  String getTransactionType() {
+    switch (data.type?.toLowerCase()) {
+      case 'mobile_data':
+        return 'Mobile Data';
+      case 'electricity':
+        return 'Electricity';
+      case 'airtime':
+        return 'Airtime';
+      case 'cable_tv':
+        return 'Cable TV';
+      case 'internet_service':
+        return 'Internet Service';
+      case 'fund_wallet':
+        return 'Top-up';
+      case 'withdrawal':
+        return 'Withdrawal';
+      case 'betting':
+        return 'Betting';
+      default:
+        return data.type!.capiTalizeFirstLast;
+    }
+  }
+
   Color _getStatusColor() {
     // Determine color based on transaction status
     switch (data.status.toLowerCase()) {
@@ -260,14 +285,11 @@ class _TransactionDetailItem extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          flex: 2,
-          child: Text(
-            label,
-            style: context.textTheme.bodySmall?.copyWith(
-              fontSize: 12.sp,
-              color: AppColors.grey33,
-            ),
+        Text(
+          label,
+          style: context.textTheme.bodySmall?.copyWith(
+            fontSize: 12,
+            color: AppColors.grey33,
           ),
         ),
         16.horizontalSpace,
@@ -282,7 +304,7 @@ class _TransactionDetailItem extends StatelessWidget {
                   style: valueStyle ??
                       context.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
-                        fontSize: 12.sp,
+                        fontSize: 12,
                         color: valueColor ?? AppColors.black,
                       ),
                   textAlign: TextAlign.right,

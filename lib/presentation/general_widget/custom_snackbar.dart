@@ -7,7 +7,7 @@ class CustomSnackBar {
   static void show(
     BuildContext context,
     String message, {
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 5),
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -20,7 +20,11 @@ class CustomSnackBar {
         backgroundColor: AppColors.primaryColor,
         duration: duration,
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.all(16.w),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16.w,
+          left: 16.w,
+          right: 16.w,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.r),
         ),
@@ -32,7 +36,7 @@ class CustomSnackBar {
   static void showError(
     BuildContext context,
     String message, {
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 5),
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -41,7 +45,7 @@ class CustomSnackBar {
             Icon(
               Icons.error_outline,
               color: AppColors.white,
-              size: 20.sp,
+              size: 20,
             ),
             12.horizontalSpace,
             Expanded(
@@ -57,7 +61,11 @@ class CustomSnackBar {
         backgroundColor: Colors.red,
         duration: duration,
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.all(16.w),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16.w,
+          left: 16.w,
+          right: 16.w,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.r),
         ),
@@ -69,7 +77,7 @@ class CustomSnackBar {
   static void showSuccess(
     BuildContext context,
     String message, {
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 5),
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -78,7 +86,7 @@ class CustomSnackBar {
             Icon(
               Icons.check_circle_outline,
               color: AppColors.white,
-              size: 20.sp,
+              size: 20,
             ),
             12.horizontalSpace,
             Expanded(
@@ -94,7 +102,11 @@ class CustomSnackBar {
         backgroundColor: Colors.green,
         duration: duration,
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.all(16.w),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16.w,
+          left: 16.w,
+          right: 16.w,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.r),
         ),
@@ -106,7 +118,7 @@ class CustomSnackBar {
   static void showWarning(
     BuildContext context,
     String message, {
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 5),
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -115,7 +127,7 @@ class CustomSnackBar {
             Icon(
               Icons.warning_amber_outlined,
               color: AppColors.white,
-              size: 20.sp,
+              size: 20,
             ),
             12.horizontalSpace,
             Expanded(
@@ -131,7 +143,11 @@ class CustomSnackBar {
         backgroundColor: Colors.orange,
         duration: duration,
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.all(16.w),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16.w,
+          left: 16.w,
+          right: 16.w,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.r),
         ),

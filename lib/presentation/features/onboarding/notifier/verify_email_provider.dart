@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
@@ -87,7 +89,7 @@ class VerifyEmailProvider extends ChangeNotifier {
 
     _verifying = true;
     notifyListeners();
-    context.showLoadingDialog(message: 'Verifying email');
+    unawaited(context.showLoadingDialog(message: 'Verifying email'));
     final token = await _ref.read(secureStorageHelperProvider).getAuthToken();
     if (token == null) {
       context.showErrorSnackBar('Missing auth token');
@@ -104,10 +106,11 @@ class VerifyEmailProvider extends ChangeNotifier {
         context.showErrorSnackBar(fail.properties.join('\n'));
         _verifying = false;
         context.dismissDialog();
+        context.pushReplacementNamed(RouteConstants.dashboard);
         notifyListeners();
         return false;
       },
-      (BaseResponse resp) {
+      (resp) {
         // Check if the response indicates actual success
         if (resp.success) {
           WidgetsBinding.instance.addPostFrameCallback((_) {

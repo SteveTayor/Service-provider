@@ -100,7 +100,7 @@ class _EnterPinScreenState extends State<EnterPinScreen>
       child: Text(
         number,
         style: context.textTheme.titleLarge!
-            .copyWith(fontSize: 24.sp, fontWeight: FontWeight.w500),
+            .copyWith(fontSize: 24, fontWeight: FontWeight.w500),
       ),
     );
   }
@@ -125,7 +125,7 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                       textAlign: TextAlign.center,
                       style: context.textTheme.bodySmall!.copyWith(
                         color: AppColors.grey33,
-                        fontSize: 18.sp,
+                        fontSize: 18,
                       ),
                     ),
                   ],
@@ -150,7 +150,7 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                     _errorMessage!,
                     style: TextStyle(
                       color: AppColors.errorText,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                     ),
                   ),
                   24.verticalSpace,
@@ -188,7 +188,7 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                     onPressed: _deletePin,
                     icon: Icon(
                       Icons.backspace_outlined,
-                      size: 24.sp,
+                      size: 24,
                       color: AppColors.grey83,
                     ),
                   ),
@@ -201,7 +201,7 @@ class _EnterPinScreenState extends State<EnterPinScreen>
             child: Text(
               'Forgot PIN?',
               style: context.textTheme.bodyMedium!.copyWith(
-                fontSize: 16.sp,
+                fontSize: 16,
                 color: AppColors.black,
               ),
             ),

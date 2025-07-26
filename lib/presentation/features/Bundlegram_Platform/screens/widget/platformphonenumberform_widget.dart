@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +47,17 @@ class _PlatformPhoneNumberFormWidgetState
         .selectedSubProduct;
     if (selected?.subName?.toLowerCase().contains('postpaid') ?? false) {
       _tabController.index = 1;
+    }
+    final profile = ref.read(globalProvider).profile.value?.data;
+    final isPhoneBased = widget.serviceType == PlatformProductType.airtime ||
+        widget.serviceType == PlatformProductType.mobileData;
+
+    if (isPhoneBased && profile != null) {
+      final phone = formatPhone(profile.phone);
+      ref
+          .read(platformProductProvider(widget.serviceType))
+          .firstInputController
+          .text = phone;
     }
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
@@ -164,90 +176,12 @@ class _PlatformPhoneNumberFormWidgetState
             labelStyle: context.textTheme.bodySmall,
             unselectedLabelStyle: TextStyle(
               fontWeight: FontWeight.w400,
-              fontSize: 14.sp,
+              fontSize: 14,
               color: AppColors.grey2F,
             ),
             dividerColor: Colors.transparent,
             tabs: const [Tab(text: 'Prepaid'), Tab(text: 'Postpaid')],
           ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     ChoiceChip(
-          //       label: const Text('Prepaid'),
-          //       selected: state.selectedSubProduct?.subName
-          //               ?.toLowerCase()
-          //               .contains('prepaid') ??
-          //           false,
-          //       onSelected: (selected) {
-          //         if (selected) {
-          //           final prepaidSubProduct = state.subProducts.firstWhere(
-          //             (p) => p.subName!.toLowerCase().contains('prepaid'),
-          //           );
-          //           notifier.selectSubProduct(prepaidSubProduct);
-          //         }
-          //       },
-          //       selectedColor:
-          //           const Color(0xFFE8EFFF), // Background color when selected
-          //       labelStyle: TextStyle(
-          //         color: AppColors.primaryColor,
-          //         fontWeight: FontWeight.w500,
-          //         fontSize: 14.sp,
-          //       ),
-          //       backgroundColor:
-          //           Colors.transparent, // Background when not selected
-          //       side: BorderSide(
-          //         color: state.selectedSubProduct?.subName
-          //                     ?.toLowerCase()
-          //                     .contains('postpaid') ??
-          //                 false
-          //             ? AppColors.primaryColor
-          //             : Colors.grey.shade300,
-          //         width: 1,
-          //       ),
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(8), // Adjust as needed
-          //       ),
-          //     ),
-          //     SizedBox(width: 16.w),
-          //     ChoiceChip(
-          //       label: const Text('Postpaid'),
-          //       selected: state.selectedSubProduct?.subName
-          //               ?.toLowerCase()
-          //               .contains('postpaid') ??
-          //           false,
-          //       onSelected: (selected) {
-          //         if (selected) {
-          //           final postpaidSubProduct = state.subProducts.firstWhere(
-          //             (p) => p.subName!.toLowerCase().contains('postpaid'),
-          //           );
-          //           notifier.selectSubProduct(postpaidSubProduct);
-          //         }
-          //       },
-          //       selectedColor:
-          //           const Color(0xFFE8EFFF), // Background color when selected
-          //       labelStyle: TextStyle(
-          //         color: AppColors.primaryColor,
-          //         fontWeight: FontWeight.w500,
-          //         fontSize: 14.sp,
-          //       ),
-          //       backgroundColor:
-          //           Colors.transparent, // Background when not selected
-          //       side: BorderSide(
-          //         color: state.selectedSubProduct?.subName
-          //                     ?.toLowerCase()
-          //                     .contains('postpaid') ??
-          //                 false
-          //             ? AppColors.primaryColor
-          //             : Colors.grey.shade300,
-          //         width: 1,
-          //       ),
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(8), // Adjust as needed
-          //       ),
-          //     ),
-          //   ],
-          // ),
         ],
 
         // Dropdown for dataType (mobile data) or sub_name (cable TV)
@@ -307,4 +241,10 @@ class _PlatformPhoneNumberFormWidgetState
       child: Icon(Icons.device_unknown, size: 16),
     );
   }
+}
+
+String formatPhone(String? phone) {
+  if (phone == null) return '';
+  if (phone.startsWith('+234')) return phone.replaceFirst('+234', '0');
+  return phone;
 }

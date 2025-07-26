@@ -47,7 +47,7 @@ class ChooseUsernameScreen extends ConsumerWidget {
                 textAlign: TextAlign.center,
                 style: context.textTheme.bodySmall!.copyWith(
                   color: AppColors.grey33,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                 ),
               ),
             ],

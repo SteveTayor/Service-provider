@@ -28,7 +28,9 @@ class ResetPasswordLinkScreen extends ConsumerWidget {
         title: title,
         subText: subtitle,
         buttonText: 'Go to email app',
-        onPressed: () => ctrl.openEmailApp(context),
+        onPressed: () {
+          // ctrl.openEmailApp(context);
+        },
       ),
     );
   }

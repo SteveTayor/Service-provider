@@ -123,6 +123,15 @@ class ApiService {
     });
   }
 
+  Future<Either<Failure, BaseResponse>> verifyOtp(
+    String token,
+    VerifyOtpRequest req,
+  ) {
+    return handleApi(() {
+      return _api.verifyOtp('Bearer $token', req);
+    });
+  }
+
   Future<Either<Failure, BaseResponse>> verifyEmail(
       String token, VerifyEmailRequest req) {
     return handleApi(() {

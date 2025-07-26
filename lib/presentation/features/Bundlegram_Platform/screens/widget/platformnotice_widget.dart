@@ -46,6 +46,11 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
           advertActions.add(() => context.push(RouteConstants.becomeagent));
         }
 
+        advertItems.add(Assets.svgs.completesetup);
+        advertActions.add(
+          () => null,
+        );
+
         // If nothing left to show, hide the entire carousel
         if (advertItems.isEmpty) return const SizedBox.shrink();
 

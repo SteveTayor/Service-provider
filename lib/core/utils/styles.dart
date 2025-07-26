@@ -51,7 +51,7 @@ class BundlegramButtonSecondary extends BundlegramButtonStyle {
           borderColor: Colors.transparent,
           textStyle: TextStyle(
             color: AppColors.primaryColor,
-            fontSize: 16.sp,
+            fontSize: 16,
             fontFamily: FontFamily.mabryPro,
           ),
         );
@@ -63,10 +63,10 @@ class BundlegramButtonOutline extends BundlegramButtonStyle {
           background: Colors.transparent,
           textColor: AppColors.greyD0,
           borderColor: AppColors.greyD0,
-          border: Border.all(width: 1.sp, color: AppColors.greyD0),
+          border: Border.all(width: 1, color: AppColors.greyD0),
           textStyle: TextStyle(
             color: AppColors.grey19,
-            fontSize: 18.sp,
+            fontSize: 18,
             fontWeight: FontWeight.w500,
             fontFamily: FontFamily.mabryPro,
           ),

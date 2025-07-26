@@ -21,7 +21,7 @@ class LogoutWidget extends ConsumerWidget {
           Text(
             'Log out',
             style: context.textTheme.bodyMedium!.copyWith(
-              fontSize: 18.sp,
+              fontSize: 18,
             ),
           ),
           12.verticalSpace,

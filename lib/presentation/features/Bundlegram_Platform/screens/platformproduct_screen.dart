@@ -242,7 +242,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                             textStyle: context.textTheme.bodyMedium!.copyWith(
                               color: AppColors.grey19,
                               fontFamily: FontFamily.mabryPro,
-                              fontSize: 18.sp,
+                              fontSize: 18,
                               fontWeight: FontWeight.w500,
                             ),
                             onPressed: () =>
@@ -740,7 +740,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
 //                   textStyle: context.textTheme.bodyMedium?.copyWith(
 //                     color: AppColors.grey19,
 //                     fontFamily: FontFamily.mabryPro,
-//                     fontSize: 18.sp,
+//                     fontSize: 18,
 //                     fontWeight: FontWeight.w500,
 //                   ),
 //                   onPressed: () {
@@ -807,7 +807,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
 //                               textStyle: context.textTheme.bodyMedium?.copyWith(
 //                                 color: AppColors.grey19,
 //                                 fontFamily: FontFamily.mabryPro,
-//                                 fontSize: 18.sp,
+//                                 fontSize: 18,
 //                                 fontWeight: FontWeight.w500,
 //                               ),
 //                               onPressed: () {
