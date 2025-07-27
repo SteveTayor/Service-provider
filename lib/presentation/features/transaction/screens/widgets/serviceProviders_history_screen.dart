@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
@@ -206,7 +207,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         date: _formatDate(dateTime.toString()),
         time: _formatTime(dateTime.toString()),
         type: getTransactionType(txn),
-        amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
+        amount: txn.deductAmount.toCurrency(),
         // accountNumber:
         //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
@@ -215,9 +216,8 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
             '',
         network: txn.subProduct?.product?.productName,
         phoneNumber: txn.crAcc,
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter!)
-            : null,
+        userBalance: txn.balanceAfter?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
       );
     } else if (transTypeLower.contains('data')) {
       // Handle data transaction
@@ -226,7 +226,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         date: _formatDate(dateTime.toString()),
         time: _formatTime(dateTime.toString()),
         type: getTransactionType(txn),
-        amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
+        amount: txn.deductAmount.toCurrency(),
         // accountNumber:
         //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
@@ -235,9 +235,8 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
             '',
         network: txn.subProduct?.product?.productName,
         phoneNumber: txn.crAcc,
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter!)
-            : null,
+        userBalance: txn.balanceAfter?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
       );
     } else if (transTypeLower.contains('withdrawal')) {
       // Handle withdrawal transaction
@@ -246,19 +245,15 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         date: _formatDate(dateTime.toString()),
         time: _formatTime(dateTime.toString()),
         type: getTransactionType(txn),
-        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        amount: txn.amount.toCurrency(),
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter!)
-            : null,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore!)
-            : null,
+        userBalance: txn.balanceAfter?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
       );
     } else if (transTypeLower.contains('cable')) {
       // Handle data transaction
@@ -268,7 +263,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         time: _formatTime(dateTime.toString()),
         type: getTransactionType(txn),
 
-        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        amount: txn.amount.toCurrency(),
         // accountNumber:
         //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
@@ -277,12 +272,8 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
             '',
 
         smartCardNumber: txn.crAcc,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore!)
-            : null,
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter!)
-            : null,
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
       );
     } else if (transTypeLower.contains('electricity')) {
       // Handle data transaction
@@ -292,7 +283,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         time: _formatTime(dateTime.toString()),
         type: getTransactionType(txn),
 
-        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        amount: txn.amount.toCurrency(),
         // accountNumber:
         //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
@@ -302,12 +293,8 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
 
         meterNumber: txn.crAcc,
         token: txn.token,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore!)
-            : null,
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter!)
-            : null,
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
       );
     } else if (transTypeLower.contains('fund_wallet')) {
       // Handle fund wallet transaction
@@ -316,7 +303,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         date: _formatDate(dateTime.toString()),
         time: _formatTime(dateTime.toString()),
         type: getTransactionType(txn),
-        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        amount: txn.amount.toCurrency(),
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
@@ -324,12 +311,8 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
             txn.subProduct?.product?.productName ??
             '',
         paymentMethod: txn.paymentType ?? '',
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter)
-            : null,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore)
-            : null,
+        userBalance: txn.balanceAfter?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
       );
     } else {
       // Default case for other transaction types
@@ -339,8 +322,8 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         time: _formatTime(dateTime.toString()),
         type: getTransactionType(txn) ?? 'N/A',
         amount: txn.transType != 'fund_wallet' && txn.transType != 'withdrawal'
-            ? CurrencyFormatter.format(txn.deductAmount ?? 0.0)
-            : CurrencyFormatter.format(txn.amount ?? 0.0),
+            ? txn.deductAmount.toCurrency()
+            : txn.amount.toCurrency(),
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',

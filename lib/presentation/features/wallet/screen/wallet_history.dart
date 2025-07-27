@@ -138,17 +138,15 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
         date: _formatDate(txn.createdAt.toString() ?? ''),
         time: _formatTime(txn.createdAt.toString()),
         type: txn.transType,
-        amount: CurrencyFormatter.format(txn.amount),
+        amount: txn.amount.toCurrency(),
         accountNumber: txn.crAcc,
         status: txn.status ?? '',
         description: txn.subProduct?.subName ?? '',
         paymentMethod: txn.paymentType ?? '',
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter)
-            : null,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore)
-            : null,
+        userBalance:
+            txn.balanceAfter != null ? txn.balanceAfter.toCurrency() : null,
+        balanceBefore:
+            txn.balanceBefore != null ? txn.balanceBefore.toCurrency() : null,
       );
     } else if (transTypeLower.contains('withdrawal')) {
       // Handle withdrawal transaction
@@ -157,16 +155,14 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
         date: _formatDate(txn.createdAt.toString() ?? ''),
         time: _formatTime(txn.createdAt.toString()),
         type: txn.transType,
-        amount: CurrencyFormatter.format(txn.amount),
+        amount: txn.amount.toCurrency(),
         accountNumber: txn.crAcc,
         status: txn.status ?? '',
         description: txn.subProduct?.subName ?? '',
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter)
-            : null,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore)
-            : null,
+        userBalance:
+            txn.balanceAfter != null ? txn.balanceAfter.toCurrency() : null,
+        balanceBefore:
+            txn.balanceBefore != null ? txn.balanceBefore.toCurrency() : null,
       );
     } else {
       // Default case (should not occur for wallet, but included for robustness)
@@ -175,7 +171,7 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
         date: _formatDate(txn.createdAt.toString() ?? ''),
         time: _formatTime(txn.createdAt.toString()),
         type: txn.transType.toString(),
-        amount: CurrencyFormatter.format(txn.amount),
+        amount: txn.amount.toCurrency(),
         phoneNumber: txn.crAcc,
         status: txn.status ?? '',
         description: txn.subProduct?.subName ?? '',

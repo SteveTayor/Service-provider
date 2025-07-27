@@ -89,19 +89,15 @@ class RecentTransactionWidget extends ConsumerWidget {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
-        amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
+        amount: txn.deductAmount.toCurrency(),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         network: txn.subProduct?.product?.productName,
         phoneNumber: txn.crAcc,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore)
-            : null,
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter!)
-            : null,
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
       );
     } else if (transTypeLower.contains('data')) {
       // Handle data transaction
@@ -110,19 +106,15 @@ class RecentTransactionWidget extends ConsumerWidget {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
-        amount: CurrencyFormatter.format(txn.deductAmount ?? 0.0),
+        amount: txn.deductAmount.toCurrency(),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         network: txn.subProduct?.product?.productName,
         phoneNumber: txn.crAcc,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore)
-            : null,
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter!)
-            : null,
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
       );
     } else if (transTypeLower.contains('withdrawal')) {
       // Handle withdrawal transaction
@@ -131,19 +123,15 @@ class RecentTransactionWidget extends ConsumerWidget {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
-        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        amount: txn.amount.toCurrency(),
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter!)
-            : null,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore!)
-            : null,
+        userBalance: txn.balanceAfter?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
       );
     } else if (transTypeLower.contains('fund_wallet')) {
       // Handle fund wallet transaction
@@ -152,7 +140,7 @@ class RecentTransactionWidget extends ConsumerWidget {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
-        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        amount: txn.amount.toCurrency(),
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
@@ -160,12 +148,8 @@ class RecentTransactionWidget extends ConsumerWidget {
             txn.subProduct?.product?.productName ??
             '',
         paymentMethod: txn.paymentType ?? '',
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter)
-            : null,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore)
-            : null,
+        userBalance: txn.balanceAfter?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
       );
     } else if (transTypeLower.contains('cable')) {
       // Handle data transaction
@@ -174,7 +158,7 @@ class RecentTransactionWidget extends ConsumerWidget {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
-        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        amount: txn.amount.toCurrency(),
         // accountNumber:
         //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
@@ -182,12 +166,8 @@ class RecentTransactionWidget extends ConsumerWidget {
             txn.subProduct?.product?.productName ??
             '',
         smartCardNumber: txn.crAcc,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore!)
-            : null,
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter!)
-            : null,
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
       );
     } else if (transTypeLower.contains('electricity')) {
       // Handle data transaction
@@ -197,7 +177,7 @@ class RecentTransactionWidget extends ConsumerWidget {
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
 
-        amount: CurrencyFormatter.format(txn.amount ?? 0.0),
+        amount: txn.amount.toCurrency(),
         // accountNumber:
         //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
@@ -207,12 +187,8 @@ class RecentTransactionWidget extends ConsumerWidget {
 
         meterNumber: txn.crAcc,
         token: txn.token,
-        balanceBefore: txn.balanceBefore != null
-            ? CurrencyFormatter.format(txn.balanceBefore!)
-            : null,
-        userBalance: txn.balanceAfter != null
-            ? CurrencyFormatter.format(txn.balanceAfter!)
-            : null,
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
       );
     } else {
       // Default case for other transaction types
@@ -222,8 +198,8 @@ class RecentTransactionWidget extends ConsumerWidget {
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn) ?? 'N/A',
         amount: txn.transType != 'fund_wallet' && txn.transType != 'withdrawal'
-            ? CurrencyFormatter.format(txn.deductAmount ?? 0.0)
-            : CurrencyFormatter.format(txn.amount ?? 0.0),
+            ? txn.deductAmount.toCurrency()
+            : txn.amount.toCurrency(),
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
