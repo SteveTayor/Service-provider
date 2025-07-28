@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
@@ -838,7 +839,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
     if (amount > walletBalance) {
       context.showErrorSnackBar(
-          'Insufficient wallet balance: ${CurrencyFormatter.format(walletBalance)} available');
+          'Insufficient wallet balance: ${walletBalance.toCurrency()} available');
       return;
     }
     final discountedAmount =
@@ -858,8 +859,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         assetPath: state.selectedProviderIcon,
         transactionType: state.selectedSubProduct?.subName ??
             state.selectedProduct?.productName,
-        amount: CurrencyFormatter.format(amount),
-        discountedPrice: CurrencyFormatter.format(discountedAmount),
+        amount: amount.toCurrency(),
+        discountedPrice: amount.toCurrency(),
         beneficiary: beneficiary,
         onPay: () {
           initiatePurchase(
@@ -969,8 +970,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         },
         (response) {
           if (response.success) {
-            final screen = _buildSuccessScreen(
-                CurrencyFormatter.format(originalAmount), beneficiary);
+            final screen =
+                _buildSuccessScreen(originalAmount.toCurrency(), beneficiary);
             context.dismissDialog();
             Navigator.pushReplacement(
               context,
@@ -1076,7 +1077,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               textStyle: context.textTheme.bodyMedium?.copyWith(
                 color: AppColors.grey19,
                 fontFamily: FontFamily.mabryPro,
-                fontSize: 18,
+                // fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),
               onPressed: () => context.pop(),

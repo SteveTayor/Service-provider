@@ -112,7 +112,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
           },
           child: Text(
             'Filter',
-            style: context.textTheme.bodySmall!
+            style: context.textTheme.labelSmall!
                 .copyWith(fontWeight: FontWeight.w500),
           ),
         ),

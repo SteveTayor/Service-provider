@@ -36,7 +36,7 @@ class PlatformItemWidget extends StatelessWidget {
             title,
             style: context.textTheme.bodyMedium!.copyWith(
               color: AppColors.white,
-              fontSize: 14,
+              // fontSize: 14,
             ),
           ),
         ],

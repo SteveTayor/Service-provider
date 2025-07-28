@@ -76,7 +76,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
       child: Text(
         number,
         style: context.textTheme.titleLarge!.copyWith(
-          fontSize: 24,
+          // fontSize: 24,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -118,7 +118,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
                   textAlign: TextAlign.center,
                   style: context.textTheme.bodySmall!.copyWith(
                     color: AppColors.grey33,
-                    fontSize: 16,
+                    // fontSize: 16,
                     height: 1.4,
                   ),
                 ),

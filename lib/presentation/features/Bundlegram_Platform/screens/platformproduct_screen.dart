@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
@@ -6,6 +7,7 @@ import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatter.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
@@ -81,7 +83,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
             },
             child: Text(
               'History',
-              style: context.textTheme.bodySmall!
+              style: context.textTheme.labelSmall!
                   .copyWith(fontWeight: FontWeight.w500),
             ),
           ),
@@ -114,6 +116,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                         AppTextField(
                           hintText: 'Amount',
                           controller: state.amountController,
+                          inputFormatters: [CurrencyTextInputFormatter()],
                           readOnly: true,
                           prefixIcon: Padding(
                             padding: EdgeInsets.only(left: 16.w),
@@ -157,10 +160,10 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                       Row(
                         children: [
                           AppSvgIcon(path: Assets.svgs.balance),
-                          8.horizontalSpace,
+                          3.horizontalSpace,
                           Text(
-                            'Balance (${CurrencyFormatter.format(walletBalance)})',
-                            style: context.textTheme.bodySmall,
+                            'Balance (${walletBalance.toCurrency()})',
+                            style: context.textTheme.labelMedium,
                           ),
                           const Spacer(),
                           InkWell(
@@ -172,7 +175,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                             },
                             child: Text(
                               'Top-up >',
-                              style: context.textTheme.bodySmall!
+                              style: context.textTheme.labelMedium!
                                   .copyWith(color: AppColors.primaryColor),
                             ),
                           ),
@@ -242,7 +245,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                             textStyle: context.textTheme.bodyMedium!.copyWith(
                               color: AppColors.grey19,
                               fontFamily: FontFamily.mabryPro,
-                              fontSize: 18,
+                              // fontSize: 18,
                               fontWeight: FontWeight.w500,
                             ),
                             onPressed: () =>

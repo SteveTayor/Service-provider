@@ -1,7 +1,9 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatter.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_product_provider.dart';
@@ -82,10 +84,10 @@ class ProductItemGrid extends ConsumerWidget {
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(vertical: 16.h),
                   child: Text(
-                    '${CurrencyFormatter.format(amount)}',
-                    style: context.textTheme.titleMedium!.copyWith(
+                    '${formatAmount(amount)}',
+                    style: context.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      // fontSize: 14,
                       color: isSelected
                           ? AppColors.primaryColor
                           : AppColors.grey83,
@@ -135,9 +137,9 @@ class ProductItemGrid extends ConsumerWidget {
                         child: Text(
                           formattedData,
                           // textAlign: TextAlign.start,
-                          style: context.textTheme.titleMedium!.copyWith(
+                          style: context.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w500,
-                            fontSize: 14,
+                            // fontSize: 14,
                             color: isSelected
                                 ? AppColors.primaryColor
                                 : AppColors.grey83,
@@ -147,8 +149,8 @@ class ProductItemGrid extends ConsumerWidget {
                       4.verticalSpace,
                       Text(
                         item.duration ?? '',
-                        style: context.textTheme.bodySmall!.copyWith(
-                          fontSize: 10,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          fontSize: 14.sp,
                           color: AppColors.grey83,
                         ),
                       ),
@@ -164,6 +166,7 @@ class ProductItemGrid extends ConsumerWidget {
           AppTextField(
             hintText: 'Enter amount',
             controller: state.amountController,
+            inputFormatters: [CurrencyTextInputFormatter()],
             prefixIcon: Padding(
               padding: context.symmetricPadding(24, 0),
               child: Text('₦', style: context.textTheme.bodyMedium),

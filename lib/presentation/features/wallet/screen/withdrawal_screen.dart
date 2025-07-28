@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatter.dart';
 import 'package:bundlegram/data/models/banks/get_all_users_banks_response.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/withdraw_from_wallet_provider.dart';
@@ -111,6 +113,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 AppTextField(
                   hintText: 'Enter amount',
                   controller: provider.amountController,
+                  inputFormatters: [CurrencyTextInputFormatter()],
                   keyboardType: TextInputType.number,
                 ),
                 16.verticalSpace,
@@ -127,7 +130,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                     6.horizontalSpace,
                     Text(
                       'Wallet balance',
-                      style: context.textTheme.bodySmall,
+                      style: context.textTheme.bodyMedium,
                     ),
                     const Spacer(),
                     Text(
@@ -156,16 +159,16 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                                   final success = await provider
                                       .requestWithdrawal(context, pin);
                                   if (!success) return;
-                                  Navigator.pushReplacement(
+                                  unawaited(Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (ctx) => TransactionSuccessful(
                                         title: 'Withdrawal request received!',
                                         subTitle:
-                                            'Your withdrawal request of ${CurrencyFormatter.format(provider.amountController.text)} from your Bundlegram wallet has been successfully received.',
+                                            'Your withdrawal request of ${provider.amountController.text.toCurrency()} from your Bundlegram wallet has been successfully received.',
                                       ),
                                     ),
-                                  );
+                                  ));
                                 },
                               ),
                             ),

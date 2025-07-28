@@ -76,7 +76,7 @@ class NavBar extends ConsumerWidget {
                     6.verticalSpace,
                     Text(
                       '${items[index]['name']}',
-                      style: context.textTheme.bodySmall!.copyWith(
+                      style: context.textTheme.labelSmall!.copyWith(
                         fontSize: 12,
                         color: AppColors.black.withOpacity(0.6),
                       ),

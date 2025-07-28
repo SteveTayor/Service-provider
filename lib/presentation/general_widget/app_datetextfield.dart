@@ -37,7 +37,7 @@ class AppDatetextfield extends StatelessWidget {
           child: TextFormField(
             controller: controller,
             style: context.textTheme.bodySmall?.copyWith(
-              fontSize: 14,
+              // fontSize: 14,
               color: AppColors.grey19,
             ),
             readOnly: readOnly,

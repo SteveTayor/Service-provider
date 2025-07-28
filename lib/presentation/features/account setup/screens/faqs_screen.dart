@@ -170,7 +170,7 @@ class FAQExpansionTile extends StatelessWidget {
                     textAlign: TextAlign.justify,
                     style: context.textTheme.bodySmall?.copyWith(
                       height: 1.5,
-                      fontSize: 16,
+                      // fontSize: 16,
                       fontWeight: FontWeight.w400,
                     ),
                   ),

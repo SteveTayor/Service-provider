@@ -92,7 +92,7 @@ class HelpandsupportScreen extends ConsumerWidget {
                 child: Text(
                   'View FAQs',
                   style: context.textTheme.titleMedium!.copyWith(
-                    fontSize: 16,
+                    // fontSize: 16,
                     height: 3,
                     color: AppColors.primaryColor,
                     decorationColor: AppColors.primaryColor,
@@ -116,7 +116,7 @@ class HelpandsupportScreen extends ConsumerWidget {
                           child: Text(
                             'Enquiry: info@bundlegram.com',
                             style: context.textTheme.bodySmall!.copyWith(
-                              fontSize: 14,
+                              // fontSize: 14,
                               fontWeight: FontWeight.w400,
                               color: AppColors.grey33,
                             ),
@@ -141,7 +141,7 @@ class HelpandsupportScreen extends ConsumerWidget {
                           child: Text(
                             'Technical: support@bundlegram.com',
                             style: context.textTheme.bodySmall!.copyWith(
-                              fontSize: 14,
+                              // fontSize: 14,
                               fontWeight: FontWeight.w400,
                               color: AppColors.grey33,
                             ),
@@ -173,7 +173,7 @@ class HelpandsupportScreen extends ConsumerWidget {
                         child: Text(
                           '08133434566',
                           style: context.textTheme.bodySmall!.copyWith(
-                            fontSize: 14,
+                            // fontSize: 14,
                             fontWeight: FontWeight.w400,
                             color: AppColors.grey33,
                           ),

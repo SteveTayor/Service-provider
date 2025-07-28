@@ -89,7 +89,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           onTap: () => context.push(RouteConstants.walletHistoryScreen),
           child: Text(
             'History',
-            style: context.textTheme.bodySmall!
+            style: context.textTheme.labelSmall!
                 .copyWith(fontWeight: FontWeight.w500),
           ),
         ),
@@ -109,7 +109,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         children: [
                           Text(
                             'Wallet balance',
-                            style: context.textTheme.bodySmall!.copyWith(
+                            style: context.textTheme.bodyMedium?.copyWith(
                               color: AppColors.white,
                             ),
                           ),
@@ -149,8 +149,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                             ? provider.formattedBalance
                             : '⁕⁕⁕⁕',
                         // wallet.value?.wallet.toCurrency() ?? '₦0.00',
-                        style: context.textTheme.bodyLarge!.copyWith(
-                          fontSize: 30,
+                        style: context.textTheme.titleLarge?.copyWith(
+                          // fontSize: 30,
                           color: AppColors.white,
                           fontWeight: FontWeight.w500,
                         ),

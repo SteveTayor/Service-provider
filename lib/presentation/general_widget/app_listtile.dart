@@ -82,7 +82,7 @@ class AppListTile extends StatelessWidget {
                           subtitle!,
                           style: context.textTheme.bodySmall!.copyWith(
                             color: titleColor ?? AppColors.subtitleColor,
-                            fontSize: 14,
+                            // fontSize: 14,
                           ),
                         ),
                       ),

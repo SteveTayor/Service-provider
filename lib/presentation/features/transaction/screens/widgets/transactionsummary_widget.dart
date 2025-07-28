@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -150,11 +151,14 @@ class TransactionSummary extends ConsumerWidget {
           if (isBecomeAnAgent != true) ...[
             Text(
               discountedPrice ?? amount,
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: AppColors.grey33,
+              style: context.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w500,
               ),
+              // TextStyle(
+              //   fontSize: 26,
+              //   fontWeight: FontWeight.bold,
+              //   color: AppColors.grey33,
+              // ),
             ),
             32.verticalSpace,
             if (transactionType != null) ...[
@@ -191,7 +195,7 @@ class TransactionSummary extends ConsumerWidget {
               children: [
                 AppSvgIcon(path: Assets.svgs.balance),
                 8.horizontalSpace,
-                Text('Balance (${CurrencyFormatter.format(walletBalance)})',
+                Text('Balance (${walletBalance.toCurrency()})',
                     style: context.textTheme.bodySmall),
                 const Spacer(),
                 Flexible(

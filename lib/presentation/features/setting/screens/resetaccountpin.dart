@@ -52,7 +52,7 @@ class _ResetAccountPinState extends ConsumerState<ResetAccountPin> {
                     .resetPinWithPassword(password, context)
                     .then((success) {
                   if (success) {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => ResetPasswordLinkScreen(

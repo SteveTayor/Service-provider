@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:bundlegram/core/error/failures.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -93,7 +94,7 @@ class WithdrawalProvider extends ChangeNotifier {
   String get formattedBalance {
     final wallet = _ref.read(globalProvider).walletBalance;
     final value = wallet.value?.wallet;
-    return CurrencyFormatter.format(value);
+    return value.toCurrency();
   }
 
   Future<void> fetchData(BuildContext context) async {

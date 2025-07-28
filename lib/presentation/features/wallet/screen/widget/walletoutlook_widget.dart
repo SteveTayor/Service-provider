@@ -53,8 +53,8 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
           children: [
             Text(
               'Wallet balance ',
-              style: context.textTheme.bodySmall!
-                  .copyWith(fontSize: 16, color: AppColors.white),
+              style: context.textTheme.bodyMedium!
+                  .copyWith(color: AppColors.white),
             ),
             GestureDetector(
               onTap: () =>
@@ -72,8 +72,9 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
         12.verticalSpace,
         Text(
           provider.isBalanceVisible ? provider.formattedBalance : '⁕⁕⁕⁕',
-          style: context.textTheme.bodyMedium!.copyWith(
-            fontSize: provider.isBalanceVisible ? 36.sp : 24,
+          style: context.textTheme.titleLarge!.copyWith(
+            // fontSize: provider.isBalanceVisible ? 36.sp : 24,
+            fontWeight: FontWeight.w500,
             color: AppColors.white,
           ),
         ),

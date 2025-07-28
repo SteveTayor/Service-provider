@@ -5,6 +5,7 @@ import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatter.dart';
 import 'package:bundlegram/core/utils/phone_number_formatter.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
@@ -96,6 +97,7 @@ class BulkEpinScreen extends ConsumerWidget {
                     AppTextField(
                       hintText: 'Amount',
                       controller: state.amountController,
+                      inputFormatters: [CurrencyTextInputFormatter()],
                       prefixIcon: Padding(
                         padding: context.symmetricPadding(24, 0),
                         child: Text(

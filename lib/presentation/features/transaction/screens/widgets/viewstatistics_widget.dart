@@ -36,7 +36,7 @@ class ViewStatisticsWidget extends ConsumerWidget {
                 // SizedBox(height: 4.h),
                 Text(
                   'View charts of your transactions',
-                  style: context.textTheme.bodySmall,
+                  style: context.textTheme.labelSmall,
                   // maxLines: 2,
                   overflow: TextOverflow.clip,
                 ),

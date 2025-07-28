@@ -190,8 +190,8 @@ class ChoosebillerWidget extends ConsumerWidget {
         children: [
           Text(
             'Choose Biller',
-            style: context.textTheme.titleMedium!.copyWith(
-              fontSize: 20,
+            style: context.textTheme.titleSmall!.copyWith(
+              // fontSize: 20,
               fontWeight: FontWeight.w600,
               color: AppColors.black,
             ),

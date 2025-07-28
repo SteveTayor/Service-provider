@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -35,8 +36,8 @@ class ServiceListItem extends ConsumerWidget {
     final date = _formatDate(transaction.createdAt);
     final amount = (transaction.transType == "fund_wallet" ||
             transaction.transType == "withdrawal")
-        ? CurrencyFormatter.format(transaction.amount)
-        : CurrencyFormatter.format(transaction.deductAmount);
+        ? transaction.amount.toCurrency()
+        : transaction.deductAmount.toCurrency();
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,14 +60,16 @@ class ServiceListItem extends ConsumerWidget {
               SizedBox(height: 2),
               Text(
                 title!,
-                style: context.textTheme.bodyMedium?.copyWith(fontSize: 14),
+                style: context.textTheme.bodySmall?.copyWith(
+                  fontSize: 14.sp,
+                ),
               ),
               Row(
                 children: [
                   Flexible(
                     child: Text(
                       status,
-                      style: context.textTheme.bodySmall!.copyWith(
+                      style: context.textTheme.labelMedium!.copyWith(
                         fontSize: 12,
                         color: _getStatusColor(status),
                       ),
@@ -86,8 +89,8 @@ class ServiceListItem extends ConsumerWidget {
         ),
         Text(
           amount,
-          style: context.textTheme.bodyMedium!.copyWith(
-            fontSize: 13,
+          style: context.textTheme.bodySmall?.copyWith(
+            fontSize: 14.sp,
             fontWeight: FontWeight.w500,
           ),
         ),

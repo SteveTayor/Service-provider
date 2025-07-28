@@ -66,7 +66,7 @@ class BundlegramAppbar extends StatelessWidget implements PreferredSizeWidget {
                       (titleText != null
                           ? Text(
                               titleText!,
-                              style: context.textTheme.titleMedium,
+                              style: context.textTheme.titleSmall,
                             )
                           : const SizedBox()),
                 ),

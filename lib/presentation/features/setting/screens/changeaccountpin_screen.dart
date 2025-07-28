@@ -48,12 +48,12 @@ class ChangeaccountpinScreen extends ConsumerWidget {
                     builder: (ctx) => EnterPinScreen(
                       isChangedAccountPin: true,
                       onVerified: (pin) {
-                        pinCtrl.start(
-                          PinScreenMode.create,
-                          initialPin: pinCtrl.initialPin,
-                          onComplete: () =>
-                              context.push(RouteConstants.pinScreen),
-                        );
+                        // pinCtrl.start(PinScreenMode.create, initialPin: pin,
+                        //     onComplete: () {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          context.go(RouteConstants.pinScreen);
+                        });
+                        // });
                       },
                     ),
                   ),

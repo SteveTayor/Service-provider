@@ -70,7 +70,7 @@ class TransactionReceiptWidget extends StatelessWidget {
               child: Text(
                 'Transaction details',
                 style: context.textTheme.headlineMedium?.copyWith(
-                  fontSize: 18,
+                  // fontSize: 18,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -287,8 +287,8 @@ class _TransactionDetailItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: context.textTheme.bodySmall?.copyWith(
-            fontSize: 12,
+          style: context.textTheme.labelMedium?.copyWith(
+            // fontSize: 12,
             color: AppColors.grey33,
           ),
         ),
@@ -302,9 +302,9 @@ class _TransactionDetailItem extends StatelessWidget {
                 child: Text(
                   value,
                   style: valueStyle ??
-                      context.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
+                      context.textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        // fontSize: 12,
                         color: valueColor ?? AppColors.black,
                       ),
                   textAlign: TextAlign.right,

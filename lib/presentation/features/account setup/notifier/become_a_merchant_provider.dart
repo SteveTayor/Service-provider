@@ -64,7 +64,7 @@ class BecomeAgentProvider extends ChangeNotifier {
           ErrorPopup(
             title: 'Insufficient Funds',
             message:
-                'Your wallet balance (${CurrencyFormatter.format(parsedBalance)}) is less than the required ₦10,000.00. Please fund your wallet.',
+                'Your wallet balance (${parsedBalance.toCurrency()}) is less than the required ₦10,000.00. Please fund your wallet.',
             onOkay: () {
               context.go(RouteConstants.dashboard); // Route to dashboard
             },
