@@ -1,9 +1,11 @@
 import 'package:bundlegram/bootstrap.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  bootstrap(() => const ProviderScope(child: App()));
+  await dotenv.load(fileName: ".env");
+  await bootstrap(() => const ProviderScope(child: App()));
 }

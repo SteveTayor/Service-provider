@@ -108,8 +108,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         10), // Limits input to 10 digits
                   ],
                   prefixIcon: Padding(
-                    padding: context.symmetricPadding(24, 12),
-                    child: Text('+234', style: context.textTheme.bodyMedium),
+                    padding: context.symmetricPadding(20, 12),
+                    child: Text('+234', style: context.textTheme.bodySmall),
                   ),
                 ),
                 AppTextField(

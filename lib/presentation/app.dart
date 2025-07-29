@@ -16,7 +16,7 @@ class App extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ScreenUtilInit(
-      designSize: const Size(320, 800),
+      designSize: const Size(360, 800),
       minTextAdapt: true,
       splitScreenMode: true,
       ensureScreenSize: true,

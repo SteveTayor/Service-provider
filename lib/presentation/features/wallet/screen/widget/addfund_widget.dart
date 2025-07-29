@@ -165,10 +165,9 @@ class _AddfundWidgetState extends ConsumerState<AddfundWidget> {
           InkWell(
             onTap: () {
               context.pop();
-
-              navigatorKey.currentState!.context
-                  .showCustomSnackBar("Coming soom");
-              // WalletNotifier().showAddMoneyViaDebitCard(context);
+              // navigatorKey.currentState!.context
+              //     .showCustomSnackBar("Coming soom");
+              WalletNotifier().showAddMoneyViaDebitCard(context);
             },
             child: Text(
               'Use debit card instead',

@@ -36,7 +36,7 @@ class PlatformProvider extends ChangeNotifier {
     final wallet = _ref.read(globalProvider).walletBalance;
     final value = wallet.value?.wallet;
 
-    return value.toCurrency();
+    return "${value.toCurrency()}";
   }
 
   List<Sterling> get virtualAccounts {

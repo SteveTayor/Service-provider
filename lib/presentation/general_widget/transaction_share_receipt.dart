@@ -69,7 +69,7 @@ class TransactionReceiptWidget extends StatelessWidget {
             child: Center(
               child: Text(
                 'Transaction details',
-                style: context.textTheme.headlineMedium?.copyWith(
+                style: context.textTheme.titleMedium?.copyWith(
                   // fontSize: 18,
                   fontWeight: FontWeight.w500,
                 ),

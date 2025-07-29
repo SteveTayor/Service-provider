@@ -91,7 +91,7 @@ class HelpandsupportScreen extends ConsumerWidget {
                 },
                 child: Text(
                   'View FAQs',
-                  style: context.textTheme.titleMedium!.copyWith(
+                  style: context.textTheme.titleSmall!.copyWith(
                     // fontSize: 16,
                     height: 3,
                     color: AppColors.primaryColor,

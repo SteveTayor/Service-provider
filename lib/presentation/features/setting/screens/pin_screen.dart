@@ -75,7 +75,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
       ),
       child: Text(
         number,
-        style: context.textTheme.titleLarge!.copyWith(
+        style: context.textTheme.titleMedium!.copyWith(
           // fontSize: 24,
           fontWeight: FontWeight.w500,
         ),

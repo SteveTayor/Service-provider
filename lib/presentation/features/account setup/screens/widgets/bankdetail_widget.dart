@@ -42,7 +42,7 @@ class BankdetailWidget extends StatelessWidget {
         Text(
           bank?.accountNumber ?? 'N/A',
           style: context.textTheme.titleLarge!.copyWith(
-            // fontSize: 26,
+            fontSize: 30.sp,
             fontWeight: FontWeight.w500,
           ),
         ),

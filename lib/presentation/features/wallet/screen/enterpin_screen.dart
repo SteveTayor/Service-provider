@@ -99,9 +99,10 @@ class _EnterPinScreenState extends State<EnterPinScreen>
       style: TextButton.styleFrom(padding: EdgeInsets.all(20.w)),
       child: Text(
         number,
-        style: context.textTheme. !.copyWith(
-            // fontSize: 24,
-            fontWeight: FontWeight.w500),
+        style: context.textTheme.titleMedium?.copyWith(
+          // fontSize: 24,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

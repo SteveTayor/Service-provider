@@ -61,7 +61,7 @@ class ServiceListItem extends ConsumerWidget {
               Text(
                 title!,
                 style: context.textTheme.bodySmall?.copyWith(
-                  fontSize: 14.sp,
+                  fontSize: 14,
                 ),
               ),
               Row(
@@ -89,8 +89,8 @@ class ServiceListItem extends ConsumerWidget {
         ),
         Text(
           amount,
-          style: context.textTheme.bodySmall?.copyWith(
-            fontSize: 14.sp,
+          style: context.textTheme.labelMedium?.copyWith(
+            fontSize: 12.sp,
             fontWeight: FontWeight.w500,
           ),
         ),

@@ -16,6 +16,7 @@ class RouteConstants {
   static const String privacyPolicy = '/privacyPolicy';
   static const String chooseUsername = '/chooseUsername';
   static const String onboardResult = '/onboardResult';
+  static const String transactionSuccess = '/transaction-success';
   // static const String resetPassword = '/resetPassword';
 
   /// Main app routes

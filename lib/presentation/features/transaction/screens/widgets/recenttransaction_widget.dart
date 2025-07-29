@@ -31,9 +31,7 @@ class RecentTransactionWidget extends ConsumerWidget {
       children: [
         Text(
           'Recent Transactions',
-          style: context.textTheme.titleSmall!.copyWith(
-              // fontSize: 20
-              ),
+          style: context.textTheme.titleSmall!.copyWith(fontSize: 18.sp),
         ),
         spacing ?? 20.verticalSpace,
         _buildRecentTransactionsList(

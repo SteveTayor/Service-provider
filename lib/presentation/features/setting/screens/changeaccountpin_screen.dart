@@ -36,28 +36,31 @@ class ChangeaccountpinScreen extends ConsumerWidget {
               isActive: pinCtrl.isFormValid,
               formKey: pinCtrl.formKey,
               onPressed: () async {
+                if (pinCtrl.isButtonDisabled) return;
                 final error = await pinCtrl.validatePasswordAsync();
                 if (error != null) {
                   context.showErrorSnackBar(error);
                   return;
                 }
 
-                unawaited(Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) => EnterPinScreen(
-                      isChangedAccountPin: true,
-                      onVerified: (pin) {
-                        // pinCtrl.start(PinScreenMode.create, initialPin: pin,
-                        //     onComplete: () {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          context.go(RouteConstants.pinScreen);
-                        });
-                        // });
-                      },
+                unawaited(
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => EnterPinScreen(
+                        isChangedAccountPin: true,
+                        onVerified: (pin) {
+                          // pinCtrl.start(PinScreenMode.create, initialPin: pin,
+                          //     onComplete: () {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            context.go(RouteConstants.pinScreen);
+                          });
+                          // });
+                        },
+                      ),
                     ),
                   ),
-                ));
+                );
               },
               buttonText: 'Continue',
               children: [

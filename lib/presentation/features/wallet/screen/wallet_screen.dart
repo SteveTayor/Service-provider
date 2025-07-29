@@ -150,7 +150,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                             : '⁕⁕⁕⁕',
                         // wallet.value?.wallet.toCurrency() ?? '₦0.00',
                         style: context.textTheme.titleLarge?.copyWith(
-                          // fontSize: 30,
+                          fontSize: provider.isBalanceVisible ? 34 : 24,
                           color: AppColors.white,
                           fontWeight: FontWeight.w500,
                         ),

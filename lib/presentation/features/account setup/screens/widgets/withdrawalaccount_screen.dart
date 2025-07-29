@@ -106,8 +106,9 @@ class _WithdrawalaccountScreenState
                               .fetchProfile(context),
                         ]);
 
-                        context.dismissDialog();
-                        context.push(RouteConstants.addbankdetail);
+                        context
+                          ..dismissDialog()
+                          ..push(RouteConstants.addbankdetail);
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24.w),

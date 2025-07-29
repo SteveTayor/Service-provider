@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final forgetPasswordProvider = ChangeNotifierProvider((ref) {
   final api = ref.read(apiServiceProvider);
@@ -150,6 +151,20 @@ class ForgetPasswordProvider extends ChangeNotifier {
     );
     _verifyingOtp = false;
     notifyListeners();
+  }
+
+  /// Opens the default email app
+  Future<void> openEmailApp() async {
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: '',
+    );
+
+    // if (await canLaunchUrl(emailUri)) {
+    await launchUrl(emailUri);
+    // } else {
+    //   debugPrint('Could not open email app.');
+    // }
   }
 
   @override

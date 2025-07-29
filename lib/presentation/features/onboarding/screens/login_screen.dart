@@ -58,7 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       },
                       child: Text(
                         'Sign up.',
-                        style: context.textTheme.bodySmall!.copyWith(
+                        style: context.textTheme.bodyMedium?.copyWith(
                           // fontSize: 16,
                           color: AppColors.primaryColor,
                         ),
@@ -99,7 +99,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                       child: Text(
                         'Forget Password?',
-                        style: context.textTheme.bodyMedium!.copyWith(
+                        style: context.textTheme.labelMedium?.copyWith(
                           // fontSize: 16,
                           color: AppColors.primaryColor,
                         ),

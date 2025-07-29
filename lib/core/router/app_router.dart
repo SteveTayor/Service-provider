@@ -28,6 +28,8 @@ import 'package:bundlegram/presentation/features/setting/screens/pin_screen.dart
 import 'package:bundlegram/presentation/features/setting/screens/privacysecurity_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/resetaccountpin.dart';
 import 'package:bundlegram/presentation/features/setting/screens/setting_screen.dart';
+import 'package:bundlegram/presentation/features/transaction/notifier/model.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/topupresult_screen.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/wallet_history.dart';
@@ -194,6 +196,17 @@ class AppRouter {
       GoRoute(
         path: RouteConstants.pinScreen,
         builder: (context, state) => const PinScreen(),
+      ),
+      GoRoute(
+        path: RouteConstants.transactionSuccess,
+        builder: (context, state) {
+          final args = state.extra as TransactionSuccessArgs;
+          return TransactionSuccessful(
+            title: args.title,
+            subTitle: args.subTitle,
+            isBasicInfo: args.isBasicInfo,
+          );
+        },
       ),
 
       //   ShellRoute(
