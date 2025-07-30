@@ -290,12 +290,30 @@ class _AddfundviadebitcardWidgetState
 
                   context.showLoadingDialog();
 
-                  await ref
+                  final response = await ref
                       .read(squadPaymentProvider.notifier)
                       .initializeCardPayment(
-                          amount: enteredAmount, email: email);
-
+                          amount: ((enteredAmount * 1.012).ceil()),
+                          email: email);
+                  await Future.delayed(const Duration(milliseconds: 600));
                   context.dismissDialog();
+
+                  // context.pop();
+                  log('11111checkout url:: ${response?.data?.checkoutUrl}');
+                  if (response?.data?.checkoutUrl != null) {
+                    final uri = Uri.parse(response!.data!.checkoutUrl!);
+                    log('checkout url:: ${uri.toString()}');
+                    final didLaunch =
+                        await launchUrl(uri, mode: LaunchMode.inAppWebView);
+
+                    if (!didLaunch) {
+                      // context.pop();
+                      context.showErrorSnackBar("Could not open payment page.");
+                    }
+                  } else {
+                    // context.pop();
+                    context.showErrorSnackBar("Payment URL not received.");
+                  }
                 } catch (e, st) {
                   context.pop();
                   context.dismissDialog();

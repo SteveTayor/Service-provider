@@ -150,7 +150,7 @@ class ProductItemGrid extends ConsumerWidget {
                       Text(
                         item.duration ?? '',
                         style: context.textTheme.bodySmall?.copyWith(
-                          fontSize: 14.sp,
+                          // fontSize: 14.sp,
                           color: AppColors.grey83,
                         ),
                       ),
@@ -178,7 +178,9 @@ class ProductItemGrid extends ConsumerWidget {
           ),
         ],
         if (state.selectedSubProduct != null &&
-            serviceType == PlatformProductType.mobileData) ...[
+            serviceType == PlatformProductType.mobileData &&
+            state.selectedSubProduct!.subPrice != null &&
+            state.selectedSubProduct!.subPrice!.isNotEmpty) ...[
           24.verticalSpace,
           Container(
             width: context.width,
@@ -194,7 +196,9 @@ class ProductItemGrid extends ConsumerWidget {
                 Text('Amount', style: context.textTheme.bodySmall),
                 8.verticalSpace,
                 Text(
-                  '₦${state.selectedSubProduct!.subPrice}',
+                  state.selectedSubProduct != null
+                      ? '₦${state.amountController.text.trim()}'
+                      : '₦0.00',
                   style: context.textTheme.bodySmall!.copyWith(
                     color: AppColors.grey19,
                   ),

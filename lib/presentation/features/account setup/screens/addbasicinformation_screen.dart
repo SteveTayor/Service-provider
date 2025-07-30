@@ -10,6 +10,7 @@ import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_datetextfield.dart';
 import 'package:bundlegram/presentation/general_widget/app_dropdown.dart';
+import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
@@ -170,6 +171,8 @@ class AddBasicInformationScreen extends ConsumerWidget {
               controller: notifier.phone,
               hintText: 'Phone Number',
               readOnly: !userAction.isCreate,
+              isFilled: !userAction.isCreate,
+              backgroundColor: AppColors.greyD0.withOpacity(0.3),
               prefixIcon: Padding(
                 padding: context.symmetricPadding(16, 0),
                 child: Text('+234', style: context.textTheme.bodyMedium),
@@ -186,13 +189,16 @@ class AddBasicInformationScreen extends ConsumerWidget {
               options: const ['Male', 'Female'],
               selected: provider.gender,
               onChanged: notifier.setGender,
+              isFilled: !userAction.isCreate,
             ),
             SizedBox(height: 12.h),
             AppTextField(
               label: 'Address',
               controller: notifier.address,
               hintText: 'Enter Address',
+              isFilled: !userAction.isCreate,
               readOnly: !userAction.isCreate,
+              backgroundColor: AppColors.greyD0.withOpacity(0.3),
               validateFunction: notifier.validateNotEmpty,
             ),
             SizedBox(height: 12.h),
@@ -200,20 +206,23 @@ class AddBasicInformationScreen extends ConsumerWidget {
               controller: notifier.dob,
               title: 'Date of birth',
               hintText: 'DD/MM/YYYY',
+              isFilled: !userAction.isCreate,
               readOnly: !userAction.isCreate,
               validator: notifier.validateDate,
               onTap: () => notifier.pickDob(context),
             ),
             SizedBox(height: 32.h),
-            BundlegramButton(
-              isEnabled: userAction.isCreate && !provider.loading,
+            
+            Opacity(
+            opacity: userAction.isCreate ? 1 : 0.5, child: BundlegramButton(
+              isEnabled: userAction == UserAction.create,
               text: userAction.isCreate ? 'Submit' : 'Update',
               onPressed: provider.loading
                   ? null
                   : () async {
                       await provider.submit(context);
                     },
-            ),
+            ),),
           ],
         ),
       ),

@@ -17,12 +17,14 @@ class AppDropdown extends StatelessWidget {
     this.options = const [],
     this.onChanged,
     this.selected,
+    this.isFilled = false,
   });
 
   final String title;
   final List<String> options;
   final void Function(String?)? onChanged;
   final String? selected;
+  final bool isFilled;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,7 @@ class AppDropdown extends StatelessWidget {
       ).withContainer(
         padding: context.symmetricPadding(16, 16),
         borderRadius: BorderRadius.circular(6.r),
-        color: AppColors.white,
+        color: isFilled ? AppColors.greyD0.withOpacity(0.3) : AppColors.white,
         border: Border.all(color: AppColors.greyD0),
       ),
     );
@@ -68,6 +70,10 @@ class AppDropdown extends StatelessWidget {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.r),
                       ),
+                      fillColor: isFilled
+                          ? AppColors.greyD0.withOpacity(0.3)
+                          : AppColors.white,
+                      filled: true,
                       prefixIcon: Icon(Icons.search),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6.r),

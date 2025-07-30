@@ -5,6 +5,7 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/logout_widget.dart';
+import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,7 +51,21 @@ class AccountitemWidget extends ConsumerWidget {
             'Become an agent',
           ),
         buildRowWidget(
-          onPressed: () => context.push(RouteConstants.withdrawalAccount),
+          onPressed: () {
+            final profile = ref.read(globalProvider).profile;
+            final bvn = profile.value?.data?.bvn;
+
+            if (bvn == null) {
+              WalletNotifier().showLinkBVNSnackBar(
+                context,
+                'To ensure that you get a virtual account number, verify your BVN for this feature.',
+                'Link now',
+              );
+              return;
+            }
+
+            context.push(RouteConstants.withdrawalAccount);
+          },
           Assets.svgs.walletAdd1,
           'Withdrawal accounts',
         ),

@@ -10,6 +10,7 @@ import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart
 import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatter.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
+import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/gen/fonts.gen.dart';
@@ -117,6 +118,25 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                           hintText: 'Amount',
                           controller: state.amountController,
                           inputFormatters: [CurrencyTextInputFormatter()],
+                          validateFunction: (val) {
+                            final enteredAmount =
+                                double.tryParse(val?.replaceAll(',', '') ?? '');
+                            final wallet = double.tryParse(
+                                walletBalance.toCurrency()); // Already a double
+
+                            if (enteredAmount == null || enteredAmount <= 0) {
+                              return 'Enter a valid amount';
+                            }
+
+                            if (enteredAmount > wallet!) {
+                              context.showErrorSnackBar(
+                                'Insufficient wallet balance: ${walletBalance.toCurrency()} available',
+                              );
+                              return '';
+                            }
+
+                            return null;
+                          },
                           readOnly: true,
                           prefixIcon: Padding(
                             padding: EdgeInsets.only(left: 16.w),

@@ -29,6 +29,18 @@ class UserdetailWidget extends ConsumerWidget {
       );
     }
 
+    String moveSurnameToEnd(String? fullName) {
+      if (fullName == null || fullName.trim().isEmpty) return '';
+
+      final parts = fullName.trim().split(RegExp(r'\s+'));
+      if (parts.length < 2) return fullName;
+
+      final firstName = parts.first;
+      final rest = parts.sublist(1).join(' ');
+
+      return ('$rest $firstName').capiTalizeFirstLast;
+    }
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -37,7 +49,7 @@ class UserdetailWidget extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              globalUserProvider.value?.data?.name?.initials ?? 'AA',
+              "${globalUserProvider.value?.data?.firstName?[0]}${globalUserProvider.value?.data?.lastName?[0]}",
               style: context.textTheme.titleMedium!.copyWith(
                 color: AppColors.white,
               ),
@@ -49,7 +61,7 @@ class UserdetailWidget extends ConsumerWidget {
               shape: BoxShape.circle,
             ),
             12.verticalSpace,
-            Text(globalUserProvider.value!.data!.name!.capiTalizeFirstLast,
+            Text(moveSurnameToEnd(globalUserProvider.value!.data!.name!),
                 style: context.textTheme.titleSmall),
             if (profileProv?.emailVerifiedAt == null ||
                 profileProv?.bvn == null ||

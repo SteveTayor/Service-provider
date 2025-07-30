@@ -98,7 +98,7 @@ class BecomeagentScreen extends ConsumerWidget {
                         amount: '₦10,000.00',
                         paymentMethod: 'Wallet',
                         onPay: () {
-                          context.pop(); // Close the sheet first
+                          // context.pop(); // Close the sheet first
                           ref
                               .read(becomeAgentProvider.notifier)
                               .checkAndInitiatePayment(context);

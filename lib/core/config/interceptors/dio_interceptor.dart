@@ -95,9 +95,9 @@ final dioProvider = Provider<Dio>((ref) {
     ),
   );
 
-  // dio.interceptors.add(
-  //   PrettyDioLogger(requestBody: true),
-  // );
+  dio.interceptors.add(
+    PrettyDioLogger(requestBody: true),
+  );
 
   return dio;
 });

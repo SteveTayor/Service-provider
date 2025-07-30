@@ -4,6 +4,7 @@ import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
@@ -40,6 +41,8 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = ref.watch(withdrawalProvider);
+    final globalUserProvider = ref.watch(globalProvider).profile;
+    final profileProv = globalUserProvider.value?.data;
 
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(
@@ -57,7 +60,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                       .asMap()
                       .entries
                       .map((entry) =>
-                          'Account ${entry.key + 1} - ${entry.value.accountName ?? 'N/A'}')
+                          'Account ${entry.key + 1} - ${entry.value.accountName ?? ''}')
                       .toList(),
                   onChanged: (value) {
                     if (value != null) {
@@ -71,7 +74,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 ),
                 24.verticalSpace,
                 // Text(
-                //   'Account ID: ${provider.selectedBank?.id ?? 'N/A'}',
+                //   'Account ID: ${provider.selectedBank?.id ?? ''}',
                 // ).withContainer(
                 //   width: context.width,
                 //   color: AppColors.greyD0.withOpacity(0.3),
@@ -81,7 +84,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 // ),
                 // 24.verticalSpace,
                 Text(
-                  provider.selectedBank?.bankName ?? 'N/A',
+                  provider.selectedBank?.bankName ?? '',
                 ).withContainer(
                   width: context.width,
                   color: AppColors.greyD0.withOpacity(0.3),
@@ -91,7 +94,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 ),
                 24.verticalSpace,
                 Text(
-                  provider.selectedBank?.accountNumber ?? 'N/A',
+                  provider.selectedBank?.accountNumber ?? '',
                 ).withContainer(
                   width: context.width,
                   color: AppColors.greyD0.withOpacity(0.3),
@@ -101,7 +104,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 ),
                 24.verticalSpace,
                 Text(
-                  provider.selectedBank?.accountName ?? 'N/A',
+                  provider.selectedBank?.accountName ?? '',
                 ).withContainer(
                   width: context.width,
                   color: AppColors.greyD0.withOpacity(0.3),
@@ -115,6 +118,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                   controller: provider.amountController,
                   inputFormatters: [CurrencyTextInputFormatter()],
                   keyboardType: TextInputType.number,
+                  readOnly: profileProv?.bvn == null ? true : false,
                 ),
                 16.verticalSpace,
                 Row(
@@ -141,6 +145,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 ),
                 40.verticalSpace,
                 BundlegramButton(
+                  isEnabled: profileProv?.bvn == null ? false : true,
                   text: provider.isSubmitting
                       ? "Requesting"
                       : 'Request withdrawal',

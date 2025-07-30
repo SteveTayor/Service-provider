@@ -50,7 +50,9 @@
   <!-- if you ever launch https links -->
   <intent>
     <action android:name="android.intent.action.VIEW"/>
-    <data android:scheme="https"/>
+    <data
+      android:scheme="https"
+      android:host="pay.squadco.com" />
   </intent>
 </queries>
 

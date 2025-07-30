@@ -124,7 +124,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       selectedSubProduct: defaultSubProduct,
       amountController: _serviceType == PlatformProductType.electricity
           ? state.amountController
-          : TextEditingController(text: defaultSubProduct?.subPrice ?? ''),
+          : TextEditingController(),
       error: result.status != 'success' ? result.message : null,
     );
 
@@ -251,7 +251,13 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   }
 
   void selectDataType(String dataType) {
-    state = state.copyWith(selectedDataType: dataType);
+    state.amountController.clear();
+    state = state.copyWith(
+      selectedDataType: dataType,
+      selectedSubProduct: null, // Clear selected subproduct
+      selectedPresetAmount: null, // Clear preset amount
+      amountController: TextEditingController(),
+    );
   }
 
   void selectPaymentType(String type) {
@@ -261,9 +267,10 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   void selectSubProduct(SubProduct subProduct) {
     state = state.copyWith(
       selectedSubProduct: subProduct,
+      selectedPresetAmount: null,
       amountController: _serviceType == PlatformProductType.electricity
           ? state.amountController // Retain the current user-entered amount
-          : TextEditingController(text: subProduct.subPrice),
+          : TextEditingController(text: subProduct.subPrice ?? ''),
     );
   }
 

@@ -1,4 +1,4 @@
-package com.example.verygoodcore.bundlegram
+package com.verygoodcore.bundlegram
 
 import io.flutter.embedding.android.FlutterActivity
 

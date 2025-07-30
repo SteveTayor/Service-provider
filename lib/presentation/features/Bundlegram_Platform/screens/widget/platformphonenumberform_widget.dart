@@ -191,7 +191,9 @@ class _PlatformPhoneNumberFormWidgetState
             title: state.selectedDataType ?? widget.dropdownHint!,
             options: state.dropdownOptions,
             selected: state.selectedDataType,
-            onChanged: (val) => notifier.selectDataType(val!),
+            onChanged: (val) {
+              notifier.selectDataType(val!);
+            },
           ),
         ] else if (state.subProducts.isNotEmpty &&
             widget.serviceType != PlatformProductType.electricity &&

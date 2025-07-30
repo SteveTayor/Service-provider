@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -328,7 +329,8 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
       context.dismissDialog();
       debugPrint('Share failed: ${e.toString()}');
       if (mounted) {
-        context.showErrorSnackBar('Failed to share receipt');
+        log('Failed to share receipt');
+        // context.showErrorSnackBar('Failed to share receipt');
       }
     }
   }
