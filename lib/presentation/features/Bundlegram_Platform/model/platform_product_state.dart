@@ -21,6 +21,7 @@ class PlatformProductState {
   final List<SubProduct> subProducts;
   final bool isValidating;
   final bool billValidated;
+  final double? discountedAmount;
 
   PlatformProductState({
     this.selectedProduct,
@@ -41,6 +42,7 @@ class PlatformProductState {
     this.subProducts = const [],
     this.isValidating = false,
     this.billValidated = false,
+    this.discountedAmount,
   });
 
   factory PlatformProductState.initial() => PlatformProductState(
@@ -50,6 +52,7 @@ class PlatformProductState {
         dropdownOptions: [],
         isValidating: false,
         billValidated: false,
+        discountedAmount: null,
       );
 
   PlatformProductState copyWith({
@@ -71,6 +74,7 @@ class PlatformProductState {
     List<SubProduct>? subProducts,
     bool? isValidating,
     bool? billValidated,
+    double? discountedAmount,
   }) {
     return PlatformProductState(
       selectedProduct: selectedProduct ?? this.selectedProduct,
@@ -92,6 +96,7 @@ class PlatformProductState {
       subProducts: subProducts ?? this.subProducts,
       isValidating: isValidating ?? this.isValidating,
       billValidated: billValidated ?? this.billValidated,
+      discountedAmount: discountedAmount ?? this.discountedAmount,
     );
   }
 }

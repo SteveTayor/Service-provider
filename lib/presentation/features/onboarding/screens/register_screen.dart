@@ -14,6 +14,7 @@ import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -33,7 +34,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return BundlegramScaffold(
       resizeToAvoidBottomInset: true,
       sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
-      appBar: const BundlegramAppbar(),
+      // appBar: const BundlegramAppbar(),
       body: Column(
         children: [
           Column(
@@ -49,7 +50,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     'Have an account? ',
                     style: context.textTheme.bodySmall!.copyWith(
                       color: AppColors.grey33,
-                      fontSize: 16.sp,
+                      // fontSize: 16,
                     ),
                   ),
                   InkWell(
@@ -58,8 +59,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     },
                     child: Text(
                       'Sign in.',
-                      style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 16.sp,
+                      style: context.textTheme.bodyMedium!.copyWith(
+                        // fontSize: 16,
                         color: AppColors.primaryColor,
                       ),
                     ),
@@ -72,7 +73,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           Expanded(
             child: AppForm(
               formKey: ctrl.formKey,
-              isActive: prov.isValid && prov.agreed && !prov.isLoading,
+              isActive: prov.isValid && !prov.isLoading,
               buttonText: prov.isLoading ? 'Loading...' : 'Continue',
               onPressed: () => ctrl.submit(context),
               children: [
@@ -101,10 +102,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   validateFunction: Validators.validateNigerianPhoneNumber(),
                   keyboardType: TextInputType.phone,
                   textInputAction: TextInputAction.next,
-                  inputFormatters: [NumberInputFormatter()],
+                  inputFormatters: [
+                    NumberInputFormatter(),
+                    LengthLimitingTextInputFormatter(
+                        10), // Limits input to 10 digits
+                  ],
                   prefixIcon: Padding(
-                    padding: context.symmetricPadding(24, 12),
-                    child: Text('+234', style: context.textTheme.bodyMedium),
+                    padding: context.symmetricPadding(20, 12),
+                    child: Text('+234', style: context.textTheme.bodySmall),
                   ),
                 ),
                 AppTextField(
@@ -152,7 +157,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               style: context.textTheme.bodySmall,
               children: [
                 TextSpan(
-                  text: 'Terms and Conditions ↗',
+                  text: 'Terms and Conditions',
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       context.push(RouteConstants.termsCondition);
@@ -166,7 +171,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 const TextSpan(text: ' and'),
                 TextSpan(
-                  text: ' Privacy Policy↗',
+                  text: ' Privacy Policy',
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       context.push(RouteConstants.privacyPolicy);

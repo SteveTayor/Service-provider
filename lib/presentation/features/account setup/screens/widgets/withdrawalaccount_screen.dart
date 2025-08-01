@@ -39,75 +39,90 @@ class _WithdrawalaccountScreenState
       ),
       body: provider.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Display user name and wallet balance
-                // Padding(
-                //   padding:
-                //       EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     children: [
-                //       Text(
-                //         provider.userName ?? 'Loading...',
-                //         style: context.textTheme.titleLarge,
-                //       ),
-                //       8.verticalSpace,
-                //       Text(
-                //         'Wallet Balance: ₦${provider.formattedBalance}',
-                //         style: context.textTheme.bodyMedium!.copyWith(
-                //           color: AppColors.grey5B,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // Display bank details
-                ...provider.userBanks.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final bank = entry.value;
-                  return Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-                    child: BankdetailWidget(
-                      bank: bank,
-                      accountNumber:
-                          index + 1, // Account number (1-based index)
-                      onDelete: provider.isDeleting
-                          ? null
-                          : () async {
-                              final success =
-                                  await provider.deleteBank(context, bank!.id);
-                              if (!success) return; // Handle failure
-                            },
-                    ),
-                  );
-                }).toList(),
-                40.verticalSpace,
-                InkWell(
-                  onTap: () async {
-                    context.showLoadingDialog(message: 'Fetching details...');
-
-                    await Future.wait([
-                      ref.read(globalProvider.notifier).fetchBanks(context),
-                      ref.read(globalProvider.notifier).fetchProfile(context),
-                    ]);
-
-                    context.dismissDialog();
-                    context.push(RouteConstants.addbankdetail);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Text(
-                      '+ Add another account',
-                      style: context.textTheme.bodyMedium!.copyWith(
-                        color: AppColors.primaryColor,
+          : RefreshIndicator(
+              onRefresh: () async {
+                // Trigger data refresh by calling fetchData
+                await ref.read(withdrawalAccountProvider).fetchData(context);
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Display user name and wallet balance (uncomment if needed)
+                    /*
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            provider.userName ?? 'Loading...',
+                            style: context.textTheme.titleLarge,
+                          ),
+                          8.verticalSpace,
+                          Text(
+                            'Wallet Balance: ₦${provider.formattedBalance}',
+                            style: context.textTheme.bodyMedium!.copyWith(
+                              color: AppColors.grey5B,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+                    */
+                    // Display bank details
+                    ...provider.userBanks.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final bank = entry.value;
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.w, vertical: 8.h),
+                        child: BankdetailWidget(
+                          bank: bank,
+                          accountNumber:
+                              index + 1, // Account number (1-based index)
+                          onDelete: provider.isDeleting
+                              ? null
+                              : () async {
+                                  final success = await provider.deleteBank(
+                                      context, bank!.id);
+                                  if (!success) return; // Handle failure
+                                },
+                        ),
+                      );
+                    }).toList(),
+                    20.verticalSpace,
+                    InkWell(
+                      onTap: () async {
+                        context.showLoadingDialog(
+                            message: 'Fetching details...');
+
+                        await Future.wait([
+                          ref.read(globalProvider.notifier).fetchBanks(context),
+                          ref
+                              .read(globalProvider.notifier)
+                              .fetchProfile(context),
+                        ]);
+
+                        context
+                          ..dismissDialog()
+                          ..push(RouteConstants.addbankdetail);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Text(
+                          '+ Add another account',
+                          style: context.textTheme.bodyMedium!.copyWith(
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
     );
   }

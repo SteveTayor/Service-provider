@@ -23,7 +23,7 @@ class AppSvgIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
       child: path.contains('.svg')
           ? SvgPicture.asset(

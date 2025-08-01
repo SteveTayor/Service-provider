@@ -130,6 +130,8 @@ node_modules/
 *.njsproj
 *.sln
 *.sw?
+*.jks
+*.pem
 # OS specific
 # Task files
 tasks.json

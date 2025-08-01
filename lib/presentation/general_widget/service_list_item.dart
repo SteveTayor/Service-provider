@@ -1,22 +1,17 @@
-import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
-import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
-import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 import 'package:intl/intl.dart';
 
-class ServiceListItem extends StatelessWidget {
+class ServiceListItem extends ConsumerWidget {
   const ServiceListItem({
     super.key,
     required this.transaction,
@@ -25,7 +20,7 @@ class ServiceListItem extends StatelessWidget {
   final UserTransactions transaction;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef _ref) {
     final title = transaction.transType == "fund_wallet"
         ? "Top-up"
         : transaction.transType == "withdrawal"
@@ -39,7 +34,10 @@ class ServiceListItem extends StatelessWidget {
                 'unknown';
     final status = transaction.status?.capitalizeFirst ?? 'Unknown';
     final date = _formatDate(transaction.createdAt);
-    final amount = CurrencyFormatter.format(transaction.amount);
+    final amount = (transaction.transType == "fund_wallet" ||
+            transaction.transType == "withdrawal")
+        ? transaction.amount.toCurrency()
+        : transaction.deductAmount.toCurrency();
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,27 +55,30 @@ class ServiceListItem extends StatelessWidget {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 4,
             children: [
+              SizedBox(height: 2),
               Text(
                 title!,
-                style: context.textTheme.bodyMedium!.copyWith(fontSize: 14.sp),
+                style: context.textTheme.bodySmall?.copyWith(
+                  fontSize: 14,
+                ),
               ),
-              6.verticalSpace,
               Row(
                 children: [
                   Flexible(
                     child: Text(
                       status,
-                      style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 12.sp,
+                      style: context.textTheme.labelMedium!.copyWith(
+                        fontSize: 12,
                         color: _getStatusColor(status),
                       ),
                     ),
                   ),
                   Text(
-                    '  -  $date',
+                    ' - $date',
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 12,
                       color: AppColors.dateColor,
                     ),
                   ),
@@ -88,8 +89,8 @@ class ServiceListItem extends StatelessWidget {
         ),
         Text(
           amount,
-          style: context.textTheme.bodyMedium!.copyWith(
-            fontSize: 14.sp,
+          style: context.textTheme.labelMedium?.copyWith(
+            fontSize: 12.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -108,7 +109,7 @@ class ServiceListItem extends StatelessWidget {
     final txnDate = DateTime(date.year, date.month, date.day);
     if (txnDate == today) return 'Today';
     if (txnDate == yesterday) return 'Yesterday';
-    return DateFormat('MMMM d, yyyy').format(date);
+    return DateFormat('MMM d, yyyy').format(date); // e.g. Jul 26, 2025
   }
 
   Widget _getServiceIcon(String type) {
@@ -123,7 +124,10 @@ class ServiceListItem extends StatelessWidget {
     if (key.contains('data') || key.contains('internet')) {
       return AppSvgIcon(path: Assets.svgs.mobileData);
     }
-    if (key.contains('cable')) {
+    if (key.contains('cable') ||
+        key.contains('dstv') ||
+        key.contains('gotv') ||
+        key.contains('startimes')) {
       return AppSvgIcon(path: Assets.svgs.cableTv);
     }
     if (key.contains('bet')) {

@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/data/models/base/base_response.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/email_otp_widget.dart';
+import 'package:bundlegram/presentation/features/dashboard/screens/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -64,6 +69,7 @@ class VerifyEmailProvider extends ChangeNotifier {
 
           // Fetch profile to ensure UI updates
           _ref.read(globalProvider.notifier).fetchProfile(context);
+
           return true;
         } else {
           context.pop();
@@ -83,7 +89,7 @@ class VerifyEmailProvider extends ChangeNotifier {
 
     _verifying = true;
     notifyListeners();
-
+    unawaited(context.showLoadingDialog(message: 'Verifying email'));
     final token = await _ref.read(secureStorageHelperProvider).getAuthToken();
     if (token == null) {
       context.showErrorSnackBar('Missing auth token');
@@ -99,10 +105,12 @@ class VerifyEmailProvider extends ChangeNotifier {
       (Failure fail) {
         context.showErrorSnackBar(fail.properties.join('\n'));
         _verifying = false;
+        context.dismissDialog();
+        context.pushReplacementNamed(RouteConstants.dashboard);
         notifyListeners();
         return false;
       },
-      (BaseResponse resp) {
+      (resp) {
         // Check if the response indicates actual success
         if (resp.success) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -111,12 +119,17 @@ class VerifyEmailProvider extends ChangeNotifier {
           });
           _ref.read(globalProvider.notifier).fetchProfile(context);
           _verifying = false;
+          context.pushReplacementNamed(RouteConstants.dashboard);
           otpCtrl.clear();
+
+          context.dismissDialog();
           notifyListeners();
           return true;
         } else {
           context.showErrorSnackBar(resp.message ?? 'Verification failed');
           _verifying = false;
+          context.pop();
+          context.dismissDialog();
           notifyListeners();
           return false;
         }

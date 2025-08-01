@@ -54,7 +54,7 @@ class BankdetailWidget extends StatelessWidget {
         ),
       ],
     ).withContainer(
-      padding: context.symmetricPadding(24, 24),
+      padding: context.symmetricPadding(20, 12),
       borderRadius: BorderRadius.circular(6.r),
       color: const Color(0xffF1F5FF),
     );

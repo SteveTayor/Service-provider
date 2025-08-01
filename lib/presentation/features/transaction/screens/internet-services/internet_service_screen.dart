@@ -6,6 +6,7 @@ import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatter.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
@@ -103,6 +104,7 @@ class _InternetServiceProviderScreenState
                   AppTextField(
                     hintText: 'Amount',
                     controller: state.amountController,
+                    inputFormatters: [CurrencyTextInputFormatter()],
                     readOnly: true, // Price is set from dropdown selection
                     prefixIcon: Padding(
                       padding: context.symmetricPadding(24, 0),

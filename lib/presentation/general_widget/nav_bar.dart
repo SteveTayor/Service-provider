@@ -39,10 +39,10 @@ class NavBar extends ConsumerWidget {
 
     return Container(
       padding: EdgeInsets.fromLTRB(
-        23.w,
-        17.h,
-        23.w,
-        25.h,
+        20.w,
+        14.h,
+        20.w,
+        22.h,
       ),
       color: AppColors.background,
       width: double.infinity,
@@ -69,15 +69,15 @@ class NavBar extends ConsumerWidget {
                       path: index == currentIndex
                           ? '${items[index]['active']}'
                           : '${items[index]['icon']}',
-                      width: 24.w,
-                      height: 24.h,
+                      width: 14.w,
+                      height: 14.h,
                       fit: BoxFit.scaleDown,
                     ),
                     6.verticalSpace,
                     Text(
                       '${items[index]['name']}',
-                      style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 14.sp,
+                      style: context.textTheme.labelMedium!.copyWith(
+                        fontSize: 12,
                         color: AppColors.black.withOpacity(0.6),
                       ),
                     ),

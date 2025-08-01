@@ -8,11 +8,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class WalletoutlookWidget extends ConsumerWidget {
+class WalletoutlookWidget extends ConsumerStatefulWidget {
   const WalletoutlookWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WalletoutlookWidget> createState() =>
+      _WalletoutlookWidgetState();
+}
+
+class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
+  bool _isProcessing = false;
+
+  Future<void> _handleFundWallet(BuildContext context) async {
+    if (_isProcessing) return;
+
+    setState(() => _isProcessing = true);
+
+    final profile = ref.read(globalProvider).profile;
+    final bvn = profile.value?.data?.bvn;
+
+    if (bvn == null) {
+      WalletNotifier().showLinkBVNSnackBar(
+        context,
+        'To ensure that you get a virtual account number, verify your BVN for this feature.',
+        'Link now',
+      );
+    } else {
+      await WalletNotifier().showAddMoney(context, ref);
+    }
+
+    if (mounted) {
+      setState(() => _isProcessing = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final provider = ref.watch(platformProvider);
     final profile = ref.watch(globalProvider).profile;
     return Column(
@@ -22,8 +53,8 @@ class WalletoutlookWidget extends ConsumerWidget {
           children: [
             Text(
               'Wallet balance ',
-              style: context.textTheme.bodySmall!
-                  .copyWith(fontSize: 16.sp, color: AppColors.white),
+              style: context.textTheme.bodyMedium!
+                  .copyWith(color: AppColors.white),
             ),
             GestureDetector(
               onTap: () =>
@@ -38,11 +69,12 @@ class WalletoutlookWidget extends ConsumerWidget {
             ),
           ],
         ),
-        16.verticalSpace,
+        12.verticalSpace,
         Text(
           provider.isBalanceVisible ? provider.formattedBalance : '⁕⁕⁕⁕',
-          style: context.textTheme.bodyMedium!.copyWith(
-            fontSize: provider.isBalanceVisible ? 36.sp : 24.sp,
+          style: context.textTheme.titleLarge!.copyWith(
+            fontSize: provider.isBalanceVisible ? 34 : 24,
+            fontWeight: FontWeight.w500,
             color: AppColors.white,
           ),
         ),
@@ -55,18 +87,7 @@ class WalletoutlookWidget extends ConsumerWidget {
           text: 'Fund wallet',
           textStyle: context.textTheme.bodyMedium!
               .copyWith(color: AppColors.primaryColor),
-          onPressed: () {
-            final bvn = profile.value?.data?.bvn;
-            if (bvn == null) {
-              WalletNotifier().showLinkBVNSnackBar(
-                  context,
-                  'To ensure that you get a virtual account number, verify your BVN for this feature.',
-                  'Link now');
-            } else {
-              // ref.read(globalProvider.notifier).fetchVirtualAccount(context);
-              WalletNotifier().showAddMoney(context, ref);
-            }
-          },
+          onPressed: _isProcessing ? null : () => _handleFundWallet(context),
         ),
       ],
     );

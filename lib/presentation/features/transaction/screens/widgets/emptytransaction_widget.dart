@@ -15,11 +15,11 @@ class EmptytransactionWidget extends StatelessWidget {
         32.verticalSpace,
         Text(
           'No transaction yet',
-          style: context.textTheme.displayLarge,
+          style: context.textTheme.bodyMedium,
         ),
         Text(
           'You will find history of your transactions here',
-          style: context.textTheme.labelMedium,
+          style: context.textTheme.labelSmall,
         ),
       ],
     );

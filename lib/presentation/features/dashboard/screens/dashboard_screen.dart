@@ -16,16 +16,32 @@ class Dashboard extends ConsumerStatefulWidget {
 }
 
 class _DashboardState extends ConsumerState<Dashboard> {
+  bool hasInitialized = false;
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-      () => ref.read(dashboardProvider.notifier).initDashboard(context),
-    );
+// Only initDashboard if not last tab (AccountScreen = index 3)
+    final currentIndex = ref.read(dashboardProvider).currentIndex;
+    if (currentIndex != 3) {
+      Future.microtask(() {
+        ref.read(dashboardProvider.notifier).initDashboard(context);
+        hasInitialized = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentIndex =
+        ref.watch(dashboardProvider.select((p) => p.currentIndex));
+
+    // If user navigates to a new tab and init wasn't done yet, do it now
+    if (!hasInitialized && currentIndex != 3) {
+      Future.microtask(() {
+        ref.read(dashboardProvider.notifier).initDashboard(context);
+        hasInitialized = true;
+      });
+    }
     return Scaffold(
       body: IndexedStack(
         index: ref.watch(dashboardProvider.select((p) => p.currentIndex)),

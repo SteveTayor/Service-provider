@@ -1,7 +1,9 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatter.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_product_provider.dart';
@@ -82,10 +84,10 @@ class ProductItemGrid extends ConsumerWidget {
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(vertical: 16.h),
                   child: Text(
-                    '${CurrencyFormatter.format(amount)}',
-                    style: context.textTheme.titleMedium!.copyWith(
+                    '${formatAmount(amount)}',
+                    style: context.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w500,
-                      fontSize: 14.sp,
+                      // fontSize: 14,
                       color: isSelected
                           ? AppColors.primaryColor
                           : AppColors.grey83,
@@ -97,13 +99,22 @@ class ProductItemGrid extends ConsumerWidget {
               final item = validList[i];
               final isSelected = state.selectedSubProduct?.id == item.id;
 
-              final formattedData = item.dataSize! < 0.1
-                  ? '${(item.dataSize! * 10000).toStringAsFixed(0)}MB'
-                  : item.dataSize! < 1
-                      ? '${(item.dataSize! * 1000).toStringAsFixed(0)}MB'
-                      : item.subName!.contains('TB')
-                          ? '${item.dataSize!.toStringAsFixed(0)}TB'
-                          : '${item.dataSize!.toStringAsFixed(0)}GB';
+              String formatNumber(double value) {
+                return value.toStringAsFixed(1).endsWith('.0')
+                    ? value.toStringAsFixed(0)
+                    : value.toStringAsFixed(1);
+              }
+
+              String formattedData;
+              if (item.dataSize! < 0.1) {
+                formattedData = '${formatNumber(item.dataSize! * 10000)}MB';
+              } else if (item.dataSize! < 1) {
+                formattedData = '${formatNumber(item.dataSize! * 1000)}MB';
+              } else if (item.subName?.contains('TB') == true) {
+                formattedData = '${formatNumber(item.dataSize!)}TB';
+              } else {
+                formattedData = '${formatNumber(item.dataSize!)}GB';
+              }
 
               return GestureDetector(
                 onTap: () => notifier.selectSubProduct(item),
@@ -126,9 +137,9 @@ class ProductItemGrid extends ConsumerWidget {
                         child: Text(
                           formattedData,
                           // textAlign: TextAlign.start,
-                          style: context.textTheme.titleMedium!.copyWith(
+                          style: context.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w500,
-                            fontSize: 14.sp,
+                            // fontSize: 14,
                             color: isSelected
                                 ? AppColors.primaryColor
                                 : AppColors.grey83,
@@ -138,8 +149,8 @@ class ProductItemGrid extends ConsumerWidget {
                       4.verticalSpace,
                       Text(
                         item.duration ?? '',
-                        style: context.textTheme.bodySmall!.copyWith(
-                          fontSize: 10.sp,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          // fontSize: 14.sp,
                           color: AppColors.grey83,
                         ),
                       ),
@@ -155,6 +166,7 @@ class ProductItemGrid extends ConsumerWidget {
           AppTextField(
             hintText: 'Enter amount',
             controller: state.amountController,
+            inputFormatters: [CurrencyTextInputFormatter()],
             prefixIcon: Padding(
               padding: context.symmetricPadding(24, 0),
               child: Text('₦', style: context.textTheme.bodyMedium),
@@ -166,7 +178,9 @@ class ProductItemGrid extends ConsumerWidget {
           ),
         ],
         if (state.selectedSubProduct != null &&
-            serviceType == PlatformProductType.mobileData) ...[
+            serviceType == PlatformProductType.mobileData &&
+            state.selectedSubProduct!.subPrice != null &&
+            state.selectedSubProduct!.subPrice!.isNotEmpty) ...[
           24.verticalSpace,
           Container(
             width: context.width,
@@ -182,7 +196,9 @@ class ProductItemGrid extends ConsumerWidget {
                 Text('Amount', style: context.textTheme.bodySmall),
                 8.verticalSpace,
                 Text(
-                  '₦${state.selectedSubProduct!.subPrice}',
+                  state.selectedSubProduct != null
+                      ? '₦${state.amountController.text.trim()}'
+                      : '₦0.00',
                   style: context.textTheme.bodySmall!.copyWith(
                     color: AppColors.grey19,
                   ),
@@ -290,7 +306,7 @@ class ProductItemGrid extends ConsumerWidget {
 //                   bundle[dataKey]!,
 //                   style: context.textTheme.titleMedium!.copyWith(
 //                     fontWeight: FontWeight.w500,
-//                     fontSize: 20.sp,
+//                     fontSize: 20,
 //                     color:
 //                         isSelected ? AppColors.primaryColor : AppColors.grey83,
 //                   ),
@@ -302,7 +318,7 @@ class ProductItemGrid extends ConsumerWidget {
 //                   child: Text(
 //                     bundle['duration']!,
 //                     style: context.textTheme.bodySmall!.copyWith(
-//                       fontSize: 12.sp,
+//                       fontSize: 12,
 //                       color: AppColors.grey83,
 //                     ),
 //                   ),

@@ -34,6 +34,7 @@ class BasicInfoProvider extends ChangeNotifier {
     final profile = (_ref.read(globalProvider).profile).value!.data!;
 
     _lastName.text = profile.lastName ?? '';
+    _firstName.text = profile.firstName ?? '';
     _email.text = profile.email ?? '';
     _phone.text = profile.phone ?? '';
     if (profile.gender != null) {

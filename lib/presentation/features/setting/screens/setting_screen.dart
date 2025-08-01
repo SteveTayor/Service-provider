@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
@@ -8,13 +9,16 @@ import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class SettingScreen extends StatelessWidget {
+class SettingScreen extends ConsumerWidget {
   const SettingScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final globalUserProvider = ref.watch(globalProvider).profile;
+    final profileProv = globalUserProvider.value?.data;
     Widget buildRowWidget(String asset, String title,
         {VoidCallback? onPressed}) {
       return AppListTile(
@@ -38,7 +42,8 @@ class SettingScreen extends StatelessWidget {
             Assets.svgs.userProtection2StreamlineCore,
             'Change password',
             onPressed: () {
-              context.push(RouteConstants.changePassword);
+              final email = profileProv?.email;
+              context.push(RouteConstants.changePassword, extra: email);
             },
           ),
           buildRowWidget(

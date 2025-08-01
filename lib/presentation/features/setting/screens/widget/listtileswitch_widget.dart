@@ -46,8 +46,8 @@ class _ListtileswitchWidgetState extends State<ListtileswitchWidget> {
               child: Text(
                 widget.title,
                 style: context.textTheme.bodyMedium!.copyWith(
-                  fontSize: 22.sp,
-                ),
+                    // fontSize: 22,
+                    ),
               ),
             ),
             CupertinoSwitch(

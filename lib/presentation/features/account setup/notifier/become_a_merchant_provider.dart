@@ -20,6 +20,7 @@ import 'package:bundlegram/presentation/features/account%20setup/screens/widgets
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
+import 'package:bundlegram/presentation/features/wallet/screen/topup_failed_screen.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,17 +61,41 @@ class BecomeAgentProvider extends ChangeNotifier {
 
       if (parsedBalance < requiredAmount) {
         context.dismissDialog();
-        unawaited(context.showPopUp(
-          ErrorPopup(
-            title: 'Insufficient Funds',
-            message:
-                'Your wallet balance (${CurrencyFormatter.format(parsedBalance)}) is less than the required ₦10,000.00. Please fund your wallet.',
-            onOkay: () {
-              context.go(RouteConstants.dashboard); // Route to dashboard
-            },
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (ctx) => FailedResultScreen(
+              title: "Transaction Failed",
+              serviceContent: "transaction",
+              errorMessage:
+                  'Your wallet balance (${parsedBalance.toCurrency()}) is less than the required ₦10,000.00. Please fund your wallet.',
+              onRetry: () {
+                context.pushReplacement(RouteConstants.dashboard);
+              },
+            ),
           ),
-        ));
+        );
+        // unawaited(context.showPopUp(
+        //   ErrorPopup(
+        //     title: 'Insufficient Funds',
+        //     message:
+        //         'Your wallet balance (${parsedBalance.toCurrency()}) is less than the required ₦10,000.00. Please fund your wallet.',
+        //     onOkay: () {
+        //       context.go(RouteConstants.dashboard); // Route to dashboard
+        //     },
+        //   ),
+        // ));
         _setLoading(false);
+        return;
+      }
+      final globalUserProvider = _ref.watch(globalProvider).profile;
+      final profileProv = globalUserProvider.value?.data;
+      if (profileProv?.userType == "agent") {
+        _setLoading(false);
+        context
+          ..showErrorSnackBar('You are already a Bundlegram agent')
+          ..go(RouteConstants.dashboard); // Route to dashboard
+
         return;
       }
 

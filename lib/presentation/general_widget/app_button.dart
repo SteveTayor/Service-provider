@@ -116,7 +116,9 @@ class _BundlegramButton extends State<BundlegramButton> {
                         shape: BoxShape.circle,
                         border: Border.all(
                           width: 1.86,
-                          color: AppColors.primaryColor,
+                          color: widget.isEnabled == false
+                              ? AppColors.greyD0.withOpacity(0.3)
+                              : AppColors.primaryColor,
                         ),
                       ),
                       5.horizontalSpace,
@@ -128,7 +130,7 @@ class _BundlegramButton extends State<BundlegramButton> {
                           context.textTheme.bodyMedium?.copyWith(
                             color: _buttonStyle.textColor,
                             fontFamily: FontFamily.mabryPro,
-                            fontSize: 18.sp,
+                            // fontSize: 18,
                             fontWeight: FontWeight.w500,
                           ),
                     ),

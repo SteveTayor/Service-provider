@@ -14,7 +14,7 @@ class EmptynotificationWidget extends StatelessWidget {
         AppSvgIcon(path: Assets.svgs.notificationbell),
         Text(
           'No notification yet.',
-          style: context.textTheme.displayLarge,
+          style: context.textTheme.bodyMedium,
         ),
         Text(
           'You will find all notifications here',

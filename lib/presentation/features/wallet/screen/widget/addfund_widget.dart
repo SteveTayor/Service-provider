@@ -1,15 +1,18 @@
 // ignore_for_file: lines_longer_than_80_chars
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/models/banks/get_virtual_account_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -54,7 +57,15 @@ class _AddfundWidgetState extends ConsumerState<AddfundWidget> {
             ),
           ],
         ),
-        AppSvgIcon(path: Assets.svgs.phCopySimple),
+        AppSvgIcon(
+          onTap: () {
+            Clipboard.setData(ClipboardData(text: title));
+
+            navigatorKey.currentState!.context
+                .showCustomSnackBar("Account number Copied");
+          },
+          path: Assets.svgs.phCopySimple,
+        ),
       ],
     );
   }
@@ -154,6 +165,8 @@ class _AddfundWidgetState extends ConsumerState<AddfundWidget> {
           InkWell(
             onTap: () {
               context.pop();
+              // navigatorKey.currentState!.context
+              //     .showCustomSnackBar("Coming soom");
               WalletNotifier().showAddMoneyViaDebitCard(context);
             },
             child: Text(

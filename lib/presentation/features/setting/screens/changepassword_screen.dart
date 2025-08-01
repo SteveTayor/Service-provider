@@ -1,39 +1,40 @@
+// lib/presentation/features/setting/screens/change_password_screen.dart
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/validators.dart';
+import 'package:bundlegram/presentation/features/setting/provider/change_password_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ChangepasswordScreen extends StatefulWidget {
-  const ChangepasswordScreen({super.key});
+class ChangepasswordScreen extends ConsumerStatefulWidget {
+  final String email;
+  const ChangepasswordScreen({super.key, required this.email});
 
   @override
-  State<ChangepasswordScreen> createState() => _ChangepasswordScreenState();
+  ConsumerState<ChangepasswordScreen> createState() =>
+      _ChangepasswordScreenState();
 }
 
-class _ChangepasswordScreenState extends State<ChangepasswordScreen> {
-  final _formKey = GlobalKey<FormState>();
-  bool _isFormValid = false;
+class _ChangepasswordScreenState extends ConsumerState<ChangepasswordScreen> {
+  @override
+  void initState() {
+    super.initState();
 
-  validateform() {
-    setState(() {
-      _isFormValid = _formKey.currentState!.validate();
+    // ✅ Use ref.read instead of ref.watch here
+    final controller = ref.read(changePasswordProvider(widget.email));
+    controller.confirmPasswordController.addListener(() {
+      controller.formKey.currentState?.validate();
     });
-    if (_isFormValid) {
-      // show a green success bar
-      context.showCustomSnackBar("Password has been updated!");
-      context.pop();
-    } else {
-      // show a red error bar
-      context.showErrorSnackBar("Please enter valid passwords.");
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = ref.watch(changePasswordProvider(widget.email));
+
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(
         titleText: 'Change password',
@@ -43,28 +44,63 @@ class _ChangepasswordScreenState extends State<ChangepasswordScreen> {
           Flexible(
             child: AppForm(
               isExpanded: false,
-              isActive: _isFormValid,
-              onPressed: () {
-                // context.go(RouteConstants.dashboard);
-                validateform();
-              },
-              buttonText: 'Update password',
-              formKey: _formKey,
+              isActive: controller.isFormValid,
+              onPressed: () => controller.submit(context),
+              buttonText:
+                  controller.isLoading ? 'Updating...' : 'Update password',
+              formKey: controller.formKey,
               children: [
                 AppTextField(
-                  obscureText: true,
+                  controller: controller.currentPasswordController,
+                  obscureText: controller.showCurrentPassword,
                   hintText: 'Current password',
-                  validateFunction: Validators.passcode(),
+                  label: 'Current password',
+                  suffixIcon: GestureDetector(
+                    onTap: controller.toggleCurrentPasswordVisibility,
+                    child: Icon(
+                      controller.showCurrentPassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColors.grey33,
+                      size: 24,
+                    ),
+                  ),
                 ),
                 AppTextField(
-                  obscureText: true,
+                  controller: controller.newPasswordController,
+                  obscureText: controller.showNewPassword,
                   hintText: 'New Password',
+                  label: 'New Password',
                   validateFunction: Validators.password(),
+                  suffixIcon: GestureDetector(
+                    onTap: controller.toggleNewPasswordVisibility,
+                    child: Icon(
+                      controller.showNewPassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColors.grey33,
+                      size: 24,
+                    ),
+                  ),
                 ),
                 AppTextField(
-                  obscureText: true,
-                  hintText: 'New Password again',
-                  validateFunction: Validators.password(),
+                  controller: controller.confirmPasswordController,
+                  obscureText: controller.showConfirmPassword,
+                  hintText: 'Confirm New Password',
+                  label: 'Confirm New Password',
+                  validateFunction: Validators.confirmPass(
+                    controller.newPasswordController.text,
+                  ),
+                  suffixIcon: GestureDetector(
+                    onTap: controller.toggleConfirmPasswordVisibility,
+                    child: Icon(
+                      controller.showConfirmPassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColors.grey33,
+                      size: 24,
+                    ),
+                  ),
                 ),
               ],
             ),

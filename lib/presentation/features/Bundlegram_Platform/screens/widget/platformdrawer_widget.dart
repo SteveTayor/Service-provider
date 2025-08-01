@@ -20,10 +20,26 @@ class PlatFormDrawer extends ConsumerWidget {
     final userName = ref.watch(platformProvider).userName;
     final global = ref.watch(globalProvider).profile;
     final profileProv = global.value?.data;
+    final isAgent = profileProv?.userType == "agent";
+
+    // Filter platformDrawerItem to exclude "Become an agent" if user is an agent
+    final drawerItems = PlatFormData.platformDrawerItem
+        .asMap()
+        .entries
+        .where((entry) {
+          // Index 5 corresponds to "Become an agent" in platformDrawerItem
+          if (isAgent && entry.key == 5) {
+            return false; // Exclude "Become an agent" for agents
+          }
+          return true; // Include all other items
+        })
+        .map((entry) => entry.value)
+        .toList();
+
     return Material(
       color: AppColors.background,
       child: SizedBox(
-        width: 300.w,
+        width: 260.w,
         child: Stack(
           children: [
             ListView(
@@ -32,12 +48,14 @@ class PlatFormDrawer extends ConsumerWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(
-                      PlatFormData.platformDrawerItem.length, (index) {
-                    return PlatFormData.platformDrawerItem[index].withContainer(
-                      padding: context.symmetricPadding(0, 10.h),
-                      margin: context.symmetricPadding(20.w, 10.h),
-                    );
-                  }),
+                    drawerItems.length,
+                    (index) {
+                      return drawerItems[index].withContainer(
+                        padding: context.symmetricPadding(0, 10.h),
+                        margin: context.symmetricPadding(20.w, 10.h),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
@@ -64,7 +82,7 @@ class PlatFormDrawer extends ConsumerWidget {
                   ],
                 ),
                 12.verticalSpace,
-                if (global.value?.data?.userType == "agent")
+                if (isAgent)
                   Row(
                     children: [
                       AppSvgIcon(path: Assets.svgs.crownStreamlineFlex),
@@ -72,14 +90,14 @@ class PlatFormDrawer extends ConsumerWidget {
                       Text(
                         'Bundlegram agent',
                         style: context.textTheme.bodySmall!.copyWith(
-                          fontSize: 14.sp,
+                          // fontSize: 14,
                           color: AppColors.greyF5,
                         ),
                       ),
                     ],
                   )
                 else
-                  SizedBox(),
+                  const SizedBox(),
               ],
             ).withContainer(
               height: 152.h,

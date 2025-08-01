@@ -4,18 +4,22 @@ import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/gen/fonts.gen.dart';
+import 'package:bundlegram/presentation/features/account%20setup/notifier/help_and_support_provider.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/faqs_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class HelpandsupportScreen extends StatelessWidget {
+class HelpandsupportScreen extends ConsumerWidget {
   const HelpandsupportScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(helpSupportProvider);
+
     Widget buildItemRow(
       String asset,
       String title,
@@ -67,99 +71,127 @@ class HelpandsupportScreen extends StatelessWidget {
       appBar: const BundlegramAppbar(
         titleText: 'Help & Support',
       ),
-      body: Column(
-        children: [
-          40.verticalSpace,
-          buildItemRow(
-            Assets.svgs.helpQuestion1StreamlineCore,
-            extraWidget: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) => const HelpCenterScreen(),
+      body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            40.verticalSpace,
+            buildItemRow(
+              Assets.svgs.helpQuestion1StreamlineCore,
+              'Help center (FAQs)',
+              'We collated some likely questions you may have, with their respective answers. If you don’t find answer to your question, please call support or send an email to the addresses below.',
+              extraWidget: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => const HelpCenterScreen(),
+                    ),
+                  );
+                },
+                child: Text(
+                  'View FAQs',
+                  style: context.textTheme.titleSmall!.copyWith(
+                    // fontSize: 16,
+                    height: 3,
+                    color: AppColors.primaryColor,
+                    decorationColor: AppColors.primaryColor,
+                    decoration: TextDecoration.underline,
                   ),
-                );
-              },
-              child: Text(
-                'View FAQs',
-                style: context.textTheme.titleMedium!.copyWith(
-                  fontSize: 16.sp,
-                  height: 3,
-                  color: AppColors.primaryColor,
-                  decorationColor: AppColors.primaryColor,
-                  decoration: TextDecoration.underline,
                 ),
               ),
             ),
-            'Help center (FAQs)',
-            'We collated some likely questions you may have, with their respective answers. If you don’t find answer to your question, please call support or send an email to the addresses below.',
-          ),
-          buildItemRow(
-            Assets.svgs.sendEmailMailSendEmailPaperAirplane,
-            extraWidget: Column(
-              children: [
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        'Enquiry: info@bundlegram.com',
-                        style: context.textTheme.bodySmall!.copyWith(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.grey33,
+            buildItemRow(
+              Assets.svgs.sendEmailMailSendEmailPaperAirplane,
+              'Send an email',
+              '',
+              extraWidget: Column(
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: GestureDetector(
+                          onTap: () => provider.launchEmail(
+                              context, 'info@bundlegram.com'),
+                          child: Text(
+                            'Enquiry: info@bundlegram.com',
+                            style: context.textTheme.bodySmall!.copyWith(
+                              // fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.grey33,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    5.horizontalSpace,
-                    AppSvgIcon(path: Assets.svgs.copy),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Flexible(
-                      child: Text(
-                        'Technical: support@bundlegram.com',
-                        style: context.textTheme.bodySmall!.copyWith(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.grey33,
+                      5.horizontalSpace,
+                      GestureDetector(
+                        onTap: () => provider.copyToClipboard(
+                            context, 'info@bundlegram.com'),
+                        child: AppSvgIcon(path: Assets.svgs.copy),
+                      ),
+                    ],
+                  ),
+                  8.verticalSpace,
+                  Row(
+                    children: [
+                      Flexible(
+                        child: GestureDetector(
+                          onTap: () => provider.launchEmail(
+                              context, 'support@bundlegram.com'),
+                          child: Text(
+                            'Technical: support@bundlegram.com',
+                            style: context.textTheme.bodySmall!.copyWith(
+                              // fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.grey33,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    5.horizontalSpace,
-                    AppSvgIcon(path: Assets.svgs.copy),
-                  ],
-                ),
-              ],
-            ),
-            'Send an email',
-            '',
-          ),
-          buildItemRow(
-            Assets.svgs.phoneRinging1StreamlineCore,
-            extraWidget: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '08133434566',
-                      style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.grey33,
+                      5.horizontalSpace,
+                      GestureDetector(
+                        onTap: () => provider.copyToClipboard(
+                            context, 'support@bundlegram.com'),
+                        child: AppSvgIcon(path: Assets.svgs.copy),
                       ),
-                    ),
-                    5.horizontalSpace,
-                    AppSvgIcon(path: Assets.svgs.copy),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-            'Call support',
-            '',
-          ),
-        ],
+            buildItemRow(
+              Assets.svgs.phoneRinging1StreamlineCore,
+              'Call support',
+              '',
+              extraWidget: Column(
+                children: [
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () =>
+                            provider.launchPhoneCall(context, '08133434566'),
+                        child: Text(
+                          '08133434566',
+                          style: context.textTheme.bodySmall!.copyWith(
+                            // fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.grey33,
+                          ),
+                        ),
+                      ),
+                      5.horizontalSpace,
+                      GestureDetector(
+                        onTap: () =>
+                            provider.copyToClipboard(context, '08133434566'),
+                        child: AppSvgIcon(path: Assets.svgs.copy),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

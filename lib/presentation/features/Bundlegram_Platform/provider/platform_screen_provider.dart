@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
@@ -35,7 +36,7 @@ class PlatformProvider extends ChangeNotifier {
     final wallet = _ref.read(globalProvider).walletBalance;
     final value = wallet.value?.wallet;
 
-    return CurrencyFormatter.format(value);
+    return "${value.toCurrency()}";
   }
 
   List<Sterling> get virtualAccounts {

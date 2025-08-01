@@ -4,6 +4,7 @@ import 'package:bundlegram/core/utils/themes.dart';
 // import 'package:bundlegram/presentation/features/onboarding/screens/splash_screen.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -21,23 +22,30 @@ class App extends ConsumerWidget {
       ensureScreenSize: true,
       useInheritedMediaQuery: true,
       builder: (context, c) {
-        return DevicePreview(
-          builder: (context) {
-            return GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-              child: MaterialApp.router(
-                themeMode: ThemeMode.system,
-                theme: AppTheme.lightTheme,
-                darkTheme: AppTheme.darkTheme,
-                routerConfig: AppRouter.router,
-                debugShowCheckedModeBanner: false,
-              ),
-            );
+        // return DevicePreview(
+        //   builder: (context) {
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
           },
+          child: MaterialApp.router(
+            themeMode: ThemeMode.system,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            routerConfig: AppRouter.router,
+            debugShowCheckedModeBanner: false,
+            locale: const Locale('en', 'NG'), // Set en_NG locale
+            supportedLocales: const [Locale('en', 'NG')],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+          ),
         );
+        //   },
+        // );
       },
     );
   }

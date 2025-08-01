@@ -21,40 +21,45 @@ class ForgetPasswordScreen extends ConsumerWidget {
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(),
       sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
-      body: Column(
-        children: [
-          Column(
-            children: [
-              Text('Forget Password?', style: context.textTheme.titleMedium),
-              Text(
-                'Enter email address used to create account. A code will be sent for verification.',
-                textAlign: TextAlign.center,
-                style: context.textTheme.bodySmall!.copyWith(
-                  color: AppColors.grey33,
-                  fontSize: 16.sp,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Column(
+              children: [
+                Text('Forget Password?', style: context.textTheme.titleMedium),
+                Text(
+                  'Enter email address used to create account. A code will be sent for verification.',
+                  textAlign: TextAlign.center,
+                  style: context.textTheme.bodySmall!.copyWith(
+                    color: AppColors.grey33,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          40.verticalSpace,
-          Expanded(
-            child: AppForm(
+              ],
+            ),
+            40.verticalSpace,
+            AppForm(
               formKey: ctrl.formKey,
               isExpanded: false,
-              isActive: prov.isValid,
-              onPressed: () => ctrl.submit(context),
-              buttonText: 'Continue',
+              isActive: prov.isValid && !prov.isLoading,
+              onPressed: () {
+                FocusScope.of(context).unfocus(); // Dismiss keyboard
+                ctrl.submit(context);
+              },
+              buttonText: prov.isLoading ? 'Sending...' : 'Continue',
               children: [
                 AppTextField(
                   hintText: 'Email',
                   controller: ctrl.emailCtrl,
                   validateFunction: Validators.email(),
                   keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.done,
+                  onChange: (value) => ctrl.validate(), // Manual trigger
                 ),
               ],
             ),
-          ),
-        ],
+            40.verticalSpace,
+          ],
+        ),
       ),
     );
   }

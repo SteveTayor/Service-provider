@@ -36,15 +36,20 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
         final advertItems = <String>[];
         final advertActions = <VoidCallback>[];
 
-        if (!isAccountSetupComplete) {
+        // if (!isAccountSetupComplete) {
           advertItems.add(Assets.svgs.accountsetup);
           advertActions.add(() => context.push(RouteConstants.accountSetup));
-        }
+        // }
 
-        if (!isAgent) {
+        // if (!isAgent) {
           advertItems.add(Assets.svgs.bundlegramagent);
           advertActions.add(() => context.push(RouteConstants.becomeagent));
-        }
+        // }
+
+        advertItems.add(Assets.svgs.completesetup);
+        advertActions.add(
+          () => null,
+        );
 
         // If nothing left to show, hide the entire carousel
         if (advertItems.isEmpty) return const SizedBox.shrink();

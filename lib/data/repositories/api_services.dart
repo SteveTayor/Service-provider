@@ -123,6 +123,15 @@ class ApiService {
     });
   }
 
+  Future<Either<Failure, BaseResponse>> verifyOtp(
+    String token,
+    VerifyOtpRequest req,
+  ) {
+    return handleApi(() {
+      return _api.verifyOtp('Bearer $token', req);
+    });
+  }
+
   Future<Either<Failure, BaseResponse>> verifyEmail(
       String token, VerifyEmailRequest req) {
     return handleApi(() {
@@ -196,6 +205,12 @@ class ApiService {
       String token, FetchAccountNameRequest req) {
     return handleApi(
         () => _api.fetchAccountName('Bearer $token', _sterilizer, req));
+  }
+
+  Future<Either<Failure, BaseResponse>> closeAccount(
+      String token, DeleteAccountRequest req) {
+    return handleApi(
+        () => _api.deleteAccount('Bearer $token', _sterilizer, req));
   }
 
   Future<Either<Failure, DeleteBankResponse>> deleteBank(

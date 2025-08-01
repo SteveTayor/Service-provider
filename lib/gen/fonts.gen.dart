@@ -15,4 +15,13 @@ class FontFamily {
 
   /// Font family: MabryProBold
   static const String mabryProBold = 'MabryProBold';
+
+  /// Font family: Roboto-Bold
+  static const String robotoBold = 'Roboto-Bold';
+
+  /// Font family: Roboto-Regular
+  static const String robotoRegular = 'Roboto-Regular';
+
+  /// Font family: Roboto-SemiBold
+  static const String robotoSemiBold = 'Roboto-SemiBold';
 }

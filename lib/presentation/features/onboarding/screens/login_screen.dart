@@ -15,138 +15,155 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  @override
+  Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     final ctrl = ref.read(loginProvider);
-    return BundlegramScaffold(
-      sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
-      appBar: const BundlegramAppbar(),
-      body: Column(
-        children: [
-          Column(
-            children: [
-              Text(
-                'Welcome back!',
-                style: context.textTheme.titleMedium,
+    return WillPopScope(
+      onWillPop: () async {
+        context.pushReplacement(RouteConstants.register);
+        return false;
+      },
+      child: BundlegramScaffold(
+        sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
+        appBar: const BundlegramAppbar(),
+        body: Column(
+          children: [
+            Column(
+              children: [
+                Text(
+                  'Welcome back!',
+                  style: context.textTheme.titleMedium,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'No account yet? ',
+                      style: context.textTheme.bodySmall!.copyWith(
+                        color: AppColors.grey33,
+                        // fontSize: 16,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        context.push('/register');
+                      },
+                      child: Text(
+                        'Sign up.',
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          // fontSize: 16,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            40.verticalSpace,
+            Flexible(
+              child: AppForm(
+                formKey: ctrl.formKey,
+                isExpanded: false,
+                extraWidget: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Checkbox(
+                    //   value: prov.rememberMe,
+                    //   onChanged: ctrl.toggleRememberMe,
+                    //   activeColor: AppColors.primaryColor,
+                    //   side: const BorderSide(
+                    //     color: AppColors.primaryColor,
+                    //   ),
+                    //   checkColor: AppColors.white,
+                    // ),
+                    // Text(
+                    //   'Remember me',
+                    //   style: context.textTheme.bodySmall!.copyWith(
+                    //     // fontSize: 16,
+                    //     color: AppColors.grey83,
+                    //   ),
+                    // ),
+                    // const Spacer(),
+                    InkWell(
+                      onTap: () => context.push(
+                        RouteConstants.forgetPassword,
+                      ),
+                      child: Text(
+                        'Forget Password?',
+                        style: context.textTheme.labelMedium?.copyWith(
+                          // fontSize: 16,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                isActive: prov.isValid && !prov.isLoading,
+                onPressed: () {
+                  FocusScope.of(context).unfocus(); // Dismiss keyboard
+                  ctrl.submit(context);
+                },
+                buttonText: prov.isLoading ? 'Loading...' : 'Sign In',
+                children: [
+                  AppTextField(
+                    hintText: 'Email address',
+                    controller: ctrl.emailCtrl,
+                    validateFunction: Validators.email(),
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  AppTextField(
+                    hintText: 'Password',
+                    controller: ctrl.passwordCtrl,
+                    obscureText: prov.showPasswrd,
+                    suffixIcon: GestureDetector(
+                      onTap: () =>
+                          setState(() => prov.showPasswrd = !prov.showPasswrd),
+                      // onTap: () => ctrl.togglePasswordVisibility,
+                      child: Icon(
+                        prov.showPasswrd
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: AppColors.grey33,
+                        size: 24,
+                      ),
+                    ),
+                    onChange: (value) {
+                      ctrl.validate();
+                    },
+                  ),
+                ],
               ),
-              Row(
+            ),
+            40.verticalSpace,
+            Visibility(
+              visible: false, // biometric toggle off for now
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'No account yet? ',
-                    style: context.textTheme.bodySmall!.copyWith(
-                      color: AppColors.grey33,
-                      fontSize: 16.sp,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      context.push('/register');
-                    },
+                  AppSvgIcon(path: Assets.svgs.fingerCricle),
+                  8.horizontalSpace,
+                  Flexible(
                     child: Text(
-                      'Sign up.',
-                      style: context.textTheme.bodySmall!.copyWith(
-                        fontSize: 16.sp,
-                        color: AppColors.primaryColor,
-                      ),
+                      textAlign: TextAlign.center,
+                      'Sign in with fingerprint / face ID',
+                      style: context.textTheme.bodyMedium,
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
-          40.verticalSpace,
-          Flexible(
-            child: AppForm(
-              formKey: ctrl.formKey,
-              isExpanded: false,
-              extraWidget: Row(
-                children: [
-                  Checkbox(
-                    value: prov.rememberMe,
-                    onChanged: ctrl.toggleRememberMe,
-                    activeColor: AppColors.primaryColor,
-                    side: const BorderSide(color: AppColors.primaryColor),
-                    checkColor: AppColors.white,
-                  ),
-                  Text(
-                    'Remember me',
-                    style: context.textTheme.bodySmall!.copyWith(
-                      fontSize: 16.sp,
-                      color: AppColors.grey83,
-                    ),
-                  ),
-                  const Spacer(),
-                  InkWell(
-                    onTap: () => context.push(
-                      RouteConstants.forgetPassword,
-                    ),
-                    child: Text(
-                      'Forget Password?',
-                      style: context.textTheme.bodyMedium!.copyWith(
-                        fontSize: 16.sp,
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              isActive: prov.isValid && !prov.isLoading,
-              onPressed: () => ctrl.submit(context),
-              buttonText: prov.isLoading ? 'Loading...' : 'Sign In',
-              children: [
-                AppTextField(
-                  hintText: 'Email address',
-                  controller: ctrl.emailCtrl,
-                  validateFunction: Validators.email(),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                AppTextField(
-                  obscureText: prov.showPassword,
-                  hintText: 'Password',
-                  controller: ctrl.passwordCtrl,
-                  suffixIcon: prov.showPassword
-                      ? AppSvgIcon(
-                          path: Assets.svgs.eye,
-                          fit: BoxFit.scaleDown,
-                          onTap: ctrl.togglePasswordVisibility,
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.visibility_off,
-                            size: 24,
-                          ),
-                        ),
-                  validateFunction: Validators.password(),
-                  onChange: (value) => ctrl.validate(),
-                ),
-              ],
             ),
-          ),
-          40.verticalSpace,
-          Visibility(
-            visible: false, // biometric toggle off for now
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AppSvgIcon(path: Assets.svgs.fingerCricle),
-                8.horizontalSpace,
-                Flexible(
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    'Sign in with fingerprint / face ID',
-                    style: context.textTheme.bodyMedium,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

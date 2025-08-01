@@ -34,9 +34,9 @@ class PlatformItemWidget extends StatelessWidget {
           8.verticalSpace,
           Text(
             title,
-            style: context.textTheme.bodyMedium!.copyWith(
+            style: context.textTheme.bodySmall!.copyWith(
               color: AppColors.white,
-              fontSize: 14.sp,
+              // fontSize: 14,
             ),
           ),
         ],

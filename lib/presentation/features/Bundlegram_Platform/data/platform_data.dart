@@ -1,8 +1,10 @@
 // ignore_for_file: inference_failure_on_instance_creation, inference_failure_on_function_invocation
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
@@ -14,6 +16,13 @@ import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+class BillWidgetItem {
+  final String title;
+  final Widget Function(BuildContext) builder;
+
+  BillWidgetItem({required this.title, required this.builder});
+}
+
 class PlatFormData {
   static final List<String> advert = [
     Assets.svgs.accountsetup,
@@ -23,103 +32,126 @@ class PlatFormData {
         () => context.push(RouteConstants.accountSetup),
         () => context.push(RouteConstants.becomeagent),
       ];
-  static final List<Widget> payBillWidget = [
-    Builder(builder: (context) {
-      return AppListTile(
-        assetPath: Assets.svgs.betting,
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PlatformproductScreen(
-                  serviceType: PlatformProductType.betting),
-            ),
-          );
-        },
+  static final List<BillWidgetItem> billWidgets = [
+    BillWidgetItem(
         title: 'Betting',
-      );
-    }),
-    Builder(builder: (context) {
-      return AppListTile(
-        assetPath: Assets.svgs.electricity,
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PlatformproductScreen(
-                  serviceType: PlatformProductType.electricity),
-            ),
+        builder: (context) {
+          return AppListTile(
+            assetPath: Assets.svgs.betting,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PlatformproductScreen(
+                      serviceType: PlatformProductType.betting),
+                ),
+              );
+            },
+            title: 'Betting',
           );
-        },
-        title: 'Electricity',
-      );
-    }),
-    Builder(builder: (context) {
-      return AppListTile(
-        assetPath: Assets.svgs.ePin,
-        title: 'E-pin voucher',
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PlatformproductScreen(
-                  serviceType: PlatformProductType.ePinVoucher),
-            ),
-          );
-        },
-      );
-    }),
-    Builder(builder: (context) {
-      return AppListTile(
-        assetPath: Assets.svgs.educationSvg,
+        }),
+    BillWidgetItem(
+      title: 'Electricity',
+      builder: (context) {
+        return AppListTile(
+          assetPath: Assets.svgs.electricity,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PlatformproductScreen(
+                    serviceType: PlatformProductType.electricity),
+              ),
+            );
+          },
+          title: 'Electricity',
+        );
+      },
+    ),
+    BillWidgetItem(
+      title: 'E-pin voucher',
+      builder: (context) {
+        return AppListTile(
+          assetPath: Assets.svgs.ePin,
+          title: 'E-pin voucher',
+          onPressed: () {
+            context
+              ..pop()
+              ..showCustomSnackBar("coming soon");
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const PlatformproductScreen(
+            //         serviceType: PlatformProductType.ePinVoucher),
+            //   ),
+            // );
+          },
+        );
+      },
+    ),
+    BillWidgetItem(
         title: 'Education',
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PlatformproductScreen(
-                  serviceType: PlatformProductType.education),
-            ),
+        builder: (context) {
+          return AppListTile(
+            assetPath: Assets.svgs.educationSvg,
+            title: 'Education',
+            onPressed: () {
+              context
+                ..pop()
+                ..showCustomSnackBar("coming soon");
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const PlatformproductScreen(
+              //         serviceType: PlatformProductType.education),
+              //   ),
+              // );
+            },
           );
-        },
-      );
-    }),
-    Builder(builder: (context) {
-      return AppListTile(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const PlatformproductScreen(
-                  serviceType: PlatformProductType.cableTv),
-            ),
-          );
-        },
-        assetPath: Assets.svgs.cableTv,
+        }),
+    BillWidgetItem(
         title: 'Cable Tv',
-      );
-    }),
-    Builder(builder: (context) {
-      return AppListTile(
-        onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => const PlatformproductScreen(
-          //         serviceType: PlatformProductType.internetServices),
-          //   ),
-          // );
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (ctx) => InternetServiceProviderScreen(),
-            ),
+        builder: (context) {
+          return AppListTile(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PlatformproductScreen(
+                      serviceType: PlatformProductType.cableTv),
+                ),
+              );
+            },
+            assetPath: Assets.svgs.cableTv,
+            title: 'Cable Tv',
           );
-        },
-        assetPath: Assets.svgs.internetservice,
+        }),
+    BillWidgetItem(
         title: 'Internet Provider',
-      );
-    }),
+        builder: (context) {
+          return AppListTile(
+            onPressed: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const PlatformproductScreen(
+              //         serviceType: PlatformProductType.internetServices),
+              //   ),
+              // );
+              context
+                ..pop()
+                ..showCustomSnackBar("coming soon");
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (ctx) => InternetServiceProviderScreen(),
+              //   ),
+              // );
+            },
+            assetPath: Assets.svgs.internetservice,
+            title: 'Internet Provider',
+          );
+        }),
   ];
 
   static final List<Widget> serviceProviderWidget = [
@@ -334,6 +366,7 @@ class PlatFormData {
       builder: (context) {
         return AppListTile(
           onPressed: () {
+            context.pop();
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -343,7 +376,8 @@ class PlatFormData {
               ),
             );
           },
-          assetPath: Assets.svgs.buydata,
+          color: AppColors.black,
+          assetPath: Assets.svgs.mobile,
           title: 'Buy data',
         );
       },
@@ -352,6 +386,7 @@ class PlatFormData {
       builder: (context) {
         return AppListTile(
             onPressed: () {
+              context.pop();
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -383,6 +418,7 @@ class PlatFormData {
       builder: (context) {
         return AppListTile(
             onPressed: () {
+              context.pop();
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -397,30 +433,38 @@ class PlatFormData {
     Builder(
       builder: (context) {
         return AppListTile(
-            onPressed: () {
-              context.push(RouteConstants.becomeagent);
-            },
-            assetPath: Assets.svgs.becomeagent,
-            title: 'Become an agent');
-      },
-    ),
-    Builder(
-      builder: (context) {
-        return AppListTile(
-            onPressed: () {
-              context.push(RouteConstants.accountSetup);
-            },
-            assetPath: Assets.svgs.setting,
-            title: 'Account');
+          onPressed: () {
+            context
+              ..pop()
+              ..push(RouteConstants.becomeagent);
+          },
+          assetPath: Assets.svgs.becomeagent,
+          title: 'Become an agent',
+        );
       },
     ),
     Builder(
       builder: (context) {
         return AppListTile(
           onPressed: () {
-            context.push(RouteConstants.setting);
+            context
+              ..pop()
+              ..push(RouteConstants.accountSetup);
           },
-          assetPath: Assets.svgs.logout1ArrowExitFrameLeaveLogoutRectangleRight,
+          assetPath: Assets.svgs.userCircleSingleStreamlineCore,
+          title: 'Account',
+        );
+      },
+    ),
+    Builder(
+      builder: (context) {
+        return AppListTile(
+          onPressed: () {
+            context
+              ..pop()
+              ..push(RouteConstants.setting);
+          },
+          assetPath: Assets.svgs.cogStreamlineCore,
           title: 'Settings',
         );
       },

@@ -1,3 +1,5 @@
+import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,6 +47,17 @@ class _PlatformPhoneNumberFormWidgetState
         .selectedSubProduct;
     if (selected?.subName?.toLowerCase().contains('postpaid') ?? false) {
       _tabController.index = 1;
+    }
+    final profile = ref.read(globalProvider).profile.value?.data;
+    final isPhoneBased = widget.serviceType == PlatformProductType.airtime ||
+        widget.serviceType == PlatformProductType.mobileData;
+
+    if (isPhoneBased && profile != null) {
+      final phone = formatPhone(profile.phone);
+      ref
+          .read(platformProductProvider(widget.serviceType))
+          .firstInputController
+          .text = phone;
     }
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
@@ -100,7 +113,8 @@ class _PlatformPhoneNumberFormWidgetState
           controller: state.firstInputController,
           keyboardType: TextInputType.number,
           inputFormatters: [
-            LengthLimitingTextInputFormatter(11),
+            LengthLimitingTextInputFormatter(11,
+                maxLengthEnforcement: MaxLengthEnforcement.enforced),
             FilteringTextInputFormatter.digitsOnly,
           ],
           onTap:
@@ -126,7 +140,7 @@ class _PlatformPhoneNumberFormWidgetState
             widget.serviceType == PlatformProductType.cableTv ||
             widget.serviceType == PlatformProductType.electricity ||
             widget.serviceType == PlatformProductType.internetServices) ...[
-          24.verticalSpace,
+          8.verticalSpace,
           AppTextField(
             hintText: widget.serviceType == PlatformProductType.betting
                 ? 'Enter User ID'
@@ -137,6 +151,10 @@ class _PlatformPhoneNumberFormWidgetState
                         : 'Enter account number', // For internet services
             controller: state.secondaryInputController,
             keyboardType: TextInputType.number,
+            validateFunction: (val) {
+              if (val?.length != 10) return 'Must be 10 digits';
+              return null;
+            },
             inputFormatters: [
               LengthLimitingTextInputFormatter(10),
               FilteringTextInputFormatter.digitsOnly,
@@ -146,7 +164,7 @@ class _PlatformPhoneNumberFormWidgetState
 
         // Electricity prepaid/postpaid tabs
         if (widget.serviceType == PlatformProductType.electricity) ...[
-          24.verticalSpace,
+          8.verticalSpace,
           TabBar(
             controller: _tabController,
             indicator: BoxDecoration(
@@ -158,103 +176,30 @@ class _PlatformPhoneNumberFormWidgetState
             labelStyle: context.textTheme.bodySmall,
             unselectedLabelStyle: TextStyle(
               fontWeight: FontWeight.w400,
-              fontSize: 14.sp,
-              color: AppColors.black,
+              fontSize: 14,
+              color: AppColors.grey2F,
             ),
+            dividerColor: Colors.transparent,
             tabs: const [Tab(text: 'Prepaid'), Tab(text: 'Postpaid')],
           ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     ChoiceChip(
-          //       label: const Text('Prepaid'),
-          //       selected: state.selectedSubProduct?.subName
-          //               ?.toLowerCase()
-          //               .contains('prepaid') ??
-          //           false,
-          //       onSelected: (selected) {
-          //         if (selected) {
-          //           final prepaidSubProduct = state.subProducts.firstWhere(
-          //             (p) => p.subName!.toLowerCase().contains('prepaid'),
-          //           );
-          //           notifier.selectSubProduct(prepaidSubProduct);
-          //         }
-          //       },
-          //       selectedColor:
-          //           const Color(0xFFE8EFFF), // Background color when selected
-          //       labelStyle: TextStyle(
-          //         color: AppColors.primaryColor,
-          //         fontWeight: FontWeight.w500,
-          //         fontSize: 14.sp,
-          //       ),
-          //       backgroundColor:
-          //           Colors.transparent, // Background when not selected
-          //       side: BorderSide(
-          //         color: state.selectedSubProduct?.subName
-          //                     ?.toLowerCase()
-          //                     .contains('postpaid') ??
-          //                 false
-          //             ? AppColors.primaryColor
-          //             : Colors.grey.shade300,
-          //         width: 1,
-          //       ),
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(8), // Adjust as needed
-          //       ),
-          //     ),
-          //     SizedBox(width: 16.w),
-          //     ChoiceChip(
-          //       label: const Text('Postpaid'),
-          //       selected: state.selectedSubProduct?.subName
-          //               ?.toLowerCase()
-          //               .contains('postpaid') ??
-          //           false,
-          //       onSelected: (selected) {
-          //         if (selected) {
-          //           final postpaidSubProduct = state.subProducts.firstWhere(
-          //             (p) => p.subName!.toLowerCase().contains('postpaid'),
-          //           );
-          //           notifier.selectSubProduct(postpaidSubProduct);
-          //         }
-          //       },
-          //       selectedColor:
-          //           const Color(0xFFE8EFFF), // Background color when selected
-          //       labelStyle: TextStyle(
-          //         color: AppColors.primaryColor,
-          //         fontWeight: FontWeight.w500,
-          //         fontSize: 14.sp,
-          //       ),
-          //       backgroundColor:
-          //           Colors.transparent, // Background when not selected
-          //       side: BorderSide(
-          //         color: state.selectedSubProduct?.subName
-          //                     ?.toLowerCase()
-          //                     .contains('postpaid') ??
-          //                 false
-          //             ? AppColors.primaryColor
-          //             : Colors.grey.shade300,
-          //         width: 1,
-          //       ),
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(8), // Adjust as needed
-          //       ),
-          //     ),
-          //   ],
-          // ),
         ],
 
         // Dropdown for dataType (mobile data) or sub_name (cable TV)
         if (state.dropdownOptions.isNotEmpty) ...[
-          24.verticalSpace,
+          8.verticalSpace,
           AppDropdown(
             title: state.selectedDataType ?? widget.dropdownHint!,
             options: state.dropdownOptions,
             selected: state.selectedDataType,
-            onChanged: (val) => notifier.selectDataType(val!),
+            onChanged: (val) {
+              notifier.selectDataType(val!);
+            },
           ),
         ] else if (state.subProducts.isNotEmpty &&
-            widget.serviceType != PlatformProductType.electricity) ...[
-          24.verticalSpace,
+            widget.serviceType != PlatformProductType.electricity &&
+            widget.serviceType != PlatformProductType.airtime &&
+            widget.serviceType != PlatformProductType.betting) ...[
+          8.verticalSpace,
           AppDropdown(
             title: state.selectedSubProduct?.subName ?? 'Select package',
             options: state.subProducts.map((e) => e.subName!).toList(),
@@ -298,4 +243,10 @@ class _PlatformPhoneNumberFormWidgetState
       child: Icon(Icons.device_unknown, size: 16),
     );
   }
+}
+
+String formatPhone(String? phone) {
+  if (phone == null) return '';
+  if (phone.startsWith('+234')) return phone.replaceFirst('+234', '0');
+  return phone;
 }

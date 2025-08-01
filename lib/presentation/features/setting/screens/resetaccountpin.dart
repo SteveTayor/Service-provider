@@ -28,6 +28,19 @@ class _ResetAccountPinState extends ConsumerState<ResetAccountPin> {
   @override
   Widget build(BuildContext context) {
     final userEmail = ref.watch(globalProvider).profile.value?.data?.email;
+    String maskEmail(String email) {
+      final parts = email.split('@');
+      if (parts.length != 2) return email;
+
+      final name = parts[0];
+      final domain = parts[1];
+
+      final visible = name.length <= 4 ? name : name.substring(0, 4);
+      final maskedLength = name.length - visible.length;
+      final masked = '*' * maskedLength;
+
+      return '$visible$masked@$domain';
+    }
 
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(
@@ -52,13 +65,13 @@ class _ResetAccountPinState extends ConsumerState<ResetAccountPin> {
                     .resetPinWithPassword(password, context)
                     .then((success) {
                   if (success) {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => ResetPasswordLinkScreen(
                           title: 'Reset link sent!',
                           subtitle:
-                              'Your account pin reset link has been sent to your email - $userEmail. Check your inbox and click the link to reset your pin.',
+                              'Your account pin reset link has been sent to your email - ${maskEmail(userEmail!)}. Check your inbox and click the link to reset your pin.',
                         ),
                       ),
                     );
@@ -74,7 +87,7 @@ class _ResetAccountPinState extends ConsumerState<ResetAccountPin> {
                   controller: _passwordController,
                   obscureText: true,
                   hintText: 'Password',
-                  validateFunction: Validators.passcode(),
+                  // validateFunction: Validators.password(),
                 ),
               ],
             ),

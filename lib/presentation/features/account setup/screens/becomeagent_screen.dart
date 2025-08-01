@@ -74,7 +74,7 @@ class BecomeagentScreen extends ConsumerWidget {
               textAlign: TextAlign.center,
               style: context.textTheme.titleMedium!.copyWith(
                 color: AppColors.grey33,
-                fontSize: 22.sp,
+                // fontSize: 22,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -98,7 +98,7 @@ class BecomeagentScreen extends ConsumerWidget {
                         amount: '₦10,000.00',
                         paymentMethod: 'Wallet',
                         onPay: () {
-                          context.pop(); // Close the sheet first
+                          // context.pop(); // Close the sheet first
                           ref
                               .read(becomeAgentProvider.notifier)
                               .checkAndInitiatePayment(context);

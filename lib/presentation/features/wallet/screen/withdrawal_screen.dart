@@ -1,11 +1,14 @@
 import 'dart:async';
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatter.dart';
 import 'package:bundlegram/data/models/banks/get_all_users_banks_response.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/withdraw_from_wallet_provider.dart';
@@ -38,6 +41,8 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = ref.watch(withdrawalProvider);
+    final globalUserProvider = ref.watch(globalProvider).profile;
+    final profileProv = globalUserProvider.value?.data;
 
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(
@@ -55,7 +60,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                       .asMap()
                       .entries
                       .map((entry) =>
-                          'Account ${entry.key + 1} - ${entry.value.accountName ?? 'N/A'}')
+                          'Account ${entry.key + 1} - ${entry.value.accountName ?? ''}')
                       .toList(),
                   onChanged: (value) {
                     if (value != null) {
@@ -69,7 +74,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 ),
                 24.verticalSpace,
                 // Text(
-                //   'Account ID: ${provider.selectedBank?.id ?? 'N/A'}',
+                //   'Account ID: ${provider.selectedBank?.id ?? ''}',
                 // ).withContainer(
                 //   width: context.width,
                 //   color: AppColors.greyD0.withOpacity(0.3),
@@ -79,7 +84,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 // ),
                 // 24.verticalSpace,
                 Text(
-                  provider.selectedBank?.bankName ?? 'N/A',
+                  provider.selectedBank?.bankName ?? '',
                 ).withContainer(
                   width: context.width,
                   color: AppColors.greyD0.withOpacity(0.3),
@@ -89,7 +94,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 ),
                 24.verticalSpace,
                 Text(
-                  provider.selectedBank?.accountNumber ?? 'N/A',
+                  provider.selectedBank?.accountNumber ?? '',
                 ).withContainer(
                   width: context.width,
                   color: AppColors.greyD0.withOpacity(0.3),
@@ -99,7 +104,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 ),
                 24.verticalSpace,
                 Text(
-                  provider.selectedBank?.accountName ?? 'N/A',
+                  provider.selectedBank?.accountName ?? '',
                 ).withContainer(
                   width: context.width,
                   color: AppColors.greyD0.withOpacity(0.3),
@@ -111,7 +116,9 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 AppTextField(
                   hintText: 'Enter amount',
                   controller: provider.amountController,
+                  inputFormatters: [CurrencyTextInputFormatter()],
                   keyboardType: TextInputType.number,
+                  readOnly: profileProv?.bvn == null ? true : false,
                 ),
                 16.verticalSpace,
                 Row(
@@ -127,7 +134,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                     6.horizontalSpace,
                     Text(
                       'Wallet balance',
-                      style: context.textTheme.bodySmall,
+                      style: context.textTheme.bodyMedium,
                     ),
                     const Spacer(),
                     Text(
@@ -138,6 +145,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                 ),
                 40.verticalSpace,
                 BundlegramButton(
+                  isEnabled: profileProv?.bvn == null ? false : true,
                   text: provider.isSubmitting
                       ? "Requesting"
                       : 'Request withdrawal',
@@ -156,16 +164,16 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                                   final success = await provider
                                       .requestWithdrawal(context, pin);
                                   if (!success) return;
-                                  Navigator.pushReplacement(
+                                  unawaited(Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (ctx) => TransactionSuccessful(
                                         title: 'Withdrawal request received!',
                                         subTitle:
-                                            'Your withdrawal request of ${CurrencyFormatter.format(provider.amountController.text)} from your Bundlegram wallet has been successfully received.',
+                                            'Your withdrawal request of ${provider.amountController.text.toCurrency()} from your Bundlegram wallet has been successfully received.',
                                       ),
                                     ),
-                                  );
+                                  ));
                                 },
                               ),
                             ),

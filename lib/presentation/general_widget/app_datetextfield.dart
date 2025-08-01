@@ -16,6 +16,7 @@ class AppDatetextfield extends StatelessWidget {
     this.validator,
     this.readOnly = false,
     this.onTap,
+    this.isFilled = false,
   }) : super(key: key);
 
   final TextEditingController? controller;
@@ -24,6 +25,7 @@ class AppDatetextfield extends StatelessWidget {
   final StringValidator? validator;
   final bool readOnly;
   final VoidCallback? onTap;
+  final bool isFilled;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class AppDatetextfield extends StatelessWidget {
           child: TextFormField(
             controller: controller,
             style: context.textTheme.bodySmall?.copyWith(
-              fontSize: 14.sp,
+              // fontSize: 14,
               color: AppColors.grey19,
             ),
             readOnly: readOnly,
@@ -48,7 +50,9 @@ class AppDatetextfield extends StatelessWidget {
               hintStyle: context.textTheme.bodySmall!
                   .copyWith(color: AppColors.grey33),
               filled: true,
-              fillColor: AppColors.white,
+              fillColor: isFilled
+                  ? AppColors.greyD0.withOpacity(0.3)
+                  : AppColors.white,
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               suffixIcon: Padding(

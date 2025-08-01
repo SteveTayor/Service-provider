@@ -1,18 +1,24 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/logout_widget.dart';
+import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class AccountitemWidget extends StatelessWidget {
+class AccountitemWidget extends ConsumerWidget {
   const AccountitemWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final globalUserProvider = ref.watch(globalProvider).profile;
+    final profileProv = globalUserProvider.value?.data;
+
     Widget buildRowWidget(
       String asset,
       String title, {
@@ -38,13 +44,28 @@ class AccountitemWidget extends StatelessWidget {
           Assets.svgs.userIdentifierCardStreamlineCore,
           'Update account details',
         ),
+        if (profileProv?.userType != "agent")
+          buildRowWidget(
+            Assets.svgs.uploadCircleStreamlineCore,
+            onPressed: () => context.push(RouteConstants.becomeagent),
+            'Become an agent',
+          ),
         buildRowWidget(
-          Assets.svgs.uploadCircleStreamlineCore,
-          onPressed: () => context.push(RouteConstants.becomeagent),
-          'Become an agent',
-        ),
-        buildRowWidget(
-          onPressed: () => context.push(RouteConstants.withdrawalAccount),
+          onPressed: () {
+            final profile = ref.read(globalProvider).profile;
+            final bvn = profile.value?.data?.bvn;
+
+            if (bvn == null) {
+              WalletNotifier().showLinkBVNSnackBar(
+                context,
+                'To ensure that you get a virtual account number, verify your BVN for this feature.',
+                'Link now',
+              );
+              return;
+            }
+
+            context.push(RouteConstants.withdrawalAccount);
+          },
           Assets.svgs.walletAdd1,
           'Withdrawal accounts',
         ),

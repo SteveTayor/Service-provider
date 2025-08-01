@@ -47,7 +47,7 @@ class ChooseUsernameScreen extends ConsumerWidget {
                 textAlign: TextAlign.center,
                 style: context.textTheme.bodySmall!.copyWith(
                   color: AppColors.grey33,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                 ),
               ),
             ],
@@ -84,7 +84,7 @@ class ChooseUsernameScreen extends ConsumerWidget {
                       ? SizedBox(
                           height: 20.h,
                           width: 20.h,
-                          child: AppLoader(
+                          child: AppLoaderSpinnerKit(
                               size: 20, color: AppColors.primaryColor),
                         )
                       : AppSvgIcon(

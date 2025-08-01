@@ -6,6 +6,7 @@ import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
@@ -111,7 +112,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
           },
           child: Text(
             'Filter',
-            style: context.textTheme.bodySmall!
+            style: context.textTheme.labelSmall!
                 .copyWith(fontWeight: FontWeight.w500),
           ),
         ),
@@ -175,32 +176,174 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
   }
 
   void _showTransactionDetails(UserTransactions txn) {
-    final data = TransactionReceiptData(
-      transactionId: txn.transRef ?? 'BNG-${txn.id}',
-      date: _formatDate(txn.createdAt),
-      time: _formatTime(txn.createdAt),
-      type: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
-          ? txn.subProduct?.product?.productName
-          : txn.transType ?? 'N/A',
-      amount: txn.amount?.toCurrency() ?? '₦0.00',
-      accountNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
-      status: txn.status ?? 'Unknown',
-      description:
-          txn.subProduct?.subName ?? txn.subProduct?.product?.productName ?? '',
-    );
+    // final data = TransactionReceiptData(
+    //   transactionId: txn.transRef ?? 'BNG-${txn.id}',
+    //   date: _formatDate(txn.createdAt),
+    //   time: _formatTime(txn.createdAt),
+    //   type: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
+    //       ? txn.subProduct?.product?.productName
+    //       : txn.transType ?? 'N/A',
+    //   amount: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
+    //       ? CurrencyFormatter.format(txn.deductAmount ?? 0.0)
+    //       : txn.amount.toCurrency()),
+    //   accountNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+    //   status: txn.status ?? 'Unknown',
+    //   description:
+    //       txn.subProduct?.subName ?? txn.subProduct?.product?.productName ?? '',
+    // );
+    // Construct receipt data dynamically based on transType contents
+    TransactionReceiptData data;
+    final transTypeLower = (txn.transType ?? '').toLowerCase();
+
+    if (transTypeLower.contains('airtime')) {
+      // Handle airtime transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        // type: txn.subProduct?.product?.productName,
+        type: txn.transType,
+        amount: txn.deductAmount.toCurrency(),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+        network: txn.subProduct?.product?.productName,
+        phoneNumber: txn.crAcc,
+        userBalance: txn.balanceAfter?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+      );
+    } else if (transTypeLower.contains('data')) {
+      // Handle data transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        // type: txn.subProduct?.product?.productName,
+        type: txn.transType,
+        amount: txn.deductAmount.toCurrency(),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+        network: txn.subProduct?.product?.productName,
+        phoneNumber: txn.crAcc,
+        userBalance: txn.balanceAfter?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+      );
+    } else if (transTypeLower.contains('withdrawal')) {
+      // Handle withdrawal transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.transType,
+        amount: txn.amount.toCurrency(),
+        accountNumber:
+            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+        userBalance: txn.balanceAfter?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+      );
+    } else if (transTypeLower.contains('fund_wallet')) {
+      // Handle fund wallet transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.transType,
+        amount: txn.amount.toCurrency(),
+        accountNumber:
+            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+        paymentMethod: txn.paymentType ?? '',
+        userBalance: txn.balanceAfter?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+      );
+    } else if (transTypeLower.contains('cable')) {
+      // Handle data transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.transType,
+
+        amount: txn.amount.toCurrency(),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+
+        smartCardNumber: txn.crAcc,
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
+      );
+    } else if (transTypeLower.contains('electricity')) {
+      // Handle data transaction
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.transType,
+
+        amount: txn.amount.toCurrency(),
+        // accountNumber:
+        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+
+        meterNumber: txn.crAcc,
+        token: txn.token,
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
+      );
+    } else {
+      // Default case for other transaction types
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.transType ?? 'N/A',
+        amount: txn.transType != 'fund_wallet' && txn.transType != 'withdrawal'
+            ? txn.deductAmount.toCurrency()
+            : txn.amount.toCurrency(),
+        accountNumber:
+            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        status: txn.status ?? 'Unknown',
+        description: txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+      );
+    }
 
     context.showPopUp(
       color: Colors.transparent,
       TransactionReceiptWidget(
         data: data,
         onShareReceipt: () {
-          context.pop();
-          context.showPopUp(
-            color: Colors.transparent,
-            generateShareableReceipt(data),
-            isDismissable: true,
-          );
+          context
+            ..pop()
+            ..showPopUp(
+              color: Colors.transparent,
+              ReceiptShareWrapper(data: data),
+              isDismissable: true,
+            );
         },
+        onClose: () => context.pop(),
       ),
       isDismissable: true,
     );
@@ -243,7 +386,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
     }
   }
 
-  Widget generateShareableReceipt(TransactionReceiptData data) {
-    return VisualReceiptCard(data: data);
-  }
+  // Widget generateShareableReceipt(TransactionReceiptData data) {
+  //   return VisualReceiptCard(data: data);
+  // }
 }

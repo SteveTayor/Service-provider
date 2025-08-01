@@ -10,6 +10,7 @@ import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_datetextfield.dart';
 import 'package:bundlegram/presentation/general_widget/app_dropdown.dart';
+import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //               borderRadius: BorderRadius.circular(8),
 //               border: Border.all(color: AppColors.greyD0),
 //             ),
-//             SizedBox(height: 24.h),
+//             SizedBox(height: 12.h),
 //             Text(profileinfoProv.email!).withContainer(
 //               width: context.width,
 //               color: AppColors.greyD0.withOpacity(0.3),
@@ -54,23 +55,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //             ),
 //           ] else ...[
 //             const AppTextField(hintText: 'First Name'),
-//             SizedBox(height: 24.h),
+//             SizedBox(height: 12.h),
 //             const AppTextField(hintText: 'Last Name'),
-//             SizedBox(height: 24.h),
+//             SizedBox(height: 12.h),
 //             const AppTextField(hintText: 'Email'),
-//             SizedBox(height: 24.h),
+//             SizedBox(height: 12.h),
 //             const AppTextField(hintText: 'Phone Number'),
 //           ],
-//           SizedBox(height: 24.h),
+//           SizedBox(height: 12.h),
 //           const AppDropdown(
 //             title: 'Gender',
 //             options: ['Male', 'Female'],
 //           ),
-//           SizedBox(height: 24.h),
+//           SizedBox(height: 12.h),
 //           const AppTextField(hintText: 'Address'),
-//           SizedBox(height: 24.h),
+//           SizedBox(height: 12.h),
 //           const AppDatetextfield(title: 'Date of birth'),
-//           SizedBox(height: 24.h),
+//           SizedBox(height: 12.h),
 //           BundlegramButton(
 //             text: '${userAction.isCreate ? 'Submit' : 'Update'} details',
 //             onPressed: () {
@@ -125,15 +126,15 @@ class AddBasicInformationScreen extends ConsumerWidget {
     String lastName = parts.length > 1 ? parts.last : '';
 
 // Set values into the controllers
-    notifier.firstName.text = firstName;
-    notifier.lastName.text = lastName;
+    notifier.firstName.text = profileProv.firstName!;
+    // notifier.lastName.text = lastName;
 
     return BundlegramScaffold(
       appBar: BundlegramAppbar(titleText: titleText),
       body: Form(
         key: provider.formKey,
         child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
           children: [
             AppTextField(
               label: "First Name",
@@ -144,7 +145,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
               isFilled: true,
               backgroundColor: AppColors.greyD0.withOpacity(0.3),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 12.h),
             AppTextField(
               label: 'Last Name',
               controller: notifier.lastName,
@@ -155,7 +156,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
               // readOnly: userAction.isCreate ? false : true,
               backgroundColor: AppColors.greyD0.withOpacity(0.3),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 12.h),
             AppTextField(
               label: "Email",
               controller: notifier.email,
@@ -164,11 +165,14 @@ class AddBasicInformationScreen extends ConsumerWidget {
               isFilled: true,
               backgroundColor: AppColors.greyD0.withOpacity(0.3),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 12.h),
             AppTextField(
               label: 'Phone Number',
               controller: notifier.phone,
               hintText: 'Phone Number',
+              readOnly: !userAction.isCreate,
+              isFilled: !userAction.isCreate,
+              backgroundColor: AppColors.greyD0.withOpacity(0.3),
               prefixIcon: Padding(
                 padding: context.symmetricPadding(16, 0),
                 child: Text('+234', style: context.textTheme.bodyMedium),
@@ -179,37 +183,46 @@ class AddBasicInformationScreen extends ConsumerWidget {
                 notifier.phone.text = value;
               },
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 12.h),
             AppDropdown(
               title: provider.gender != "" ? provider.gender : "Gender",
               options: const ['Male', 'Female'],
               selected: provider.gender,
               onChanged: notifier.setGender,
+              isFilled: !userAction.isCreate,
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 12.h),
             AppTextField(
               label: 'Address',
               controller: notifier.address,
               hintText: 'Enter Address',
+              isFilled: !userAction.isCreate,
+              readOnly: !userAction.isCreate,
+              backgroundColor: AppColors.greyD0.withOpacity(0.3),
               validateFunction: notifier.validateNotEmpty,
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 12.h),
             AppDatetextfield(
               controller: notifier.dob,
               title: 'Date of birth',
               hintText: 'DD/MM/YYYY',
+              isFilled: !userAction.isCreate,
+              readOnly: !userAction.isCreate,
               validator: notifier.validateDate,
               onTap: () => notifier.pickDob(context),
             ),
             SizedBox(height: 32.h),
-            BundlegramButton(
+            
+            Opacity(
+            opacity: userAction.isCreate ? 1 : 0.5, child: BundlegramButton(
+              isEnabled: userAction == UserAction.create,
               text: userAction.isCreate ? 'Submit' : 'Update',
               onPressed: provider.loading
                   ? null
                   : () async {
                       await provider.submit(context);
                     },
-            ),
+            ),),
           ],
         ),
       ),

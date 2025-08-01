@@ -37,6 +37,37 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     });
   }
 
+  bool _isProcessing = false;
+
+  Future<void> _handleFundWallet(BuildContext context) async {
+    if (_isProcessing) return;
+
+    setState(() => _isProcessing = true);
+
+    final profile = ref.read(globalProvider).profile;
+    final bvn = profile.value?.data?.bvn;
+
+    if (bvn == null) {
+      // WalletNotifier().showLinkBVNSnackBar(
+      //   context,
+      //   'To ensure that you get a virtual account number, verify your BVN for this feature.',
+      //   'Link now',
+      // );
+      WalletNotifier().showLinkBVNSnackBar(
+        context,
+        'Complete account setup before funding wallet.',
+        'Setup',
+      );
+      // return;
+    } else {
+      await WalletNotifier().showAddMoney(context, ref);
+    }
+
+    if (mounted) {
+      setState(() => _isProcessing = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = ref.watch(platformProvider);
@@ -58,7 +89,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           onTap: () => context.push(RouteConstants.walletHistoryScreen),
           child: Text(
             'History',
-            style: context.textTheme.bodySmall!
+            style: context.textTheme.labelSmall!
                 .copyWith(fontWeight: FontWeight.w500),
           ),
         ),
@@ -78,7 +109,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                         children: [
                           Text(
                             'Wallet balance',
-                            style: context.textTheme.bodySmall!.copyWith(
+                            style: context.textTheme.bodyMedium?.copyWith(
                               color: AppColors.white,
                             ),
                           ),
@@ -118,8 +149,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                             ? provider.formattedBalance
                             : '⁕⁕⁕⁕',
                         // wallet.value?.wallet.toCurrency() ?? '₦0.00',
-                        style: context.textTheme.bodyLarge!.copyWith(
-                          fontSize: 30.sp,
+                        style: context.textTheme.titleLarge?.copyWith(
+                          fontSize: provider.isBalanceVisible ? 34 : 24,
                           color: AppColors.white,
                           fontWeight: FontWeight.w500,
                         ),
@@ -143,23 +174,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               svgIconContainerColor: Colors.transparent,
               leading: Assets.svgs.walletAdd,
               text: 'Top-up wallet',
-              onPressed: () {
-                if (profile.value?.data?.bvn == null) {
-                  WalletNotifier().showLinkBVNSnackBar(
-                    context,
-                    'Complete account setup before funding wallet.',
-                    'Setup',
-                  );
-                  return;
-                }
-
-                WalletNotifier().showAddMoney(
-                  context,
-                  ref,
-                );
-              },
+              onPressed:
+                  _isProcessing ? null : () => _handleFundWallet(context),
             ),
-            45.verticalSpace,
+            40.verticalSpace,
             if (walletTxns == null || walletTxns.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 32),
@@ -169,6 +187,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               RecentTransactionWidget(
                 SizedBox(height: 20),
               ),
+            35.verticalSpace,
           ],
         ),
       ),

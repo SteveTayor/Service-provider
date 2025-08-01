@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -50,7 +51,7 @@ class TransactionSummary extends ConsumerWidget {
                   label,
                   style: TextStyle(
                     color: AppColors.grey83,
-                    fontSize: 14.sp,
+                    // fontSize: 14,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -87,7 +88,7 @@ class TransactionSummary extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: AppColors.grey33,
-                          fontSize: 14.sp,
+                          // fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -150,48 +151,51 @@ class TransactionSummary extends ConsumerWidget {
           if (isBecomeAnAgent != true) ...[
             Text(
               discountedPrice ?? amount,
-              style: TextStyle(
-                fontSize: 32.sp,
-                fontWeight: FontWeight.bold,
-                color: AppColors.grey33,
+              style: context.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w500,
               ),
+              // TextStyle(
+              //   fontSize: 26,
+              //   fontWeight: FontWeight.bold,
+              //   color: AppColors.grey33,
+              // ),
             ),
-            40.verticalSpace,
+            32.verticalSpace,
             if (transactionType != null) ...[
               _buildSummaryRow('Transaction type', transactionType!),
-              10.verticalSpace,
+              8.verticalSpace,
             ],
             _buildSummaryRow('Amount', amount),
-            10.verticalSpace,
+            8.verticalSpace,
             if (discountedPrice != null) ...[
               _buildSummaryRow('Discounted price', discountedPrice!),
-              10.verticalSpace,
+              8.verticalSpace,
             ],
             _buildSummaryRow('Payment method', paymentMethod),
-            10.verticalSpace,
+            8.verticalSpace,
             if (beneficiary!.isNotEmpty)
               _buildSummaryRow('Beneficiary', beneficiary!),
           ] else ...[
             Text(
               discountedPrice ?? amount,
               style: TextStyle(
-                fontSize: 40.sp,
+                fontSize: 40,
                 fontWeight: FontWeight.bold,
                 color: AppColors.grey33,
               ),
             ),
-            40.verticalSpace,
+            32.verticalSpace,
             _buildSummaryRow('Transaction type', transactionType!),
-            10.verticalSpace,
+            8.verticalSpace,
             _buildSummaryRow('Amount to pay', amount),
-            10.verticalSpace,
+            8.verticalSpace,
             _buildSummaryRow('Payment method', paymentMethod),
-            18.verticalSpace,
+            16.verticalSpace,
             Row(
               children: [
                 AppSvgIcon(path: Assets.svgs.balance),
-                16.horizontalSpace,
-                Text('Balance (${CurrencyFormatter.format(walletBalance)})',
+                8.horizontalSpace,
+                Text('Balance (${walletBalance.toCurrency()})',
                     style: context.textTheme.bodySmall),
                 const Spacer(),
                 Flexible(
@@ -209,7 +213,7 @@ class TransactionSummary extends ConsumerWidget {
               ],
             ).withContainer(
               color: const Color(0xffEEF3FF),
-              padding: context.symmetricPadding(16, 12),
+              padding: context.symmetricPadding(10, 8),
               borderRadius: BorderRadius.circular(6),
             ),
           ],

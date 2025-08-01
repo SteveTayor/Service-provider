@@ -32,6 +32,7 @@ class PinController extends ChangeNotifier {
   String? initialPin;
   PinScreenMode mode = PinScreenMode.create;
   VoidCallback? onCompleted;
+  bool isButtonDisabled = false;
 
   AnimationController? shakeController;
 
@@ -118,19 +119,18 @@ class PinController extends ChangeNotifier {
     }
 
     final res = await _api.createPin(token, pin, pin);
-    res.fold(
-      (failure) {
-        context.showErrorSnackBar(
-          failure.properties.isNotEmpty
-              ? failure.properties.join('\n')
-              : "Failed to create PIN",
-        );
-      },
-      (data) {
-        Navigator.pushReplacement(
+    res.fold((failure) {
+      context.showErrorSnackBar(
+        failure.properties.isNotEmpty
+            ? failure.properties.join('\n')
+            : "Failed to create PIN",
+      );
+    }, (data) {
+      if (data.status == "success") {
+        Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => const TransactionSuccessful(
+            builder: (ctx) => TransactionSuccessful(
               title: 'Account pin created!',
               subTitle:
                   'You can now use your account PIN when performing transactions.',
@@ -138,8 +138,8 @@ class PinController extends ChangeNotifier {
             ),
           ),
         );
-      },
-    );
+      }
+    });
   }
 
   Future<bool> resetPinWithPassword(
@@ -171,12 +171,19 @@ class PinController extends ChangeNotifier {
   }
 
   Future<String?> validatePasswordAsync() async {
-    final input = passwordController.text.trim();
-    final storedPassword = await _storage.getPassword();
-    if (storedPassword == null || storedPassword != input) {
-      return 'Incorrect password';
+    isButtonDisabled = true;
+    notifyListeners();
+    try {
+      final input = passwordController.text.trim();
+      final storedPassword = await _storage.getPassword();
+      if (storedPassword == null || storedPassword != input) {
+        return 'Incorrect password';
+      }
+      return null;
+    } finally {
+      isButtonDisabled = false; // Always re-enable the button
+      notifyListeners();
     }
-    return null;
   }
 
   void validateForm() {

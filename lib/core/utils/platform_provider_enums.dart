@@ -13,11 +13,23 @@ enum PlatformProductType {
 extension PlatformProductTypeExt on PlatformProductType {
   bool get hasSubProducts {
     switch (this) {
+      case PlatformProductType.airtime:
+        return true; // Enable subproducts for airtime
       case PlatformProductType.mobileData:
-      case PlatformProductType.cableTv:
-      case PlatformProductType.internetServices:
-      case PlatformProductType.ePinVoucher:
         return true;
+      case PlatformProductType.betting:
+        return true;
+      case PlatformProductType.cableTv:
+        return true;
+      case PlatformProductType.electricity:
+        return true;
+      case PlatformProductType.education:
+        return true;
+      case PlatformProductType.internetServices:
+        return true;
+      case PlatformProductType.ePinVoucher:
+      case PlatformProductType.bulkEPin:
+        return false;
       default:
         return false;
     }

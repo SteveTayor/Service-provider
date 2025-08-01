@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -36,7 +37,8 @@ class ResultWidget extends StatelessWidget {
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: context.textTheme.headlineLarge,
+                style: context.textTheme.headlineLarge
+                    ?.copyWith(color: AppColors.grey19),
               ),
               12.verticalSpace,
               Text(

@@ -36,6 +36,9 @@ _$TransactionReceiptDataImpl _$$TransactionReceiptDataImplFromJson(
       subProduct: json['subProduct'] as String?,
       dataBundle: json['dataBundle'] as String?,
       phoneNumber: json['phoneNumber'] as String?,
+      balanceBefore: json['balanceBefore'] as String?,
+      token: json['token'] as String?,
+      units: json['units'] as String?,
     );
 
 Map<String, dynamic> _$$TransactionReceiptDataImplToJson(
@@ -68,4 +71,7 @@ Map<String, dynamic> _$$TransactionReceiptDataImplToJson(
       'subProduct': instance.subProduct,
       'dataBundle': instance.dataBundle,
       'phoneNumber': instance.phoneNumber,
+      'balanceBefore': instance.balanceBefore,
+      'token': instance.token,
+      'units': instance.units,
     };

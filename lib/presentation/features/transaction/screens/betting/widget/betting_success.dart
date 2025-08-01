@@ -19,19 +19,25 @@ class BettingSuccessResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BundlegramScaffold(
-      sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
-      body: ResultWidget(
-        appIcon: AppSvgIcon(
-          path: Assets.svgs.successfulIllustration,
+    return WillPopScope(
+      onWillPop: () async {
+        context.pushReplacement(RouteConstants.dashboard);
+        return false;
+      },
+      child: BundlegramScaffold(
+        sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
+        body: ResultWidget(
+          appIcon: AppSvgIcon(
+            path: Assets.svgs.successfulIllustration,
+          ),
+          title: 'Payment successful!',
+          subText:
+              'Your payment of ${amount} to your ${biller} account wallet was successful.',
+          buttonText: 'Go to home',
+          onPressed: () {
+            context.pushReplacement(RouteConstants.dashboard);
+          },
         ),
-        title: 'Payment successful!',
-        subText:
-            'Your payment of ${amount} to your ${biller} account wallet was successful.',
-        buttonText: 'Go to home',
-        onPressed: () {
-          context.push(RouteConstants.dashboard);
-        },
       ),
     );
   }

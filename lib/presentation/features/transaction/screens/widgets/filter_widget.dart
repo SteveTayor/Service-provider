@@ -54,7 +54,7 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
                   child: Center(
                     child: Text(
                       'Filters',
-                      style: context.textTheme.titleMedium,
+                      style: context.textTheme.titleSmall,
                     ),
                   ),
                 ),

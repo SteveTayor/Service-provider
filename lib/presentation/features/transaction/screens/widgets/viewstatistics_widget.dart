@@ -36,7 +36,7 @@ class ViewStatisticsWidget extends ConsumerWidget {
                 // SizedBox(height: 4.h),
                 Text(
                   'View charts of your transactions',
-                  style: context.textTheme.bodySmall!.copyWith(fontSize: 14.sp),
+                  style: context.textTheme.labelSmall,
                   // maxLines: 2,
                   overflow: TextOverflow.clip,
                 ),
@@ -58,7 +58,7 @@ class ViewStatisticsWidget extends ConsumerWidget {
           ),
         ],
         borderRadius: BorderRadius.circular(8.r),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(12),
       ),
     );
   }
