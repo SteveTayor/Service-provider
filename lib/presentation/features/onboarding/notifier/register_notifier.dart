@@ -7,20 +7,16 @@ import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/auth/auth_model.dart';
-import 'package:bundlegram/data/models/auth/registeration/registeration_response.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dartz/dartz.dart';
 
-import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
-import 'package:bundlegram/presentation/general_widget/app_loader.dart';
 import 'package:go_router/go_router.dart';
 
-final registerProvider = ChangeNotifierProvider<RegisterProvider>((ref) {
+final registerProvider = ChangeNotifierProvider.autoDispose((ref) {
   final api = ref.read(apiServiceProvider);
-  final storage = ref.read(secureStorageHelperProvider); // inject storage
+  final storage = ref.read(secureStorageHelperProvider);
   return RegisterProvider(api, storage, ref);
 });
 

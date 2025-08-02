@@ -162,7 +162,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
                           );
                         }
                         final txn = allTxns[index];
-                        return GestureDetector(
+                        return InkWell(
                           onTap: () => _showTransactionDetails(txn),
                           child: ServiceListItem(transaction: txn),
                         );

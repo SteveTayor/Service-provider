@@ -46,7 +46,7 @@ class DashboardProvider extends ChangeNotifier {
       _currentIndex = index;
       notifyListeners();
     }
-    if (index != 3) {
+    if (index != 1 && index != 3) {
       _fetchDashboardData(context);
     }
   }
@@ -58,41 +58,15 @@ class DashboardProvider extends ChangeNotifier {
     final storage = _ref.read(secureStorageHelperProvider);
     final api = _ref.read(apiServiceProvider);
     final token = await storage.getAuthToken();
+    context.showLoadingDialog();
 
     if (token == null) {
+      context.dismissDialog();
+
       context
         ..showErrorSnackBar(
             'No authentication token found. Please log in again.')
         ..go(RouteConstants.login);
-      _setLoading(false);
-      return;
-    }
-
-    unawaited(context.showLoadingDialog(message: 'Fetching profile...'));
-    final profileRes = await api.getProfile(token);
-    if (profileRes.isLeft()) {
-      context.dismissDialog();
-      // ..showErrorSnackBar("Failed to fetch profile");
-      _setLoading(false);
-      return;
-    }
-
-    // unawaited(context.showLoadingDialog(message: 'Fetching banks...'));
-    final bankRes = await api.getAllBanks(token);
-    if (bankRes.isLeft()) {
-      context
-        ..dismissDialog()
-        ..showErrorSnackBar("Failed to fetch banks");
-      _setLoading(false);
-      return;
-    }
-
-    // unawaited(context.showLoadingDialog(message: 'Fetching wallet...'));
-    final walletRes = await api.getWallet(token);
-    if (walletRes.isLeft()) {
-      context
-        ..dismissDialog()
-        ..showErrorSnackBar("Failed to fetch wallet");
       _setLoading(false);
       return;
     }

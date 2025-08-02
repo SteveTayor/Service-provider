@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/error/failures.dart';
+import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_data_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
@@ -374,6 +375,9 @@ class _StatisticsDashboardState extends ConsumerState<StatisticsDashboard>
       child: DropdownButton<String>(
         value: value,
         underline: const SizedBox(),
+        dropdownColor: Colors.white, // background of dropdown menu
+        iconEnabledColor: Colors.black,
+        style: context.textTheme.bodySmall?.copyWith(color: Colors.black),
         items: monthYearList
             .map((e) => DropdownMenuItem(
                 value: e, child: Text(e, style: context.textTheme.bodySmall)))
@@ -578,7 +582,10 @@ class _StatisticsDashboardState extends ConsumerState<StatisticsDashboard>
               ),
             ),
             const SizedBox(width: 8),
-            Text(d.label, style: const TextStyle(fontSize: 12)),
+            Text(
+              d.label.replaceAll("_", " ").capiTalizeFirstLast,
+              style: const TextStyle(fontSize: 12),
+            ),
           ],
         );
       }),

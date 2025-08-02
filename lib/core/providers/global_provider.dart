@@ -33,12 +33,16 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
   Future<void> initializeWalletandAccounts(BuildContext context) async {
     await Future.wait([
-      fetchUserBanks(context),
-      fetchVirtualAccount(context),
       fetchWalletBalance(context),
       fetchProfile(context),
-      fetchUsersTransactions(context),
     ]);
+
+    unawaited(fetchUserBanks(context));
+    unawaited(fetchVirtualAccount(context));
+    // Defer transactions
+    Future.delayed(const Duration(milliseconds: 500), () {
+      fetchUsersTransactions(context);
+    });
   }
 
   Future<void> initializeData(BuildContext context) async {
@@ -228,17 +232,17 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     final now = DateTime.now();
     if (!force && state.lastTransactionFetch != null) {
       final difference = now.difference(state.lastTransactionFetch!);
-      if (difference.inMinutes < 5) {
+      if (difference.inMinutes < 10) {
         // Cache valid for 5 minutes
         return;
       }
     }
-    unawaited(context.showLoadingDialog(message: 'Fetching transactions...'));
+    // unawaited(context.showLoadingDialog(message: 'Fetching transactions...'));
     state = state.copyWith(usersTransactions: const AsyncLoading());
 
     final result = await _api.getAllTransactions(token);
 
-    context.dismissDialog();
+    // context.dismissDialog();
     result.fold(
       (fail) {
         _handleFailure(fail, context);

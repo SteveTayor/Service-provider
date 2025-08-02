@@ -4,13 +4,9 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/phone_number_formatter.dart';
 import 'package:bundlegram/core/utils/validators.dart';
-import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/onboarding/notifier/register_notifier.dart';
-import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
-import 'package:bundlegram/presentation/general_widget/app_loader.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
-import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +51,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   InkWell(
                     onTap: () {
-                      context.push('/login');
+                      context.go('/login');
+                      // context.push('/login');
                     },
                     child: Text(
                       'Sign in.',

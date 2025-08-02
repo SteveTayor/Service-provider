@@ -25,6 +25,7 @@ class TransactionSummary extends ConsumerWidget {
     this.transactionType,
     this.discountedPrice,
     this.assetPath,
+    this.billValidatedName,
     this.isBecomeAnAgent = false,
   });
   final String amount;
@@ -35,6 +36,7 @@ class TransactionSummary extends ConsumerWidget {
   final VoidCallback onPay;
   final String? assetPath;
   final bool isBecomeAnAgent;
+  final String? billValidatedName;
 
   Widget _buildSummaryRow(String label, String value) {
     return Padding(
@@ -167,6 +169,10 @@ class TransactionSummary extends ConsumerWidget {
             ],
             _buildSummaryRow('Amount', amount),
             8.verticalSpace,
+            if (billValidatedName != null) ...[
+              _buildSummaryRow('Name', billValidatedName!),
+              8.verticalSpace,
+            ],
             if (discountedPrice != null) ...[
               _buildSummaryRow('Discounted price', discountedPrice!),
               8.verticalSpace,

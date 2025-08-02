@@ -21,7 +21,7 @@ import 'package:go_router/go_router.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-final loginProvider = ChangeNotifierProvider((ref) {
+final loginProvider = ChangeNotifierProvider.autoDispose((ref) {
   final api = ref.read(apiServiceProvider);
   final storage = ref.read(secureStorageHelperProvider);
   return LoginProvider(api, storage, ref);
@@ -210,13 +210,13 @@ class LoginProvider extends ChangeNotifier {
           }
         }
 
-        context.dismissDialog();
         _setLoading(false);
 
         // Check if username creation is required
         final message = loginData.message;
         if (message != null &&
             message == "Please create a username to continue") {
+          context.dismissDialog();
           context.go(
             RouteConstants.chooseUsername,
             extra: {'fromLogin': true},
@@ -225,8 +225,36 @@ class LoginProvider extends ChangeNotifier {
         }
         passwordCtrl.clear();
 
+        // unawaited(context.showLoadingDialog(message: 'Fetching profile...'));
+        final profileRes = await _api.getProfile(token);
+        if (profileRes.isLeft()) {
+          context.dismissDialog();
+          // ..showErrorSnackBar("Failed to fetch profile");
+          _setLoading(false);
+          return;
+        }
+        // unawaited(context.showLoadingDialog(message: 'Fetching banks...'));
+        final bankRes = await _api.getAllBanks(token);
+        if (bankRes.isLeft()) {
+          context
+            ..dismissDialog()
+            ..showErrorSnackBar("Failed to fetch banks");
+          _setLoading(false);
+          return;
+        }
+
+        // unawaited(context.showLoadingDialog(message: 'Fetching wallet...'));
+        final walletRes = await _api.getWallet(token);
+        if (walletRes.isLeft()) {
+          context.showErrorSnackBar("Failed to fetch wallet");
+          // ..dismissDialog()
+          _setLoading(false);
+          return;
+        }
+        context.dismissDialog();
+
         // Proceed to dashboard if username is not required
-        context.pushReplacement(RouteConstants.dashboard);
+        context.go(RouteConstants.dashboard);
       },
     );
   }

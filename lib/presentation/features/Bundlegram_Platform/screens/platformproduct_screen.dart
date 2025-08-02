@@ -221,11 +221,11 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                                     ? state.secondaryInputController.text.trim()
                                     : state.firstInputController.text.trim();
 
-                            if (input.isEmpty) {
-                              return context.showErrorSnackBar(
-                                'Please enter a valid ${serviceType == PlatformProductType.betting ? 'User ID' : serviceType == PlatformProductType.cableTv ? 'Smart Card Number' : 'Meter Number'}',
-                              );
-                            }
+                            // if (input.isEmpty) {
+                            //   return context.showErrorSnackBar(
+                            //     'Please enter a valid ${serviceType == PlatformProductType.betting ? 'User ID' : serviceType == PlatformProductType.cableTv ? 'Smart Card Number' : 'Meter Number'}',
+                            //   );
+                            // }
 
                             // Additional validation for electricity
                             // if (serviceType ==
@@ -250,6 +250,26 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                                   state.selectedSubProduct?.id,
                               state.selectedSubProduct?.autoSubProdId ??
                                   state.selectedProduct?.autoProdId,
+                              onSuccess: () async {
+                                // ✅ Check wallet balance before showing transaction summary
+                                final walletBalanceStr = ref
+                                    .read(globalProvider)
+                                    .walletBalance
+                                    .value
+                                    ?.wallet;
+                                final walletBalance =
+                                    double.tryParse(walletBalanceStr ?? '') ??
+                                        0.0;
+                                final amount = notifier.getTransactionAmount();
+                                if (amount > walletBalance) {
+                                  context.showErrorSnackBar(
+                                    'Insufficient balance. You have ${walletBalance.toCurrency()}',
+                                  );
+                                  return;
+                                }
+
+                                notifier.showTransactionSummary(context);
+                              },
                             );
                           } else {
                             notifier.showTransactionSummary(context);

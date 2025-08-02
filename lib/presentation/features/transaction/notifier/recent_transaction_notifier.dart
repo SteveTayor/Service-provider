@@ -15,18 +15,16 @@ class RecentTransactionsNotifier
       globalProvider.select((s) => s.usersTransactions),
       (prev, next) {
         next.whenData((wrapper) {
-          final now = DateTime.now();
-          final last7Days = now.subtract(const Duration(days: 7));
+          final recent = (wrapper?.data ?? [])
+              .where((txn) => txn.createdAt != null)
+              .toList()
+            ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 
-          final recent = (wrapper?.data ?? []).where((txn) {
-            final txnDate = txn.createdAt;
-            if (txnDate == null) return false;
-            return txnDate.isAfter(last7Days);
-          }).toList();
+          final limited = recent.take(10).toList();
 
           state = state.copyWith(
-            services: recent,
-            filteredServices: recent,
+            services: limited,
+            filteredServices: limited,
             isLoading: false,
           );
         });
@@ -36,23 +34,21 @@ class RecentTransactionsNotifier
 
   void refresh() {
     // Will trigger update when usersTransactions is refreshed externally
-    final wrapper = ref.read(globalProvider).usersTransactions;
-    wrapper.whenData((data) {
-      final now = DateTime.now();
-      final last7Days = now.subtract(const Duration(days: 7));
+    final wrapper = ref.read(globalProvider).usersTransactions
+      ..whenData((data) {
+        final recent = (data?.data ?? [])
+            .where((txn) => txn.createdAt != null)
+            .toList()
+          ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 
-      final recent = (data?.data ?? []).where((txn) {
-        final txnDate = txn.createdAt;
-        if (txnDate == null) return false;
-        return txnDate.isAfter(last7Days);
-      }).toList();
+        final limited = recent.take(10).toList();
 
-      state = state.copyWith(
-        services: recent,
-        filteredServices: recent,
-        isLoading: false,
-      );
-    });
+        state = state.copyWith(
+          services: limited,
+          filteredServices: limited,
+          isLoading: false,
+        );
+      });
   }
 
   void search(String query) {
