@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -251,6 +252,10 @@ class LoginProvider extends ChangeNotifier {
           _setLoading(false);
           return;
         }
+        // Fetch and cache users' transactions before routing
+        await _ref
+            .read(globalProvider.notifier)
+            .fetchUsersTransactions(context);
         context.dismissDialog();
 
         // Proceed to dashboard if username is not required

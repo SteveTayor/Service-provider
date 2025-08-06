@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:developer';
+
 import 'package:bundlegram/core/error/failures.dart';
-import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/state/global_state.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
-import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/presentation/app.dart';
-import 'package:bundlegram/presentation/features/setting/screens/pin_screen.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +23,27 @@ final globalProvider = StateNotifierProvider<GlobalProvider, GlobalState>(
     ref,
   ),
 );
+
+/// Returns the K transactions with the latest createdAt, sorted newest→oldest.
+List<UserTransactions> _takeTopKByDate(
+  List<UserTransactions> all, {
+  required int k,
+}) {
+  // Min-heap ordered oldest→newest
+  final pq = PriorityQueue<UserTransactions>(
+    (a, b) => a.createdAt!.compareTo(b.createdAt!),
+  );
+
+  for (final txn in all) {
+    if (txn.createdAt == null) continue;
+    pq.add(txn);
+    if (pq.length > k) pq.removeFirst();
+  }
+
+  // Now heap has at most K items — pull them out and sort descending
+  final top = pq.toList()..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+  return top;
+}
 
 class GlobalProvider extends StateNotifier<GlobalState> {
   final ApiService _api;
@@ -223,36 +244,77 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   //   );
   // }
 
+  // Future<void> fetchUsersTransactions(BuildContext context,
+  //     {bool force = false}) async {
+  //   final token = await _storage.getAuthToken();
+  //   if (token == null) {
+  //     return _handleError('Authentication token missing', context);
+  //   }
+  //   final now = DateTime.now();
+  //   if (!force && state.lastTransactionFetch != null) {
+  //     final difference = now.difference(state.lastTransactionFetch!);
+  //     if (difference.inMinutes < 10) {
+  //       // Cache valid for 5 minutes
+  //       return;
+  //     }
+  //   }
+  //   // unawaited(context.showLoadingDialog(message: 'Fetching transactions...'));
+  //   state = state.copyWith(usersTransactions: const AsyncLoading());
+
+  //   final result = await _api.getAllTransactions(token);
+
+  //   // context.dismissDialog();
+  //   result.fold(
+  //     (fail) {
+  //       _handleFailure(fail, context);
+  //       state = state.copyWith(
+  //           usersTransactions: AsyncError(fail, StackTrace.current));
+  //     },
+  //     (data) => state = state.copyWith(
+  //       usersTransactions: AsyncData(data),
+  //       lastTransactionFetch: now,
+  //     ),
+  //   );
+  // }
   Future<void> fetchUsersTransactions(BuildContext context,
       {bool force = false}) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
       return _handleError('Authentication token missing', context);
     }
+
     final now = DateTime.now();
     if (!force && state.lastTransactionFetch != null) {
-      final difference = now.difference(state.lastTransactionFetch!);
-      if (difference.inMinutes < 10) {
-        // Cache valid for 5 minutes
+      final diff = now.difference(state.lastTransactionFetch!);
+      if (diff.inMinutes < 10) {
+        // Cache still valid
         return;
       }
     }
-    // unawaited(context.showLoadingDialog(message: 'Fetching transactions...'));
+
+    // Show in-panel loading state if needed
     state = state.copyWith(usersTransactions: const AsyncLoading());
 
     final result = await _api.getAllTransactions(token);
-
-    // context.dismissDialog();
     result.fold(
       (fail) {
         _handleFailure(fail, context);
         state = state.copyWith(
-            usersTransactions: AsyncError(fail, StackTrace.current));
+          usersTransactions: AsyncError(fail, StackTrace.current),
+        );
       },
-      (data) => state = state.copyWith(
-        usersTransactions: AsyncData(data),
-        lastTransactionFetch: now,
-      ),
+      (dataWrapper) {
+        final allTx = dataWrapper.data ?? [];
+        // Extract only the top 10 newest, without sorting the entire list
+        final limited = _takeTopKByDate(allTx, k: 10);
+
+        state = state.copyWith(
+          usersTransactions: AsyncData(
+            GetAllUserTransactionResponse(data: limited),
+          ),
+          lastTransactionFetch: now,
+        );
+      },
     );
   }
 }
