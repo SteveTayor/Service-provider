@@ -102,7 +102,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   inputFormatters: [
                     NumberInputFormatter(),
                     LengthLimitingTextInputFormatter(
-                        10), // Limits input to 10 digits
+                      10,
+                    ), // Limits input to 10 digits
                   ],
                   prefixIcon: Padding(
                     padding: context.symmetricPadding(20, 12),
@@ -112,7 +113,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 AppTextField(
                   hintText: 'Password',
                   controller: ctrl.passwordCtrl,
-                  validateFunction: Validators.password(),
+                  // validateFunction: Validators.password(),
+                  // Add simple required validation
+                  validateFunction: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Password is required';
+                    }
+                    return null;
+                  },
                   obscureText: !prov.showPassword,
                   suffixIcon: GestureDetector(
                     onTap: () =>
@@ -129,9 +137,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 AppTextField(
                   hintText: 'Confirm Password',
                   controller: ctrl.confirmCtrl,
-                  onChange:
-                      Validators.confirmPass(ctrl.passwordCtrl.text.trim()),
+                  // onChange: Validators.confirmPass(ctrl.passwordCtrl.text.trim()),
+                  // Add simple required validation and basic confirm password check
+                  validateFunction: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Confirm Password is required';
+                    }
+                    if (value.trim() != ctrl.passwordCtrl.text.trim()) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  },
                   obscureText: !prov.showConfirm,
+                  onChange: (value) {
+                    ctrl.validate();
+                  },
                   suffixIcon: GestureDetector(
                     onTap: () =>
                         setState(() => prov.showConfirm = !prov.showConfirm),

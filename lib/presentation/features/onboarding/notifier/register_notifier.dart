@@ -27,16 +27,13 @@ class RegisterProvider extends ChangeNotifier {
 
   RegisterProvider(this._api, this._storage, this._ref) {
     // listen for field changes to validate form
-    for (final c in [
-      firstNameCtrl,
-      lastNameCtrl,
-      emailCtrl,
-      phoneCtrl,
-      passwordCtrl,
-      confirmCtrl
-    ]) {
-      c.addListener(_validate);
-    }
+
+    firstNameCtrl.addListener(validate);
+    lastNameCtrl.addListener(validate);
+    emailCtrl.addListener(validate);
+    phoneCtrl.addListener(validate);
+    passwordCtrl.addListener(validate);
+    confirmCtrl.addListener(validate);
   }
 
   // controllers
@@ -101,7 +98,7 @@ class RegisterProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _validate() {
+  void validate() {
     final valid = formKey.currentState?.validate() ?? false;
     if (valid != _isValid) {
       _isValid = valid;
@@ -110,7 +107,7 @@ class RegisterProvider extends ChangeNotifier {
   }
 
   Future<void> submit(BuildContext context) async {
-    if (!_isValid || !_agreed) return;
+    if (!_isValid) return;
 
     _setLoading(true);
     _setError(null);

@@ -51,7 +51,7 @@ class HelpandsupportScreen extends ConsumerWidget {
                   else
                     Text(
                       label,
-                      style: context.textTheme.labelMedium,
+                      style: context.textTheme.bodySmall,
                     ),
                   extraWidget ?? const SizedBox(),
                 ],
@@ -91,7 +91,7 @@ class HelpandsupportScreen extends ConsumerWidget {
                 },
                 child: Text(
                   'View FAQs',
-                  style: context.textTheme.titleSmall!.copyWith(
+                  style: context.textTheme.bodyMedium?.copyWith(
                     // fontSize: 16,
                     height: 3,
                     color: AppColors.primaryColor,

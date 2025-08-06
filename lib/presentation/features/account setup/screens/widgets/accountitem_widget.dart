@@ -60,7 +60,7 @@ class AccountitemWidget extends ConsumerWidget {
             if (bvn == null) {
               WalletNotifier().showLinkBVNSnackBar(
                 context,
-                'To ensure that you get a virtual account number, verify your BVN for this feature.',
+                'verify your BVN for this feature.',
                 'Link now',
               );
               return;

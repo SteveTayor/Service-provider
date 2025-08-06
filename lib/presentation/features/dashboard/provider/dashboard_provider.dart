@@ -31,7 +31,7 @@ class DashboardProvider extends ChangeNotifier {
   String? get error => _error;
 
   Future<void> initDashboard(BuildContext context) async {
-    if (_currentIndex != 3) {
+    if (_currentIndex != 1 && _currentIndex != 3) {
       await _fetchDashboardData(context);
     }
   }

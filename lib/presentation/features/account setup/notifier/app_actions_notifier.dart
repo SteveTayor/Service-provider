@@ -73,18 +73,18 @@ class AppActionsNotifier {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
       if (latestVersion == null) {
-        context.showErrorSnackBar('Unable to check for updates');
+        // context.showErrorSnackBar('Unable to check for updates');
         return;
       }
 
       if (_isUpdateAvailable(currentVersion, latestVersion)) {
         _showUpdateDialog(context, currentVersion, latestVersion);
       } else {
-        context.showSuccessSnackBar('You have the latest version!');
+        // context.showSuccessSnackBar('You have the latest version!');
       }
     } catch (_) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      context.showErrorSnackBar('Error checking for updates');
+      // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      // context.showErrorSnackBar('Error checking for updates');
     }
   }
 

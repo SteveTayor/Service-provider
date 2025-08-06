@@ -92,7 +92,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
         titleText: controller.mode == PinScreenMode.create
             ? 'Create new pin'
             : 'Confirm pin',
-        showBackButton: true,
+        showBackButton: false,
         onTap: () {
           if (controller.mode == PinScreenMode.create) {
             context.pop();
