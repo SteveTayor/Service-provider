@@ -22,7 +22,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
     super.initState();
 // Only initDashboard if not last tab (AccountScreen = index 3)
     final currentIndex = ref.read(dashboardProvider).currentIndex;
-    if (currentIndex != 1 && currentIndex != 3) {
+    if (currentIndex != 3) {
       Future.microtask(() {
         ref.read(dashboardProvider.notifier).initDashboard(context);
         hasInitialized = true;

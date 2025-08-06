@@ -50,17 +50,23 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
     _scrollController.addListener(_onScroll);
   }
 
+  // void _onScroll() {
+  //   if (_scrollController.position.pixels >=
+  //       _scrollController.position.maxScrollExtent - 200) {
+  //     // Avoid triggering multiple times while loading
+  //     if (!_isLoadingMore) {
+  //       _isLoadingMore = true;
+  //       Future.microtask(() {
+  //         ref.read(transactionHistoryProvider.notifier).loadMoreTransactions();
+  //         _isLoadingMore = false;
+  //       });
+  //     }
+  //   }
+  // }
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      // Avoid triggering multiple times while loading
-      if (!_isLoadingMore) {
-        _isLoadingMore = true;
-        Future.microtask(() {
-          ref.read(transactionHistoryProvider.notifier).loadMoreTransactions();
-          _isLoadingMore = false;
-        });
-      }
+      ref.read(transactionHistoryProvider.notifier).loadMoreTransactions();
     }
   }
 
@@ -154,13 +160,21 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
                       ),
                       itemBuilder: (ctx, index) {
                         if (index == allTxns.length) {
-                          return Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          );
+                          final isLoadingMore = state.isLoadingMore;
+                          final hasMore = state.hasMore;
+
+                          if (!hasMore) return const SizedBox.shrink();
+                          if (isLoadingMore) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2)),
+                            );
+                          }
+                          return const SizedBox.shrink();
                         }
+
                         final txn = allTxns[index];
                         return InkWell(
                           onTap: () => _showTransactionDetails(txn),

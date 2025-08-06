@@ -24,8 +24,17 @@ class RecentTransactionWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recentState = ref.watch(recentTransactionsProvider);
+    // Wait until loading is done before rendering anything
+    if (recentState.isLoading) {
+      return _buildLoadingState();
+    }
     final recentTransactions = recentState.filteredServices.take(5).toList();
-
+    if (recentTransactions.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.all(20),
+        child: EmptytransactionWidget(),
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

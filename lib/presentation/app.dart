@@ -1,5 +1,8 @@
+import 'package:bundlegram/core/providers/connectivity_provider.dart';
 import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/utils/themes.dart';
+import 'package:bundlegram/presentation/no_internet.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 // import 'package:bundlegram/presentation/routes/app_router.dart';
 // import 'package:bundlegram/presentation/features/onboarding/screens/splash_screen.dart';
 import 'package:device_preview/device_preview.dart';
@@ -15,37 +18,46 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final connectivityProv = ref.watch(connectivityStatusProvider);
+
     return ScreenUtilInit(
       designSize: const Size(360, 800),
       minTextAdapt: true,
       splitScreenMode: true,
       ensureScreenSize: true,
       useInheritedMediaQuery: true,
-      builder: (context, c) {
-        // return DevicePreview(
-        //   builder: (context) {
+      builder: (context, _) {
         return GestureDetector(
           behavior: HitTestBehavior.translucent,
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
+          onTap: () => FocusScope.of(context).unfocus(),
           child: MaterialApp.router(
+            routerConfig: AppRouter.router,
             themeMode: ThemeMode.system,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            routerConfig: AppRouter.router,
             debugShowCheckedModeBanner: false,
-            locale: const Locale('en', 'NG'), // Set en_NG locale
+            locale: const Locale('en', 'NG'),
             supportedLocales: const [Locale('en', 'NG')],
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
+            builder: (context, child) {
+              // final connectivityAsync = ref.watch(connectivityProvider);
+
+              return connectivityProv.when(
+                data: (status) {
+                  final isOffline = status == ConnectivityResult.none;
+                  if (isOffline) return const NoInternetWidget();
+                  return child!;
+                },
+                loading: () => const SizedBox(), // or Splash/loading screen
+                error: (_, __) => const NoInternetWidget(),
+              );
+            },
           ),
         );
-        //   },
-        // );
       },
     );
   }

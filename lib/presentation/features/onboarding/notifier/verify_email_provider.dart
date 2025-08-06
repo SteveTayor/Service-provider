@@ -119,6 +119,12 @@ class VerifyEmailProvider extends ChangeNotifier {
           });
           _ref.read(globalProvider.notifier).fetchProfile(context);
           _verifying = false;
+          // ✅ Dismiss OTP sheet if still open
+          if (Navigator.canPop(context)) {
+            context.pop(); // or: context.pop();
+          }
+
+          // ✅ Navigate after dismiss
           context.pushReplacementNamed(RouteConstants.dashboard);
           otpCtrl.clear();
 

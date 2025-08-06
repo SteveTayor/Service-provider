@@ -9,6 +9,7 @@ import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatte
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/squad_notifier.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
+import 'package:bundlegram/presentation/features/wallet/payment_webview/squad_payment_webiew_screen.dart/squad_payment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -303,12 +304,32 @@ class _AddfundviadebitcardWidgetState
                   if (response?.data?.checkoutUrl != null) {
                     final uri = Uri.parse(response!.data!.checkoutUrl!);
                     log('checkout url:: ${uri.toString()}');
-                    final didLaunch =
-                        await launchUrl(uri, mode: LaunchMode.inAppWebView);
+                    // final didLaunch =
+                    //     await launchUrl(uri, mode: LaunchMode.inAppWebView);
 
-                    if (!didLaunch) {
-                      // context.pop();
-                      context.showErrorSnackBar("Could not open payment page.");
+                    // if (!didLaunch) {
+                    //   // context.pop();
+                    //   context.showErrorSnackBar("Could not open payment page.");
+                    // }
+                    final success = await Navigator.of(context).push<bool>(
+                      MaterialPageRoute(
+                        builder: (_) => SquadWebViewPage(
+                          paymentUrl: response.data!.checkoutUrl!,
+                          redirectUrlSubstring:
+                              "success", // customize based on Squad redirect
+                          transactionRef: response.data!.transactionRef!,
+                        ),
+                      ),
+                    );
+
+                    if (success == true) {
+                      await ref
+                          .read(globalProvider.notifier)
+                          .fetchWalletBalance(context);
+                      context
+                          .showSuccessSnackBar("Wallet funded successfully!");
+                    } else {
+                      context.showErrorSnackBar("Payment was not completed.");
                     }
                   } else {
                     // context.pop();
