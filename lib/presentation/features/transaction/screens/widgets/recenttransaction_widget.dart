@@ -50,7 +50,10 @@ class RecentTransactionWidget extends ConsumerWidget {
     bool isLoading,
     WidgetRef ref,
   ) {
-    if (isLoading) return _buildLoadingState();
+    // only show the skeleton if we're loading *and* have no items yet
+    if (isLoading && transactions.isEmpty) {
+      return _buildLoadingState();
+    }
 
     if (transactions.isEmpty) {
       return const Padding(

@@ -1,10 +1,10 @@
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 
 class RecentTransactionsState {
-  final List<UserTransactions> services; // All services/transactions
-  final List<UserTransactions> filteredServices; // Filtered subset
-  final String? filterType; // Current filter type
-  final bool isLoading; // Loading state
+  final List<UserTransactions> services; // All fetched transactions
+  final List<UserTransactions> filteredServices; // After search/filters
+  final String? filterType; // (unused right now)
+  final bool isLoading; // true only on very first load
 
   RecentTransactionsState({
     required this.services,

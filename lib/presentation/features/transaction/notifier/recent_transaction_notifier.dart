@@ -5,12 +5,20 @@ import 'package:bundlegram/data/models/transaction/user_transactions_response.da
 import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:bundlegram/core/extensions/string_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
+import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 class RecentTransactionsNotifier
     extends StateNotifier<RecentTransactionsState> {
   final Ref ref;
 
   RecentTransactionsNotifier(this.ref)
-      : super(RecentTransactionsState.initial()) {
+      // ← Start with isLoading=true so first-load skeleton shows exactly once
+      : super(RecentTransactionsState.initial().copyWith(isLoading: true)) {
+    // Listen for the global fetch completing…
     ref.listen<AsyncValue<GetAllUserTransactionResponse?>>(
       globalProvider.select((s) => s.usersTransactions),
       (prev, next) {
@@ -22,6 +30,7 @@ class RecentTransactionsNotifier
 
           final limited = recent.take(10).toList();
 
+          // When data arrives, publish it and turn off loading once and for all
           state = state.copyWith(
             services: limited,
             filteredServices: limited,
@@ -32,23 +41,24 @@ class RecentTransactionsNotifier
     );
   }
 
+  /// Calling refresh() will re-filter or re-publish the existing
+  /// data if you need to retrigger the listener logic; it won't
+  /// turn isLoading back on.
   void refresh() {
-    // Will trigger update when usersTransactions is refreshed externally
-    final wrapper = ref.read(globalProvider).usersTransactions
-      ..whenData((data) {
-        final recent = (data?.data ?? [])
-            .where((txn) => txn.createdAt != null)
-            .toList()
-          ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+    ref.read(globalProvider).usersTransactions.whenData((data) {
+      final recent = (data?.data ?? [])
+          .where((txn) => txn.createdAt != null)
+          .toList()
+        ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 
-        final limited = recent.take(10).toList();
+      final limited = recent.take(10).toList();
 
-        state = state.copyWith(
-          services: limited,
-          filteredServices: limited,
-          isLoading: false,
-        );
-      });
+      state = state.copyWith(
+        services: limited,
+        filteredServices: limited,
+        isLoading: false, // stays false
+      );
+    });
   }
 
   void search(String query) {
@@ -92,11 +102,11 @@ class RecentTransactionsNotifier
 
     if (sortBy.isNotEmpty) {
       temp.sort((a, b) {
-        final aDate = a.createdAt;
-        final bDate = b.createdAt;
+        final aDate = a.createdAt!;
+        final bDate = b.createdAt!;
         return sortBy == 'newest'
-            ? bDate!.compareTo(aDate!)
-            : aDate!.compareTo(bDate!);
+            ? bDate.compareTo(aDate)
+            : aDate.compareTo(bDate);
       });
     }
 

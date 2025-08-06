@@ -30,10 +30,11 @@ class DashboardProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<void> initDashboard(BuildContext context) async {
+  Future<void> initDashboard(BuildContext context) {
     if (_currentIndex != 1 && _currentIndex != 3) {
-      await _fetchDashboardData(context);
+      unawaited(_fetchDashboardData(context));
     }
+    return Future.value();
   }
 
   void resetIndex() {
@@ -58,10 +59,10 @@ class DashboardProvider extends ChangeNotifier {
     final storage = _ref.read(secureStorageHelperProvider);
     final api = _ref.read(apiServiceProvider);
     final token = await storage.getAuthToken();
-    context.showLoadingDialog();
+    // context.showLoadingDialog();
 
     if (token == null) {
-      context.dismissDialog();
+      // context.dismissDialog();
 
       context
         ..showErrorSnackBar(
@@ -72,9 +73,9 @@ class DashboardProvider extends ChangeNotifier {
     }
 
     final global = _ref.read(globalProvider.notifier);
-    await global.initializeWalletandAccounts(context);
+    unawaited(global.initializeWalletandAccounts(context));
 
-    context.dismissDialog();
+    // context.dismissDialog();
     _setLoading(false);
   }
 
