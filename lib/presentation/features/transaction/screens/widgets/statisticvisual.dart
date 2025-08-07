@@ -202,6 +202,13 @@ class _StatisticsDashboardState extends ConsumerState<StatisticsDashboard>
             if (barData.isEmpty) {
               return _buildEmptyBarChart('No transaction data available');
             }
+            // / Additional check: if all amounts are zero, also show empty state
+            final hasNonZeroData =
+                barData.any((bar) => _toDouble(bar.amount) > 0);
+            if (!hasNonZeroData) {
+              return _buildEmptyBarChart(
+                  'No transactions recorded for this period');
+            }
 
             // Calculate a reasonable width per bar:
             final barWidth = 16.0;
@@ -317,6 +324,13 @@ class _StatisticsDashboardState extends ConsumerState<StatisticsDashboard>
             final doughnut = resp.data?.doughnutData ?? [];
             if (doughnut.isEmpty) {
               return _buildEmptyPieChart('No bill distribution data available');
+            }
+            // Additional checks for meaningful data
+            final hasNonZeroData =
+                doughnut.any((item) => _toDouble(item.value) > 0);
+            if (!hasNonZeroData) {
+              return _buildEmptyPieChartState(
+                  'No bill payments recorded for this period');
             }
 
             return SizedBox(
@@ -531,6 +545,158 @@ class _StatisticsDashboardState extends ConsumerState<StatisticsDashboard>
           ),
         ),
       ],
+    );
+  }
+
+//empty state with illustration
+  Widget _buildEmptyBarChartWithIllustration(String? reason) {
+    return Container(
+      height: 260,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Create a simple bar chart illustration using containers
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: List.generate(5, (index) {
+                return Container(
+                  width: 12,
+                  height: 20.0 + (index * 8), // Varying heights
+                  margin: const EdgeInsets.symmetric(horizontal: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(2),
+                    ),
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'No Transaction Data',
+              style: TextStyle(
+                color: Colors.grey.shade700,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              reason ?? 'Transactions will appear here once available',
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyPieChartState(String? reason) {
+    return Container(
+      height: 350,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50, // Subtle background
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Animated empty pie chart illustration
+            TweenAnimationBuilder(
+              duration: const Duration(milliseconds: 1200),
+              tween: Tween<double>(begin: 0.0, end: 1.0),
+              builder: (context, double progress, child) {
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Background circle
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.grey.shade300,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    // Animated arc
+                    SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: CircularProgressIndicator(
+                        value: progress * 0.3, // Partial fill for visual appeal
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.grey.shade400,
+                        ),
+                        backgroundColor: Colors.transparent,
+                      ),
+                    ),
+                    // Center icon
+                    Icon(
+                      Icons.pie_chart_outline,
+                      size: 32,
+                      color: Colors.grey.shade400,
+                    ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'No Bill Distribution Data',
+              style: TextStyle(
+                color: Colors.grey.shade700,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Text(
+                reason ?? 'No bill payments found for this period',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Action button
+            // TextButton.icon(
+            //   onPressed: () {
+            //     final req = _toRequest(selectedBillsMonth);
+            //     ref.read(statisticsDashboardProvider.notifier).fetch(req);
+            //     _resetAndStartAnimations();
+            //   },
+            //   icon: const Icon(Icons.refresh, size: 16),
+            //   label: const Text('Refresh Data'),
+            //   style: TextButton.styleFrom(
+            //     foregroundColor: Colors.blue,
+            //     textStyle: const TextStyle(fontSize: 12),
+            //   ),
+            // ),
+          ],
+        ),
+      ),
     );
   }
 
