@@ -7,7 +7,7 @@ class CustomSnackBar {
   static void show(
     BuildContext context,
     String message, {
-    Duration duration = const Duration(seconds: 5),
+    Duration duration = const Duration(seconds: 3),
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -36,7 +36,7 @@ class CustomSnackBar {
   static void showError(
     BuildContext context,
     String message, {
-    Duration duration = const Duration(seconds: 5),
+    Duration duration = const Duration(seconds: 3),
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -77,7 +77,7 @@ class CustomSnackBar {
   static void showSuccess(
     BuildContext context,
     String message, {
-    Duration duration = const Duration(seconds: 5),
+    Duration duration = const Duration(seconds: 3),
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -118,7 +118,7 @@ class CustomSnackBar {
   static void showWarning(
     BuildContext context,
     String message, {
-    Duration duration = const Duration(seconds: 5),
+    Duration duration = const Duration(seconds: 3),
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

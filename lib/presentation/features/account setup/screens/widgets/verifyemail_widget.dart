@@ -70,7 +70,7 @@ class _VerifyEmailWidgetState extends ConsumerState<VerifyEmailWidget> {
                 onPressed: provider.sending
                     ? null
                     : () async {
-                        await notifier.sendEmailOtp(context, ref);
+                        await notifier.sendEmailOtp(context);
                       },
               ),
               24.verticalSpace,

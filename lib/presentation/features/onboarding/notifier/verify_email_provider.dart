@@ -37,7 +37,7 @@ class VerifyEmailProvider extends ChangeNotifier {
   bool get verifying => _verifying;
 
   /// Step 1: Send the OTP to the user’s email
-  Future<bool> sendEmailOtp(BuildContext context, WidgetRef ref) async {
+  Future<bool> sendEmailOtp(BuildContext context) async {
     _sending = true;
     notifyListeners();
 
@@ -64,8 +64,10 @@ class VerifyEmailProvider extends ChangeNotifier {
           otpCtrl.clear();
           notifyListeners();
           context.pop();
-          EmailOtpDialogNotifier().showOtpInputDialog(
-              context, _ref.watch(verifyEmailProvider.notifier));
+          // Safely open new dialog in next frame
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            EmailOtpDialogNotifier().showOtpInputDialog(context, this);
+          });
 
           // Fetch profile to ensure UI updates
           _ref.read(globalProvider.notifier).fetchProfile(context);
@@ -73,8 +75,7 @@ class VerifyEmailProvider extends ChangeNotifier {
           return true;
         } else {
           context.pop();
-
-          context.showErrorSnackBar(resp.message ?? 'Failed to send OTP');
+          // context.showErrorSnackBar(resp.message ?? 'Failed to send OTP');
           _sending = false;
           notifyListeners();
           return false;
@@ -106,7 +107,7 @@ class VerifyEmailProvider extends ChangeNotifier {
         context.showErrorSnackBar(fail.properties.join('\n'));
         _verifying = false;
         context.dismissDialog();
-        context.pushReplacementNamed(RouteConstants.dashboard);
+        context.pushReplacement(RouteConstants.dashboard);
         notifyListeners();
         return false;
       },
@@ -125,7 +126,7 @@ class VerifyEmailProvider extends ChangeNotifier {
           }
 
           // ✅ Navigate after dismiss
-          context.pushReplacementNamed(RouteConstants.dashboard);
+          context.pushReplacement(RouteConstants.dashboard);
           otpCtrl.clear();
 
           context.dismissDialog();
