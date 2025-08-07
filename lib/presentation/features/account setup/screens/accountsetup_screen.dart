@@ -75,9 +75,11 @@ class _AccountsetupScreenState extends ConsumerState<AccountsetupScreen> {
             Column(
               children: steps.map((step) {
                 return InkWell(
-                  onTap: step.done
-                      ? null
-                      : () => provider.onStepTap(step, context),
+                  onTap:
+                      // step.done
+                      //     ? null
+                      // :
+                      () => provider.onStepTap(step, context),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

@@ -315,13 +315,27 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       child: ChoosebillerWidget(
         serviceType: _serviceType,
         onProviderSelected: (path, name, id) {
-          final product = state.products.firstWhere((p) => p.id == id);
+          if (_serviceType == PlatformProductType.betting) {
+            // 'id' is a subproduct ID
+            final selectedSubProduct = state.subProducts.firstWhere(
+              (s) => s.id == id,
+            );
 
-          // 1. Select the product visually
-          selectProduct(product, path!);
+            if (selectedSubProduct != null && state.selectedProduct != null) {
+              selectSubProduct(selectedSubProduct);
+              // fetchSubProducts(ctx, selectedSubProduct.id!);
+            }
+          } else {
+            // 'id' is a product ID
 
-          // 2. Trigger fetchSubProducts based on product.id
-          fetchSubProducts(ctx, product.id!);
+            final product = state.products.firstWhere((p) => p.id == id);
+
+            // 1. Select the product visually
+            selectProduct(product, path!);
+
+            // 2. Trigger fetchSubProducts based on product.id
+            fetchSubProducts(ctx, product.id!);
+          }
         },
       ),
     );
@@ -967,8 +981,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                       message.toLowerCase().contains('incorrect pin')
                   ? message
                   : 'Transaction failed. Please try again later.';
-          context.showErrorSnackBar(
-              message.isNotEmpty ? message : 'Transaction failed');
+          debugPrint(message.isNotEmpty ? message : 'Transaction failed');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -998,7 +1011,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                         response.message.toLowerCase().contains('incorrect pin')
                     ? response.message
                     : 'Please try again later.';
-            context.showErrorSnackBar(displayMessage);
+            debugPrint(displayMessage);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -1019,15 +1032,17 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       context
         ..dismissDialog()
         ..showErrorSnackBar(e.toString());
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => FailedResultScreen(
-            serviceContent: _serviceType.title.toLowerCase(),
-            errorMessage: "The purchase was not successful, Try again later",
-            onRetry: () {
-              context.pushReplacement(RouteConstants.dashboard);
-            },
+      unawaited(
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (ctx) => FailedResultScreen(
+              serviceContent: _serviceType.title.toLowerCase(),
+              errorMessage: "The purchase was not successful, Try again later",
+              onRetry: () {
+                context.pushReplacement(RouteConstants.dashboard);
+              },
+            ),
           ),
         ),
       );

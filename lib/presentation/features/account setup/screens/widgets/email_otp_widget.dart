@@ -37,8 +37,8 @@ class EmailOtpDialogNotifier {
               text: provider.verifying ? 'Verifying...' : 'Submit',
               onPressed: provider.verifying
                   ? null
-                  : () async {
-                      await provider.verifyEmailOtp(context);
+                  : () {
+                      provider.verifyEmailOtp(context);
                     },
             ),
           ],

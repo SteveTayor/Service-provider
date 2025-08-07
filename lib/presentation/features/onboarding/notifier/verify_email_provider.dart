@@ -65,7 +65,7 @@ class VerifyEmailProvider extends ChangeNotifier {
           notifyListeners();
           context.pop();
           EmailOtpDialogNotifier().showOtpInputDialog(
-              context, _ref.read(verifyEmailProvider.notifier));
+              context, _ref.watch(verifyEmailProvider.notifier));
 
           // Fetch profile to ensure UI updates
           _ref.read(globalProvider.notifier).fetchProfile(context);
