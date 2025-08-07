@@ -20,6 +20,7 @@ class SecureStorageHelper {
   Future<String?> getAuthToken() async {
     return await _storage.read(key: _tokenKey);
   }
+
   Future<void> setAppVersionCode(int versionCode) async {
     await _storage.write(
       key: _appVersionCodeKey,
@@ -31,7 +32,6 @@ class SecureStorageHelper {
     final value = await _storage.read(key: _appVersionCodeKey);
     return int.tryParse(value ?? '');
   }
-
 
   Future<void> setAuthToken(String token) async {
     await _storage.write(key: _tokenKey, value: token);
