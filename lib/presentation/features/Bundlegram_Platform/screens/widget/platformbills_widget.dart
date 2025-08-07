@@ -42,7 +42,7 @@ class _PlatformbillsWidgetState extends State<PlatformbillsWidget> {
             final item = filteredWidgets[index];
             return Builder(
               builder: (context) => item.builder(context).withContainer(
-                    padding: context.symmetricPadding(0, 20.h),
+                    padding: context.symmetricPadding(0, 16.h),
                     margin: context.symmetricPadding(20.w, 8.h),
                   ),
             );

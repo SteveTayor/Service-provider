@@ -3,8 +3,10 @@ import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/data/platform_data.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/account%20setup/notifier/account_setup_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -28,6 +30,7 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
     return Consumer(
       builder: (context, ref, child) {
         final provider = ref.watch(accountSetupProvider);
+        final platform = ref.read(platformProvider);
         final isAccountSetupComplete = provider.isAccountSetupComplete;
         final profile = ref.watch(globalProvider).profile.value?.data;
         final isAgent = profile?.userType?.toLowerCase() == "agent";
@@ -37,18 +40,18 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
         final advertActions = <VoidCallback>[];
 
         // if (!isAccountSetupComplete) {
-          advertItems.add(Assets.svgs.accountsetup);
-          advertActions.add(() => context.push(RouteConstants.accountSetup));
+        advertItems.add(Assets.svgs.accountsetup);
+        advertActions.add(() => context.push(RouteConstants.accountSetup));
         // }
 
         // if (!isAgent) {
-          advertItems.add(Assets.svgs.bundlegramagent);
-          advertActions.add(() => context.push(RouteConstants.becomeagent));
+        advertItems.add(Assets.svgs.bundlegramagent);
+        advertActions.add(() => context.push(RouteConstants.becomeagent));
         // }
 
         advertItems.add(Assets.svgs.completesetup);
         advertActions.add(
-          () => null,
+          () => platform.goToProduct(context, PlatformProductType.mobileData),
         );
 
         // If nothing left to show, hide the entire carousel

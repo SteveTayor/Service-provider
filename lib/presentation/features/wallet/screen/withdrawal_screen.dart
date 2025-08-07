@@ -36,6 +36,10 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
     super.initState();
     // Fetch data when the screen loads
     ref.read(withdrawalProvider).fetchData(context);
+
+    ref.read(withdrawalProvider).fetchData(context);
+    ref.read(withdrawalProvider).amountController.clear();
+    ref.read(withdrawalProvider).setSubmitting(false);
   }
 
   @override
@@ -156,28 +160,35 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                           final isValid = await provider
                               .validateAndPrepareWithdrawal(context);
                           if (!isValid) return;
-                          unawaited(Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (ctx) => EnterPinScreen(
-                                onVerified: (pin) async {
-                                  final success = await provider
-                                      .requestWithdrawal(context, pin);
-                                  if (!success) return;
-                                  unawaited(Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (ctx) => TransactionSuccessful(
-                                        title: 'Withdrawal request received!',
-                                        subTitle:
-                                            'Your withdrawal request of ${provider.amountController.text.toCurrency()} from your Bundlegram wallet has been successfully received.',
+                          unawaited(
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (ctx) => EnterPinScreen(
+                                  onVerified: (pin) async {
+                                    final success = await provider
+                                        .requestWithdrawal(context, pin);
+                                    if (!success) return;
+
+                                    unawaited(
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (ctx) =>
+                                              TransactionSuccessful(
+                                            title:
+                                                'Withdrawal request received!',
+                                            subTitle:
+                                                'Your withdrawal request of ${provider.amountController.text.toCurrency()} from your Bundlegram wallet has been successfully received.',
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ));
-                                },
+                                    );
+                                  },
+                                ),
                               ),
                             ),
-                          ));
+                          );
                         },
                 ),
               ],

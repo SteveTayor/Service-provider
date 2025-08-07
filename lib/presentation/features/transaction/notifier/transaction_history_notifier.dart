@@ -25,24 +25,54 @@ class TransactionHistoryNotifier
     );
   }
 
+  // void _resetVisibleTransactions() {
+  //   final initialBatch = _allTransactions.take(_batchSize).toList();
+  //   state = state.copyWith(
+  //     services: _allTransactions,
+  //     filteredServices: initialBatch,
+  //     isLoading: false,
+  //   );
+  // }
   void _resetVisibleTransactions() {
     final initialBatch = _allTransactions.take(_batchSize).toList();
+    final hasMore = _allTransactions.length > initialBatch.length;
+
     state = state.copyWith(
       services: _allTransactions,
       filteredServices: initialBatch,
       isLoading: false,
+      isLoadingMore: false,
+      hasMore: hasMore,
     );
   }
 
   void loadMoreTransactions() {
-    final current = state.filteredServices.length;
-    if (current >= _allTransactions.length) return; // all loaded
+    if (state.isLoadingMore || !state.hasMore) return;
 
+    state = state.copyWith(isLoadingMore: true);
+
+    final current = state.filteredServices.length;
     final nextBatch = _allTransactions.skip(current).take(_batchSize).toList();
 
     final updated = [...state.filteredServices, ...nextBatch];
-    state = state.copyWith(filteredServices: updated);
+    final hasMore = updated.length < _allTransactions.length;
+
+    state = state.copyWith(
+      filteredServices: updated,
+      isLoadingMore: false,
+      hasMore: hasMore,
+    );
   }
+
+  // void loadMoreTransactions() {
+  //   final current = state.filteredServices.length;
+  //   if (current >= _allTransactions.length) return; // all loaded
+
+  //   final nextBatch = _allTransactions.skip(current).take(_batchSize).toList();
+
+  //   final updated = [...state.filteredServices, ...nextBatch];
+  //   state = state.copyWith(filteredServices: updated);
+  // }
 
   void loadServices() {
     ref.read(globalProvider).usersTransactions.whenData((data) {

@@ -315,13 +315,27 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       child: ChoosebillerWidget(
         serviceType: _serviceType,
         onProviderSelected: (path, name, id) {
-          final product = state.products.firstWhere((p) => p.id == id);
+          if (_serviceType == PlatformProductType.betting) {
+            // 'id' is a subproduct ID
+            final selectedSubProduct = state.subProducts.firstWhere(
+              (s) => s.id == id,
+            );
 
-          // 1. Select the product visually
-          selectProduct(product, path!);
+            if (selectedSubProduct != null && state.selectedProduct != null) {
+              selectSubProduct(selectedSubProduct);
+              // fetchSubProducts(ctx, selectedSubProduct.id!);
+            }
+          } else {
+            // 'id' is a product ID
 
-          // 2. Trigger fetchSubProducts based on product.id
-          fetchSubProducts(ctx, product.id!);
+            final product = state.products.firstWhere((p) => p.id == id);
+
+            // 1. Select the product visually
+            selectProduct(product, path!);
+
+            // 2. Trigger fetchSubProducts based on product.id
+            fetchSubProducts(ctx, product.id!);
+          }
         },
       ),
     );
@@ -361,8 +375,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         break;
 
       case PlatformProductType.betting:
-        if (state.secondaryInputController.text.length != 10) {
-          return 'User ID must be 10 digits';
+        if (state.secondaryInputController.text == null) {
+          return 'User ID is required';
         }
         if (state.amountController.text.isEmpty ||
             double.tryParse(state.amountController.text) == null ||
@@ -629,7 +643,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
     final isPrimaryInputReady = number.trim().length == 11;
     final isSecondaryInputReady =
-        state.secondaryInputController.text.trim().length == 10;
+        state.secondaryInputController.text.trim() != null;
     final isBillTypeWithSecondary =
         _serviceType == PlatformProductType.betting ||
             _serviceType == PlatformProductType.cableTv ||
@@ -802,7 +816,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   //   });
   // }
 
-  double _getTransactionAmount() {
+  double getTransactionAmount() {
     if (_serviceType == PlatformProductType.airtime ||
         _serviceType == PlatformProductType.betting ||
         _serviceType == PlatformProductType.electricity) {
@@ -838,7 +852,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
 
     // Get and validate amount
-    final amount = _getTransactionAmount();
+    final amount = getTransactionAmount();
     if (amount <= 0) {
       context
           .showErrorSnackBar('Please enter a valid amount greater than zero');
@@ -864,10 +878,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       showIcon: true,
       child: TransactionSummary(
         assetPath: state.selectedProviderIcon,
+        billValidatedName: state.validatedName,
         transactionType: state.selectedSubProduct?.subName ??
             state.selectedProduct?.productName,
         amount: amount.toCurrency(),
-        discountedPrice: amount.toCurrency(),
+        discountedPrice: discountedAmount.toCurrency(),
         beneficiary: beneficiary,
         onPay: () {
           initiatePurchase(
@@ -898,6 +913,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                 originalAmount: originalAmount,
                 discountedAmount: discountedAmount,
                 beneficiary: beneficiary,
+                validatedName: state.validatedName,
               );
             },
           ),
@@ -912,6 +928,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     required String pin,
     required String discountedAmount,
     required String beneficiary,
+    String? validatedName,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
 
@@ -944,6 +961,10 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         subProdId: state.selectedSubProduct?.id ?? 0,
         serviceId: state.selectedProduct?.serviceId ?? '',
         pin: pin,
+        name: _serviceType != PlatformProductType.airtime ||
+                _serviceType != PlatformProductType.mobileData
+            ? validatedName
+            : null,
       );
 
       final result = _serviceType == PlatformProductType.mobileData ||
@@ -960,8 +981,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                       message.toLowerCase().contains('incorrect pin')
                   ? message
                   : 'Transaction failed. Please try again later.';
-          context.showErrorSnackBar(
-              message.isNotEmpty ? message : 'Transaction failed');
+          debugPrint(message.isNotEmpty ? message : 'Transaction failed');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -991,7 +1011,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                         response.message.toLowerCase().contains('incorrect pin')
                     ? response.message
                     : 'Please try again later.';
-            context.showErrorSnackBar(displayMessage);
+            debugPrint(displayMessage);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -1012,15 +1032,17 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       context
         ..dismissDialog()
         ..showErrorSnackBar(e.toString());
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => FailedResultScreen(
-            serviceContent: _serviceType.title.toLowerCase(),
-            errorMessage: "The purchase was not successful, Try again later",
-            onRetry: () {
-              context.pushReplacement(RouteConstants.dashboard);
-            },
+      unawaited(
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (ctx) => FailedResultScreen(
+              serviceContent: _serviceType.title.toLowerCase(),
+              errorMessage: "The purchase was not successful, Try again later",
+              onRetry: () {
+                context.pushReplacement(RouteConstants.dashboard);
+              },
+            ),
           ),
         ),
       );

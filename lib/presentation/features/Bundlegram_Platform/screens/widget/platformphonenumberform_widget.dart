@@ -152,11 +152,11 @@ class _PlatformPhoneNumberFormWidgetState
             controller: state.secondaryInputController,
             keyboardType: TextInputType.number,
             validateFunction: (val) {
-              if (val?.length != 10) return 'Must be 10 digits';
+              if (val == null) return 'required';
               return null;
             },
             inputFormatters: [
-              LengthLimitingTextInputFormatter(10),
+              // LengthLimitingTextInputFormatter(10),
               FilteringTextInputFormatter.digitsOnly,
             ],
           ),

@@ -4,6 +4,7 @@ import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
@@ -11,7 +12,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/pl
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/recenttransaction_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
-import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_notifier.dart';
+// import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
@@ -94,101 +95,111 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            'Wallet balance',
-                            style: context.textTheme.bodyMedium?.copyWith(
-                              color: AppColors.white,
-                            ),
-                          ),
-                          8.horizontalSpace,
-                          GestureDetector(
-                            onTap: () => ref
-                                .read(platformProvider.notifier)
-                                .toggleBalanceVisibility(),
-                            child: Icon(
-                              provider.isBalanceVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: AppColors.white,
-                              size: 20,
-                            ),
-                          ),
-                          const Spacer(),
-                          Flexible(
-                            child: BundlegramButton(
-                              width: 105.w,
-                              height: 40.h,
-                              color: AppColors.white,
-                              cornerRadius: 4.r,
-                              text: 'Withdraw',
-                              textStyle: context.textTheme.bodyMedium!.copyWith(
-                                color: AppColors.primaryColor,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          // Refresh anything you need here
+          ref.read(globalProvider.notifier).fetchWalletBalance(context);
+          ref.read(recentTransactionsProvider.notifier).refresh();
+          ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Wallet balance',
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.white,
                               ),
-                              onPressed: () {
-                                context.push(RouteConstants.withdrawFund);
-                              },
                             ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        provider.isBalanceVisible
-                            ? provider.formattedBalance
-                            : '⁕⁕⁕⁕',
-                        // wallet.value?.wallet.toCurrency() ?? '₦0.00',
-                        style: context.textTheme.titleLarge?.copyWith(
-                          fontSize: provider.isBalanceVisible ? 34 : 24,
-                          color: AppColors.white,
-                          fontWeight: FontWeight.w500,
+                            8.horizontalSpace,
+                            GestureDetector(
+                              onTap: () => ref
+                                  .read(platformProvider.notifier)
+                                  .toggleBalanceVisibility(),
+                              child: Icon(
+                                provider.isBalanceVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: AppColors.white,
+                                size: 20,
+                              ),
+                            ),
+                            const Spacer(),
+                            Flexible(
+                              child: BundlegramButton(
+                                width: 105.w,
+                                height: 40.h,
+                                color: AppColors.white,
+                                cornerRadius: 4.r,
+                                text: 'Withdraw',
+                                textStyle:
+                                    context.textTheme.bodyMedium!.copyWith(
+                                  color: AppColors.primaryColor,
+                                ),
+                                onPressed: () {
+                                  context.push(RouteConstants.withdrawFund);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        Text(
+                          provider.isBalanceVisible
+                              ? provider.formattedBalance
+                              : '⁕⁕⁕⁕',
+                          // wallet.value?.wallet.toCurrency() ?? '₦0.00',
+                          style: context.textTheme.titleLarge?.copyWith(
+                            fontSize: provider.isBalanceVisible ? 34 : 24,
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const Spacer(),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Assets.images.growth.image(),
-                ),
-              ],
-            ).withContainer(
-              color: AppColors.primaryColor,
-              height: 328.h,
-              width: context.width,
-            ),
-            32.verticalSpace,
-            BundlegramButton(
-              svgIconContainerColor: Colors.transparent,
-              leading: Assets.svgs.walletAdd,
-              text: 'Top-up wallet',
-              onPressed:
-                  _isProcessing ? null : () => _handleFundWallet(context),
-            ),
-            40.verticalSpace,
-            if (walletTxns == null || walletTxns.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 32),
-                child: Center(child: EmptytransactionWidget()),
-              )
-            else
-              RecentTransactionWidget(
-                SizedBox(height: 20),
+                  const Spacer(),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Assets.images.growth.image(),
+                  ),
+                ],
+              ).withContainer(
+                color: AppColors.primaryColor,
+                height: 328.h,
+                width: context.width,
               ),
-            35.verticalSpace,
-          ],
+              32.verticalSpace,
+              BundlegramButton(
+                svgIconContainerColor: Colors.transparent,
+                leading: Assets.svgs.walletAdd,
+                text: 'Top-up wallet',
+                onPressed:
+                    _isProcessing ? null : () => _handleFundWallet(context),
+              ),
+              40.verticalSpace,
+              if (walletTxns == null || walletTxns.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 32),
+                  child: Center(child: EmptytransactionWidget()),
+                )
+              else
+                RecentTransactionWidget(
+                  SizedBox(height: 20),
+                ),
+              35.verticalSpace,
+            ],
+          ),
         ),
       ),
     );
