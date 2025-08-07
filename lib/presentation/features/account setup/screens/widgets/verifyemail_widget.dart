@@ -44,37 +44,44 @@ class _VerifyEmailWidgetState extends ConsumerState<VerifyEmailWidget> {
         final provider = ref.watch(verifyEmailProvider);
         final notifier = ref.read(verifyEmailProvider.notifier);
 
-        return Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Text(
-                'Verify email',
-                style: innerContext.textTheme.headlineMedium!
-                    .copyWith(color: AppColors.black),
-              ),
-              12.verticalSpace,
-              Text(
-                'Please, confirm your email address to receive a verification code.',
-                textAlign: TextAlign.center,
-                style: innerContext.textTheme.bodySmall,
-              ),
-              24.verticalSpace,
-              AppTextField(
-                controller: _emailCtrl,
-                readOnly: true,
-              ),
-              40.verticalSpace,
-              BundlegramButton(
-                text: provider.sending ? 'Sending...' : 'Confirm email',
-                onPressed: provider.sending
-                    ? null
-                    : () async {
-                        await notifier.sendEmailOtp(context);
-                      },
-              ),
-              24.verticalSpace,
-            ],
+        return WillPopScope(
+          onWillPop: () async {
+            // Reset provider state when the bottom sheet is dismissed
+            notifier.resetState();
+            return true;
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Text(
+                  'Verify email',
+                  style: innerContext.textTheme.headlineMedium!
+                      .copyWith(color: AppColors.black),
+                ),
+                12.verticalSpace,
+                Text(
+                  'Please, confirm your email address to receive a verification code.',
+                  textAlign: TextAlign.center,
+                  style: innerContext.textTheme.bodySmall,
+                ),
+                24.verticalSpace,
+                AppTextField(
+                  controller: _emailCtrl,
+                  readOnly: true,
+                ),
+                40.verticalSpace,
+                BundlegramButton(
+                  text: provider.sending ? 'Sending...' : 'Confirm email',
+                  onPressed: provider.sending
+                      ? null
+                      : () async {
+                          await notifier.sendEmailOtp(context);
+                        },
+                ),
+                24.verticalSpace,
+              ],
+            ),
           ),
         );
       },

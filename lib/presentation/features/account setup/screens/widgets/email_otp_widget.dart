@@ -12,40 +12,44 @@ import 'package:go_router/go_router.dart';
 class EmailOtpDialogNotifier {
   Future<void> showOtpInputDialog(
       BuildContext context, VerifyEmailProvider notifier) async {
-    final provider = notifier;
-
     await context.showBottomSheet(
-      child: Form(
-        key: provider.formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Enter OTP Sent to Your Mail!',
-              textAlign: TextAlign.center,
+      child: Consumer(
+        builder: (context, ref, _) {
+          final provider = notifier;
+
+          return Form(
+            key: provider.formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Enter OTP Sent to Your Mail!',
+                  textAlign: TextAlign.center,
+                ),
+                10.verticalSpace,
+                AppTextField(
+                  controller: provider.otpCtrl,
+                  hintText: 'OTP',
+                  keyboardType: TextInputType.number,
+                  validateFunction: (v) =>
+                      v == null || v.trim().isEmpty ? 'OTP is required' : null,
+                ),
+                30.verticalSpace,
+                BundlegramButton(
+                  text: provider.verifying ? 'Verifying...' : 'Submit',
+                  onPressed: provider.verifying
+                      ? null
+                      : () {
+                          provider.verifyEmailOtp(context);
+                        },
+                ),
+              ],
+            ).withContainer(
+              padding: context.symmetricPadding(24, 24),
+              borderRadius: BorderRadius.circular(6.r),
             ),
-            10.verticalSpace,
-            AppTextField(
-              controller: provider.otpCtrl,
-              hintText: 'OTP',
-              keyboardType: TextInputType.number,
-              validateFunction: (v) =>
-                  v == null || v.trim().isEmpty ? 'OTP is required' : null,
-            ),
-            30.verticalSpace,
-            BundlegramButton(
-              text: provider.verifying ? 'Verifying...' : 'Submit',
-              onPressed: provider.verifying
-                  ? null
-                  : () {
-                      provider.verifyEmailOtp(context);
-                    },
-            ),
-          ],
-        ).withContainer(
-          padding: context.symmetricPadding(24, 24),
-          borderRadius: BorderRadius.circular(6.r),
-        ),
+          );
+        },
       ),
     );
   }

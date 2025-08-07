@@ -29,7 +29,7 @@ class AppDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _showMenu(context),
+      onTap: isFilled ? null : () => _showMenu(context),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

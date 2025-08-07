@@ -4,6 +4,7 @@ import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/data/models/base/base_response.dart';
+import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/email_otp_widget.dart';
 import 'package:bundlegram/presentation/features/dashboard/screens/dashboard_screen.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,13 @@ class VerifyEmailProvider extends ChangeNotifier {
   bool _verifying = false;
   bool get verifying => _verifying;
 
+  void resetState() {
+    _sending = false;
+    _verifying = false;
+    otpCtrl.clear();
+    notifyListeners();
+  }
+
   /// Step 1: Send the OTP to the user’s email
   Future<bool> sendEmailOtp(BuildContext context) async {
     _sending = true;
@@ -62,15 +70,24 @@ class VerifyEmailProvider extends ChangeNotifier {
           context.showSuccessSnackBar(resp.message ?? 'OTP sent');
           _sending = false;
           otpCtrl.clear();
-          notifyListeners();
           context.pop();
           // Safely open new dialog in next frame
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            EmailOtpDialogNotifier().showOtpInputDialog(context, this);
+          // WidgetsBinding.instance.addPostFrameCallback((_) {
+          //   if (Navigator.canPop(context)) {
+          //     context.pop(); // dismiss the current bottom sheet
+          //   }
+          //   EmailOtpDialogNotifier().showOtpInputDialog(context, this);
+          // });
+
+          // Delay showing OTP dialog till after pop finishes
+          Future.microtask(() {
+            EmailOtpDialogNotifier()
+                .showOtpInputDialog(navigatorKey.currentContext!, this);
           });
 
           // Fetch profile to ensure UI updates
           _ref.read(globalProvider.notifier).fetchProfile(context);
+          notifyListeners();
 
           return true;
         } else {
@@ -114,17 +131,17 @@ class VerifyEmailProvider extends ChangeNotifier {
       (resp) {
         // Check if the response indicates actual success
         if (resp.success) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.showPopUp(Text('${resp.message}'));
-            context.showSuccessSnackBar(resp.message ?? 'Email verified');
-          });
+          // WidgetsBinding.instance.addPostFrameCallback((_) {
+          //   context.showPopUp(Text('${resp.message}'));
+          // });
           _ref.read(globalProvider.notifier).fetchProfile(context);
           _verifying = false;
           // ✅ Dismiss OTP sheet if still open
-          if (Navigator.canPop(context)) {
-            context.pop(); // or: context.pop();
+          if (Navigator.of(context, rootNavigator: true).canPop()) {
+            Navigator.of(context, rootNavigator: true).pop();
           }
 
+          context.showSuccessSnackBar(resp.message ?? 'Email verified');
           // ✅ Navigate after dismiss
           context.pushReplacement(RouteConstants.dashboard);
           otpCtrl.clear();

@@ -65,81 +65,81 @@ class WalletNotifier {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  Future<void> handleSquadPayment({
-    required BuildContext context,
-    required int amount,
-    required String email,
-  }) async {
-    final transactionRef = SquadPay.generateTransactionRef(16);
-    final publicKey = dotenv.env['SQUAD_PUBLIC_KEY'] ?? '';
-    final secretKey = dotenv.env['SQUAD_SECRET_KEY'] ?? '';
+  // Future<void> handleSquadPayment({
+  //   required BuildContext context,
+  //   required int amount,
+  //   required String email,
+  // }) async {
+  //   final transactionRef = SquadPay.generateTransactionRef(16);
+  //   final publicKey = dotenv.env['SQUAD_PUBLIC_KEY'] ?? '';
+  //   final secretKey = dotenv.env['SQUAD_SECRET_KEY'] ?? '';
 
-    try {
-      // ✅ Close the bottom sheet first
-      // context.pop(); // <-- This closes bottomsheet
+  //   try {
+  //     // ✅ Close the bottom sheet first
+  //     // context.pop(); // <-- This closes bottomsheet
 
-      await SquadPay.initializeAndCheckout(
-        context,
-        Environment.test,
-        publicKey,
-        InitialPayload(
-          amount: amount,
-          email: email,
-          currency: "NGN",
-          initiateType: "redirect",
-          transactionRef: transactionRef,
-          callbackUrl: '',
-        ),
-      );
+  //     await SquadPay.initializeAndCheckout(
+  //       context,
+  //       Environment.test,
+  //       publicKey,
+  //       InitialPayload(
+  //         amount: amount,
+  //         email: email,
+  //         currency: "NGN",
+  //         initiateType: "redirect",
+  //         transactionRef: transactionRef,
+  //         callbackUrl: '',
+  //       ),
+  //     );
 
-      final result = await SquadPay.verifyTransaction(
-        Environment.test,
-        secretKey,
-        transactionRef,
-      );
+  //     final result = await SquadPay.verifyTransaction(
+  //       Environment.test,
+  //       secretKey,
+  //       transactionRef,
+  //     );
 
-      if (result.data?.transactionStatus?.toLowerCase() == "success") {
-        if (context.mounted) {
-          unawaited(Navigator.of(context).pushNamedAndRemoveUntil(
-            RouteConstants.dashboard,
-            (route) => false,
-          ));
-        }
-      } else {
-        context.showErrorSnackBar("Payment failed or was cancelled.");
-      }
-    } catch (e, st) {
-      log("Payment error: $e\n$st");
-      context.showErrorSnackBar("An error occurred. Please try again.");
-    }
-  }
+  //     if (result.data?.transactionStatus?.toLowerCase() == "success") {
+  //       if (context.mounted) {
+  //         unawaited(Navigator.of(context).pushNamedAndRemoveUntil(
+  //           RouteConstants.dashboard,
+  //           (route) => false,
+  //         ));
+  //       }
+  //     } else {
+  //       context.showErrorSnackBar("Payment failed or was cancelled.");
+  //     }
+  //   } catch (e, st) {
+  //     log("Payment error: $e\n$st");
+  //     context.showErrorSnackBar("An error occurred. Please try again.");
+  //   }
+  // }
 
-  (int amountWithCharge, String? email)? prepareSquadPaymentData({
-    required WidgetRef ref,
-    required String rawAmount,
-    BuildContext? context,
-  }) {
-    context?.showLoadingDialog();
+  // (int amountWithCharge, String? email)? prepareSquadPaymentData({
+  //   required WidgetRef ref,
+  //   required String rawAmount,
+  //   BuildContext? context,
+  // }) {
+  //   context?.showLoadingDialog();
 
-    final profile = ref.read(globalProvider).profile.value?.data;
-    final email = profile?.email;
-    log("Users email: ${email}");
+  //   final profile = ref.read(globalProvider).profile.value?.data;
+  //   final email = profile?.email;
+  //   log("Users email: ${email}");
 
-    final cleanedAmount = rawAmount.replaceAll(RegExp(r'[^\d]'), '');
-    final enteredAmount = int.tryParse(cleanedAmount);
-    log("Users amount: ${enteredAmount}");
+  //   final cleanedAmount = rawAmount.replaceAll(RegExp(r'[^\d]'), '');
+  //   final enteredAmount = int.tryParse(cleanedAmount);
+  //   log("Users amount: ${enteredAmount}");
 
-    if (enteredAmount == null || enteredAmount <= 0 || email == null) {
-      context?.dismissDialog();
-      return null;
-    }
+  //   if (enteredAmount == null || enteredAmount <= 0 || email == null) {
+  //     context?.dismissDialog();
+  //     return null;
+  //   }
 
-    const double chargeRate = 0.012;
-    final amountWithCharge =
-        (enteredAmount + (enteredAmount * chargeRate).ceil());
-    log("Users amount with charges: ${amountWithCharge}");
+  //   const double chargeRate = 0.012;
+  //   final amountWithCharge =
+  //       (enteredAmount + (enteredAmount * chargeRate).ceil());
+  //   log("Users amount with charges: ${amountWithCharge}");
 
-    context?.dismissDialog(); // Optional early cancel
-    return (amountWithCharge, email);
-  }
+  //   context?.dismissDialog(); // Optional early cancel
+  //   return (amountWithCharge, email);
+  // }
 }
