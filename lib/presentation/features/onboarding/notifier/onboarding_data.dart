@@ -86,7 +86,9 @@ If you have any questions about these Terms, please contact us at info@bundlegra
 By using Bundlegram, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.""";
 
   static const String privacyPolicy =
-      """Bundlegram ("us," "we," or "our") operates the Bundlegram website and mobile application (the "Service"). This Privacy Policy informs you of our policies regarding the collection, use, and disclosure of personal information when you use our Service and the choices you have in relation to that information.
+      """By accessing and placing an order with UXTheme, you confirm that you are in agreement with and bound by the terms and conditions
+
+Bundlegram ("us," "we," or "our") operates the Bundlegram website and mobile application (the "Service"). This Privacy Policy informs you of our policies regarding the collection, use, and disclosure of personal information when you use our Service and the choices you have in relation to that information.
 
 By using the Service, you agree to the collection and use of information in accordance with this policy. If you do not agree with our policies and practices, please discontinue use of the Service.
 
