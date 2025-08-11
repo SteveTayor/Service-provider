@@ -32,7 +32,11 @@
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>We need your location to verify your identity.</string>
+        <string>Bundlegram needs your location to verify your identity.</string>
+        <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+        <string>Bundlegram needs your location to verify your identity.</string>
+        <key>NSLocationAlwaysUsageDescription</key>
+        <string>Bundlegram needs your location to verify your identity</string>
 		<key>UIMainStoryboardFile</key>
 		<string>Main</string>
 		<key>UISupportedInterfaceOrientations</key>

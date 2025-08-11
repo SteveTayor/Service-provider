@@ -1,6 +1,5 @@
-import 'package:bundlegram/core/utils/colors.dart';
-import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
@@ -28,16 +27,32 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
-      body: Center(
-          child: AppSvgIcon(
-        width: 150,
-        height: 150,
-        path: Assets.svgs.bundlegramWhiteLogo,
-        color: AppColors.background,
-      )
-          // Image.asset(Assets.images.logo.path),
-
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AppSvgIcon(
+                  width: 150,
+                  height: 150,
+                  path: Assets.svgs.bundlegramWhiteLogo,
+                  color: AppColors.background,
+                ),
+              ],
+            ),
           ),
+          Text(
+            "Powered by CodeFixBug",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white),
+          ),
+          SizedBox(
+            height: 10,
+          )
+        ],
+      ),
     );
   }
 }
