@@ -196,6 +196,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               else
                 RecentTransactionWidget(
                   SizedBox(height: 20),
+                  title: "Wallet Transactions",
                 ),
               35.verticalSpace,
             ],

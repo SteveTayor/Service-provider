@@ -256,10 +256,11 @@ class LoginProvider extends ChangeNotifier {
         await _ref
             .read(globalProvider.notifier)
             .fetchUsersTransactions(context);
-        context..dismissDialog()
+        context
+          ..dismissDialog()
 
-        // Proceed to dashboard if username is not required
-        ..go(RouteConstants.dashboard);
+          // Proceed to dashboard if username is not required
+          ..go(RouteConstants.dashboard);
       },
     );
   }

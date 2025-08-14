@@ -19,7 +19,10 @@ import 'package:go_router/go_router.dart';
 
 class RecentTransactionWidget extends ConsumerWidget {
   final Widget? spacing;
-  const RecentTransactionWidget(this.spacing, {Key? key}) : super(key: key);
+  final String? title;
+  const RecentTransactionWidget(this.spacing,
+      {this.title = 'Recent Transactions', Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +42,7 @@ class RecentTransactionWidget extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Recent Transactions',
+          title!,
           style: context.textTheme.titleSmall!.copyWith(fontSize: 18.sp),
         ),
         spacing ?? 20.verticalSpace,
@@ -82,7 +85,7 @@ class RecentTransactionWidget extends ConsumerWidget {
       ),
       itemBuilder: (context, index) {
         final transaction = transactions[index];
-        return GestureDetector(
+        return InkWell(
           onTap: () => _showTransactionDetails(context, transaction),
           child: ServiceListItem(transaction: transaction),
         );
