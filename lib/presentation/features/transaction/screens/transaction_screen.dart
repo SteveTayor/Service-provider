@@ -365,22 +365,28 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
 
   String _formatDate(DateTime? date) {
     if (date == null) return 'Unknown Date';
+
+    final localDate = date.toLocal(); // <-- Always convert first
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
-    final txnDate = DateTime(date.year, date.month, date.day);
+    final txnDate = DateTime(localDate.year, localDate.month, localDate.day);
 
     if (txnDate.isAtSameMomentAs(today)) return 'Today';
     if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
-    return date.toLocal().toIso8601String();
+
+    return localDate.toIso8601String();
   }
 
   String _formatTime(DateTime? date) {
     if (date == null) return '--:--';
-    final hour = date.hour;
-    final minute = date.minute;
+
+    final localDate = date.toLocal(); // <-- Always convert first
+    final hour = localDate.hour;
+    final minute = localDate.minute;
     final period = hour >= 12 ? 'pm' : 'am';
     final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+
     return '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}$period';
   }
 

@@ -59,7 +59,7 @@ class ServiceListItem extends ConsumerWidget {
             children: [
               SizedBox(height: 2),
               Text(
-                title!,
+                title!.capitalizeFirst,
                 style: context.textTheme.bodySmall?.copyWith(
                   fontSize: 14,
                 ),

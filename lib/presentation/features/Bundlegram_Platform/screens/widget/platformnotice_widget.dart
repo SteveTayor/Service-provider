@@ -45,7 +45,7 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
         // }
 
         // if (!isAgent) {
-        advertItems.add(Assets.svgs.bundlegramagent);
+        advertItems.add(Assets.images.becomeanagent.path);
         advertActions.add(() => context.push(RouteConstants.becomeagent));
         // }
 
@@ -61,9 +61,16 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
           children: [
             CarouselSlider(
               items: List.generate(advertItems.length, (index) {
+                bool isBecomeAgentItem =
+                    advertItems[index] == Assets.images.becomeanagent.path;
+
                 return AppSvgIcon(
                   onTap: advertActions[index],
                   fit: BoxFit.scaleDown,
+                  width: isBecomeAgentItem
+                      ? 80
+                      : 56, // Different width for become agent
+                  height: isBecomeAgentItem ? 80 : null,
                   path: advertItems[index],
                 );
               }),

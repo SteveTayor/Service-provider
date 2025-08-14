@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
@@ -12,6 +13,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/pl
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/recenttransaction_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
+import 'package:bundlegram/presentation/features/wallet/notifier/wallet_transactions_notifier.dart';
 // import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
@@ -97,10 +99,17 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          // Refresh anything you need here
-          ref.read(globalProvider.notifier).fetchWalletBalance(context);
-          ref.read(recentTransactionsProvider.notifier).refresh();
-          ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
+          context.showLoadingDialog();
+
+          try {
+            await Future.wait([
+              ref.read(globalProvider.notifier).fetchWalletBalance(context),
+              ref.read(globalProvider.notifier).fetchUsersTransactions(context),
+            ]);
+            ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
+          } finally {
+            context.dismissDialog();
+          }
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -195,8 +204,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                 )
               else
                 RecentTransactionWidget(
-                  SizedBox(height: 20),
+                  SizedBox(height: 30),
                   title: "Wallet Transactions",
+                  transactionProvider: walletTransactionsProvider,
                 ),
               35.verticalSpace,
             ],

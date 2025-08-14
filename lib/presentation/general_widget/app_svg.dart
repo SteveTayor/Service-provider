@@ -40,8 +40,8 @@ class AppSvgIcon extends StatelessWidget {
               radius: 20,
               child: Image.asset(
                 path,
-                width: 28,
-                height: 28,
+                width: width ?? 28,
+                height: width ?? 28,
                 fit: fit,
                 // color: color ?? AppColors.primaryColor
                 // colorBlendMode: BlendMode.srcIn,

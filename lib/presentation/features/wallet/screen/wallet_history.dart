@@ -101,30 +101,31 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
     );
   }
 
-  String _formatDate(String? dateStr) {
-    final dt = dateStr?.toDateTime();
-    if (dt == null) return '--';
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'Unknown Date';
 
+    final localDate = date.toLocal(); // <-- Always convert first
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
-    final txnDate = DateTime(dt.year, dt.month, dt.day);
+    final txnDate = DateTime(localDate.year, localDate.month, localDate.day);
 
-    if (txnDate == today) return 'Today';
-    if (txnDate == yesterday) return 'Yesterday';
+    // if (txnDate.isAtSameMomentAs(today)) return 'Today';
+    // if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
 
-    return DateFormat('MMMM d, yyyy').format(dt); // ➤ e.g., July 6, 2025
+    return DateFormat('EEE MMM dd yyyy').format(localDate);
   }
 
-  String _formatTime(String? createdAt) {
-    try {
-      final time = createdAt!.toDateTime()?.toLocal();
-      return time == null
-          ? '--:--'
-          : '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
-    } catch (e) {
-      return '--:--';
-    }
+  String _formatTime(DateTime? date) {
+    if (date == null) return '--:--';
+
+    final localDate = date.toLocal(); // <-- Always convert first
+    final hour = localDate.hour;
+    final minute = localDate.minute;
+    final period = hour >= 12 ? 'pm' : 'am';
+    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+
+    return '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}$period';
   }
 
   void _showTransactionDetails(UserTransactions txn) {
@@ -135,8 +136,8 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
       // Handle fund wallet transaction
       transactionData = TransactionReceiptData(
         transactionId: txn.transRef.toString(),
-        date: _formatDate(txn.createdAt.toString() ?? ''),
-        time: _formatTime(txn.createdAt.toString()),
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
         type: txn.transType,
         amount: txn.amount.toCurrency(),
         accountNumber: txn.crAcc,
@@ -152,8 +153,8 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
       // Handle withdrawal transaction
       transactionData = TransactionReceiptData(
         transactionId: txn.transRef.toString(),
-        date: _formatDate(txn.createdAt.toString() ?? ''),
-        time: _formatTime(txn.createdAt.toString()),
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
         type: txn.transType,
         amount: txn.amount.toCurrency(),
         accountNumber: txn.crAcc,
@@ -168,8 +169,8 @@ class _WalletHistoryScreenState extends ConsumerState<WalletHistoryScreen> {
       // Default case (should not occur for wallet, but included for robustness)
       transactionData = TransactionReceiptData(
         transactionId: txn.transRef.toString(),
-        date: _formatDate(txn.createdAt.toString() ?? ''),
-        time: _formatTime(txn.createdAt.toString()),
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
         type: txn.transType.toString(),
         amount: txn.amount.toCurrency(),
         phoneNumber: txn.crAcc,

@@ -90,7 +90,7 @@ final dioProvider = Provider<Dio>((ref) {
       request: true,
       requestBody: true,
       responseHeader: true,
-      responseBody: true,
+      responseBody: false,
       error: true,
     ),
   );

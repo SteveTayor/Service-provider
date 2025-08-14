@@ -53,6 +53,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/bars-3.svg
   String get bars3 => 'assets/images/bars-3.svg';
 
+  /// File path: assets/images/becomeanagent.png
+  AssetGenImage get becomeanagent =>
+      const AssetGenImage('assets/images/becomeanagent.png');
+
   /// File path: assets/images/bet9ja.png
   AssetGenImage get bet9ja => const AssetGenImage('assets/images/bet9ja.png');
 
@@ -143,6 +147,7 @@ class $AssetsImagesGen {
         airtel,
         bangbet,
         bars3,
+        becomeanagent,
         bet9ja,
         betway,
         dstv,

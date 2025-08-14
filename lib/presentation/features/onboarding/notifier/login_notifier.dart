@@ -260,7 +260,7 @@ class LoginProvider extends ChangeNotifier {
           ..dismissDialog()
 
           // Proceed to dashboard if username is not required
-          ..go(RouteConstants.dashboard);
+          ..pushReplacement(RouteConstants.dashboard);
       },
     );
   }
