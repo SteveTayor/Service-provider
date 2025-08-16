@@ -33,7 +33,7 @@ class PromoInputSection extends ConsumerWidget {
               12.horizontalSpace,
               BundlegramButton(
                 text: 'Claim',
-                height: 52.h,
+                height: 45.h,
                 width: 94.w,
                 isLoading: promoState.isLoading,
                 onPressed: promoState.promoCode.isNotEmpty

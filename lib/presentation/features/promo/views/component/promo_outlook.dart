@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/promo/provider/promo_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -19,9 +20,9 @@ class PromoRewardsSection extends ConsumerWidget {
         children: [
           Text(
             'Promo rewards',
-            style: TextStyle(
+            style: context.textTheme.bodyMedium?.copyWith(
               fontSize: 14.sp,
-              color: Colors.grey.shade600,
+              // color: Colors.grey.shade600,
               fontWeight: FontWeight.w400,
             ),
           ),
@@ -30,8 +31,8 @@ class PromoRewardsSection extends ConsumerWidget {
             children: [
               Text(
                 '₦${promoState.totalRewards.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontSize: 24.sp,
+                style: context.textTheme.titleLarge?.copyWith(
+                  fontSize: 36.sp,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),
@@ -45,6 +46,8 @@ class PromoRewardsSection extends ConsumerWidget {
                 ),
                 child: AppSvgIcon(
                   path: Assets.svgs.promoGiftImage,
+                  width: 72,
+                  height: 68,
                 ),
                 // Image.asset(
                 //   'assets/images/gift_reward.png', // Replace with your gift reward asset

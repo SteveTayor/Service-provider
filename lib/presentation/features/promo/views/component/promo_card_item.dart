@@ -58,7 +58,7 @@ class PromoCard extends StatelessWidget {
                   child: Text(
                     promo.code,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF0A3BA5),
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
                     ),

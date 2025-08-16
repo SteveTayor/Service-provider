@@ -195,9 +195,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                           ],
                         ),
                         Text(
-                          provider.isBalanceVisible
-                              ? provider.formattedBalance
-                              : '⁕⁕⁕⁕',
+                          provider.isBalanceVisible ? "₦5,000.00" : '⁕⁕⁕⁕',
                           // wallet.value?.wallet.toCurrency() ?? '₦0.00',
                           style: context.textTheme.titleLarge?.copyWith(
                             fontSize: provider.isBalanceVisible ? 34 : 24,

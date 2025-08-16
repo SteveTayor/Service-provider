@@ -9,26 +9,26 @@ class PromoNotifier extends StateNotifier<PromoState> {
 
   void _loadInitialData() {
     // Mock data - replace with API call
-    final mockPromos = [
-      const PromoModel(
-        id: '1',
-        code: 'LOYALTY2500',
-        title: 'We are giving ₦2500 free bonus to our loyal customers',
-        description: 'Just hit ₦50,000 spend this month!',
-        amount: 2500,
-        backgroundColor: '#C9DAFF',
-        textColor: '#0A3BA5',
-      ),
-      const PromoModel(
-        id: '2',
-        code: 'WELCOME5000',
-        title: 'Get ₦5000 free in your promo wallet as a welcome gift',
-        description: 'Your first wallet top-up is all it takes!',
-        amount: 5000,
-        isClaimed: true,
-        backgroundColor: '#C9DAFF',
-        textColor: '#0A3BA5',
-      ),
+    final List<PromoModel> mockPromos = [
+      // const PromoModel(
+      //   id: '1',
+      //   code: 'LOYALTY2500',
+      //   title: 'We are giving ₦2500 free bonus to our loyal customers',
+      //   description: 'Just hit ₦50,000 spend this month!',
+      //   amount: 2500,
+      //   backgroundColor: '#EEF3FF',
+      //   textColor: '#C9DAFF',
+      // ),
+      // const PromoModel(
+      //   id: '2',
+      //   code: 'WELCOME5000',
+      //   title: 'Get ₦5000 free in your promo wallet as a welcome gift',
+      //   description: 'Your first wallet top-up is all it takes!',
+      //   amount: 5000,
+      //   isClaimed: true,
+      //   backgroundColor: '#EEF3FF',
+      //   textColor: '#C9DAFF',
+      // ),
     ];
 
     state = state.copyWith(availablePromos: mockPromos);
@@ -75,6 +75,7 @@ class PromoNotifier extends StateNotifier<PromoState> {
   }
 }
 
-final promoProvider = StateNotifierProvider<PromoNotifier, PromoState>((ref) {
+final promoProvider =
+    StateNotifierProvider.autoDispose<PromoNotifier, PromoState>((ref) {
   return PromoNotifier();
 });
