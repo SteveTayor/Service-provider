@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/styles.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
@@ -183,6 +184,10 @@ class AppActionsNotifier {
     } else {
       context.showErrorSnackBar('Unable to open browser');
     }
+  }
+
+  void goToPromo(BuildContext context) {
+    context.push(RouteConstants.promo);
   }
 
   // void _showErrorSnackBar(BuildContext context, String message) {

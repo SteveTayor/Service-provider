@@ -72,6 +72,11 @@ class AccountitemWidget extends ConsumerWidget {
           'Withdrawal accounts',
         ),
         buildRowWidget(
+          Assets.svgs.gift,
+          'Bundlegram promo',
+          onPressed: () => appActions.goToPromo(context),
+        ),
+        buildRowWidget(
           Assets.svgs.starBadgeStreamlineCore,
           'Rate Bundlegram',
           onPressed: () => appActions.rateApp(context),

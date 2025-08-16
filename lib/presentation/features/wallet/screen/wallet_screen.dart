@@ -170,6 +170,41 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
+                        16.verticalSpace,
+                        Row(
+                          children: [
+                            Text(
+                              'Promo rewards',
+                              style: context.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.white,
+                              ),
+                            ),
+                            8.horizontalSpace,
+                            GestureDetector(
+                              onTap: () => ref
+                                  .read(platformProvider.notifier)
+                                  .toggleBalanceVisibility(),
+                              child: Icon(
+                                provider.isBalanceVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: AppColors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          provider.isBalanceVisible
+                              ? provider.formattedBalance
+                              : '⁕⁕⁕⁕',
+                          // wallet.value?.wallet.toCurrency() ?? '₦0.00',
+                          style: context.textTheme.titleLarge?.copyWith(
+                            fontSize: provider.isBalanceVisible ? 34 : 24,
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ],
                     ),
                   ),

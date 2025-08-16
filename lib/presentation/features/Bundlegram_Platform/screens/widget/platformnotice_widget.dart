@@ -152,6 +152,9 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
                   platform.goToProduct(context, PlatformProductType.mobileData),
             );
 
+            advertItems.add(Assets.svgs.promoRewards);
+            advertActions.add(() => context.push(RouteConstants.promo));
+
             // If nothing left to show, hide the entire carousel
             if (advertItems.isEmpty) return const SizedBox.shrink();
 

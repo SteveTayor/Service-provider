@@ -22,6 +22,7 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
   DateTime _lastInteraction = DateTime.now();
   final _timeoutDuration = const Duration(minutes: 5);
   final FocusNode _keyboardFocusNode = FocusNode();
+  bool _isLoggingOut = false;
 
   @override
   void initState() {
@@ -39,14 +40,9 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
     super.dispose();
   }
 
-  void _initializeTimer() async {
+  /// Always resets timer to 5 minutes
+  void _initializeTimer() {
     _cancelTimer();
-
-    // Only start timer if authenticated
-    final secureStorage = ref.read(secureStorageHelperProvider);
-    final token = await secureStorage.getAuthToken();
-    if (token == null || token.isEmpty) return;
-
     _inactivityTimer = Timer(_timeoutDuration, _handleTimeout);
   }
 
@@ -55,23 +51,32 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
     _inactivityTimer = null;
   }
 
+  /// Called on any user interaction
   void _handleUserInteraction([_]) {
     _lastInteraction = DateTime.now();
     _initializeTimer();
   }
 
+  /// Handles inactivity logout
   Future<void> _handleTimeout() async {
+    if (_isLoggingOut) return; // prevent multiple triggers
+    _isLoggingOut = true;
+
     final secureStorage = ref.read(secureStorageHelperProvider);
     await secureStorage.deleteAuthToken();
 
     final ctx = navigatorKey.currentContext;
-    if (ctx == null) return;
-    final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
+    if (ctx != null) {
+      // use navigatorKey context for accurate route detection
+      final currentRoute = ModalRoute.of(ctx)?.settings.name ?? '';
 
-    if (!currentRoute.contains(RouteConstants.login)) {
-      // ctx.showCustomSnackBar('Logged out due to inactivity.');
-      unawaited(Future.microtask(() => ctx.go(RouteConstants.login)));
+      if (!currentRoute.contains(RouteConstants.login)) {
+        ctx.go(RouteConstants.login);
+        ctx.showCustomSnackBar('Logged out due to inactivity.');
+      }
     }
+
+    _isLoggingOut = false;
   }
 
   @override
