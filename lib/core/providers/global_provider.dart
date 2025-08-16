@@ -221,61 +221,6 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     );
   }
 
-  // Future<void> fetchUsersTransactions(BuildContext context) async {
-  //   final token = await _storage.getAuthToken();
-  //   if (token == null) {
-  //     return _handleError('Authentication token missing', context);
-  //   }
-
-  //   unawaited(context.showLoadingDialog(message: 'Fetching transactions...'));
-  //   state = state.copyWith(usersTransactions: const AsyncLoading());
-
-  //   final result = await _api.getAllTransactions(token);
-
-  //   context.dismissDialog();
-
-  //   result.fold(
-  //     (fail) {
-  //       _handleFailure(fail, context);
-  //       state = state.copyWith(
-  //           usersTransactions: AsyncError(fail, StackTrace.current));
-  //     },
-  //     (data) => state = state.copyWith(usersTransactions: AsyncData(data)),
-  //   );
-  // }
-
-  // Future<void> fetchUsersTransactions(BuildContext context,
-  //     {bool force = false}) async {
-  //   final token = await _storage.getAuthToken();
-  //   if (token == null) {
-  //     return _handleError('Authentication token missing', context);
-  //   }
-  //   final now = DateTime.now();
-  //   if (!force && state.lastTransactionFetch != null) {
-  //     final difference = now.difference(state.lastTransactionFetch!);
-  //     if (difference.inMinutes < 10) {
-  //       // Cache valid for 5 minutes
-  //       return;
-  //     }
-  //   }
-  //   // unawaited(context.showLoadingDialog(message: 'Fetching transactions...'));
-  //   state = state.copyWith(usersTransactions: const AsyncLoading());
-
-  //   final result = await _api.getAllTransactions(token);
-
-  //   // context.dismissDialog();
-  //   result.fold(
-  //     (fail) {
-  //       _handleFailure(fail, context);
-  //       state = state.copyWith(
-  //           usersTransactions: AsyncError(fail, StackTrace.current));
-  //     },
-  //     (data) => state = state.copyWith(
-  //       usersTransactions: AsyncData(data),
-  //       lastTransactionFetch: now,
-  //     ),
-  //   );
-  // }
   Future<void> fetchUsersTransactions(BuildContext context,
       {bool force = false}) async {
     final token = await _storage.getAuthToken();
@@ -312,46 +257,4 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       },
     );
   }
-
-  // Future<void> fetchUsersTransactions(BuildContext context,
-  //     {bool force = false}) async {
-  //   final token = await _storage.getAuthToken();
-  //   if (token == null) {
-  //     return _handleError('Authentication token missing', context);
-  //   }
-
-  //   final now = DateTime.now();
-  //   if (!force && state.lastTransactionFetch != null) {
-  //     final diff = now.difference(state.lastTransactionFetch!);
-  //     if (diff.inMinutes < 10) {
-  //       // Cache still valid
-  //       return;
-  //     }
-  //   }
-
-  //   // Show in-panel loading state if needed
-  //   state = state.copyWith(usersTransactions: const AsyncLoading());
-
-  //   final result = await _api.getAllTransactions(token);
-  //   result.fold(
-  //     (fail) {
-  //       _handleFailure(fail, context);
-  //       state = state.copyWith(
-  //         usersTransactions: AsyncError(fail, StackTrace.current),
-  //       );
-  //     },
-  //     (dataWrapper) {
-  //       final allTx = dataWrapper.data ?? [];
-  //       // Extract only the top 10 newest, without sorting the entire list
-  //       final limited = _takeTopKByDate(allTx, k: 10);
-
-  //       state = state.copyWith(
-  //         usersTransactions: AsyncData(
-  //           GetAllUserTransactionResponse(data: limited),
-  //         ),
-  //         lastTransactionFetch: now,
-  //       );
-  //     },
-  //   );
-  // }
 }

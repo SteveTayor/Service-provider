@@ -19,6 +19,7 @@ import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
+import 'package:bundlegram/presentation/general_widget/async_value/app_future_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -51,11 +52,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     final bvn = profile.value?.data?.bvn;
 
     if (bvn == null) {
-      // WalletNotifier().showLinkBVNSnackBar(
-      //   context,
-      //   'To ensure that you get a virtual account number, verify your BVN for this feature.',
-      //   'Link now',
-      // );
       WalletNotifier().showLinkBVNSnackBar(
         context,
         'Complete account setup before funding wallet.',
@@ -197,17 +193,41 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                     _isProcessing ? null : () => _handleFundWallet(context),
               ),
               40.verticalSpace,
-              if (walletTxns == null || walletTxns.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 32),
-                  child: Center(child: EmptytransactionWidget()),
-                )
-              else
-                RecentTransactionWidget(
-                  SizedBox(height: 30),
-                  title: "Wallet Transactions",
-                  transactionProvider: walletTransactionsProvider,
-                ),
+              // if (walletTxns == null || walletTxns.isEmpty)
+              //   const Padding(
+              //     padding: EdgeInsets.symmetric(vertical: 32),
+              //     child: Center(child: EmptytransactionWidget()),
+              //   )
+              // else
+              //   RecentTransactionWidget(
+              //     SizedBox(height: 30),
+              //     title: "Wallet Transactions",
+              //     transactionProvider: walletTransactionsProvider,
+              //   ),
+              // ✅ Wrapped transactions with AppAsyncBuilder
+              AppAsyncBuilder(
+                state: ref
+                    .watch(globalProvider.select((g) => g.usersTransactions)),
+                builder: (context, ref, txnsResponse) {
+                  final walletTxns = txnsResponse?.data?.where((txn) {
+                    final type = txn.transType?.toLowerCase() ?? '';
+                    return type == 'fund_wallet' || type == 'withdrawal';
+                  }).toList();
+
+                  if (walletTxns == null || walletTxns.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 32),
+                      child: Center(child: EmptytransactionWidget()),
+                    );
+                  }
+
+                  return RecentTransactionWidget(
+                    SizedBox(height: 30),
+                    title: "Wallet Transactions",
+                    transactionProvider: walletTransactionsProvider,
+                  );
+                },
+              ),
               35.verticalSpace,
             ],
           ),

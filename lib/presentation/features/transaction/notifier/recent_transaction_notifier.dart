@@ -128,15 +128,24 @@ class RecentTransactionsNotifier
     ref.listen<AsyncValue<GetAllUserTransactionResponse?>>(
       globalProvider.select((s) => s.usersTransactions),
       (prev, next) {
-        next.whenData((wrapper) {
-          final limited = _takeTopKByDate(wrapper?.data ?? [], k: 10);
-
-          state = state.copyWith(
-            services: limited,
-            filteredServices: limited,
-            isLoading: false,
-          );
-        });
+        next.when(
+          data: (wrapper) {
+            try {
+              final limited = _takeTopKByDate(wrapper?.data ?? [], k: 10);
+              state = state.copyWith(
+                services: limited,
+                filteredServices: limited,
+                isLoading: false,
+                error: null,
+              );
+            } catch (e) {
+              state = state.copyWith(isLoading: false, error: e);
+            }
+          },
+          error: (err, _) =>
+              state = state.copyWith(isLoading: false, error: err),
+          loading: () => state = state.copyWith(isLoading: true, error: null),
+        );
       },
     );
   }

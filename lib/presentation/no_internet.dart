@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class NoInternetWidget extends StatelessWidget {
@@ -6,13 +7,15 @@ class NoInternetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFFF8F9FA),
-            Color(0xFFE9ECEF),
+            AppColors.primaryColor,
+            AppColors.primaryColor.withOpacity(0.8)
+            // Color(0xFFF8F9FA),
+            // Color(0xFFE9ECEF),
           ],
         ),
       ),
@@ -47,11 +50,11 @@ class NoInternetWidget extends StatelessWidget {
 
               // Main message
               Text(
-                "You're offline",
+                "You're currently offline",
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey[800],
+                  color: Colors.grey[200],
                   letterSpacing: -0.5,
                 ),
               ),
@@ -63,7 +66,7 @@ class NoInternetWidget extends StatelessWidget {
                 "Check your connection and try again",
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[600],
+                  color: Colors.grey[400],
                   height: 1.4,
                 ),
                 textAlign: TextAlign.center,
@@ -85,10 +88,10 @@ class NoInternetWidget extends StatelessWidget {
                       color: Colors.grey[300],
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.smartphone,
                       size: 20,
-                      color: Colors.grey[600],
+                      color: AppColors.grey19,
                     ),
                   ),
                 ],

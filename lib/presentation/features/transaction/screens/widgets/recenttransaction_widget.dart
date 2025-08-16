@@ -45,6 +45,8 @@ class RecentTransactionWidget extends ConsumerWidget {
         child: EmptytransactionWidget(),
       );
     }
+    if (recentState.error != null) return ErrorWidget('Something went wrong');
+    if (recentState.filteredServices.isEmpty) return EmptytransactionWidget();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -228,6 +230,8 @@ class RecentTransactionWidget extends ConsumerWidget {
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
       );
     }
     context.showPopUp(

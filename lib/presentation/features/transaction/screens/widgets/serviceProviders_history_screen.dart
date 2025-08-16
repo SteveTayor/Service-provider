@@ -330,6 +330,8 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
+              balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
       );
     }
 

@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/config/interceptors/inactivity_wrapper.dart';
 import 'package:bundlegram/core/providers/connectivity_provider.dart';
 import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/utils/themes.dart';
@@ -21,7 +22,7 @@ class App extends ConsumerWidget {
     final connectivityProv = ref.watch(connectivityStatusProvider);
 
     return ScreenUtilInit(
-      designSize: const Size(360, 800),
+      designSize: const Size(390, 800),
       minTextAdapt: true,
       splitScreenMode: true,
       ensureScreenSize: true,
@@ -50,7 +51,7 @@ class App extends ConsumerWidget {
                 data: (status) {
                   final isOffline = status == ConnectivityResult.none;
                   if (isOffline) return const NoInternetWidget();
-                  return child!;
+                  return InactivityWrapper(child: child!);
                 },
                 loading: () => const SizedBox(), // or Splash/loading screen
                 error: (_, __) => const NoInternetWidget(),

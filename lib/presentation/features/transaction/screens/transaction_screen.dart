@@ -341,6 +341,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
+              balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
       );
     }
 

@@ -12,6 +12,7 @@ class AppSvgIcon extends StatelessWidget {
     this.height,
     this.width,
     this.onTap,
+    this.useCircleAvatar = true,
     super.key,
   });
   final String path;
@@ -20,6 +21,7 @@ class AppSvgIcon extends StatelessWidget {
   final double? height;
   final double? width;
   final VoidCallback? onTap;
+  final bool useCircleAvatar;
 
   @override
   Widget build(BuildContext context) {
@@ -35,18 +37,44 @@ class AppSvgIcon extends StatelessWidget {
                   ? null
                   : ColorFilter.mode(color!, BlendMode.srcIn),
             )
-          : CircleAvatar(
-              backgroundColor: color ?? AppColors.primaryColor,
-              radius: 20,
-              child: Image.asset(
-                path,
-                width: width ?? 28,
-                height: width ?? 28,
-                fit: fit,
-                // color: color ?? AppColors.primaryColor
-                // colorBlendMode: BlendMode.srcIn,
-              ),
-            ),
+          : useCircleAvatar
+              ? CircleAvatar(
+                  backgroundColor: color ?? AppColors.primaryColor,
+                  radius: (width ?? 28) / 2,
+                  child: Image.asset(
+                    path,
+                    width: width ?? 28,
+                    height: height ?? 28,
+                    fit: fit,
+                  ),
+                )
+              : Container(
+                  width: width,
+                  height: height,
+                  decoration: BoxDecoration(
+                    color: color ?? Colors.transparent,
+                    borderRadius:
+                        BorderRadius.circular(8), // Optional: rounded corners
+                  ),
+                  child: Image.asset(
+                    path,
+                    width: width,
+                    height: height,
+                    fit: fit,
+                  ),
+                ),
+      //  CircleAvatar(
+      //     backgroundColor: color ?? AppColors.primaryColor,
+      //     // radius: 20,
+      //     child: Image.asset(
+      //       path,
+      //       width: width ?? 28,
+      //       height: width ?? 28,
+      //       fit: fit,
+      //       // color: color ?? AppColors.primaryColor
+      //       // colorBlendMode: BlendMode.srcIn,
+      //     ),
+      //   ),
     );
   }
 }

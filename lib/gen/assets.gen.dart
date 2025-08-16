@@ -301,6 +301,9 @@ class $AssetsSvgsGen {
   String get warrantyBadgeHighlightStreamlineFlex =>
       'assets/svgs/Warranty-Badge-Highlight--Streamline-Flex.svg';
 
+  /// File path: assets/svgs/a9mobile.svg
+  String get a9mobile => 'assets/svgs/a9mobile.svg';
+
   /// File path: assets/svgs/account.svg
   String get account => 'assets/svgs/account.svg';
 
@@ -312,6 +315,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/addbasicinfo.svg
   String get addbasicinfo => 'assets/svgs/addbasicinfo.svg';
+
+  /// File path: assets/svgs/airtel.svg
+  String get airtel => 'assets/svgs/airtel.svg';
 
   /// File path: assets/svgs/airtime.svg
   String get airtime => 'assets/svgs/airtime.svg';
@@ -407,6 +413,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/finger-cricle.svg
   String get fingerCricle => 'assets/svgs/finger-cricle.svg';
+
+  /// File path: assets/svgs/glo.svg
+  String get glo => 'assets/svgs/glo.svg';
 
   /// File path: assets/svgs/heart--reward-social-rating-media-heart-it-like-favorite-love.svg
   String get heartRewardSocialRatingMediaHeartItLikeFavoriteLove =>
@@ -576,10 +585,12 @@ class $AssetsSvgsGen {
         userActive,
         vpnConnectionStreamlineCore,
         warrantyBadgeHighlightStreamlineFlex,
+        a9mobile,
         account,
         accountsetup,
         addbankdetail,
         addbasicinfo,
+        airtel,
         airtime,
         arrowFowardIos,
         arrowLeft,
@@ -611,6 +622,7 @@ class $AssetsSvgsGen {
         failedIllustration,
         fingerCricle1,
         fingerCricle,
+        glo,
         heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
         home,
         homeinactive,
