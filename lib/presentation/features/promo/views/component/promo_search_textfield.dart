@@ -16,6 +16,7 @@ class PromoInputSection extends ConsumerWidget {
       padding: EdgeInsets.all(16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -27,13 +28,12 @@ class PromoInputSection extends ConsumerWidget {
                     ref.read(promoProvider.notifier).updatePromoCode(value);
                   },
                   borderRadius: 8,
-                  height: 52.h,
                 ),
               ),
               12.horizontalSpace,
               BundlegramButton(
                 text: 'Claim',
-                // height: 45.h,
+                height: 42.h,
                 width: 94.w,
                 isLoading: promoState.isLoading,
                 onPressed: promoState.promoCode.isNotEmpty

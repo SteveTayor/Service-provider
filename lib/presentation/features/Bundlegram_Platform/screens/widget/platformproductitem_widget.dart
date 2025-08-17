@@ -79,7 +79,7 @@ class ProductItemGrid extends ConsumerWidget {
             crossAxisCount: 3,
             mainAxisSpacing: 20.h,
             crossAxisSpacing: 10.w,
-            childAspectRatio: isAmountPresetGrid ? 1.5 : 1.3,
+            childAspectRatio: isAmountPresetGrid ? 1.6 : 1.4,
           ),
           itemCount: isAmountPresetGrid ? amounts.length : validList.length,
           itemBuilder: (_, i) {

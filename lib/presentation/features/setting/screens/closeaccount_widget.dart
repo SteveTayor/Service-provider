@@ -104,7 +104,7 @@ class CloseaccountWidget extends ConsumerWidget {
           ),
           12.verticalSpace,
           Text(
-            'Hi $userName, we work very hard to ensure all our users are happy using our services. Bundlegram offers one of the best rates for all its services from buying data, airtime and paying for bills. If you have any issue, kindly contact us, we will gladly help. However, if you want to close your account, click proceed.',
+            'Hi ${userName.toUpperCase()}, we work very hard to ensure all our users are happy using our services. Bundlegram offers one of the best rates for all its services from buying data, airtime and paying for bills. If you have any issue, kindly contact us, we will gladly help. However, if you want to close your account, click proceed.',
             textAlign: TextAlign.center,
             style: context.textTheme.bodySmall,
           ),

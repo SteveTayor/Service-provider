@@ -90,14 +90,14 @@ final dioProvider = Provider<Dio>((ref) {
       request: true,
       requestBody: true,
       responseHeader: true,
-      responseBody: false,
+      responseBody: true,
       error: true,
     ),
   );
 
-  // dio.interceptors.add(
-  //   PrettyDioLogger(requestBody: true),
-  // );
+  dio.interceptors.add(
+    PrettyDioLogger(requestBody: true),
+  );
 
   return dio;
 });

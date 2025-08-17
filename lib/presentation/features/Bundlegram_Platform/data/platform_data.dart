@@ -438,7 +438,7 @@ class PlatFormData {
               ..pop()
               ..push(RouteConstants.becomeagent);
           },
-          assetPath: Assets.svgs.becomeagent,
+          assetPath: Assets.svgs.uploadCircleStreamlineCore,
           title: 'Become an agent',
         );
       },

@@ -158,7 +158,7 @@ class _AppTextFieldState extends State<AppTextField> {
                       EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                   filled: widget.isFilled,
                   constraints: BoxConstraints(
-                    minHeight: 56.h,
+                    minHeight: 40.h,
                   ),
                   fillColor: widget.backgroundColor ?? AppColors.white,
                   prefixIconConstraints: BoxConstraints(
