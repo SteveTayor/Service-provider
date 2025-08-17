@@ -270,7 +270,7 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Future.delayed(const Duration(milliseconds: 400));
+      await Future.delayed(const Duration(milliseconds: 500));
       _captureAndShare();
     });
   }
@@ -348,8 +348,8 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
     } catch (e) {
       context.dismissDialog();
       debugPrint("Error capturing/sharing receipt: $e");
-      _showError("An unexpected error occurred.");
-      if (mounted) Navigator.pop(context);
+      // _showError("An unexpected error occurred.");
+      // if (mounted) Navigator.pop(context);
     }
   }
 

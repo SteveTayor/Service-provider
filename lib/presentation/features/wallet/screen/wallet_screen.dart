@@ -112,7 +112,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Column(
+              Stack(
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(20),
@@ -195,7 +195,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                           ],
                         ),
                         Text(
-                          provider.isBalanceVisible ? "₦5,000.00" : '⁕⁕⁕⁕',
+                          provider.isBalanceVisible ? "₦0.00" : '⁕⁕⁕⁕',
                           // wallet.value?.wallet.toCurrency() ?? '₦0.00',
                           style: context.textTheme.titleLarge?.copyWith(
                             fontSize: provider.isBalanceVisible ? 34 : 24,
@@ -207,9 +207,23 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                     ),
                   ),
                   const Spacer(),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Assets.images.growth.image(),
+                  // Align(
+                  //   alignment: Alignment.bottomCenter,
+                  //   child: Assets.images.growth.image(),
+                  // ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: SizedBox(
+                      // height: 100.h, // Set a specific height
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Assets.images.growth.image(
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ).withContainer(

@@ -27,19 +27,22 @@ class PromoInputSection extends ConsumerWidget {
                   onChange: (value) {
                     ref.read(promoProvider.notifier).updatePromoCode(value);
                   },
+                  readOnly: true,
                   borderRadius: 8,
                 ),
               ),
               12.horizontalSpace,
               BundlegramButton(
-                text: 'Claim',
-                height: 42.h,
-                width: 94.w,
-                isLoading: promoState.isLoading,
-                onPressed: promoState.promoCode.isNotEmpty
-                    ? () => ref.read(promoProvider.notifier).claimPromoByCode()
-                    : null,
-              ),
+                  text: 'Claim',
+                  height: 42.h,
+                  width: 94.w,
+                  isLoading: promoState.isLoading,
+                  isEnabled: false,
+                  onPressed: () {}
+                  // promoState.promoCode.isNotEmpty
+                  //     ? () => ref.read(promoProvider.notifier).claimPromoByCode()
+                  //     : null,
+                  ),
             ],
           ),
         ],

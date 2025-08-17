@@ -30,7 +30,8 @@ class PromoRewardsSection extends ConsumerWidget {
           Row(
             children: [
               Text(
-                '₦${promoState.totalRewards.toStringAsFixed(2)}',
+                // '₦${promoState.totalRewards.toStringAsFixed(2)}',
+                '₦0.00',
                 style: context.textTheme.titleLarge?.copyWith(
                   fontSize: 36.sp,
                   fontWeight: FontWeight.w700,
