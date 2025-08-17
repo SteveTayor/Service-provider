@@ -46,12 +46,13 @@ class _SquadWebViewPageState extends State<SquadWebViewPage> {
           onNavigationRequest: (request) {
             final url = request.url.toLowerCase();
             debugPrint("[WebView] Navigating to: $url");
-            if (request.url.startsWith('https://www.google.com')) {
+            if (request.url.startsWith('https://bundlegram-success.com')) {
               // ✅ Transaction finished, go verify
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (_) => VerifySquadPaymentPage(
-                      transactionRef: widget.transactionRef),
+                    transactionRef: widget.transactionRef,
+                  ),
                 ),
               );
               return NavigationDecision.prevent;

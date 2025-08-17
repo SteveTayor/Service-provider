@@ -45,49 +45,6 @@ class _VerifySquadPaymentPageState
       Navigator.pop(context);
     }
   }
-  // Future<void> _verifyTransaction() async {
-  //   final secretKey = dotenv.env['SQUAD_SECRET_KEY'] ?? '';
-  //   final transactionRef = widget.transactionRef;
-
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse(
-  //         'https://api.squadco.com/transaction/verify/$transactionRef',
-  //       ),
-  //       headers: {
-  //         'Authorization': 'Bearer $secretKey',
-  //       },
-  //     );
-
-  //     final decoded = jsonDecode(response.body) as Map<String, dynamic>;
-  //     debugPrint(decoded.toString());
-  //     final status = decoded['data']?['transaction_status']?.toLowerCase();
-
-  //     if (response.statusCode == 200 && status == 'success') {
-  //       await ref.read(globalProvider.notifier).fetchWalletBalance(context);
-
-  //       if (context.mounted) {
-  //         context
-  //           ..go(RouteConstants.dashboard)
-  //           ..showSuccessSnackBar("Wallet funded successfully!");
-  //       }
-  //     } else {
-  //       if (context.mounted) {
-  //         context
-  //           ..go(RouteConstants.dashboard)
-  //           ..showErrorSnackBar("Could not verify payment.");
-  //       }
-  //     }
-  //   } catch (e) {
-  //     if (context.mounted) {
-  //       context
-  //         ..go(RouteConstants.dashboard)
-  //         ..showErrorSnackBar("An error occurred while verifying payment.");
-  //     }
-  //   } finally {
-  //     if (mounted) setState(() => _loading = false);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

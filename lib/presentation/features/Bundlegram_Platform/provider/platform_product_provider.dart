@@ -628,11 +628,17 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         );
       },
     );
-
     final result = (matchingProvider as AppListTile).assetPath ??
+        matchingProvider.imagePath ??
         _getFallbackAsset(serviceType ?? _serviceType);
+
     print('normalizeAssetName: Final asset path: $result');
     return result;
+
+    // final result = (matchingProvider as AppListTile).assetPath ??
+    //     _getFallbackAsset(serviceType ?? _serviceType);
+    // print('normalizeAssetName: Final asset path: $result');
+    // return result;
     // return (matchingProvider as AppListTile).imagePath ??
     //     _getFallbackAsset(serviceType ?? _serviceType);
   }

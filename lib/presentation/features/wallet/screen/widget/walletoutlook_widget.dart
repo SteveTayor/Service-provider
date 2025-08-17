@@ -136,7 +136,7 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
                 12.verticalSpace,
                 Text(
                   provider.isBalanceVisible
-                      ? "₦5,000.00"
+                      ? provider.formattedBalance
                       : '⁕⁕⁕⁕',
                   style: context.textTheme.titleLarge!.copyWith(
                     fontSize: provider.isBalanceVisible ? 34 : 24,

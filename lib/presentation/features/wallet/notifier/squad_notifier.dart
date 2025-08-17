@@ -32,7 +32,7 @@ class SquadPaymentNotifier
           'email': email,
           'currency': 'NGN',
           'transaction_ref': transactionRef,
-          'callback_url': 'https://www.google.com',
+          'callback_url': 'https://bundlegram-success.com',
           'initiate_type': 'inline',
         }),
       );
