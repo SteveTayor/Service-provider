@@ -43,14 +43,6 @@ class _SplashScreenState extends State<SplashScreen> {
               ],
             ),
           ),
-          Text(
-            "Powered by CodeFixBug",
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white),
-          ),
-          SizedBox(
-            height: 10,
-          )
         ],
       ),
     );
