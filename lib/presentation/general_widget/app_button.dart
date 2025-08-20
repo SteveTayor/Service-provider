@@ -96,7 +96,9 @@ class _BundlegramButton extends State<BundlegramButton> {
               ? BundlegramButtonStyle.outline().border
               : Border.all(color: Colors.transparent),
           borderRadius: BorderRadius.circular(widget.cornerRadius),
-          color: widget.color ?? _buttonStyle.background,
+          color: widget.isEnabled == false
+              ? AppColors.greyD0.withOpacity(0.3)
+              : widget.color ?? _buttonStyle.background,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -128,7 +130,9 @@ class _BundlegramButton extends State<BundlegramButton> {
                       style: widget.textStyle ??
                           _buttonStyle.textStyle ??
                           context.textTheme.bodyMedium?.copyWith(
-                            color: _buttonStyle.textColor,
+                            color: widget.isEnabled == false
+                                ? AppColors.grey8E
+                                : _buttonStyle.textColor,
                             fontFamily: FontFamily.mabryPro,
                             // fontSize: 18,
                             fontWeight: FontWeight.w500,

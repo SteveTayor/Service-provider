@@ -60,10 +60,11 @@ const List<PlatformProductType> kValidationRequiredServices = [
   PlatformProductType.internetServices,
 ];
 
-final platformProductProvider = StateNotifierProvider.family<
-    PlatformProductNotifier, PlatformProductState, PlatformProductType>((ref,
-        serviceType) =>
-    PlatformProductNotifier(ref.read(apiServiceProvider), serviceType, ref));
+final platformProductProvider = StateNotifierProvider.family.autoDispose<
+    PlatformProductNotifier, PlatformProductState, PlatformProductType>(
+  (ref, serviceType) =>
+      PlatformProductNotifier(ref.read(apiServiceProvider), serviceType, ref),
+);
 
 class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   final ApiService _apiService;
@@ -389,8 +390,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         break;
 
       case PlatformProductType.cableTv:
-        if (state.secondaryInputController.text.length != 10) {
-          return 'Smart Card Number must be 10 digits';
+        if (state.secondaryInputController.text == null) {
+          return 'Smart Card Number is required';
         }
         if (state.selectedSubProduct == null) {
           return 'Please select a cable TV package';
@@ -401,8 +402,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         break;
 
       case PlatformProductType.electricity:
-        if (state.secondaryInputController.text.length != 10) {
-          return 'Meter Number must be 10 digits';
+        if (state.secondaryInputController.text == null) {
+          return 'Meter Number is required';
         }
         // if (state.selectedSubProduct == null) {
         //   return 'Please select Prepaid or Postpaid';
@@ -530,26 +531,39 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   bool _matches(String a, String b) {
     final cleanA = a.toLowerCase().replaceAll(RegExp(r'\s+'), '');
     final cleanB = b.toLowerCase().replaceAll(RegExp(r'\s+'), '');
-    return cleanA.contains(cleanB) || cleanB.contains(cleanA);
+    final brandA = _extractBrand(a).replaceAll(RegExp(r'\s+'), '');
+    final brandB = _extractBrand(b).replaceAll(RegExp(r'\s+'), '');
+    return cleanA.contains(cleanB) ||
+        cleanB.contains(cleanA) ||
+        brandA == brandB; // Add exact brand match
   }
 
   String _extractBrand(String name) {
     final lower = name.toLowerCase();
-    if (lower.contains("mtn")) return "mtn";
+    print('Extracting brand from: $name');
+    if (lower.contains("mtn")) {
+      print('Brand: mtn');
+      return "mtn";
+    }
     if (lower.contains("glo")) return "glo";
     if (lower.contains("airtel")) return "airtel";
     if (lower.contains("9mobile") || lower.contains("etisalat"))
       return "9mobile";
+    print('Brand: ${name.split(" ").first.toLowerCase()}');
     return name.split(" ").first.toLowerCase();
   }
 
   // Map sub-product or product names to asset paths from PlatFormData
   String? normalizeAssetName(String? raw, {PlatformProductType? serviceType}) {
+    print('Raw input: $raw, ServiceType: $serviceType');
     if (raw == null || raw.isEmpty) {
+      print(
+          'Returning fallback due to null/empty raw: ${_getFallbackAsset(serviceType ?? _serviceType)}');
       return _getFallbackAsset(serviceType ?? _serviceType);
     }
 
     final lowerName = raw.toLowerCase();
+    print('Lowercase raw: $lowerName');
     List<Widget> providers;
 
     // Select provider list based on service type
@@ -571,15 +585,23 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         break;
       case PlatformProductType.airtime:
         providers = PlatFormData.serviceProviderWidget;
+        print(
+            'Providers for airtime: ${providers.map((p) => (p as AppListTile).title).toList()}');
+        // break;
         break;
       case PlatformProductType.mobileData:
         providers = PlatFormData.serviceProviderWidget;
+        print(
+            'Providers for data purchase: ${providers.map((p) => (p as AppListTile).title).toList()}');
+
         break;
       case PlatformProductType.ePinVoucher:
       case PlatformProductType.bulkEPin:
         // Use a generic e-pin asset or specific providers if available
         return Assets.svgs.ePin; // Adjust if you have specific e-pin providers
       default:
+        print(
+            'Returning fallback for unknown service type: ${_getFallbackAsset(serviceType ?? _serviceType)}');
         return _getFallbackAsset(serviceType ?? _serviceType);
     }
 
@@ -591,16 +613,34 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         final rawKey = _extractBrand(raw);
         final titleKey = _extractBrand(title);
         // return rawKey == titleKey;
-        return _matches(raw, title);
+        final match = _matches(raw, title);
+        print('Comparing raw: $rawKey with title: $titleKey -> Match: $match');
+        return match;
       },
-      orElse: () => AppListTile(
-        title: state.selectedProduct?.productName ?? '',
-        imagePath: _getFallbackAsset(serviceType ?? _serviceType),
-      ),
+      orElse: () {
+        print(
+            'No match found, using fallback: ${_getFallbackAsset(serviceType ?? _serviceType)}');
+        return AppListTile(
+          title: state.selectedProduct?.productName ?? '',
+          // color: getFallbackColor ,
+          imagePath: _getFallbackAsset(serviceType ?? _serviceType),
+          assetPath: _getFallbackAsset(serviceType ?? _serviceType),
+        );
+      },
     );
-
-    return (matchingProvider as AppListTile).imagePath ??
+    final result = (matchingProvider as AppListTile).assetPath ??
+        matchingProvider.imagePath ??
         _getFallbackAsset(serviceType ?? _serviceType);
+
+    print('normalizeAssetName: Final asset path: $result');
+    return result;
+
+    // final result = (matchingProvider as AppListTile).assetPath ??
+    //     _getFallbackAsset(serviceType ?? _serviceType);
+    // print('normalizeAssetName: Final asset path: $result');
+    // return result;
+    // return (matchingProvider as AppListTile).imagePath ??
+    //     _getFallbackAsset(serviceType ?? _serviceType);
   }
 
   // Get fallback asset based on service type

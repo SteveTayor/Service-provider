@@ -52,6 +52,7 @@ class RouteConstants {
   static const String withdrawalAccount = '/withdrawalaccount';
   static const String helpSupport = '/helpSupport';
   static const String becomeagent = '/becomeagent';
+  static const String promo = '/promo';
 
   /// Agent routes
   static const String agent = '/agent';

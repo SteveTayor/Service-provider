@@ -53,6 +53,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/bars-3.svg
   String get bars3 => 'assets/images/bars-3.svg';
 
+  /// File path: assets/images/becomeanagent.png
+  AssetGenImage get becomeanagent =>
+      const AssetGenImage('assets/images/becomeanagent.png');
+
   /// File path: assets/images/bet9ja.png
   AssetGenImage get bet9ja => const AssetGenImage('assets/images/bet9ja.png');
 
@@ -143,6 +147,7 @@ class $AssetsImagesGen {
         airtel,
         bangbet,
         bars3,
+        becomeanagent,
         bet9ja,
         betway,
         dstv,
@@ -218,6 +223,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/Frame 1000004111.svg
   String get frame1000004111 => 'assets/svgs/Frame 1000004111.svg';
+
+  /// File path: assets/svgs/Gift.svg
+  String get gift => 'assets/svgs/Gift.svg';
 
   /// File path: assets/svgs/Growth.svg
   String get growth => 'assets/svgs/Growth.svg';
@@ -296,6 +304,9 @@ class $AssetsSvgsGen {
   String get warrantyBadgeHighlightStreamlineFlex =>
       'assets/svgs/Warranty-Badge-Highlight--Streamline-Flex.svg';
 
+  /// File path: assets/svgs/a9mobile.svg
+  String get a9mobile => 'assets/svgs/a9mobile.svg';
+
   /// File path: assets/svgs/account.svg
   String get account => 'assets/svgs/account.svg';
 
@@ -308,6 +319,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/addbasicinfo.svg
   String get addbasicinfo => 'assets/svgs/addbasicinfo.svg';
 
+  /// File path: assets/svgs/airtel.svg
+  String get airtel => 'assets/svgs/airtel.svg';
+
   /// File path: assets/svgs/airtime.svg
   String get airtime => 'assets/svgs/airtime.svg';
 
@@ -316,6 +330,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/arrow-left.svg
   String get arrowLeft => 'assets/svgs/arrow-left.svg';
+
+  /// File path: assets/svgs/available_promo.svg
+  String get availablePromo => 'assets/svgs/available_promo.svg';
 
   /// File path: assets/svgs/balance.svg
   String get balance => 'assets/svgs/balance.svg';
@@ -403,6 +420,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/finger-cricle.svg
   String get fingerCricle => 'assets/svgs/finger-cricle.svg';
 
+  /// File path: assets/svgs/glo.svg
+  String get glo => 'assets/svgs/glo.svg';
+
   /// File path: assets/svgs/heart--reward-social-rating-media-heart-it-like-favorite-love.svg
   String get heartRewardSocialRatingMediaHeartItLikeFavoriteLove =>
       'assets/svgs/heart--reward-social-rating-media-heart-it-like-favorite-love.svg';
@@ -442,6 +462,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/mobile_data.svg
   String get mobileData => 'assets/svgs/mobile_data.svg';
 
+  /// File path: assets/svgs/mtn.svg
+  String get mtn => 'assets/svgs/mtn.svg';
+
   /// File path: assets/svgs/mtn_neww.svg
   String get mtnNeww => 'assets/svgs/mtn_neww.svg';
 
@@ -451,6 +474,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/no-transactions-e-commerce 1.svg
   String get noTransactionsECommerce1 =>
       'assets/svgs/no-transactions-e-commerce 1.svg';
+
+  /// File path: assets/svgs/no_promo.svg
+  String get noPromo => 'assets/svgs/no_promo.svg';
 
   /// File path: assets/svgs/noapineeded.svg
   String get noapineeded => 'assets/svgs/noapineeded.svg';
@@ -472,6 +498,12 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/ph_copy-simple.svg
   String get phCopySimple => 'assets/svgs/ph_copy-simple.svg';
+
+  /// File path: assets/svgs/promo_gift_image.svg
+  String get promoGiftImage => 'assets/svgs/promo_gift_image.svg';
+
+  /// File path: assets/svgs/promo_rewards.svg
+  String get promoRewards => 'assets/svgs/promo_rewards.svg';
 
   /// File path: assets/svgs/receipt.svg
   String get receipt => 'assets/svgs/receipt.svg';
@@ -550,6 +582,7 @@ class $AssetsSvgsGen {
         crownStreamlineFlex,
         customerSupport1StreamlineCore,
         frame1000004111,
+        gift,
         growth,
         helpQuestion1StreamlineCore,
         lockRotationStreamlineCore,
@@ -571,13 +604,16 @@ class $AssetsSvgsGen {
         userActive,
         vpnConnectionStreamlineCore,
         warrantyBadgeHighlightStreamlineFlex,
+        a9mobile,
         account,
         accountsetup,
         addbankdetail,
         addbasicinfo,
+        airtel,
         airtime,
         arrowFowardIos,
         arrowLeft,
+        availablePromo,
         balance,
         banknotes,
         bars3,
@@ -606,6 +642,7 @@ class $AssetsSvgsGen {
         failedIllustration,
         fingerCricle1,
         fingerCricle,
+        glo,
         heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
         home,
         homeinactive,
@@ -618,9 +655,11 @@ class $AssetsSvgsGen {
         mailresent,
         mobile,
         mobileData,
+        mtn,
         mtnNeww,
         mtnnw,
         noTransactionsECommerce1,
+        noPromo,
         noapineeded,
         notification,
         notificationbell,
@@ -628,6 +667,8 @@ class $AssetsSvgsGen {
         paybills,
         pending,
         phCopySimple,
+        promoGiftImage,
+        promoRewards,
         receipt,
         receiptactive,
         sendEmailMailSendEmailPaperAirplane,

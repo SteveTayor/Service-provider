@@ -7,6 +7,7 @@ import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
+import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
 import 'package:bundlegram/presentation/general_widget/receipt_widget.dart';
 import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
@@ -16,14 +17,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class RecentTransactionWidget extends ConsumerWidget {
+  final StateNotifierProvider<StateNotifier<RecentTransactionsState>,
+      RecentTransactionsState> transactionProvider;
   final Widget? spacing;
-  const RecentTransactionWidget(this.spacing, {Key? key}) : super(key: key);
+  final String? title;
+  const RecentTransactionWidget(this.spacing,
+      {required this.transactionProvider,
+      this.title = 'Recent Transactions',
+      Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recentState = ref.watch(recentTransactionsProvider);
+    // final recentState = ref.watch(recentTransactionsProvider);
+    final recentState = ref.watch(transactionProvider);
     // Wait until loading is done before rendering anything
     if (recentState.isLoading) {
       return _buildLoadingState();
@@ -35,11 +45,13 @@ class RecentTransactionWidget extends ConsumerWidget {
         child: EmptytransactionWidget(),
       );
     }
+    if (recentState.error != null) return ErrorWidget('Something went wrong');
+    if (recentState.filteredServices.isEmpty) return EmptytransactionWidget();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Recent Transactions',
+          title!,
           style: context.textTheme.titleSmall!.copyWith(fontSize: 18.sp),
         ),
         spacing ?? 20.verticalSpace,
@@ -82,7 +94,7 @@ class RecentTransactionWidget extends ConsumerWidget {
       ),
       itemBuilder: (context, index) {
         final transaction = transactions[index];
-        return GestureDetector(
+        return InkWell(
           onTap: () => _showTransactionDetails(context, transaction),
           child: ServiceListItem(transaction: transaction),
         );
@@ -218,6 +230,8 @@ class RecentTransactionWidget extends ConsumerWidget {
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
       );
     }
     context.showPopUp(
@@ -263,22 +277,28 @@ class RecentTransactionWidget extends ConsumerWidget {
 
   String _formatDate(DateTime? date) {
     if (date == null) return 'Unknown Date';
+
+    final localDate = date.toLocal(); // <-- Always convert first
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
-    final txnDate = DateTime(date.year, date.month, date.day);
+    final txnDate = DateTime(localDate.year, localDate.month, localDate.day);
 
-    if (txnDate.isAtSameMomentAs(today)) return 'Today';
-    if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
-    return date.toLocal().toIso8601String();
+    // if (txnDate.isAtSameMomentAs(today)) return 'Today';
+    // if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
+
+    return DateFormat('EEE MMM dd yyyy').format(localDate);
   }
 
   String _formatTime(DateTime? date) {
     if (date == null) return '--:--';
-    final hour = date.hour;
-    final minute = date.minute;
+
+    final localDate = date.toLocal(); // <-- Always convert first
+    final hour = localDate.hour;
+    final minute = localDate.minute;
     final period = hour >= 12 ? 'pm' : 'am';
     final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+
     return '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}$period';
   }
 
@@ -300,7 +320,7 @@ class RecentTransactionWidget extends ConsumerWidget {
 
   Widget _buildLoadingState() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: ListView.separated(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,

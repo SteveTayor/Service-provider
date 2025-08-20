@@ -157,32 +157,32 @@ class PlatFormData {
   static final List<Widget> serviceProviderWidget = [
     AppListTile(
       showSubtitle: true,
-      // assetPath: 'assets/svgs/mtn_logo.svg',
-      imagePath: Assets.images.mtn.path,
-      title: 'MTN ',
+      assetPath: Assets.svgs.mtnnw,
+      // imagePath: Assets.images.mtn.path,
+      title: 'MTN',
       subtitle: '@mtnng',
       onPressed: () {},
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.airtel,
-      imagePath: Assets.images.airtel.path,
+      assetPath: Assets.svgs.airtel,
+      // imagePath: Assets.images.airtel.path,
+      color: AppColors.error,
       title: 'Airtel',
       subtitle: '@airtelnigeria',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.glo,
-      imagePath: Assets.images.glo.path,
+      assetPath: Assets.svgs.glo,
+      // imagePath: Assets.images.glo.path,
       title: 'Glo',
       subtitle: '@globacomlimited',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.a9mobile,
-
-      imagePath: Assets.images.a9mobile.path,
-      title: '9mobile ',
+      assetPath: Assets.svgs.a9mobile,
+      // imagePath: Assets.images.a9mobile.path,
+      title: '9mobile',
       subtitle: '@9mobileng',
     ),
   ];
@@ -438,7 +438,7 @@ class PlatFormData {
               ..pop()
               ..push(RouteConstants.becomeagent);
           },
-          assetPath: Assets.svgs.becomeagent,
+          assetPath: Assets.svgs.uploadCircleStreamlineCore,
           title: 'Become an agent',
         );
       },

@@ -28,66 +28,47 @@ class _VerifySquadPaymentPageState
   @override
   void initState() {
     super.initState();
-    _verifyTransaction();
+
+    // ✅ Run after first frame to avoid "modifying provider while building"
+    Future.microtask(() => _verifyTransaction());
   }
 
   Future<void> _verifyTransaction() async {
-    final result = await ref
-        .read(squadPaymentVerifierProvider.notifier)
-        .verifyTransaction(widget.transactionRef);
+    debugPrint("🚀 Starting verification for: ${widget.transactionRef}");
 
-    if (result?.success == true) {
-      // ✅ Successful funding
-      // Optionally refetch wallet balance here
-      context.pushReplacement(RouteConstants.dashboard);
-    } else {
-      context.showErrorSnackBar("Transaction verification failed");
-      Navigator.pop(context);
+    try {
+      final result = await ref
+          .read(squadPaymentVerifierProvider.notifier)
+          .verifyTransaction(widget.transactionRef);
+
+      if (result?.success == true) {
+        debugPrint("✅ Verification success: $result");
+
+        // Refresh wallet balance before leaving
+        await ref.read(globalProvider.notifier).fetchWalletBalance(context);
+
+        if (mounted) {
+          setState(() => _loading = false);
+          context.showSuccessSnackBar("Wallet funded successfully!");
+          context.pushReplacement(RouteConstants.dashboard);
+        }
+      } else {
+        debugPrint("❌ Verification failed: $result");
+        if (mounted) {
+          setState(() => _loading = false);
+          context.showErrorSnackBar("Transaction verification failed");
+          Navigator.pop(context);
+        }
+      }
+    } catch (e, st) {
+      debugPrint("💥 Exception verifying transaction: $e\n$st");
+      if (mounted) {
+        setState(() => _loading = false);
+        context.showErrorSnackBar("An error occurred during verification.");
+        Navigator.pop(context);
+      }
     }
   }
-  // Future<void> _verifyTransaction() async {
-  //   final secretKey = dotenv.env['SQUAD_SECRET_KEY'] ?? '';
-  //   final transactionRef = widget.transactionRef;
-
-  //   try {
-  //     final response = await http.get(
-  //       Uri.parse(
-  //         'https://api.squadco.com/transaction/verify/$transactionRef',
-  //       ),
-  //       headers: {
-  //         'Authorization': 'Bearer $secretKey',
-  //       },
-  //     );
-
-  //     final decoded = jsonDecode(response.body) as Map<String, dynamic>;
-  //     debugPrint(decoded.toString());
-  //     final status = decoded['data']?['transaction_status']?.toLowerCase();
-
-  //     if (response.statusCode == 200 && status == 'success') {
-  //       await ref.read(globalProvider.notifier).fetchWalletBalance(context);
-
-  //       if (context.mounted) {
-  //         context
-  //           ..go(RouteConstants.dashboard)
-  //           ..showSuccessSnackBar("Wallet funded successfully!");
-  //       }
-  //     } else {
-  //       if (context.mounted) {
-  //         context
-  //           ..go(RouteConstants.dashboard)
-  //           ..showErrorSnackBar("Could not verify payment.");
-  //       }
-  //     }
-  //   } catch (e) {
-  //     if (context.mounted) {
-  //       context
-  //         ..go(RouteConstants.dashboard)
-  //         ..showErrorSnackBar("An error occurred while verifying payment.");
-  //     }
-  //   } finally {
-  //     if (mounted) setState(() => _loading = false);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

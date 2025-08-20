@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformquickaction_widget.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformdrawer_widget.dart';
@@ -59,6 +60,7 @@ class _PlatformScreenState extends ConsumerState<PlatformScreen> {
                   SizedBox(
                     height: 0.h,
                   ),
+                  transactionProvider: recentTransactionsProvider,
                 ),
               ),
               SizedBox(

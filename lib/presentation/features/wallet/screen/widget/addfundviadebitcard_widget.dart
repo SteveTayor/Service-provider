@@ -329,7 +329,7 @@ class _AddfundviadebitcardWidgetState
                       context
                           .showSuccessSnackBar("Wallet funded successfully!");
                     } else {
-                      context.showErrorSnackBar("Payment was not completed.");
+                      // context.showErrorSnackBar("Payment was not completed.");
                     }
                   } else {
                     // context.pop();

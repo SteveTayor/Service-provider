@@ -100,7 +100,7 @@ class _HistoryScreenState<T> extends ConsumerState<HistoryScreen<T>> {
                             widget.separator ?? SizedBox(height: 12.h),
                         itemBuilder: (ctx, i) {
                           final item = widget.items[i];
-                          return GestureDetector(
+                          return InkWell(
                             onTap: () => widget.onItemTap(item),
                             child: widget.itemBuilder(ctx, item, i),
                           );

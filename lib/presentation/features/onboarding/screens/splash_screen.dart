@@ -5,20 +5,22 @@ import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   late final SecureStorageHelper _storage;
   @override
   void initState() {
     super.initState();
+    _storage = ref.read(secureStorageHelperProvider);
     _initializeApp();
   }
 

@@ -181,7 +181,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
                               : const SizedBox.shrink();
                         }
                         final txn = state.filteredTransactions[index];
-                        return GestureDetector(
+                        return InkWell(
                           onTap: () => _showReceiptPopup(txn),
                           child: ServiceListItem(transaction: txn),
                         );
@@ -330,6 +330,8 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
+              balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
       );
     }
 

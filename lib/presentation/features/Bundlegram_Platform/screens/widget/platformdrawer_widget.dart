@@ -103,7 +103,7 @@ class PlatFormDrawer extends ConsumerWidget {
               height: 152.h,
               padding: EdgeInsets.only(
                 left: 20.w,
-                bottom: 20.h,
+                bottom: 16.h,
               ),
               color: AppColors.primaryColor,
             ),

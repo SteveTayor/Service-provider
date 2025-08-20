@@ -42,17 +42,32 @@ class _DashboardState extends ConsumerState<Dashboard> {
         hasInitialized = true;
       });
     }
-    return Scaffold(
-      body: IndexedStack(
-        index: ref.watch(dashboardProvider.select((p) => p.currentIndex)),
-        children: const [
-          PlatformScreen(),
-          WalletScreen(),
-          TransactionScreen(),
-          AccountScreen(),
-        ],
+    return PopScope(
+      canPop: false, // Prevent default pop behavior
+      onPopInvoked: (didPop) {
+        if (didPop) return; // If already popped, do nothing
+        if (currentIndex != 0) {
+          // If not on the first tab, switch to the first tab
+          ref
+              .read(dashboardProvider.notifier)
+              .onDestinationSelected(0, context);
+        } else {
+          //  exit the app or do nothing
+          // Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: ref.watch(dashboardProvider.select((p) => p.currentIndex)),
+          children: const [
+            PlatformScreen(),
+            WalletScreen(),
+            TransactionScreen(),
+            AccountScreen(),
+          ],
+        ),
+        bottomNavigationBar: const NavBar(),
       ),
-      bottomNavigationBar: const NavBar(),
     );
   }
 }

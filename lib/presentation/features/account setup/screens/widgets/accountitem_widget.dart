@@ -72,6 +72,11 @@ class AccountitemWidget extends ConsumerWidget {
           'Withdrawal accounts',
         ),
         buildRowWidget(
+          Assets.svgs.gift,
+          'Bundlegram promo',
+          onPressed: () => appActions.goToPromo(context),
+        ),
+        buildRowWidget(
           Assets.svgs.starBadgeStreamlineCore,
           'Rate Bundlegram',
           onPressed: () => appActions.rateApp(context),
@@ -89,7 +94,7 @@ class AccountitemWidget extends ConsumerWidget {
         buildRowWidget(
           Assets.svgs.shiftKeyShiftUpArrowKeyboard,
           'Update app',
-          onPressed: () => appActions.checkForUpdate(context),
+          onPressed: () => appActions.rateApp(context),
         ),
         buildRowWidget(
           onPressed: () => context.showBottomSheet(child: const LogoutWidget()),

@@ -49,4 +49,4 @@ class ProviderLogger extends ProviderObserver {
 }''',
     );
   }
-} 
+}

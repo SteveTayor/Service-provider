@@ -55,7 +55,10 @@ class AppListTile extends StatelessWidget {
                   ),
                 if (assetPath != null)
                   AppSvgIcon(
+                    useCircleAvatar: true,
                     path: assetPath!,
+                    width: 40,
+                    height: 40,
                     color: color ?? null,
                     fit: BoxFit.scaleDown,
                   ),

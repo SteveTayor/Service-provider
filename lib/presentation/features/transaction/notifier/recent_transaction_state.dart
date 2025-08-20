@@ -7,6 +7,7 @@ class RecentTransactionsState {
   final bool isLoading;
   final bool isLoadingMore;
   final bool hasMore;
+  final Object? error;
 
   RecentTransactionsState({
     required this.services,
@@ -15,6 +16,7 @@ class RecentTransactionsState {
     this.isLoading = false,
     this.isLoadingMore = false,
     this.hasMore = true,
+    this.error,
   });
 
   factory RecentTransactionsState.initial() {
@@ -25,6 +27,7 @@ class RecentTransactionsState {
       isLoading: false,
       isLoadingMore: false,
       hasMore: true,
+      error: null,
     );
   }
 
@@ -35,6 +38,7 @@ class RecentTransactionsState {
     bool? isLoading,
     bool? isLoadingMore,
     bool? hasMore,
+    Object? error,
   }) {
     return RecentTransactionsState(
       services: services ?? this.services,
@@ -43,6 +47,7 @@ class RecentTransactionsState {
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       hasMore: hasMore ?? this.hasMore,
+      error: error,
     );
   }
 }
