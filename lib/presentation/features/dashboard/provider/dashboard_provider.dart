@@ -30,10 +30,11 @@ class DashboardProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<void> initDashboard(BuildContext context) async {
-    if (_currentIndex != 3) {
-      await _fetchDashboardData(context);
+  Future<void> initDashboard(BuildContext context) {
+    if (_currentIndex != 1 && _currentIndex != 3) {
+      unawaited(_fetchDashboardData(context));
     }
+    return Future.value();
   }
 
   void resetIndex() {
@@ -46,7 +47,7 @@ class DashboardProvider extends ChangeNotifier {
       _currentIndex = index;
       notifyListeners();
     }
-    if (index != 3) {
+    if (index != 1 && index != 3) {
       _fetchDashboardData(context);
     }
   }
@@ -58,8 +59,11 @@ class DashboardProvider extends ChangeNotifier {
     final storage = _ref.read(secureStorageHelperProvider);
     final api = _ref.read(apiServiceProvider);
     final token = await storage.getAuthToken();
+    // context.showLoadingDialog();
 
     if (token == null) {
+      // context.dismissDialog();
+
       context
         ..showErrorSnackBar(
             'No authentication token found. Please log in again.')
@@ -68,39 +72,10 @@ class DashboardProvider extends ChangeNotifier {
       return;
     }
 
-    unawaited(context.showLoadingDialog(message: 'Fetching profile...'));
-    final profileRes = await api.getProfile(token);
-    if (profileRes.isLeft()) {
-      context.dismissDialog();
-      // ..showErrorSnackBar("Failed to fetch profile");
-      _setLoading(false);
-      return;
-    }
-
-    // unawaited(context.showLoadingDialog(message: 'Fetching banks...'));
-    final bankRes = await api.getAllBanks(token);
-    if (bankRes.isLeft()) {
-      context
-        ..dismissDialog()
-        ..showErrorSnackBar("Failed to fetch banks");
-      _setLoading(false);
-      return;
-    }
-
-    // unawaited(context.showLoadingDialog(message: 'Fetching wallet...'));
-    final walletRes = await api.getWallet(token);
-    if (walletRes.isLeft()) {
-      context
-        ..dismissDialog()
-        ..showErrorSnackBar("Failed to fetch wallet");
-      _setLoading(false);
-      return;
-    }
-
     final global = _ref.read(globalProvider.notifier);
-    await global.initializeWalletandAccounts(context);
+    unawaited(global.initializeWalletandAccounts(context));
 
-    context.dismissDialog();
+    // context.dismissDialog();
     _setLoading(false);
   }
 

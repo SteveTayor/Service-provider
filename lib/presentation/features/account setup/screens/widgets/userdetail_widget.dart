@@ -61,8 +61,10 @@ class UserdetailWidget extends ConsumerWidget {
               shape: BoxShape.circle,
             ),
             12.verticalSpace,
-            Text(moveSurnameToEnd(globalUserProvider.value!.data!.name!),
-                style: context.textTheme.titleSmall),
+            Text(
+              moveSurnameToEnd(globalUserProvider.value!.data!.name),
+              style: context.textTheme.titleSmall,
+            ),
             if (profileProv?.emailVerifiedAt == null ||
                 profileProv?.bvn == null ||
                 profileProv?.address == null ||

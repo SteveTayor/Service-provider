@@ -13,11 +13,24 @@ class SecureStorageHelper {
   static const _latitudeKey = 'latitude';
   static const _longitudeKey = 'longitude';
   static const _platformKey = 'platform';
+  static const _appVersionCodeKey = 'app_version_code';
 
   SecureStorageHelper(this._storage);
 
   Future<String?> getAuthToken() async {
     return await _storage.read(key: _tokenKey);
+  }
+
+  Future<void> setAppVersionCode(int versionCode) async {
+    await _storage.write(
+      key: _appVersionCodeKey,
+      value: versionCode.toString(),
+    );
+  }
+
+  Future<int?> getAppVersionCode() async {
+    final value = await _storage.read(key: _appVersionCodeKey);
+    return int.tryParse(value ?? '');
   }
 
   Future<void> setAuthToken(String token) async {

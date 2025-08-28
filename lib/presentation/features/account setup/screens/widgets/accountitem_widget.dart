@@ -4,6 +4,7 @@ import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/account%20setup/notifier/app_actions_notifier.dart';
 import 'package:bundlegram/presentation/features/setting/screens/logout_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
@@ -18,6 +19,7 @@ class AccountitemWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final globalUserProvider = ref.watch(globalProvider).profile;
     final profileProv = globalUserProvider.value?.data;
+    final appActions = ref.read(appActionsProvider);
 
     Widget buildRowWidget(
       String asset,
@@ -58,7 +60,7 @@ class AccountitemWidget extends ConsumerWidget {
             if (bvn == null) {
               WalletNotifier().showLinkBVNSnackBar(
                 context,
-                'To ensure that you get a virtual account number, verify your BVN for this feature.',
+                'verify your BVN for this feature.',
                 'Link now',
               );
               return;
@@ -70,8 +72,14 @@ class AccountitemWidget extends ConsumerWidget {
           'Withdrawal accounts',
         ),
         buildRowWidget(
+          Assets.svgs.gift,
+          'Bundlegram promo',
+          onPressed: () => appActions.goToPromo(context),
+        ),
+        buildRowWidget(
           Assets.svgs.starBadgeStreamlineCore,
           'Rate Bundlegram',
+          onPressed: () => appActions.rateApp(context),
         ),
         buildRowWidget(
           Assets.svgs.customerSupport1StreamlineCore,
@@ -81,10 +89,12 @@ class AccountitemWidget extends ConsumerWidget {
         buildRowWidget(
           Assets.svgs.heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
           'Share Bundlegram',
+          onPressed: () => appActions.shareApp(context),
         ),
         buildRowWidget(
           Assets.svgs.shiftKeyShiftUpArrowKeyboard,
           'Update app',
+          onPressed: () => appActions.rateApp(context),
         ),
         buildRowWidget(
           onPressed: () => context.showBottomSheet(child: const LogoutWidget()),

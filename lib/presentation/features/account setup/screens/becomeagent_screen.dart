@@ -1,6 +1,7 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
@@ -23,6 +24,8 @@ class BecomeagentScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final globalUserProvider = ref.watch(globalProvider).profile;
+    final profileProv = globalUserProvider.value?.data;
     // Helper method to build each benefit row
     Widget buildItemRow(
       String asset,
@@ -89,47 +92,50 @@ class BecomeagentScreen extends ConsumerWidget {
                     )),
                 40.verticalSpace,
                 BundlegramButton(
+                  isEnabled: profileProv?.userType != "agent",
                   text: 'Continue',
-                  onPressed: () {
-                    context.showBottomSheet(
-                      child: TransactionSummary(
-                        isBecomeAnAgent: true,
-                        transactionType: 'Agent fee',
-                        amount: '₦10,000.00',
-                        paymentMethod: 'Wallet',
-                        onPay: () {
-                          // context.pop(); // Close the sheet first
-                          ref
-                              .read(becomeAgentProvider.notifier)
-                              .checkAndInitiatePayment(context);
-                        },
+                  onPressed: profileProv?.userType == "agent"
+                      ? null
+                      : () {
+                          context.showBottomSheet(
+                            child: TransactionSummary(
+                              isBecomeAnAgent: true,
+                              transactionType: 'Agent fee',
+                              amount: '₦10,000.00',
+                              paymentMethod: 'Wallet',
+                              onPay: () {
+                                // context.pop(); // Close the sheet first
+                                ref
+                                    .read(becomeAgentProvider.notifier)
+                                    .checkAndInitiatePayment(context);
+                              },
 
-                        // onPay: () {
-                        //   // Handle payment
-                        //   context.pop(); // Close the bottom sheet
-                        //   Navigator.of(context).push(
-                        //     MaterialPageRoute(
-                        //       builder: (ctx) => EnterPinScreen(
-                        //         onVerified: (pin) {
-                        //           // Handle verification
-                        //           Navigator.pushReplacement(
-                        //             context,
-                        //             MaterialPageRoute(
-                        //               builder: (ctx) => TransactionSuccessful(
-                        //                 title: 'Congratulations!',
-                        //                 subTitle:
-                        //                     'You are now officially a Bundlegram agent.',
-                        //               ),
-                        //             ),
-                        //           );
-                        //         },
-                        //       ),
-                        //     ),
-                        //   );
-                        // },
-                      ),
-                    );
-                  },
+                              // onPay: () {
+                              //   // Handle payment
+                              //   context.pop(); // Close the bottom sheet
+                              //   Navigator.of(context).push(
+                              //     MaterialPageRoute(
+                              //       builder: (ctx) => EnterPinScreen(
+                              //         onVerified: (pin) {
+                              //           // Handle verification
+                              //           Navigator.pushReplacement(
+                              //             context,
+                              //             MaterialPageRoute(
+                              //               builder: (ctx) => TransactionSuccessful(
+                              //                 title: 'Congratulations!',
+                              //                 subTitle:
+                              //                     'You are now officially a Bundlegram agent.',
+                              //               ),
+                              //             ),
+                              //           );
+                              //         },
+                              //       ),
+                              //     ),
+                              //   );
+                              // },
+                            ),
+                          );
+                        },
                 ),
               ],
             ),

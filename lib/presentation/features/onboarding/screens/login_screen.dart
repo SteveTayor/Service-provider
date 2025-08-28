@@ -54,7 +54,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     InkWell(
                       onTap: () {
-                        context.push('/register');
+                        context.go('/register');
+
+                        // context.push('/register');
                       },
                       child: Text(
                         'Sign up.',

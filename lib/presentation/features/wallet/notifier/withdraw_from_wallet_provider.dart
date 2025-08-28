@@ -178,12 +178,12 @@ class WithdrawalProvider extends ChangeNotifier {
       return false;
     }
 
-    _setSubmitting(true);
+    setSubmitting(true);
     unawaited(context.showLoadingDialog());
     final token = await _storage.getAuthToken();
     if (token == null) {
       context.showErrorSnackBar('Authentication token missing');
-      _setSubmitting(false);
+      setSubmitting(false);
       return false;
     }
     // Fetch device details
@@ -210,16 +210,18 @@ class WithdrawalProvider extends ChangeNotifier {
 
         final message = fail.properties.join('\n');
         final displayMessage = message.toLowerCase().contains('insufficient') ||
-                message.toLowerCase().contains('incorrect pin')
+                message.toLowerCase().contains('incorrect') ||
+                message.toLowerCase().contains('pending payout')
             ? message
             : 'Failed to request withdrawal';
-        context.showErrorSnackBar(
-            message.isNotEmpty ? message : 'Transaction failed');
+        // context.showErrorSnackBar(
+        //     message.isNotEmpty ? message : 'Transaction failed');
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (ctx) => FailedResultScreen(
               serviceContent: 'Withdrawal',
+              title: 'Withdrawal Failed',
               errorMessage: displayMessage,
               onRetry: () {
                 context.pushReplacement(RouteConstants.dashboard);
@@ -230,10 +232,11 @@ class WithdrawalProvider extends ChangeNotifier {
         return false;
       },
       (_) {
-        context
-          ..dismissDialog()
-          ..showSuccessSnackBar('Withdrawal request submitted successfully');
-        _setSubmitting(false);
+        context.dismissDialog();
+        // ..showSuccessSnackBar('Withdrawal request submitted successfully');
+        _amountController.clear();
+        setSubmitting(false);
+        notifyListeners();
         return true;
       },
     );
@@ -244,7 +247,7 @@ class WithdrawalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _setSubmitting(bool value) {
+  void setSubmitting(bool value) {
     _isSubmitting = value;
     notifyListeners();
   }

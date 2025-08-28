@@ -140,7 +140,7 @@ class _PlatformPhoneNumberFormWidgetState
             widget.serviceType == PlatformProductType.cableTv ||
             widget.serviceType == PlatformProductType.electricity ||
             widget.serviceType == PlatformProductType.internetServices) ...[
-          8.verticalSpace,
+          24.verticalSpace,
           AppTextField(
             hintText: widget.serviceType == PlatformProductType.betting
                 ? 'Enter User ID'
@@ -152,11 +152,11 @@ class _PlatformPhoneNumberFormWidgetState
             controller: state.secondaryInputController,
             keyboardType: TextInputType.number,
             validateFunction: (val) {
-              if (val?.length != 10) return 'Must be 10 digits';
+              if (val == null) return 'required';
               return null;
             },
             inputFormatters: [
-              LengthLimitingTextInputFormatter(10),
+              // LengthLimitingTextInputFormatter(10),
               FilteringTextInputFormatter.digitsOnly,
             ],
           ),
@@ -164,7 +164,7 @@ class _PlatformPhoneNumberFormWidgetState
 
         // Electricity prepaid/postpaid tabs
         if (widget.serviceType == PlatformProductType.electricity) ...[
-          8.verticalSpace,
+          16.verticalSpace,
           TabBar(
             controller: _tabController,
             indicator: BoxDecoration(
@@ -186,7 +186,7 @@ class _PlatformPhoneNumberFormWidgetState
 
         // Dropdown for dataType (mobile data) or sub_name (cable TV)
         if (state.dropdownOptions.isNotEmpty) ...[
-          8.verticalSpace,
+          24.verticalSpace,
           AppDropdown(
             title: state.selectedDataType ?? widget.dropdownHint!,
             options: state.dropdownOptions,
@@ -199,7 +199,7 @@ class _PlatformPhoneNumberFormWidgetState
             widget.serviceType != PlatformProductType.electricity &&
             widget.serviceType != PlatformProductType.airtime &&
             widget.serviceType != PlatformProductType.betting) ...[
-          8.verticalSpace,
+          24.verticalSpace,
           AppDropdown(
             title: state.selectedSubProduct?.subName ?? 'Select package',
             options: state.subProducts.map((e) => e.subName!).toList(),

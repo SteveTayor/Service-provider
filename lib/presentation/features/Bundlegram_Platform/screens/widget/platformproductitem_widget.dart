@@ -33,8 +33,27 @@ class ProductItemGrid extends ConsumerWidget {
         serviceType == PlatformProductType.betting ||
         serviceType == PlatformProductType.electricity;
 
+    // final validList =
+    // products.where((e) => e.dataSize != null && e.dataSize! > 0).toList();
     final validList =
-        products.where((e) => e.dataSize != null && e.dataSize! > 0).toList();
+        products.where((e) => e.dataSize != null && e.dataSize! > 0).toList()
+          ..sort((a, b) {
+            // Convert everything to MB for sorting
+            double sizeInMB(SubProduct p) {
+              String? name = p.subName?.toUpperCase();
+
+              // Priority: Check TB, then GB, else assume MB
+              if (name != null && name.contains('TB')) {
+                return p.dataSize! * 1024 * 1024; // TB to MB
+              } else if (name != null && name.contains('GB')) {
+                return p.dataSize! * 1024; // GB to MB
+              } else {
+                return p.dataSize!; // already in MB
+              }
+            }
+
+            return sizeInMB(a).compareTo(sizeInMB(b));
+          });
 
     if (!isAmountPresetGrid && state.isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -60,7 +79,7 @@ class ProductItemGrid extends ConsumerWidget {
             crossAxisCount: 3,
             mainAxisSpacing: 20.h,
             crossAxisSpacing: 10.w,
-            childAspectRatio: isAmountPresetGrid ? 1.5 : 1.3,
+            childAspectRatio: isAmountPresetGrid ? 1.6 : 1.4,
           ),
           itemCount: isAmountPresetGrid ? amounts.length : validList.length,
           itemBuilder: (_, i) {
@@ -210,18 +229,6 @@ class ProductItemGrid extends ConsumerWidget {
         24.verticalSpace,
       ],
     );
-  }
-
-  String formatDataSize(double sizeInGb) {
-    if (sizeInGb >= 1024) {
-      return '${(sizeInGb / 1024).toStringAsFixed(2)}TB';
-    } else if (sizeInGb >= 1) {
-      return '${sizeInGb.toStringAsFixed(2)}GB';
-    } else if (sizeInGb >= 0.001) {
-      return '${(sizeInGb * 1000).toStringAsFixed(2)}MB';
-    } else {
-      return '${(sizeInGb * 1000000).toStringAsFixed(2)}KB';
-    }
   }
 }
 

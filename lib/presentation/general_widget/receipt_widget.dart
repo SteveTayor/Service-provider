@@ -1,17 +1,14 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
-import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
-import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -20,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart'
+    as saver;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -271,19 +270,16 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await Future.delayed(
-          const Duration(milliseconds: 400)); // Give the widget time to paint
+      await Future.delayed(const Duration(milliseconds: 500));
       _captureAndShare();
     });
   }
 
   Future<void> _captureAndShare() async {
     try {
-      // final boundary = _boundaryKey.currentContext?.findRenderObject()
-      //     as RenderRepaintBoundary?;
+      // ─── RENDERED WIDGET BOUNDARY ──────────────────────────────────────────
       RenderRepaintBoundary? boundary;
       int attempts = 0;
-      // Wait until render is complete or max attempts reached
       while ((boundary = _boundaryKey.currentContext?.findRenderObject()
                       as RenderRepaintBoundary?)
                   ?.debugNeedsPaint ==
@@ -294,44 +290,93 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
       }
 
       if (boundary == null) {
-        debugPrint("Boundary not ready");
+        _showError("Unable to capture receipt: boundary not ready.");
+        if (mounted) Navigator.pop(context);
         return;
       }
 
-      // Ensure it's painted before capturing
-      if (boundary.debugNeedsPaint) {
-        await Future.delayed(const Duration(milliseconds: 300));
-        return _captureAndShare(); // retry once
+      // ─── CONVERT TO PNG BYTES ─────────────────────────────────────────────
+      context.showLoadingDialog(message: 'Downloading ...');
+      final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      final ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) {
+        context.dismissDialog();
+        _showError("Failed to convert receipt to image.");
+        if (mounted) Navigator.pop(context);
+        return;
+      }
+      final Uint8List pngBytes = byteData.buffer.asUint8List();
+
+      // ─── WRITE TO TEMP FILE ───────────────────────────────────────────────
+      final Directory tempDir = await getTemporaryDirectory();
+      final String filePath =
+          '${tempDir.path}/bundlegram_receipt_${widget.data.transactionId ?? DateTime.now().millisecondsSinceEpoch}.png';
+      final File file = File(filePath);
+      await file.writeAsBytes(pngBytes);
+
+      // ─── ATTEMPT TO SHARE ─────────────────────────────────────────────────
+      try {
+        final result = await Share.shareXFiles(
+          [
+            XFile(
+              file.path,
+              name:
+                  "bundlegram_receipt_${widget.data.transactionId ?? DateTime.now().millisecondsSinceEpoch}.png",
+            ),
+          ],
+          text: 'TXN_bundlegram_receipt',
+          subject: 'Transaction Receipt',
+        );
+
+        context.dismissDialog();
+        if (result.status == ShareResultStatus.success) {
+          debugPrint("Share successful");
+          context.showCustomSnackBar('Transaction receipt shared successfully');
+        } else {
+          debugPrint("Share cancelled or failed: ${result.status}");
+          await _saveToGallery(pngBytes);
+        }
+      } catch (e) {
+        context.dismissDialog();
+        debugPrint("SharePlus exception: $e");
+        await _saveToGallery(pngBytes);
       }
 
-      unawaited(context.showLoadingDialog(message: 'Downloading ...'));
-      final image = await boundary.toImage(pixelRatio: 3.0);
-      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      final pngBytes = byteData!.buffer.asUint8List();
-
-      final tempDir = await getTemporaryDirectory();
-      final filePath =
-          '${tempDir.path}/bundlegram_receipt_${DateTime.now().millisecondsSinceEpoch}.png';
-
-      final file = File(filePath);
-      await file.writeAsBytes(pngBytes);
-      context.dismissDialog();
-      await SharePlus.instance.share(
-        ShareParams(
-          text: 'TXN_bundlegram_receipt',
-          files: [XFile(file.path)],
-          title: 'Transaction Receipt',
-        ),
-      );
-      context.showCustomSnackBar('Transaction receipt downloaded successfully');
-      if (mounted) Navigator.pop(context); // close the popup after sharing
+      // ─── NAVIGATE BACK ───────────────────────────────────────────────────
+      if (mounted) Navigator.pop(context);
     } catch (e) {
       context.dismissDialog();
-      debugPrint('Share failed: ${e.toString()}');
-      if (mounted) {
-        log('Failed to share receipt');
-        // context.showErrorSnackBar('Failed to share receipt');
+      debugPrint("Error capturing/sharing receipt: $e");
+      // _showError("An unexpected error occurred.");
+      // if (mounted) Navigator.pop(context);
+    }
+  }
+
+  /// Saves the receipt image to the gallery using `image_gallery_saver_plus`.
+  Future<void> _saveToGallery(Uint8List pngBytes) async {
+    try {
+      final result = await saver.ImageGallerySaverPlus.saveImage(
+        pngBytes,
+        name:
+            "bundlegram_receipt_${widget.data.transactionId ?? DateTime.now().millisecondsSinceEpoch}",
+      );
+
+      if (result['isSuccess'] == true) {
+        context.showCustomSnackBar("Receipt saved to gallery 📸");
+      } else {
+        _showError("Failed to save receipt to gallery.");
       }
+    } catch (e) {
+      debugPrint("Error saving to gallery: $e");
+      _showError("Failed to save receipt to gallery.");
+    }
+  }
+
+  /// Centralized error display using SnackBar.
+  void _showError(String message) {
+    if (mounted) {
+      context.showErrorSnackBar(message);
     }
   }
 

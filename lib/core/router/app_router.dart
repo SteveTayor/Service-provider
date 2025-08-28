@@ -21,6 +21,7 @@ import 'package:bundlegram/presentation/features/onboarding/screens/resetpasswor
 import 'package:bundlegram/presentation/features/onboarding/screens/splash_screen.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/termcondition_screen.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/walkthrough_screen.dart';
+import 'package:bundlegram/presentation/features/promo/views/promo_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/changeaccountpin_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/changepassword_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/notiificationsetting_screen.dart';
@@ -208,6 +209,10 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+        path: RouteConstants.promo,
+        builder: (context, state) => const PromoScreen(),
+      ),
 
       //   ShellRoute(
       //     builder: (context, state, child) =>const BundlegramScaffold(
@@ -225,7 +230,6 @@ class AppRouter {
       //         ],
       //       ),
       //     ],
-
       //   ),
     ],
     // redirect: RouteGuards.authGuard,

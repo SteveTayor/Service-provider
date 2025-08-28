@@ -7,20 +7,16 @@ import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/auth/auth_model.dart';
-import 'package:bundlegram/data/models/auth/registeration/registeration_response.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dartz/dartz.dart';
 
-import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
-import 'package:bundlegram/presentation/general_widget/app_loader.dart';
 import 'package:go_router/go_router.dart';
 
-final registerProvider = ChangeNotifierProvider<RegisterProvider>((ref) {
+final registerProvider = ChangeNotifierProvider.autoDispose((ref) {
   final api = ref.read(apiServiceProvider);
-  final storage = ref.read(secureStorageHelperProvider); // inject storage
+  final storage = ref.read(secureStorageHelperProvider);
   return RegisterProvider(api, storage, ref);
 });
 
@@ -31,16 +27,13 @@ class RegisterProvider extends ChangeNotifier {
 
   RegisterProvider(this._api, this._storage, this._ref) {
     // listen for field changes to validate form
-    for (final c in [
-      firstNameCtrl,
-      lastNameCtrl,
-      emailCtrl,
-      phoneCtrl,
-      passwordCtrl,
-      confirmCtrl
-    ]) {
-      c.addListener(_validate);
-    }
+
+    firstNameCtrl.addListener(validate);
+    lastNameCtrl.addListener(validate);
+    emailCtrl.addListener(validate);
+    phoneCtrl.addListener(validate);
+    passwordCtrl.addListener(validate);
+    confirmCtrl.addListener(validate);
   }
 
   // controllers
@@ -105,7 +98,7 @@ class RegisterProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _validate() {
+  void validate() {
     final valid = formKey.currentState?.validate() ?? false;
     if (valid != _isValid) {
       _isValid = valid;
@@ -114,7 +107,7 @@ class RegisterProvider extends ChangeNotifier {
   }
 
   Future<void> submit(BuildContext context) async {
-    if (!_isValid || !_agreed) return;
+    if (!_isValid) return;
 
     _setLoading(true);
     _setError(null);

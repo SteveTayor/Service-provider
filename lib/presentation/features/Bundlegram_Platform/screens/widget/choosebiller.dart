@@ -165,8 +165,11 @@ import 'package:go_router/go_router.dart';
 
 class ChoosebillerWidget extends ConsumerWidget {
   final PlatformProductType serviceType;
-  final void Function(String? imagePath, String name, int productId)
-      onProviderSelected;
+  final void Function(
+    String? imagePath,
+    String name,
+    int productId,
+  ) onProviderSelected;
 
   const ChoosebillerWidget({
     super.key,
@@ -306,7 +309,9 @@ class ChoosebillerWidget extends ConsumerWidget {
               }
 
               // For all others
-              final items = resp.data ?? [];
+              final items =
+                  (resp.data ?? []).where((p) => p.status == '1').toList();
+
               if (items.isEmpty) {
                 return Text('No providers available',
                     style: context.textTheme.bodySmall);

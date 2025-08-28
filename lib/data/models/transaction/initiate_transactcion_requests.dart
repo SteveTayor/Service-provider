@@ -9,6 +9,7 @@ class InitiateTransactionRequest {
   final int? subProdId;
   final String? serviceId;
   final String? pin;
+  final String? name;
 
   InitiateTransactionRequest({
     this.amount,
@@ -21,6 +22,7 @@ class InitiateTransactionRequest {
     this.subProdId,
     this.serviceId,
     this.pin,
+    this.name,
   });
 
   factory InitiateTransactionRequest.fromJson(Map<String, dynamic> json) =>
@@ -35,6 +37,7 @@ class InitiateTransactionRequest {
         subProdId: json["sub_prod_id"] as int,
         serviceId: json["service_id"] as String,
         pin: json["pin"] as String,
+        name: json["name"] as String,
       );
 
   Map<String, dynamic> toJson() => {
@@ -48,5 +51,6 @@ class InitiateTransactionRequest {
         "sub_prod_id": subProdId,
         "service_id": serviceId,
         "pin": pin,
+        "name": name,
       };
 }

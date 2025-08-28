@@ -69,7 +69,7 @@ class AppTheme {
           fontFamily: FontFamily.robotoSemiBold,
         ),
         titleLarge: TextStyle(
-          fontSize: 36.sp,
+          fontSize: 40.sp,
           fontWeight: FontWeight.w900,
           color: AppColors.black,
           letterSpacing: 1,
