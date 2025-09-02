@@ -183,6 +183,24 @@ class LoginProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> loginWithStoredCredentials(BuildContext context) async {
+    final email = await _storage.getRememberedEmail();
+    final password = await _storage.getPassword();
+
+    if (email == null || password == null) {
+      // context.showErrorSnackBar(
+      //     "Stored credentials not found. Please sign in again.");
+      context.go(RouteConstants.login);
+      return;
+    }
+
+    emailCtrl.text = email;
+    passwordCtrl.text = password;
+
+    // Reuse the submit() flow
+    await submit(context);
+  }
+
   Future<void> submit(BuildContext context) async {
     FocusScope.of(context).unfocus();
     if (!_isValid) return;
@@ -264,6 +282,12 @@ class LoginProvider extends ChangeNotifier {
           _setLoading(false);
           return;
         }
+        final profile = profileRes.fold((_) => null, (r) => r);
+
+        if (profile?.data?.username != null) {
+          await _storage.setUsername(profile!.data!.username!);
+        }
+
         // unawaited(context.showLoadingDialog(message: 'Fetching banks...'));
         final bankRes = await _api.getAllBanks(token);
         if (bankRes.isLeft()) {

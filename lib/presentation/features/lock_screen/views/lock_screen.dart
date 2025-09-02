@@ -50,6 +50,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
   int _currentIndex = 0;
   String? _errorMessage;
   DateTime? _lastBack;
+  String? _displayName;
 
   late AnimationController _shakeController;
   late Animation<double> _offsetAnimation;
@@ -65,6 +66,18 @@ class _LockScreenState extends ConsumerState<LockScreen>
     _offsetAnimation = Tween(begin: 0.0, end: 24.0)
         .chain(CurveTween(curve: Curves.elasticIn))
         .animate(_shakeController);
+
+    _loadCachedName();
+  }
+
+  Future<void> _loadCachedName() async {
+    final storage = ref.read(secureStorageHelperProvider);
+    final username = await storage.getUsername();
+    final email = await storage.getRememberedEmail();
+
+    setState(() {
+      _displayName = username ?? email ?? "User";
+    });
   }
 
   @override
@@ -96,8 +109,8 @@ class _LockScreenState extends ConsumerState<LockScreen>
   }
 
   Future<void> _verifyPin(String enteredPin) async {
-    final userEmail =
-        await ref.read(secureStorageHelperProvider).getRememberedEmail();
+    final storage = ref.read(secureStorageHelperProvider);
+    final userEmail = await storage.getRememberedEmail();
     if (userEmail == null) {
       setState(() {
         _errorMessage = 'User not authenticated. Please log in.';
@@ -108,10 +121,12 @@ class _LockScreenState extends ConsumerState<LockScreen>
       return;
     }
 
-    final storedPin =
-        await ref.read(secureStorageHelperProvider).getPin(userEmail);
+    final storedPin = await storage.getPin(userEmail);
     if (storedPin == enteredPin) {
       // Successful verification, navigate back to dashboard
+      await ref
+          .read(loginProvider.notifier)
+          .loginWithStoredCredentials(context);
       context.pushReplacement(RouteConstants.dashboard);
     } else {
       setState(() {
@@ -204,7 +219,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                   24.verticalSpace,
                   // Greeting text
                   Text(
-                    '${DateTime.now().getGreeting()}, ${profileProv?.username ?? "User"}',
+                    '${DateTime.now().getGreeting()}, ${profileProv?.username ?? _displayName ?? "User"}',
                     textAlign: TextAlign.center,
                     style: context.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,

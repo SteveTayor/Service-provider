@@ -14,7 +14,7 @@ class SecureStorageHelper {
   static const _longitudeKey = 'longitude';
   static const _platformKey = 'platform';
   static const _appVersionCodeKey = 'app_version_code';
-  static const _pinKey = "user_pin";
+  static const _usernameKey = 'cached_username';
 
   SecureStorageHelper(this._storage);
 
@@ -40,6 +40,18 @@ class SecureStorageHelper {
 
   Future<void> deleteAuthToken() async {
     await _storage.delete(key: _tokenKey);
+  }
+
+  Future<void> setUsername(String username) async {
+    await _storage.write(key: _usernameKey, value: username);
+  }
+
+  Future<String?> getUsername() async {
+    return await _storage.read(key: _usernameKey);
+  }
+
+  Future<void> clearUsername() async {
+    await _storage.delete(key: _usernameKey);
   }
 
   Future<void> setPassword(String password) async {
