@@ -217,7 +217,7 @@ class LoginProvider extends ChangeNotifier {
         if (token == null) {
           context
             ..dismissDialog()
-            ..showErrorSnackBar("Token missing in response");
+            ..showErrorSnackBar('Token missing in response');
           _setLoading(false);
           return;
         }
@@ -246,7 +246,7 @@ class LoginProvider extends ChangeNotifier {
         // Check if username creation is required
         final message = loginData.message;
         if (message != null &&
-            message == "Please create a username to continue") {
+            message == 'Please create a username to continue') {
           context.dismissDialog();
           context.go(
             RouteConstants.chooseUsername,
@@ -264,12 +264,18 @@ class LoginProvider extends ChangeNotifier {
           _setLoading(false);
           return;
         }
+        final profile = profileRes.fold((_) => null, (r) => r);
+
+        if (profile?.data?.username != null) {
+          await _storage.setUsername(profile!.data!.username!);
+        }
+
         // unawaited(context.showLoadingDialog(message: 'Fetching banks...'));
         final bankRes = await _api.getAllBanks(token);
         if (bankRes.isLeft()) {
           context
             ..dismissDialog()
-            ..showErrorSnackBar("Failed to fetch banks");
+            ..showErrorSnackBar('Failed to fetch banks');
           _setLoading(false);
           return;
         }
@@ -277,7 +283,7 @@ class LoginProvider extends ChangeNotifier {
         // unawaited(context.showLoadingDialog(message: 'Fetching wallet...'));
         final walletRes = await _api.getWallet(token);
         if (walletRes.isLeft()) {
-          context.showErrorSnackBar("Failed to fetch wallet");
+          context.showErrorSnackBar('Failed to fetch wallet');
           // ..dismissDialog()
           _setLoading(false);
           return;
@@ -299,16 +305,16 @@ class LoginProvider extends ChangeNotifier {
                     await result.fold(
                       (failure) {
                         context.showErrorSnackBar(
-                          "Failed to verify PIN",
+                          'Failed to verify PIN',
                         );
                       },
                       (data) async {
-                        if (data.status == "success") {
+                        if (data.status == 'success') {
                           await _storage.setPin(userEmail, pin);
                           ctx.pushReplacement(RouteConstants.dashboard);
                         } else {
                           context.showErrorSnackBar(
-                            "Failed to verify PIN",
+                            'Failed to verify PIN',
                           );
                         }
                       },
@@ -360,9 +366,8 @@ class LoginProvider extends ChangeNotifier {
           await _storage.clearAll();
           _ref.read(dashboardProvider).resetIndex();
           // Navigate to login
-          context
-            ..go(RouteConstants.login)
-            ..showSuccessSnackBar(response.message ?? 'Logged out');
+          context.go(RouteConstants.login);
+          // ..showSuccessSnackBar(response.message ?? 'Logged out');
         } else {
           context.showErrorSnackBar(response.message ?? 'Logout failed');
         }

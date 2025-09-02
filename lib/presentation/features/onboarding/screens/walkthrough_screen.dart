@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/features/onboarding/notifier/onboard_notifier.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
@@ -128,7 +131,18 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen> {
               ),
               25.verticalSpace,
               InkWell(
-                onTap: () => context.push(RouteConstants.login),
+                onTap: () async {
+                  final storage = ref.read(secureStorageHelperProvider);
+                  final rememberedEmail = await storage.getRememberedEmail();
+
+                  if (rememberedEmail != null) {
+                    // Go to lock screen if email exists
+                    unawaited(context.push(RouteConstants.lockScreen));
+                  } else {
+                    // Otherwise go to login
+                    unawaited(context.push(RouteConstants.login));
+                  }
+                },
                 child: Text(
                   'I already have an account',
                   style: context.textTheme.bodyMedium,

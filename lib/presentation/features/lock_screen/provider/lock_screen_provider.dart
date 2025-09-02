@@ -1,0 +1,98 @@
+import 'dart:async';
+
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
+import 'package:bundlegram/data/models/auth/auth_model.dart';
+import 'package:bundlegram/data/repositories/api_services.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+final lockScreenServiceProvider = Provider<LockScreenService>((ref) {
+  final api = ref.read(apiServiceProvider);
+  final storage = ref.read(secureStorageHelperProvider);
+  return LockScreenService(api, storage, ref);
+});
+
+class LockScreenService {
+  final ApiService _api;
+  final SecureStorageHelper _storage;
+  final Ref _ref;
+
+  LockScreenService(this._api, this._storage, this._ref);
+
+  Future<void> performLogin(
+      String email, String password, BuildContext context) async {
+    final request = LoginRequest(
+      email: email.trim(),
+      password: password.trim(),
+    );
+
+    unawaited(context.showLoadingDialog(message: 'Logging in...'));
+
+    final loginResult = await _api.login(request);
+
+    await loginResult.fold(
+      (fail) async {
+        context.dismissDialog();
+        FocusScope.of(context).unfocus();
+
+        await Future.delayed(const Duration(milliseconds: 100));
+        final message = fail.properties.isNotEmpty
+            ? fail.properties.join('\n')
+            : 'Login failed';
+
+        context.showErrorSnackBar(message);
+      },
+      (loginData) async {
+        final token = loginData.data?.token;
+        if (token == null) {
+          context
+            ..dismissDialog()
+            ..showErrorSnackBar('Token missing in response');
+
+          return;
+        }
+
+        await _storage.setAuthToken(token);
+
+        // Fetch profile
+        final profileRes = await _api.getProfile(token);
+        if (profileRes.isLeft()) {
+          context.dismissDialog();
+          // ..showErrorSnackBar("Failed to fetch profile");
+
+          return;
+        }
+
+        // Fetch banks
+        final bankRes = await _api.getAllBanks(token);
+        if (bankRes.isLeft()) {
+          context
+            ..dismissDialog()
+            ..showErrorSnackBar("Failed to fetch banks");
+          return;
+        }
+
+        // Fetch wallet
+        final walletRes = await _api.getWallet(token);
+        if (walletRes.isLeft()) {
+          context.showErrorSnackBar("Failed to fetch wallet");
+          return;
+        }
+
+        // Fetch transactions
+        await _ref
+            .read(globalProvider.notifier)
+            .fetchUsersTransactions(context);
+
+        context
+          ..dismissDialog()
+          ..pushReplacement(RouteConstants.dashboard);
+      },
+    );
+  }
+}
