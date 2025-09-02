@@ -18,6 +18,7 @@ class RouteConstants {
   static const String onboardResult = '/onboardResult';
   static const String transactionSuccess = '/transaction-success';
   // static const String resetPassword = '/resetPassword';
+  static const String lockScreen = '/lockScreen';
 
   /// Main app routes
   static const String dashboard = '/dashboard';

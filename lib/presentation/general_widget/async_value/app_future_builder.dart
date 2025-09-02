@@ -73,8 +73,8 @@ class AppAsyncBuilder<T> extends ConsumerWidget {
                     ),
                   ),
                   style: TextButton.styleFrom(
-                    foregroundColor: AppColors.primaryColor,
-                  ),
+                      foregroundColor: AppColors.primaryColor,
+                      backgroundColor: AppColors.background),
                 ),
               ],
             ],

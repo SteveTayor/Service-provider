@@ -445,6 +445,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/linkyourbvn.svg
   String get linkyourbvn => 'assets/svgs/linkyourbvn.svg';
 
+  /// File path: assets/svgs/lock_icon.svg
+  String get lockIcon => 'assets/svgs/lock_icon.svg';
+
   /// File path: assets/svgs/logout-1--arrow-exit-frame-leave-logout-rectangle-right (1).svg
   String get logout1ArrowExitFrameLeaveLogoutRectangleRight1 =>
       'assets/svgs/logout-1--arrow-exit-frame-leave-logout-rectangle-right (1).svg';
@@ -650,6 +653,7 @@ class $AssetsSvgsGen {
         infoCircle,
         internetservice,
         linkyourbvn,
+        lockIcon,
         logout1ArrowExitFrameLeaveLogoutRectangleRight1,
         logout1ArrowExitFrameLeaveLogoutRectangleRight,
         mailresent,

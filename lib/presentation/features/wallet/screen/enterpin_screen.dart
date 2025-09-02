@@ -199,7 +199,7 @@ class _EnterPinScreenState extends State<EnterPinScreen>
             ),
           ),
           TextButton(
-            onPressed: () => context.push(RouteConstants.forgetPassword),
+            onPressed: () => context.push(RouteConstants.resetAccountPin),
             child: Text(
               'Forgot PIN?',
               style: context.textTheme.bodyMedium!.copyWith(

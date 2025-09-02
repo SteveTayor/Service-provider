@@ -77,7 +77,7 @@ class PlatFormDrawer extends ConsumerWidget {
                           path:
                               Assets.svgs.warrantyBadgeHighlightStreamlineFlex)
                     ] else ...[
-                      AppSvgIcon(path: Assets.svgs.tickCircle),
+                      // AppSvgIcon(path: Assets.svgs.tickCircle),
                     ]
                   ],
                 ),

@@ -69,8 +69,8 @@ class NavBar extends ConsumerWidget {
                       path: index == currentIndex
                           ? '${items[index]['active']}'
                           : '${items[index]['icon']}',
-                      width: 14.w,
-                      height: 14.h,
+                      width: 19.37.w,
+                      height: 20.25.h,
                       fit: BoxFit.scaleDown,
                     ),
                     6.verticalSpace,

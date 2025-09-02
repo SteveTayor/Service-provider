@@ -59,7 +59,7 @@ class AppTheme {
         labelMedium: TextStyle(
           fontSize: 14.sp,
           fontWeight: FontWeight.w400,
-          color: AppColors.grey33,
+          color: Color(0xFF333333),
           fontFamily: FontFamily.robotoRegular,
         ),
         labelSmall: TextStyle(

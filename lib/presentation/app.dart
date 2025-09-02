@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/config/interceptors/inactivity_wrapper.dart';
+import 'package:bundlegram/core/providers/app_globals..dart';
 import 'package:bundlegram/core/providers/connectivity_provider.dart';
 import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/utils/themes.dart';
@@ -44,6 +45,10 @@ class App extends ConsumerWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
+            // ---------- ----------
+            scaffoldMessengerKey: scaffoldMessengerKey,
+
+            // ---
             builder: (context, child) {
               // final connectivityAsync = ref.watch(connectivityProvider);
 

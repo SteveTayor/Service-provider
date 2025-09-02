@@ -1,4 +1,3 @@
-// lib/presentation/features/setting/screens/change_password_screen.dart
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/validators.dart';
@@ -69,16 +68,26 @@ class _ChangepasswordScreenState extends ConsumerState<ChangepasswordScreen> {
                 AppTextField(
                   controller: controller.newPasswordController,
                   obscureText: controller.showNewPassword,
-                  hintText: 'New Password',
+                  hintText: controller.enableNewPasswordFields
+                      ? 'New Password'
+                      : 'Enter current password first',
                   label: 'New Password',
-                  validateFunction: Validators.password(),
+                  enabled: controller
+                      .enableNewPasswordFields, // ✅ Use the getter from controller
+                  validateFunction: controller.enableNewPasswordFields
+                      ? Validators.password()
+                      : null,
                   suffixIcon: GestureDetector(
-                    onTap: controller.toggleNewPasswordVisibility,
+                    onTap: controller.enableNewPasswordFields
+                        ? controller.toggleNewPasswordVisibility
+                        : null,
                     child: Icon(
                       controller.showNewPassword
                           ? Icons.visibility
                           : Icons.visibility_off,
-                      color: AppColors.grey33,
+                      color: controller.enableNewPasswordFields
+                          ? AppColors.grey33
+                          : AppColors.greyb3,
                       size: 24,
                     ),
                   ),
@@ -86,18 +95,28 @@ class _ChangepasswordScreenState extends ConsumerState<ChangepasswordScreen> {
                 AppTextField(
                   controller: controller.confirmPasswordController,
                   obscureText: controller.showConfirmPassword,
-                  hintText: 'Confirm New Password',
+                  hintText: controller.enableNewPasswordFields
+                      ? 'Confirm New Password'
+                      : 'Enter current password first',
                   label: 'Confirm New Password',
-                  validateFunction: Validators.confirmPass(
-                    controller.newPasswordController.text,
-                  ),
+                  onChange: (value) => controller.validateForm(),
+                  enabled: controller
+                      .enableNewPasswordFields, // ✅ Use the getter from controller
+                  validateFunction: controller.enableNewPasswordFields
+                      ? Validators.confirmPass(
+                          controller.newPasswordController.text)
+                      : null,
                   suffixIcon: GestureDetector(
-                    onTap: controller.toggleConfirmPasswordVisibility,
+                    onTap: controller.enableNewPasswordFields
+                        ? controller.toggleConfirmPasswordVisibility
+                        : null,
                     child: Icon(
                       controller.showConfirmPassword
                           ? Icons.visibility
                           : Icons.visibility_off,
-                      color: AppColors.grey33,
+                      color: controller.enableNewPasswordFields
+                          ? AppColors.grey33
+                          : AppColors.greyb3,
                       size: 24,
                     ),
                   ),

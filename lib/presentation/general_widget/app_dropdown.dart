@@ -6,6 +6,7 @@ import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
+import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -62,25 +63,40 @@ class AppDropdown extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
-                  child: TextField(
+                  child: AppTextField(
                     decoration: InputDecoration(
-                      hintText: 'Search...',
-                      hintStyle: context.textTheme.bodySmall!
-                          .copyWith(color: AppColors.grey33),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6.r),
-                      ),
-                      fillColor: isFilled
-                          ? AppColors.greyD0.withOpacity(0.3)
-                          : AppColors.white,
+                      fillColor: AppColors.searchbarColor,
                       filled: true,
-                      prefixIcon: Icon(Icons.search),
+                      prefixIcon: const Padding(
+                        padding: EdgeInsets.only(left: 16),
+                        child: Icon(
+                          Icons.search,
+                          color: AppColors.grey8E,
+                        ),
+                      ),
+                      hintText: 'Search ...',
+                      hintStyle: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppColors.searchHintColor,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(80.r),
+                      ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(6.r),
-                        borderSide: BorderSide(color: AppColors.greyD0),
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(80.r),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(80.r),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(80.r),
                       ),
                     ),
-                    onChanged: (val) {
+                    onChange: (val) {
                       filter = val.toLowerCase();
                       setState(() {
                         filtered.value = options
@@ -111,6 +127,9 @@ class AppDropdown extends StatelessWidget {
                       );
                     },
                   ),
+                ),
+                const SizedBox(
+                  height: 30,
                 ),
               ],
             ),

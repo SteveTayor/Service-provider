@@ -20,7 +20,7 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
     with WidgetsBindingObserver {
   Timer? _inactivityTimer;
   DateTime _lastInteraction = DateTime.now();
-  final _timeoutDuration = const Duration(minutes: 5);
+  final _timeoutDuration = const Duration(minutes: 10);
   final FocusNode _keyboardFocusNode = FocusNode();
   bool _isLoggingOut = false;
 
@@ -62,17 +62,18 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
     if (_isLoggingOut) return; // prevent multiple triggers
     _isLoggingOut = true;
 
-    final secureStorage = ref.read(secureStorageHelperProvider);
-    await secureStorage.deleteAuthToken();
+    // final secureStorage = ref.read(secureStorageHelperProvider);
+    // await secureStorage.deleteAuthToken();
 
     final ctx = navigatorKey.currentContext;
     if (ctx != null) {
       // use navigatorKey context for accurate route detection
       final currentRoute = ModalRoute.of(ctx)?.settings.name ?? '';
 
-      if (!currentRoute.contains(RouteConstants.login)) {
-        ctx.go(RouteConstants.login);
-        ctx.showCustomSnackBar('Logged out due to inactivity.');
+      if (!currentRoute.contains(RouteConstants.lockScreen)) {
+        ctx
+          ..go(RouteConstants.lockScreen)
+          ..showCustomSnackBar('Locked out due to inactivity.');
       }
     }
 

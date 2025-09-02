@@ -1,6 +1,7 @@
 import 'package:bundlegram/data/models/faqs_model.dart';
 import 'package:bundlegram/presentation/features/account%20setup/notifier/accountsetup_data.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
+import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
@@ -49,30 +50,64 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
               color: AppColors.searchbarColor,
               borderRadius: BorderRadius.circular(80.r),
             ),
-            child: TextField(
-              onChanged: _filterFAQs,
+            child: AppTextField(
               decoration: InputDecoration(
+                fillColor: AppColors.searchbarColor,
+                filled: true,
+                prefixIcon: const Padding(
+                  padding: EdgeInsets.only(left: 16),
+                  child: Icon(
+                    Icons.search,
+                    color: AppColors.grey8E,
+                  ),
+                ),
                 hintText: 'Search...',
                 hintStyle: TextStyle(
+                  fontSize: 14.sp,
                   color: AppColors.searchHintColor,
-                  fontSize: 16,
                 ),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: AppColors.searchHintColor,
-                  size: 20,
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(80.r),
                 ),
-                prefixIconConstraints: BoxConstraints(
-                  minWidth: 48.w,
-                  minHeight: 24.h,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(80.r),
                 ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 16.w,
-                  vertical: 8.h,
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(80.r),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(80.r),
                 ),
               ),
+              onChange: _filterFAQs,
             ),
+            // TextField(
+            //   decoration: InputDecoration(
+            //     hintText: 'Search...',
+            //     hintStyle: TextStyle(
+            //       color: AppColors.searchHintColor,
+            //       fontSize: 16,
+            //     ),
+            //     prefixIcon: Icon(
+            //       Icons.search,
+            //       color: AppColors.searchHintColor,
+            //       size: 20,
+            //     ),
+            //     prefixIconConstraints: BoxConstraints(
+            //       minWidth: 48.w,
+            //       minHeight: 24.h,
+            //     ),
+            //     border: InputBorder.none,
+            //     contentPadding: EdgeInsets.symmetric(
+            //       horizontal: 16.w,
+            //       vertical: 8.h,
+            //     ),
+            //   ),
+            // ),
           ),
           Divider(color: Color(0xFFECECEC)),
           // FAQ List
