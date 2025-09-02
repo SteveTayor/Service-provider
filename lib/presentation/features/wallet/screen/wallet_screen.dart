@@ -70,15 +70,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = ref.watch(platformProvider);
-    final wallet = ref.watch(globalProvider.select((g) => g.walletBalance));
-    final profile = ref.watch(globalProvider.select((g) => g.profile));
-    final transactions =
-        ref.watch(globalProvider.select((g) => g.usersTransactions));
-
-    final walletTxns = transactions.value?.data?.where((txn) {
-      final type = txn.transType?.toLowerCase() ?? '';
-      return type == 'fund_wallet' || type == 'withdrawal';
-    }).toList();
 
     return BundlegramScaffold(
       appBar: BundlegramAppbar(
@@ -96,7 +87,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       body: RefreshIndicator(
         onRefresh: () async {
           context.showLoadingDialog();
-
           try {
             await Future.wait([
               ref.read(globalProvider.notifier).fetchWalletBalance(context),
@@ -112,7 +102,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Stack(
+              Column(
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(20),
@@ -125,6 +115,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                               'Wallet balance',
                               style: context.textTheme.bodyMedium?.copyWith(
                                 color: AppColors.white,
+                                fontSize: 16.sp,
                               ),
                             ),
                             8.horizontalSpace,
@@ -151,6 +142,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                                 textStyle:
                                     context.textTheme.bodyMedium!.copyWith(
                                   color: AppColors.primaryColor,
+                                  fontSize: 16.sp,
                                 ),
                                 onPressed: () {
                                   context.push(RouteConstants.withdrawFund);
@@ -177,6 +169,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                               'Promo rewards',
                               style: context.textTheme.bodyMedium?.copyWith(
                                 color: AppColors.white,
+                                fontSize: 16.sp,
                               ),
                             ),
                             8.horizontalSpace,
@@ -207,28 +200,26 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                     ),
                   ),
                   const Spacer(),
-                  // Align(
-                  //   alignment: Alignment.bottomCenter,
-                  //   child: Assets.images.growth.image(),
-                  // ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: SizedBox(
-                      // height: 100.h, // Set a specific height
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Assets.images.growth.image(
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Assets.images.growth.image(),
                   ),
+                  // Positioned(
+                  //   bottom: 0,
+                  //   left: 0,
+                  //   right: 0,
+                  //   child: SizedBox(
+                  //     // height: 100.h, // Set a specific height
+                  //     child: Align(
+                  //       alignment: Alignment.bottomCenter,
+                  //       child: Assets.images.growth.image(),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ).withContainer(
                 color: AppColors.primaryColor,
-                height: 328.h,
+                height: 360.h,
                 width: context.width,
               ),
               32.verticalSpace,
@@ -255,6 +246,19 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               AppAsyncBuilder(
                 state: ref
                     .watch(globalProvider.select((g) => g.usersTransactions)),
+                onRetry: () async {
+                  await Future.wait([
+                    ref
+                        .read(globalProvider.notifier)
+                        .fetchWalletBalance(context),
+                    ref
+                        .read(globalProvider.notifier)
+                        .fetchUsersTransactions(context),
+                  ]);
+                  ref
+                      .read(walletServiceHistoryProvider('wallet').notifier)
+                      .refresh();
+                },
                 builder: (context, ref, txnsResponse) {
                   final walletTxns = txnsResponse?.data?.where((txn) {
                     final type = txn.transType?.toLowerCase() ?? '';

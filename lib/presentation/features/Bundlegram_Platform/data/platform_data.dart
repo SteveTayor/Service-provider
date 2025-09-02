@@ -82,7 +82,8 @@ class PlatFormData {
             //   context,
             //   MaterialPageRoute(
             //     builder: (context) => const PlatformproductScreen(
-            //         serviceType: PlatformProductType.ePinVoucher),
+            //       serviceType: PlatformProductType.ePinVoucher,
+            //     ),
             //   ),
             // );
           },
@@ -96,16 +97,16 @@ class PlatFormData {
             assetPath: Assets.svgs.educationSvg,
             title: 'Education',
             onPressed: () {
-              context
-                ..pop()
-                ..showCustomSnackBar("coming soon");
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const PlatformproductScreen(
-              //         serviceType: PlatformProductType.education),
-              //   ),
-              // );
+              // context
+              //   ..pop()
+              //   ..showCustomSnackBar("coming soon");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PlatformproductScreen(
+                      serviceType: PlatformProductType.education),
+                ),
+              );
             },
           );
         }),
@@ -138,15 +139,15 @@ class PlatFormData {
               //         serviceType: PlatformProductType.internetServices),
               //   ),
               // );
-              context
-                ..pop()
-                ..showCustomSnackBar("coming soon");
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (ctx) => InternetServiceProviderScreen(),
-              //   ),
-              // );
+              // context
+              //   ..pop()
+              //   ..showCustomSnackBar("coming soon");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => InternetServiceProviderScreen(),
+                ),
+              );
             },
             assetPath: Assets.svgs.internetservice,
             title: 'Internet Provider',

@@ -41,66 +41,68 @@ class TransactionSummary extends ConsumerWidget {
   Widget _buildSummaryRow(String label, String value) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Label
-              Expanded(
-                flex: 2,
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: AppColors.grey83,
-                    // fontSize: 14,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Label - takes up to 40% of available width
+          Expanded(
+            flex: 4,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: AppColors.grey83,
               ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              softWrap: true,
+            ),
+          ),
 
-              // Value + optional icon
-              Expanded(
-                flex: 3,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (label == 'Transaction type' && assetPath != null)
-                      assetPath!.contains('.svg')
-                          ? AppSvgIcon(
-                              path: assetPath!,
-                              fit: BoxFit.scaleDown,
-                              width: 20.w,
-                              height: 20.h,
-                            )
-                          : Image.asset(
-                              assetPath!,
-                              width: 20.w,
-                              height: 20.h,
-                              fit: BoxFit.scaleDown,
-                            ),
-                    if (label == 'Transaction type' && assetPath != null)
-                      8.horizontalSpace,
-                    Flexible(
-                      child: Text(
-                        value.contains('Buy')
-                            ? value.replaceFirst('Buy', '').trim()
-                            : value,
-                        textAlign: TextAlign.right,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: AppColors.grey33,
-                          // fontSize: 14,
-                          fontWeight: FontWeight.w500,
+          8.horizontalSpace,
+
+          // Value + optional icon - takes remaining space
+          Expanded(
+            flex: 6,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (label == 'Transaction type' && assetPath != null) ...[
+                  assetPath!.contains('.svg')
+                      ? AppSvgIcon(
+                          path: assetPath!,
+                          fit: BoxFit.scaleDown,
+                          width: 20.w,
+                          height: 20.h,
+                        )
+                      : Image.asset(
+                          assetPath!,
+                          width: 20.w,
+                          height: 20.h,
+                          fit: BoxFit.scaleDown,
                         ),
-                      ),
+                  4.horizontalSpace,
+                ],
+                Expanded(
+                  child: Text(
+                    value.contains('Buy')
+                        ? value.replaceFirst('Buy', '').trim()
+                        : value,
+                    textAlign: TextAlign.right,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    softWrap: true,
+                    style: TextStyle(
+                      color: AppColors.grey33,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -112,121 +114,162 @@ class TransactionSummary extends ConsumerWidget {
     final walletBalance = walletBalanceAsync.value?.wallet ?? 0.0;
 
     return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.9,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              Flexible(
-                child: Center(
-                  child: Text(
-                    'Summary',
-                    style: context.textTheme.bodyMedium,
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  context.pop();
-                },
-                child: AppSvgIcon(path: Assets.svgs.close),
-              ),
-            ],
-          ),
-          8.verticalSpace,
-          Divider(
-            color: AppColors.divider,
-          ),
-          12.verticalSpace,
-          if (isBecomeAnAgent != true) ...[
-            Text(
-              discountedPrice ?? amount,
-              style: context.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-              // TextStyle(
-              //   fontSize: 26,
-              //   fontWeight: FontWeight.bold,
-              //   color: AppColors.grey33,
-              // ),
-            ),
-            32.verticalSpace,
-            if (transactionType != null) ...[
-              _buildSummaryRow('Transaction type', transactionType!),
-              8.verticalSpace,
-            ],
-            _buildSummaryRow('Amount', amount),
-            8.verticalSpace,
-            if (billValidatedName != null) ...[
-              _buildSummaryRow('Name', billValidatedName!),
-              8.verticalSpace,
-            ],
-            if (discountedPrice != null) ...[
-              _buildSummaryRow('Discounted price', discountedPrice!),
-              8.verticalSpace,
-            ],
-            _buildSummaryRow('Payment method', paymentMethod),
-            8.verticalSpace,
-            if (beneficiary!.isNotEmpty)
-              _buildSummaryRow('Beneficiary', beneficiary!),
-          ] else ...[
-            Text(
-              discountedPrice ?? amount,
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: AppColors.grey33,
+          // Header - Fixed at top
+          Container(
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12.r),
+                topRight: Radius.circular(12.r),
               ),
             ),
-            32.verticalSpace,
-            _buildSummaryRow('Transaction type', transactionType!),
-            8.verticalSpace,
-            _buildSummaryRow('Amount to pay', amount),
-            8.verticalSpace,
-            _buildSummaryRow('Payment method', paymentMethod),
-            16.verticalSpace,
-            Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                AppSvgIcon(path: Assets.svgs.balance),
-                8.horizontalSpace,
-                Text('Balance (${walletBalance.toCurrency()})',
-                    style: context.textTheme.bodySmall),
-                const Spacer(),
-                Flexible(
-                  child: InkWell(
-                    onTap: () {
-                      context.go(RouteConstants.dashboard);
-                    },
-                    child: Text(
-                      'Top-up >',
-                      style: context.textTheme.bodySmall!
-                          .copyWith(color: AppColors.primaryColor),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          'Summary',
+                          style: context.textTheme.bodyMedium,
+                        ),
+                      ),
                     ),
-                  ),
+                    InkWell(
+                      onTap: () => context.pop(),
+                      child: AppSvgIcon(path: Assets.svgs.close),
+                    ),
+                  ],
+                ),
+                8.verticalSpace,
+                Divider(color: AppColors.divider),
+              ],
+            ),
+          ),
+
+          // Scrollable content
+          Flexible(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+                children: [
+                  12.verticalSpace,
+                  if (isBecomeAnAgent != true) ...[
+                    Text(
+                      discountedPrice ?? amount,
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                    32.verticalSpace,
+                    if (transactionType != null) ...[
+                      _buildSummaryRow('Transaction type', transactionType!),
+                      8.verticalSpace,
+                    ],
+                    _buildSummaryRow('Amount', amount),
+                    8.verticalSpace,
+                    if (billValidatedName != null) ...[
+                      _buildSummaryRow('Name', billValidatedName!),
+                      8.verticalSpace,
+                    ],
+                    if (discountedPrice != null) ...[
+                      _buildSummaryRow('Discounted price', discountedPrice!),
+                      8.verticalSpace,
+                    ],
+                    _buildSummaryRow('Payment method', paymentMethod),
+                    8.verticalSpace,
+                    if (beneficiary != null && beneficiary!.isNotEmpty)
+                      _buildSummaryRow('Beneficiary', beneficiary!),
+                  ] else ...[
+                    Text(
+                      discountedPrice ?? amount,
+                      style: TextStyle(
+                        fontSize: 32.sp, // Responsive font size
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.grey33,
+                      ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                    32.verticalSpace,
+                    _buildSummaryRow('Transaction type', transactionType!),
+                    8.verticalSpace,
+                    _buildSummaryRow('Amount to pay', amount),
+                    8.verticalSpace,
+                    _buildSummaryRow('Payment method', paymentMethod),
+                    16.verticalSpace,
+                    Row(
+                      children: [
+                        AppSvgIcon(path: Assets.svgs.balance),
+                        8.horizontalSpace,
+                        Expanded(
+                          child: Text(
+                            'Balance (${walletBalance.toCurrency()})',
+                            style: context.textTheme.bodySmall,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        4.horizontalSpace,
+                        InkWell(
+                          onTap: () => context.go(RouteConstants.dashboard),
+                          child: Text(
+                            'Top-up >',
+                            style: context.textTheme.bodySmall!
+                                .copyWith(color: AppColors.primaryColor),
+                          ),
+                        ),
+                      ],
+                    ).withContainer(
+                      color: const Color(0xffEEF3FF),
+                      padding: context.symmetricPadding(10, 8),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ],
+                  24.verticalSpace,
+                ],
+              ),
+            ),
+          ),
+
+          // Fixed button at bottom
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.only(
+              left: 16.w,
+              right: 16.w,
+              top: 16.h,
+              bottom: MediaQuery.of(context).padding.bottom + 16.h,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(12.r),
+                bottomRight: Radius.circular(12.r),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, -2),
                 ),
               ],
-            ).withContainer(
-              color: const Color(0xffEEF3FF),
-              padding: context.symmetricPadding(10, 8),
-              borderRadius: BorderRadius.circular(6),
             ),
-          ],
-          24.verticalSpace,
-          BundlegramButton(
-            text: 'Pay',
-            onPressed: onPay,
+            child: BundlegramButton(
+              text: 'Pay',
+              onPressed: onPay,
+            ),
           ),
         ],
       ),

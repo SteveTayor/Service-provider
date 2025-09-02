@@ -8,6 +8,7 @@ import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
+import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -84,24 +85,93 @@ class LoginProvider extends ChangeNotifier {
   }
 
   // Helper method to validate device info
+  // --- Replace existing _isDeviceInfoValid with this ---
   bool _isDeviceInfoValid(Map<String, String> deviceInfo) {
     final macAddress = deviceInfo['macAddress'];
     final ipAddress = deviceInfo['ipAddress'];
-    final latitude = deviceInfo['latitude'];
-    final longitude = deviceInfo['longitude'];
     final platform = deviceInfo['platform'];
 
-    // Define validation criteria (adjust as needed)
+    // Make location optional — only require device id, ip and platform
     return macAddress != null &&
         macAddress != 'unknown' &&
         ipAddress != null &&
         ipAddress != '0.0.0.0' &&
-        latitude != null &&
-        latitude != '0.0' &&
-        longitude != null &&
-        longitude != '0.0' &&
         platform != null &&
         platform != 'unknown';
+  }
+
+// --- New helper: collect and persist device info safely (non-blocking) ---
+  Future<void> _collectAndStoreDeviceInfoSafely() async {
+    String macAddress = 'unknown';
+    String ipAddress = '0.0.0.0';
+    String latitude = '0.0';
+    String longitude = '0.0';
+    String platform = 'unknown';
+
+    try {
+      // device id / platform
+      final deviceInfo = DeviceInfoPlugin();
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        macAddress = androidInfo.id ?? 'unknown';
+        platform = 'android';
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        macAddress = iosInfo.identifierForVendor ?? 'unknown';
+        platform = 'ios';
+      }
+
+      // wifi ip (best-effort)
+      try {
+        final info = NetworkInfo();
+        ipAddress = await info.getWifiIP() ?? '0.0.0.0';
+      } catch (e) {
+        debugPrint('Failed to get wifi ip: $e');
+      }
+
+      // Request location permission gracefully and only attempt location if granted
+      PermissionStatus locationStatus;
+      if (Platform.isIOS) {
+        locationStatus = await Permission.locationWhenInUse.status;
+        if (!locationStatus.isGranted) {
+          locationStatus = await Permission.locationWhenInUse.request();
+        }
+      } else {
+        locationStatus = await Permission.location.status;
+        if (!locationStatus.isGranted) {
+          locationStatus = await Permission.location.request();
+        }
+      }
+
+      if (locationStatus.isGranted) {
+        try {
+          final position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high);
+          latitude = position.latitude.toString();
+          longitude = position.longitude.toString();
+        } catch (e) {
+          debugPrint('Could not get geolocation: $e');
+        }
+      } else {
+        // Expected: user denied location. Log for analytics/dev only.
+        debugPrint('Location permission not granted: $locationStatus');
+        // If you want to detect permanentlyDenied and later prompt user to open settings,
+        // you can check: locationStatus.isPermanentlyDenied and act accordingly (not here).
+      }
+
+      // Persist whatever we have (do not block UI)
+      await _storage.setDeviceInfo(
+        macAddress: macAddress,
+        ipAddress: ipAddress,
+        latitude: latitude,
+        longitude: longitude,
+        platform: platform,
+      );
+    } catch (e, st) {
+      // Unexpected error — log or report to analytics. Do NOT show user-facing error.
+      debugPrint('Unexpected error collecting device info: $e\n$st');
+      // Optionally send to crash reporting service.
+    }
   }
 
   Future<void> _loadRememberedEmail() async {
@@ -154,6 +224,7 @@ class LoginProvider extends ChangeNotifier {
 
         await _storage.setAuthToken(token);
         await _storage.setPassword(passwordCtrl.text.trim());
+        final userEmail = emailCtrl.text.trim();
 
         // if (_rememberMe) {
         await _storage.setRememberedEmail(emailCtrl.text.trim());
@@ -161,54 +232,13 @@ class LoginProvider extends ChangeNotifier {
         //   await _storage.clearRememberedEmail();
         // }
 
-        // Device info collection
-        String macAddress = 'unknown';
-        String ipAddress = '0.0.0.0';
-        String latitude = '0.0';
-        String longitude = '0.0';
-        String platform = 'unknown';
-
         final existingDeviceInfo = await _storage.getDeviceInfo();
         final isDeviceInfoValid = _isDeviceInfoValid(existingDeviceInfo);
 
         if (!isDeviceInfoValid) {
-          // unawaited(
-          //     context.showLoadingDialog(message: 'Collecting device info...'));
-          try {
-            final locationStatus = await Permission.location.request();
-            if (!locationStatus.isGranted) {
-              throw Exception('Location permission denied');
-            }
-
-            final deviceInfo = DeviceInfoPlugin();
-            if (Platform.isAndroid) {
-              final androidInfo = await deviceInfo.androidInfo;
-              macAddress = androidInfo.id ?? 'unknown';
-              platform = 'android';
-            } else if (Platform.isIOS) {
-              final iosInfo = await deviceInfo.iosInfo;
-              macAddress = iosInfo.identifierForVendor ?? 'unknown';
-              platform = 'iOS';
-            }
-
-            final info = NetworkInfo();
-            ipAddress = await info.getWifiIP() ?? '0.0.0.0';
-
-            final position = await Geolocator.getCurrentPosition(
-                desiredAccuracy: LocationAccuracy.high);
-            latitude = position.latitude.toString();
-            longitude = position.longitude.toString();
-
-            await _storage.setDeviceInfo(
-              macAddress: macAddress,
-              ipAddress: ipAddress,
-              latitude: latitude,
-              longitude: longitude,
-              platform: platform,
-            );
-          } catch (e) {
-            context.showErrorSnackBar('Failed to collect device info: $e');
-          }
+          // Try to collect device info but do NOT block login if it fails.
+          // Fire-and-forget so users who denied location won't see errors.
+          unawaited(_collectAndStoreDeviceInfoSafely());
         }
 
         _setLoading(false);
@@ -256,11 +286,49 @@ class LoginProvider extends ChangeNotifier {
         await _ref
             .read(globalProvider.notifier)
             .fetchUsersTransactions(context);
-        context
-          ..dismissDialog()
+        final localPin = await _storage.getPin(userEmail);
+        if (localPin == null) {
+          context.dismissDialog();
+          unawaited(
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) => EnterPinScreen(
+                  onVerified: (pin) async {
+                    final result = await _api.createPin(token, pin, pin);
+                    await result.fold(
+                      (failure) {
+                        context.showErrorSnackBar(
+                          "Failed to verify PIN",
+                        );
+                      },
+                      (data) async {
+                        if (data.status == "success") {
+                          await _storage.setPin(userEmail, pin);
+                          ctx.pushReplacement(RouteConstants.dashboard);
+                        } else {
+                          context.showErrorSnackBar(
+                            "Failed to verify PIN",
+                          );
+                        }
+                      },
+                    );
+                  },
+                  isChangedAccountPin: false, // Use existing flag for context
+                ),
+              ),
+            ),
+          );
+        } else {
+          context
+            ..dismissDialog()
+            ..pushReplacement(RouteConstants.dashboard);
+        }
+        // context
+        //   ..dismissDialog()
 
-          // Proceed to dashboard if username is not required
-          ..pushReplacement(RouteConstants.dashboard);
+        //   // Proceed to dashboard if username is not required
+        //   ..pushReplacement(RouteConstants.dashboard);
       },
     );
   }

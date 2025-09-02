@@ -57,7 +57,7 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                   Text(
                     'Bundlegram',
                     style: context.textTheme.bodyMedium!
-                        .copyWith(fontSize: 20, color: AppColors.white),
+                        .copyWith(fontSize: 20.sp, color: AppColors.white),
                   ),
                   AppSvgIcon(
                     onTap: () => platform.goToNotification(context),

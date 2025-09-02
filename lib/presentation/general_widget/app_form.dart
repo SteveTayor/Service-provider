@@ -38,37 +38,62 @@ class _AppFormState extends State<AppForm> {
   Widget build(BuildContext context) {
     return Form(
       key: widget.formKey,
-      child: Column(
-        mainAxisSize: widget.isExpanded! ? MainAxisSize.max : MainAxisSize.min,
-        mainAxisAlignment: widget.isExpanded!
-            ? MainAxisAlignment.spaceBetween
-            : MainAxisAlignment.start,
-        children: [
-          Flexible(
-            child: SingleChildScrollView(
+      child: widget.isExpanded!
+          ? SingleChildScrollView(
               child: Column(
-                children: List.generate(widget.children.length, (index) {
+                children: [
+                  // Form fields
+                  ...List.generate(widget.children.length, (index) {
+                    return widget.children[index]
+                        .withContainer(padding: EdgeInsets.only(bottom: 14.h));
+                  }),
+
+                  // Extra widget if provided
+                  if (widget.extraWidget != null) widget.extraWidget!,
+
+                  // Spacing before button
+                  32.verticalSpace,
+
+                  // Button
+                  Opacity(
+                    opacity: widget.isActive ? 1 : 0.5,
+                    child: BundlegramButton(
+                      color: widget.buttonColor ?? AppColors.primaryColor,
+                      text: widget.buttonText,
+                      onPressed: () {
+                        widget.onPressed();
+                        widget.formKey.currentState!.validate();
+                      },
+                    ),
+                  ),
+
+                  // Bottom padding to ensure button is not cut off
+                  20.verticalSpace,
+                ],
+              ),
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ...List.generate(widget.children.length, (index) {
                   return widget.children[index]
                       .withContainer(padding: EdgeInsets.only(bottom: 14.h));
                 }),
-              ),
+                widget.extraWidget ?? const SizedBox(),
+                32.verticalSpace,
+                Opacity(
+                  opacity: widget.isActive ? 1 : 0.5,
+                  child: BundlegramButton(
+                    color: widget.buttonColor ?? AppColors.primaryColor,
+                    text: widget.buttonText,
+                    onPressed: () {
+                      widget.onPressed();
+                      widget.formKey.currentState!.validate();
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-          widget.extraWidget ?? const SizedBox(),
-          32.verticalSpace,
-          Opacity(
-            opacity: widget.isActive ? 1 : 0.5,
-            child: BundlegramButton(
-              color: widget.buttonColor ?? AppColors.primaryColor,
-              text: widget.buttonText,
-              onPressed: () {
-                widget.onPressed();
-                widget.formKey.currentState!.validate();
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

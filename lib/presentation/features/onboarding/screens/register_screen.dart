@@ -203,6 +203,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ],
             ),
           ),
+          24.verticalSpace,
         ],
       ),
     );

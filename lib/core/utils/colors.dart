@@ -35,4 +35,5 @@ class AppColors {
   static const Color subtitleColor = Color(0xFF808080);
 
   static const Color searchHintColor = Color(0xFF8E8E8E);
+  static const Color closeAcctColor = Color(0xFF333333);
 }

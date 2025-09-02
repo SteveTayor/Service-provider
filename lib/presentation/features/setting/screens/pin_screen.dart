@@ -141,7 +141,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
                   Text(
                     controller.errorMessage!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColors.errorText,
                       fontSize: 14,
                     ),
@@ -168,7 +168,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
                   IconButton(
                     onPressed: () =>
                         ref.read(pinControllerProvider.notifier).deletePin(),
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.backspace_outlined,
                       size: 24,
                       color: AppColors.grey83,

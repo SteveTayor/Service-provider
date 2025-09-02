@@ -3,6 +3,7 @@ import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/core/utils/enums.dart';
@@ -16,6 +17,7 @@ import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
+import 'package:bundlegram/presentation/general_widget/async_value/app_future_builder.dart';
 import 'package:bundlegram/presentation/general_widget/receipt_widget.dart';
 import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
 import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
@@ -152,42 +154,98 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
             ),
             20.verticalSpace,
             Expanded(
-              child: state.filteredTransactions.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Center(child: EmptytransactionWidget()),
-                    )
-                  : ListView.separated(
-                      controller: _scrollController,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10.w, vertical: 25),
-                      itemCount: state.filteredTransactions.length + 1,
-                      separatorBuilder: (_, __) => Container(
-                        height: 1,
-                        color: AppColors.greyD0.withOpacity(0.3),
-                        margin: EdgeInsets.symmetric(vertical: 12.h),
-                      ),
-                      itemBuilder: (ctx, index) {
-                        if (index == state.filteredTransactions.length) {
-                          return state.filteredTransactions.length <
-                                  state.allTransactions.length
-                              ? Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 2),
-                                  ),
-                                )
-                              : const SizedBox.shrink();
-                        }
-                        final txn = state.filteredTransactions[index];
-                        return InkWell(
-                          onTap: () => _showReceiptPopup(txn),
-                          child: ServiceListItem(transaction: txn),
-                        );
-                      },
-                    ),
+              child: state.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : state.error != null
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(state.error!),
+                              12.verticalSpace,
+                              ElevatedButton(
+                                onPressed: () =>
+                                    ref.read(provider.notifier).refresh(),
+                                child: const Text("Retry"),
+                              ),
+                            ],
+                          ),
+                        )
+                      : state.filteredTransactions.isEmpty
+                          ? const Center(child: EmptytransactionWidget())
+                          : ListView.separated(
+                              controller: _scrollController,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10.w, vertical: 25),
+                              itemCount: state.filteredTransactions.length + 1,
+                              separatorBuilder: (_, __) => Container(
+                                height: 1,
+                                color: AppColors.greyD0.withOpacity(0.3),
+                                margin: EdgeInsets.symmetric(vertical: 12.h),
+                              ),
+                              itemBuilder: (ctx, index) {
+                                if (index ==
+                                    state.filteredTransactions.length) {
+                                  return state.filteredTransactions.length <
+                                          state.allTransactions.length
+                                      ? Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: CircularProgressIndicator(
+                                                strokeWidth: 2),
+                                          ),
+                                        )
+                                      : const SizedBox.shrink();
+                                }
+                                final txn = state.filteredTransactions[index];
+                                return InkWell(
+                                  onTap: () => _showReceiptPopup(txn),
+                                  child: ServiceListItem(transaction: txn),
+                                );
+                              },
+                            ),
             ),
+            // Expanded(
+            //   child: AppAsyncBuilder(
+            //     state: ref
+            //         .watch(globalProvider.select((s) => s.usersTransactions)),
+            //     onRetry: () {
+            //       ref
+            //           .read(globalProvider.notifier)
+            //           .fetchUsersTransactions(context);
+            //     },
+            //     builder: (context, ref, txnsResponse) {
+            //       final filtered = (txnsResponse?.data ?? [])
+            //           .where((txn) =>
+            //               txn.transType?.toLowerCase() ==
+            //               widget.serviceType.name.toLowerCase())
+            //           .toList();
+
+            //       if (filtered.isEmpty) {
+            //         return const Center(child: EmptytransactionWidget());
+            //       }
+
+            //       return ListView.separated(
+            //         controller: _scrollController,
+            //         padding:
+            //             EdgeInsets.symmetric(horizontal: 10.w, vertical: 25),
+            //         itemCount: filtered.length,
+            //         separatorBuilder: (_, __) => Container(
+            //           height: 1,
+            //           color: AppColors.greyD0.withOpacity(0.3),
+            //           margin: EdgeInsets.symmetric(vertical: 12.h),
+            //         ),
+            //         itemBuilder: (ctx, index) {
+            //           final txn = filtered[index];
+            //           return InkWell(
+            //             onTap: () => _showReceiptPopup(txn),
+            //             child: ServiceListItem(transaction: txn),
+            //           );
+            //         },
+            //       );
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -330,7 +388,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
-              balanceBefore: txn.balanceBefore?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
         userBalance: txn.balanceAfter?.toCurrency(),
       );
     }

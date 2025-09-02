@@ -103,6 +103,7 @@ class Endpoints {
   // Merchant / Agent
   // ====================
   static const String becomeAMerchant = '/become-a-merchant';
+  static const String initiateEpinPurchase = "/epin/purchase";
 
   // ====================
   // Misc

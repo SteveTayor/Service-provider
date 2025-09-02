@@ -117,7 +117,7 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
                     Text(
                       'Wallet balance ',
                       style: context.textTheme.bodyMedium!
-                          .copyWith(color: AppColors.white),
+                          .copyWith(fontSize: 16.sp, color: AppColors.white),
                     ),
                     GestureDetector(
                       onTap: () => ref
@@ -163,8 +163,10 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
               color: AppColors.white,
               cornerRadius: 4.r,
               text: 'Fund wallet',
-              textStyle: context.textTheme.bodyMedium!
-                  .copyWith(color: AppColors.primaryColor),
+              textStyle: context.textTheme.bodyMedium!.copyWith(
+                fontSize: 16.sp,
+                color: AppColors.primaryColor,
+              ),
               onPressed:
                   _isProcessing ? null : () => _handleFundWallet(context),
             );
