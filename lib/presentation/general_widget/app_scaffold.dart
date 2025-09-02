@@ -44,75 +44,77 @@ class BundlegramScaffold extends StatelessWidget {
         data: Theme.of(context).copyWith(
           dividerTheme: const DividerThemeData(color: Colors.transparent),
         ),
-        child: Scaffold(
-          appBar: appBar ??
-              const BundlegramAppbar(
-                showBackButton: false,
-              ),
-          backgroundColor: backgroundColor,
-          resizeToAvoidBottomInset: resizeToAvoidBottomInset ?? false,
-          body: Padding(
-            padding: sidePadding ?? const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Expanded(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      if (showBackImage)
-                        // Positioned.fill(
-                        //   child: Image(
-                        //     image:
-                        //         backgroundImage ?? Assets.images.pattern.provider()
-                        //     fit: BoxFit.cover,
-                        //     repeat: ImageRepeat.repeat,
-                        //   ),
-                        // ),
-                        // SingleChildScrollView(
-                        //   padding: EdgeInsets.only(
-                        //     bottom: MediaQuery.of(context).viewInsets.bottom,
-                        //   ),
-                        //   child: ConstrainedBox(
-                        //     constraints: BoxConstraints(
-                        //       minHeight: MediaQuery.of(context).size.height -
-                        //           MediaQuery.of(context).padding.top -
-                        //           (appBar?.preferredSize.height ??
-                        //               kToolbarHeight) -
-                        //           (sidePadding?.vertical ?? 32),
-                        //     ),
-                        //     child: IntrinsicHeight(child: body),
-                        //   ),
-                        // ),
-                        body,
-                    ],
-                  ),
+        child: SafeArea(
+          child: Scaffold(
+            appBar: appBar ??
+                const BundlegramAppbar(
+                  showBackButton: false,
                 ),
-              ],
-            ),
-          ),
-          floatingActionButton: floatingActionButton,
-          bottomNavigationBar: bottomNavigationBar,
-          persistentFooterButtons: (footerButton != null)
-              ? [
-                  Padding(
-                    padding: footerPadding ??
-                        EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                        ),
-                    child: Container(
-                      margin: context.bottomPaddingForTextField,
-                      child: Column(
-                        children: [
-                          footerButton!,
-                          16.verticalSpace,
-                          if (underFooterChild != null) underFooterChild!,
-                        ],
-                      ),
+            backgroundColor: backgroundColor,
+            resizeToAvoidBottomInset: resizeToAvoidBottomInset ?? false,
+            body: Padding(
+              padding: sidePadding ?? const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        if (showBackImage)
+                          // Positioned.fill(
+                          //   child: Image(
+                          //     image:
+                          //         backgroundImage ?? Assets.images.pattern.provider()
+                          //     fit: BoxFit.cover,
+                          //     repeat: ImageRepeat.repeat,
+                          //   ),
+                          // ),
+                          // SingleChildScrollView(
+                          //   padding: EdgeInsets.only(
+                          //     bottom: MediaQuery.of(context).viewInsets.bottom,
+                          //   ),
+                          //   child: ConstrainedBox(
+                          //     constraints: BoxConstraints(
+                          //       minHeight: MediaQuery.of(context).size.height -
+                          //           MediaQuery.of(context).padding.top -
+                          //           (appBar?.preferredSize.height ??
+                          //               kToolbarHeight) -
+                          //           (sidePadding?.vertical ?? 32),
+                          //     ),
+                          //     child: IntrinsicHeight(child: body),
+                          //   ),
+                          // ),
+                          body,
+                      ],
                     ),
                   ),
-                ]
-              : null,
-          extendBody: extendBody,
+                ],
+              ),
+            ),
+            floatingActionButton: floatingActionButton,
+            bottomNavigationBar: bottomNavigationBar,
+            persistentFooterButtons: (footerButton != null)
+                ? [
+                    Padding(
+                      padding: footerPadding ??
+                          EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                          ),
+                      child: Container(
+                        margin: context.bottomPaddingForTextField,
+                        child: Column(
+                          children: [
+                            footerButton!,
+                            16.verticalSpace,
+                            if (underFooterChild != null) underFooterChild!,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ]
+                : null,
+            extendBody: extendBody,
+          ),
         ),
       ),
     );
