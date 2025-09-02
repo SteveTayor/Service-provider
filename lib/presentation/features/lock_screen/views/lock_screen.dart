@@ -10,6 +10,7 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/lock_screen/provider/lock_screen_provider.dart';
 import 'package:bundlegram/presentation/features/onboarding/notifier/login_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -21,11 +22,7 @@ import 'package:go_router/go_router.dart';
 class LockScreen extends ConsumerStatefulWidget {
   const LockScreen({
     super.key,
-    // this.onVerified,
-    // this.userName = "User",
   });
-
-  // final String userName;
 
   @override
   ConsumerState<LockScreen> createState() => _LockScreenState();
@@ -124,10 +121,17 @@ class _LockScreenState extends ConsumerState<LockScreen>
     final storedPin = await storage.getPin(userEmail);
     if (storedPin == enteredPin) {
       // Successful verification, navigate back to dashboard
-      await ref
-          .read(loginProvider.notifier)
-          .loginWithStoredCredentials(context);
-      context.pushReplacement(RouteConstants.dashboard);
+      final password = await storage.getPassword();
+      if (password == null) {
+        context.showErrorSnackBar("Password not found, please login again");
+        context.go(RouteConstants.login);
+        return;
+      }
+
+      // Use the LockScreenService instead of loginProvider
+      final lockService = ref.read(lockScreenServiceProvider);
+      await lockService.performLogin(userEmail, password, context);
+      // context.pushReplacement(RouteConstants.dashboard);
     } else {
       setState(() {
         _errorMessage = 'Incorrect PIN';
@@ -171,181 +175,191 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Access providers here using ref.watch() or ref.read()
     final globalUserProvider = ref.watch(globalProvider).profile;
     final profileProv = globalUserProvider.value?.data;
+
     return WillPopScope(
       onWillPop: () async {
         final now = DateTime.now();
 
-        // Prevent going back unless double press
         if (_lastBack == null ||
             now.difference(_lastBack!) > const Duration(seconds: 3)) {
           _lastBack = now;
           context.showCustomSnackBar(
             'Press back again to exit',
           );
-          return false; // Block first press
+          return false;
         }
 
-        return true; // Allow exit on second press within 2s
+        return true;
       },
       child: PopScope(
-        // handles iOS slide-back gesture
         canPop: false,
         child: BundlegramScaffold(
-          sidePadding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 40.h),
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Top section with logo and greeting
-              Column(
-                children: [
-                  // Bundlegram Logo
-                  Image(
-                    image: Assets.images.bBundlegram.provider(),
-                    fit: BoxFit.contain,
-                  ).withContainer(
-                    height: 34.h,
-                  ),
-                  45.verticalSpace,
-                  // Lock Icon asset
-                  AppSvgIcon(
-                    path: Assets.svgs.lockIcon,
-                    width: 40,
-                    height: 40,
-                    // fit: BoxFit.scaleDown,
-                  ),
-                  24.verticalSpace,
-                  // Greeting text
-                  Text(
-                    '${DateTime.now().getGreeting()}, ${profileProv?.username ?? _displayName ?? "User"}',
-                    textAlign: TextAlign.center,
-                    style: context.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.black,
-                    ),
-                  ),
-                  8.verticalSpace,
-                  Text(
-                    Platform.isIOS
-                        ? 'Use Face ID or enter account pin'
-                        : 'Verify fingerprint or enter account pin',
-                    textAlign: TextAlign.center,
-                    style: context.textTheme.bodySmall!.copyWith(
-                      color: AppColors.grey33,
-                    ),
-                  ),
-                ],
+          sidePadding: EdgeInsets.fromLTRB(
+              20.w, 10.h, 20.w, 20.h), // ✅ Reduced bottom padding
+          body: SingleChildScrollView(
+            // ✅ Make entire screen scrollable
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.of(context).padding.bottom -
+                    40.h,
               ),
-
-              // Middle section with PIN dots
-              Column(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 60),
-                  AnimatedBuilder(
-                    animation: _shakeController,
-                    builder: (context, child) {
-                      final offset = sin(_offsetAnimation.value) * 12;
-                      return Transform.translate(
-                        offset: Offset(offset, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(4, _buildPinDot),
+              child: IntrinsicHeight(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Top section with logo and greeting
+                    Column(
+                      children: [
+                        Image(
+                          image: Assets.images.bBundlegram.provider(),
+                          fit: BoxFit.contain,
+                        ).withContainer(
+                          height: 34.h,
                         ),
-                      );
-                    },
-                  ),
-                  if (_errorMessage != null) ...[
-                    10.verticalSpace,
-                    Text(
-                      _errorMessage!,
-                      style: const TextStyle(
-                        color: AppColors.errorText,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-              45.verticalSpace,
-              // Number pad
-              Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: GridView.count(
-                    crossAxisCount: 3,
-                    childAspectRatio: 1.75,
-                    children: [
-                      ...List.generate(
-                        9,
-                        (index) => _buildNumberButton('${index + 1}'),
-                      ),
-                      // Face ID / Fingerprint button
-                      GestureDetector(
-                        onTap: () {
-                          // Handle biometric authentication
-                          // You can add your biometric auth logic here
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(20.w),
-                          child: AppSvgIcon(
-                            path: Assets.svgs.fingerCricle1,
-                            fit: BoxFit.scaleDown,
-                            width: 24,
-                            height: 24,
+                        45.verticalSpace,
+                        AppSvgIcon(
+                          path: Assets.svgs.lockIcon,
+                          width: 40,
+                          height: 40,
+                        ),
+                        24.verticalSpace,
+                        Text(
+                          '${DateTime.now().getGreeting()}, ${profileProv?.username ?? _displayName ?? "User"}',
+                          textAlign: TextAlign.center,
+                          style: context.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.black,
                           ),
                         ),
-                      ),
-                      _buildNumberButton('0'),
-                      IconButton(
-                        onPressed: _deletePin,
-                        icon: const Icon(
-                          Icons.backspace_outlined,
-                          size: 24,
-                          color: AppColors.grey83,
+                        8.verticalSpace,
+                        Text(
+                          Platform.isIOS
+                              ? 'Use Face ID or enter account pin'
+                              : 'Verify fingerprint or enter account pin',
+                          textAlign: TextAlign.center,
+                          style: context.textTheme.bodySmall!.copyWith(
+                            color: AppColors.grey33,
+                          ),
                         ),
+                      ],
+                    ),
+
+                    // Middle section with PIN dots
+                    Column(
+                      children: [
+                        40.verticalSpace, // ✅ Reduced from 60
+                        AnimatedBuilder(
+                          animation: _shakeController,
+                          builder: (context, child) {
+                            final offset = sin(_offsetAnimation.value) * 12;
+                            return Transform.translate(
+                              offset: Offset(offset, 0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(4, _buildPinDot),
+                              ),
+                            );
+                          },
+                        ),
+                        if (_errorMessage != null) ...[
+                          10.verticalSpace,
+                          Text(
+                            _errorMessage!,
+                            style: const TextStyle(
+                              color: AppColors.errorText,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                        30.verticalSpace, // ✅ Add space before number pad
+                      ],
+                    ),
+
+                    // Number pad - fixed height instead of Expanded
+                    SizedBox(
+                      height: 280.h, // ✅ Fixed height
+                      child: GridView.count(
+                        physics:
+                            const NeverScrollableScrollPhysics(), // ✅ Disable GridView scrolling
+                        crossAxisCount: 3,
+                        childAspectRatio: 1.75,
+                        children: [
+                          ...List.generate(
+                            9,
+                            (index) => _buildNumberButton('${index + 1}'),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              // Handle biometric authentication
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(20.w),
+                              child: AppSvgIcon(
+                                path: Assets.svgs.fingerCricle1,
+                                fit: BoxFit.scaleDown,
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
+                          ),
+                          _buildNumberButton('0'),
+                          IconButton(
+                            onPressed: _deletePin,
+                            icon: const Icon(
+                              Icons.backspace_outlined,
+                              size: 24,
+                              color: AppColors.grey83,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+
+                    // Bottom section with switch account and sign in options
+                    Column(
+                      children: [
+                        20.verticalSpace,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                context.go(RouteConstants.walkThrough);
+                              },
+                              child: Text(
+                                'Switch account',
+                                style: context.textTheme.bodyMedium!.copyWith(
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                ref
+                                    .read(loginProvider.notifier)
+                                    .logoutUser(context);
+                              },
+                              child: Text(
+                                'Sign in with password',
+                                style: context.textTheme.bodyMedium!.copyWith(
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        20.verticalSpace, // ✅ Reduced bottom spacing
+                      ],
+                    ),
+                  ],
                 ),
               ),
-
-              // Bottom section with switch account and sign in options
-              20.verticalSpace,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      // Handle switch account
-                      // You can navigate to account switching screen
-                      context.go(RouteConstants.walkThrough);
-                    },
-                    child: Text(
-                      'Switch account',
-                      style: context.textTheme.bodyMedium!.copyWith(
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Handle sign in with password
-                      ref.read(loginProvider.notifier).logoutUser(context);
-                    },
-                    child: Text(
-                      'Sign in with password',
-                      style: context.textTheme.bodyMedium!.copyWith(
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 35),
-            ],
+            ),
           ),
         ),
       ),
