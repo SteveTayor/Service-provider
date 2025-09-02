@@ -7,10 +7,10 @@ class AppConstants {
   static const String appName = 'Bundlegram';
 
   /// App version
-  static const String appVersion = '1.0.7';
+  static const String appVersion = '1.0.8';
 
   /// App build number
-  static const String appBuildNumber = '7';
+  static const String appBuildNumber = '8';
 
   /// Default animation duration
   static const Duration defaultAnimationDuration = Duration(milliseconds: 300);
