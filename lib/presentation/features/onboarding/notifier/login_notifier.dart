@@ -366,9 +366,8 @@ class LoginProvider extends ChangeNotifier {
           await _storage.clearAll();
           _ref.read(dashboardProvider).resetIndex();
           // Navigate to login
-          context
-            ..go(RouteConstants.login)
-            ..showSuccessSnackBar(response.message ?? 'Logged out');
+          context.go(RouteConstants.login);
+          // ..showSuccessSnackBar(response.message ?? 'Logged out');
         } else {
           context.showErrorSnackBar(response.message ?? 'Logout failed');
         }
