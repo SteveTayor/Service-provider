@@ -340,9 +340,10 @@ class _LockScreenState extends ConsumerState<LockScreen>
                             ),
                             TextButton(
                               onPressed: () {
-                                ref
-                                    .read(loginProvider.notifier)
-                                    .logoutUser(context);
+                                // ref
+                                //     .read(loginProvider.notifier)
+                                //     .logoutUser(context);
+                                context.go(RouteConstants.login);
                               },
                               child: Text(
                                 'Sign in with password',

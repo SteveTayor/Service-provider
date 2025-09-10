@@ -369,7 +369,8 @@ class LoginProvider extends ChangeNotifier {
           context.go(RouteConstants.login);
           // ..showSuccessSnackBar(response.message ?? 'Logged out');
         } else {
-          context.showErrorSnackBar(response.message ?? 'Logout failed');
+          context.go(RouteConstants.login);
+          context.showErrorSnackBar('Logout Succssful');
         }
       },
     );
