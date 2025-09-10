@@ -35,6 +35,12 @@
             android:value="2" />
     </application>
     <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+    <queries>
   <!-- for phone calls -->
   <intent>
     <action android:name="android.intent.action.DIAL"/>

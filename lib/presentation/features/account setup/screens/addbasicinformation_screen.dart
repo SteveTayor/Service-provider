@@ -119,6 +119,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
         phoneNumber.startsWith('+234') ? phoneNumber.substring(4) : phoneNumber;
     notifier.phone.text = localPhoneNumber;
     String fullName = profileProv!.name!;
+    final bvnLinked = profileProv.bvn?.toString().isNotEmpty ?? false;
 
     List<String> parts = fullName.trim().split(' ');
 
@@ -128,7 +129,10 @@ class AddBasicInformationScreen extends ConsumerWidget {
 // Set values into the controllers
     notifier.firstName.text = profileProv.firstName!;
     // notifier.lastName.text = lastName;
-
+// Helpers
+    bool hasGender = (profileProv.gender?.toString().isNotEmpty ?? false);
+    bool hasAddress = (profileProv.address?.toString().isNotEmpty ?? false);
+    bool hasDob = (profileProv.dob != null);
     return BundlegramScaffold(
       appBar: BundlegramAppbar(titleText: titleText),
       body: Form(
@@ -189,40 +193,49 @@ class AddBasicInformationScreen extends ConsumerWidget {
               options: const ['Male', 'Female'],
               selected: provider.gender,
               onChanged: notifier.setGender,
-              isFilled: !userAction.isCreate,
+              isFilled:
+                  userAction.isCreate ? false : (bvnLinked ? hasGender : false),
+              // editable unless BVN is linked
             ),
             SizedBox(height: 12.h),
             AppTextField(
               label: 'Address',
               controller: notifier.address,
               hintText: 'Enter Address',
-              isFilled: !userAction.isCreate,
-              readOnly: !userAction.isCreate,
+              isFilled: userAction.isCreate
+                  ? false
+                  : (bvnLinked ? hasAddress : false),
+              readOnly: bvnLinked,
               backgroundColor: AppColors.greyD0.withOpacity(0.3),
               validateFunction: notifier.validateNotEmpty,
             ),
             SizedBox(height: 12.h),
             AppDatetextfield(
               controller: notifier.dob,
-              title: 'Date of birth',
+              title: '',
               hintText: 'DD/MM/YYYY',
-              isFilled: !userAction.isCreate,
-              readOnly: !userAction.isCreate,
+              isFilled:
+                  userAction.isCreate ? false : (bvnLinked ? hasDob : false),
+              readOnly: bvnLinked,
               validator: notifier.validateDate,
               onTap: () => notifier.pickDob(context),
             ),
             SizedBox(height: 32.h),
-            
             Opacity(
-            opacity: userAction.isCreate ? 1 : 0.5, child: BundlegramButton(
-              isEnabled: userAction == UserAction.create,
-              text: userAction.isCreate ? 'Submit' : 'Update',
-              onPressed: provider.loading
-                  ? null
-                  : () async {
-                      await provider.submit(context);
-                    },
-            ),),
+              opacity: userAction.isCreate ? 1 : 0.5,
+              child: BundlegramButton(
+                isEnabled: provider.loading
+                    ? false
+                    : userAction.isCreate ||
+                        (!hasGender || !hasAddress || !hasDob),
+                text: userAction.isCreate ? 'Submit' : 'Update',
+                onPressed: provider.loading
+                    ? null
+                    : () async {
+                        await provider.submit(context);
+                      },
+              ),
+            ),
           ],
         ),
       ),

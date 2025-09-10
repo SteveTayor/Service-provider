@@ -1,10 +1,23 @@
 flutter_native_splash:
   color: "#E24934"
   image: assets/images/logo.png
+  
+  branding: assets/images/logo_color.png
+  branding_bottom_padding: 100
   android: true
   ios: true
   android_gravity: center
   ios_content_mode: center
 
+  android_12:
+    image: assets/images/logo.png    
+    # fullscreen: true
+    branding: assets/images/logo_color.png
+    branding_bottom_padding: 100
+    color: "#E24934"
+    android: true
+    android_gravity: center
+    ios_content_mode: center
+    ios: true
 
   web: false

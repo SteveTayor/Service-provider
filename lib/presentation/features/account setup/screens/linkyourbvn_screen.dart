@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/presentation/features/account%20setup/notifier/link_bvn_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
@@ -26,23 +27,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //             const AppTextField(
 //               hintText: 'Bank Verification Number (BVN)',
 //             ),
-//             24.verticalSpace,
+//             20.verticalSpace,
 //             const AppTextField(
 //               hintText: 'Phone Number linked to BVN',
 //             ),
-//             24.verticalSpace,
+//             20.verticalSpace,
 //             const AppTextField(
 //               hintText: 'Date of birth (DD/MM/YY)',
 //             ),
-//             24.verticalSpace,
+//             20.verticalSpace,
 //             const Text('Add bank details of a linked account'),
 //             18.verticalSpace,
 //             const AppDropdown(title: 'Bank name'),
-//             24.verticalSpace,
+//             20.verticalSpace,
 //             const AppTextField(
 //               hintText: 'Account number',
 //             ),
-//             24.verticalSpace,
+//             20.verticalSpace,
 //             const AppTextField(
 //               hintText: 'Account name',
 //             ),
@@ -86,8 +87,9 @@ class LinkYourBvnScreen extends ConsumerWidget {
       body: Form(
         key: provider.formKey,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppTextField(
                 label: 'Bank Verification Number (BVN)',
@@ -95,22 +97,28 @@ class LinkYourBvnScreen extends ConsumerWidget {
                 hintText: 'Bank Verification Number (BVN)',
                 validateFunction: notifier.validateBVN,
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 20.h),
               AppTextField(
                 label: 'Phone Number',
                 controller: notifier.phone,
                 hintText: 'Phone Number linked to BVN',
                 validateFunction: notifier.validatePhone,
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 20.h),
               AppDatetextfield(
                 controller: notifier.dob,
-                title: 'Date of birth',
-                hintText: 'DD/MM/YYYY',
+                title: '',
+                hintText: 'Date of birth(DD/MM/YYYY)',
                 validator: notifier.validateDate,
                 onTap: () => notifier.pickDob(context),
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 20.h),
+              Text(
+                'Add bank details of a linked account',
+                textAlign: TextAlign.left,
+                style: context.textTheme.bodyMedium,
+              ),
+              SizedBox(height: 16.h),
               AppDropdown(
                 title: provider.selectedBankName == ""
                     ? "Bank Name"
@@ -119,7 +127,7 @@ class LinkYourBvnScreen extends ConsumerWidget {
                 selected: provider.selectedBankName,
                 onChanged: notifier.setBank,
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 20.h),
               AppTextField(
                 label: 'Account Number',
                 controller: notifier.acct,

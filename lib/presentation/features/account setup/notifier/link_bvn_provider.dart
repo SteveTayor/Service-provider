@@ -77,7 +77,53 @@ class LinkBvnProvider extends ChangeNotifier {
       initialDate: now,
       firstDate: DateTime(1900),
       lastDate: now,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            datePickerTheme: DatePickerThemeData(
+              // Customize the selected date appearance
+              dayStyle: Theme.of(context).textTheme.bodySmall,
+              weekdayStyle: Theme.of(context).textTheme.bodySmall,
+              yearStyle: Theme.of(context).textTheme.bodySmall,
+              headerHeadlineStyle: Theme.of(context).textTheme.bodySmall,
+              headerHelpStyle: Theme.of(context).textTheme.bodySmall,
+
+              // Customize selected day colors
+              dayForegroundColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return Colors.white; // Text color when selected
+                  }
+                  return null; // Use default color for unselected days
+                },
+              ),
+              dayBackgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return Theme.of(context)
+                        .primaryColor
+                        .withOpacity(0.7); // Semi-transparent background
+                  }
+                  return null; // Use default background for unselected days
+                },
+              ),
+
+              // Add border to selected day to make it more visible
+              dayOverlayColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return Theme.of(context).primaryColor.withOpacity(0.1);
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
+
     if (picked != null) {
       _dob.text = DateFormat('dd/MM/yyyy').format(picked);
       notifyListeners();

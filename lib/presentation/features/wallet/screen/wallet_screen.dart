@@ -145,7 +145,19 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                                   fontSize: 16.sp,
                                 ),
                                 onPressed: () {
-                                  context.push(RouteConstants.withdrawFund);
+                                  final profile =
+                                      ref.read(globalProvider).profile;
+                                  final bvn = profile.value?.data?.bvn;
+
+                                  if (bvn == null) {
+                                    WalletNotifier().showLinkBVNSnackBar(
+                                      context,
+                                      'BVN verification required to withdraw from your wallet.',
+                                      'Link now',
+                                    );
+                                  } else {
+                                    context.push(RouteConstants.withdrawFund);
+                                  }
                                 },
                               ),
                             ),

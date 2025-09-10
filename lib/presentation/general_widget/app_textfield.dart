@@ -209,11 +209,12 @@ class _AppTextFieldState extends State<AppTextField> {
                   errorMaxLines: 1,
                   hintStyle: widget.hintStyle ??
                       context.textTheme.bodySmall!.copyWith(
-                        color: widget.enabled == false
-                            ? AppColors
-                                .greyb3 // Lighter hint text for disabled state
-                            : AppColors.grey33,
-                      ),
+                          color:
+                              // widget.enabled == false ?
+                              AppColors
+                                  .grey8E // Lighter hint text for disabled state
+                          // : AppColors.grey33,
+                          ),
                   // Enabled border (when field is enabled but not focused)
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6.r),
