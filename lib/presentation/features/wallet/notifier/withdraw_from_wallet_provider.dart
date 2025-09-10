@@ -23,6 +23,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 
 final withdrawalProvider = ChangeNotifierProvider<WithdrawalProvider>(
   (ref) => WithdrawalProvider(
@@ -191,6 +192,8 @@ class WithdrawalProvider extends ChangeNotifier {
     final position = await getCurrentLocation();
     final platform = Platform.isIOS ? 'ios' : 'android';
     final mac = await getMacAddress();
+    final packageInfo = await PackageInfo.fromPlatform();
+    final appVersion = packageInfo.version; //
 
     final req = WithdrawRequest(
       amount: amount.toString(),
@@ -201,6 +204,7 @@ class WithdrawalProvider extends ChangeNotifier {
       accountNumber: _selectedBank!.accountNumber!,
       platform: platform,
       pin: pin,
+      appVersion: appVersion,
     );
 
     final result = await _api.requestWithdraw(token, req);

@@ -47,6 +47,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 // import 'package:device_info_plus/device_info_plus.dart';
 // import 'package:geolocator/geolocator.dart';
 // import 'package:network_info_plus/network_info_plus.dart';
@@ -1003,6 +1004,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       final latitude = deviceInfo['latitude']!;
       final longitude = deviceInfo['longitude']!;
       final platform = deviceInfo['platform']!;
+      final packageInfo = await PackageInfo.fromPlatform();
+      final appVersion = packageInfo.version;
 
       unawaited(context.showLoadingDialog(message: "Initiating payment..."));
       final request = InitiateTransactionRequest(
@@ -1023,6 +1026,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                 _serviceType != PlatformProductType.mobileData
             ? validatedName
             : null,
+        appVersion: appVersion,
       );
 
       final result = _serviceType == PlatformProductType.mobileData ||
