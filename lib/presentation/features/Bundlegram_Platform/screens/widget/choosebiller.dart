@@ -181,7 +181,8 @@ class ChoosebillerWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(platformProductProvider(serviceType));
     final productsAsync = ref.watch(productsProvider(serviceType));
-
+    final notifier = ref.read(
+        platformProductProvider(serviceType).notifier); // Define notifier here
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -208,7 +209,8 @@ class ChoosebillerWidget extends ConsumerWidget {
                   context.textTheme.bodySmall!.copyWith(color: AppColors.error),
             ),
             data: (resp) {
-              if (serviceType == PlatformProductType.betting) {
+              if (serviceType == PlatformProductType.betting ||
+                  serviceType == PlatformProductType.ePinVoucher) {
                 final products = resp.data ?? [];
                 if (products.isEmpty) {
                   return Text('No providers available',
@@ -308,6 +310,65 @@ class ChoosebillerWidget extends ConsumerWidget {
                 );
               }
 
+              // For internetServices, filter products with subproducts
+              if (serviceType == PlatformProductType.internetServices) {
+                final products = (resp.data ?? [])
+                    .where((p) => p.status == '1')
+                    .toList(); // Define products here
+                return FutureBuilder<List<Product>>(
+                  future:
+                      _filterProductsWithSubproducts(ref, products, notifier),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const AppLoader();
+                    }
+                    if (snapshot.hasError) {
+                      return Text(
+                        'Error loading providers',
+                        style: context.textTheme.bodySmall!
+                            .copyWith(color: AppColors.error),
+                      );
+                    }
+                    final filteredProducts = snapshot.data ?? [];
+                    if (filteredProducts.isEmpty) {
+                      return Text(
+                        'No providers with available plans',
+                        style: context.textTheme.bodySmall,
+                      );
+                    }
+
+                    return SizedBox(
+                      height: 250.h,
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: filteredProducts.length,
+                        separatorBuilder: (_, __) => 24.verticalSpace,
+                        itemBuilder: (_, index) {
+                          final item = filteredProducts[index];
+                          final name = item.productName ?? '';
+                          final imagePath = notifier.normalizeAssetName(name,
+                              serviceType: serviceType);
+                          final isSvg =
+                              imagePath?.toLowerCase().contains('.svg') ??
+                                  false;
+
+                          return AppListTile(
+                            assetPath: isSvg ? imagePath : null,
+                            imagePath: isSvg ? null : imagePath,
+                            subtitle: item.productName,
+                            onPressed: () {
+                              onProviderSelected(imagePath, name, item.id!);
+                              Navigator.of(context).pop();
+                            },
+                            title: name,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                );
+              }
+
               // For all others
               final items =
                   (resp.data ?? []).where((p) => p.status == '1').toList();
@@ -359,5 +420,19 @@ class ChoosebillerWidget extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<List<Product>> _filterProductsWithSubproducts(
+    WidgetRef ref,
+    List<Product> products,
+    PlatformProductNotifier notifier,
+  ) async {
+    final filtered = <Product>[];
+    for (var product in products) {
+      if (await notifier.hasSubProducts(product.id!)) {
+        filtered.add(product);
+      }
+    }
+    return filtered;
   }
 }

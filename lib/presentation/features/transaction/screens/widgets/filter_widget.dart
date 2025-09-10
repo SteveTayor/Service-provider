@@ -111,7 +111,9 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
             ),
 
             SizedBox(height: 16.h),
-            const Divider(),
+            const Divider(
+              color: AppColors.divider,
+            ),
 
             // ─── Amount ─────────────────────────────────────────────────────────────
             SizedBox(height: 8.h),
@@ -159,7 +161,9 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
             ),
 
             SizedBox(height: 16.h),
-            const Divider(),
+            const Divider(
+              color: AppColors.divider,
+            ),
 
             // ─── Status ─────────────────────────────────────────────────────────────
             SizedBox(height: 8.h),
@@ -231,7 +235,9 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
             ),
 
             SizedBox(height: 16.h),
-            const Divider(),
+            const Divider(
+              color: AppColors.divider,
+            ),
 
             // ─── Type ─────────────────────────────────────────────────────────────────
             SizedBox(height: 8.h),

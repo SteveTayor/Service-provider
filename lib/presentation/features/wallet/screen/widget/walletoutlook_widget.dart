@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -31,9 +33,10 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
     if (bvn == null) {
       WalletNotifier().showLinkBVNSnackBar(
         context,
-        'To ensure that you get a virtual account number, verify your BVN for this feature.',
+        'BVN verification required to withdraw from your wallet.',
         'Link now',
       );
+      unawaited(WalletNotifier().showAddMoneyViaDebitCard(context));
     } else {
       await WalletNotifier().showAddMoney(context, ref);
     }
@@ -117,7 +120,7 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
                     Text(
                       'Wallet balance ',
                       style: context.textTheme.bodyMedium!
-                          .copyWith(color: AppColors.white),
+                          .copyWith(fontSize: 16.sp, color: AppColors.white),
                     ),
                     GestureDetector(
                       onTap: () => ref
@@ -163,8 +166,10 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
               color: AppColors.white,
               cornerRadius: 4.r,
               text: 'Fund wallet',
-              textStyle: context.textTheme.bodyMedium!
-                  .copyWith(color: AppColors.primaryColor),
+              textStyle: context.textTheme.bodyMedium!.copyWith(
+                fontSize: 16.sp,
+                color: AppColors.primaryColor,
+              ),
               onPressed:
                   _isProcessing ? null : () => _handleFundWallet(context),
             );

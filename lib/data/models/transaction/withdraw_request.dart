@@ -7,6 +7,7 @@ class WithdrawRequest {
   final String accountNumber;
   final String platform;
   final String pin;
+  final String appVersion;
 
   WithdrawRequest({
     required this.amount,
@@ -17,6 +18,7 @@ class WithdrawRequest {
     required this.accountNumber,
     required this.platform,
     required this.pin,
+    required this.appVersion,
   });
 
   factory WithdrawRequest.fromJson(Map<String, dynamic> json) =>
@@ -29,6 +31,7 @@ class WithdrawRequest {
         accountNumber: json["account_number"] as String,
         platform: json["platform"] as String,
         pin: json["pin"] as String,
+        appVersion: json["app_version"] as String,
       );
 
   Map<String, dynamic> toJson() => {
@@ -40,5 +43,6 @@ class WithdrawRequest {
         "account_number": accountNumber,
         "platform": platform,
         "pin": pin,
+        "app_version": appVersion,
       };
 }

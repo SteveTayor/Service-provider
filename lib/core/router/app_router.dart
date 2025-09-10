@@ -10,6 +10,7 @@ import 'package:bundlegram/presentation/features/account%20setup/screens/helpand
 import 'package:bundlegram/presentation/features/account%20setup/screens/linkyourbvn_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/withdrawalaccount_screen.dart';
 import 'package:bundlegram/presentation/features/dashboard/screens/dashboard_screen.dart';
+import 'package:bundlegram/presentation/features/lock_screen/views/lock_screen.dart';
 import 'package:bundlegram/presentation/features/notifications/screens/notification_screen.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/chooseusername_screen.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/forgetpassword_screen.dart';
@@ -147,6 +148,10 @@ class AppRouter {
       GoRoute(
         path: RouteConstants.resetAccountPin,
         builder: (context, state) => const ResetAccountPin(),
+      ),
+      GoRoute(
+        path: RouteConstants.lockScreen,
+        builder: (context, state) => const LockScreen(),
       ),
       GoRoute(
         path: RouteConstants.notificationsetting,

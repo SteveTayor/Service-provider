@@ -113,14 +113,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 AppTextField(
                   hintText: 'Password',
                   controller: ctrl.passwordCtrl,
-                  // validateFunction: Validators.password(),
+                  validateFunction: Validators.password(),
                   // Add simple required validation
-                  validateFunction: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Password is required';
-                    }
-                    return null;
-                  },
+                  // validateFunction: (value) {
+                  //   if (value == null || value.trim().isEmpty) {
+                  //     return 'Password is required';
+                  //   }
+                  //   return null;
+                  // },
                   obscureText: !prov.showPassword,
                   suffixIcon: GestureDetector(
                     onTap: () =>
@@ -203,6 +203,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ],
             ),
           ),
+          24.verticalSpace,
         ],
       ),
     );

@@ -11,10 +11,21 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
     ref.listen<AsyncValue<GetAllUserTransactionResponse?>>(
       globalProvider.select((s) => s.usersTransactions),
       (prev, next) {
-        next.whenData((wrapper) {
-          _allTransactions = wrapper?.data ?? [];
-          _loadServices();
-        });
+        next.when(
+          data: (wrapper) {
+            _allTransactions = wrapper?.data ?? [];
+            _loadServices();
+          },
+          loading: () {
+            state = state.copyWith(isLoading: true, error: null);
+          },
+          error: (err, stack) {
+            state = state.copyWith(
+              isLoading: false,
+              error: err.toString(), // or sanitize
+            );
+          },
+        );
       },
     );
     // Initial load

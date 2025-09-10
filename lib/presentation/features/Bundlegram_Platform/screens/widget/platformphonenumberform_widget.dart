@@ -211,6 +211,23 @@ class _PlatformPhoneNumberFormWidgetState
             },
           ),
         ],
+
+        // if (widget.serviceType == PlatformProductType.education) ...[
+        //   24.verticalSpace,
+        //   AppTextField(
+        //     hintText: 'Enter Transaction ID', // For education services
+        //     controller: state.secondaryInputController,
+        //     keyboardType: TextInputType.number,
+        //     validateFunction: (val) {
+        //       if (val == null) return 'required';
+        //       return null;
+        //     },
+        //     inputFormatters: [
+        //       // LengthLimitingTextInputFormatter(10),
+        //       FilteringTextInputFormatter.digitsOnly,
+        //     ],
+        //   ),
+        // ],
       ],
     );
   }
@@ -224,8 +241,12 @@ class _PlatformPhoneNumberFormWidgetState
       if (assetName.endsWith('.svg')) {
         return CircleAvatar(
           radius: 15,
+          backgroundColor: AppColors.white,
           child: ClipOval(
-            child: AppSvgIcon(path: assetName, fit: BoxFit.cover),
+            child: AppSvgIcon(
+              path: assetName,
+              fit: BoxFit.cover,
+            ),
           ),
         );
       }

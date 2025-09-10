@@ -1,7 +1,7 @@
 class Endpoints {
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://api.bundlegram.com/api',
+    defaultValue: 'https://apiv2.bundlegram.com/api',
   );
 
   // ====================
@@ -103,6 +103,7 @@ class Endpoints {
   // Merchant / Agent
   // ====================
   static const String becomeAMerchant = '/become-a-merchant';
+  static const String initiateEpinPurchase = "/epin/purchase";
 
   // ====================
   // Misc

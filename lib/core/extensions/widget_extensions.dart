@@ -90,14 +90,17 @@ extension AppTextFieldDecorationExtension on InputDecoration {
     return copyWith(
       fillColor: AppColors.searchbarColor,
       filled: true, // Make sure to set this to true for fillColor to work
-      prefixIcon: const Icon(
-        Icons.search,
-        color: AppColors.black,
+      prefixIcon: const Padding(
+        padding: EdgeInsets.only(left: 16),
+        child: Icon(
+          Icons.search,
+          color: AppColors.grey8E,
+        ),
       ),
       // Keep the original hintText if it exists, otherwise use null
-      hintText: hintText,
+      hintText: "Search...",
       hintStyle: TextStyle(
-        fontSize: 14,
+        fontSize: 14.sp,
         color: AppColors.searchHintColor,
       ),
       focusedBorder: OutlineInputBorder(
@@ -125,7 +128,7 @@ extension AppTextFieldDecorationExtension on InputDecoration {
       fillColor: AppColors.greyD0.withOpacity(0.3),
       filled: true,
       hintText: hintText,
-      hintStyle: TextStyle(
+      hintStyle: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w400,
         color: AppColors.black,

@@ -70,6 +70,7 @@
 //     );
 //   }
 // }
+import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/styles.dart';
@@ -97,16 +98,19 @@ class CloseaccountWidget extends ConsumerWidget {
         children: [
           Text(
             'Close account',
-            style: context.textTheme.bodyMedium!.copyWith(
-              // fontSize: 18,
-              fontWeight: FontWeight.w500,
+            style: context.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w700,
             ),
           ),
           12.verticalSpace,
           Text(
-            'Hi ${userName.toUpperCase()}, we work very hard to ensure all our users are happy using our services. Bundlegram offers one of the best rates for all its services from buying data, airtime and paying for bills. If you have any issue, kindly contact us, we will gladly help. However, if you want to close your account, click proceed.',
+            'Hi ${userName.capitalizeFirst}, we work very hard to ensure all our users are happy using our services. Bundlegram offers one of the best rates for all its services from buying data, airtime and paying for bills. If you have any issue, kindly contact us, we will gladly help. However, if you want to close your account, click proceed.',
             textAlign: TextAlign.center,
-            style: context.textTheme.bodySmall,
+            style: context.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w400,
+              fontSize: 16.sp,
+              color: AppColors.closeAcctColor,
+            ),
           ),
           28.verticalSpace,
           BundlegramButton(
@@ -133,7 +137,7 @@ class CloseaccountWidget extends ConsumerWidget {
               context.pop();
             },
           ),
-          24.verticalSpace,
+          35.verticalSpace,
         ],
       ),
     );

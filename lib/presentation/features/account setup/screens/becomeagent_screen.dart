@@ -53,6 +53,8 @@ class BecomeagentScreen extends ConsumerWidget {
                   Text(
                     label,
                     style: context.textTheme.labelMedium,
+                    maxLines: null,
+                    softWrap: true,
                   ),
                 ],
               ),
@@ -85,11 +87,13 @@ class BecomeagentScreen extends ConsumerWidget {
             Column(
               children: [
                 // Use spread operator to map benefits to widgets
-                ...benefits.map((benefit) => buildItemRow(
-                      benefit.asset,
-                      benefit.title,
-                      benefit.label,
-                    )),
+                ...benefits.map(
+                  (benefit) => buildItemRow(
+                    benefit.asset,
+                    benefit.title,
+                    benefit.label,
+                  ),
+                ),
                 40.verticalSpace,
                 BundlegramButton(
                   isEnabled: profileProv?.userType != "agent",
@@ -139,6 +143,7 @@ class BecomeagentScreen extends ConsumerWidget {
                 ),
               ],
             ),
+            50.verticalSpace,
           ],
         ),
       ),

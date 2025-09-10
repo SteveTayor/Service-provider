@@ -20,32 +20,42 @@ class ViewStatisticsWidget extends ConsumerWidget {
     return GestureDetector(
       onTap: () => platform.openStatisticsBottomSheet(context),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          AppSvgIcon(
-            path: Assets.svgs.viewstat,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: AppSvgIcon(
+              path: Assets.svgs.viewstat,
+            ),
           ),
-          Flexible(
+          8.horizontalSpace,
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'View statistics',
-                  style: context.textTheme.bodyMedium,
+                  style: context.textTheme.bodyMedium
+                      ?.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500),
                 ),
                 // SizedBox(height: 4.h),
+                4.verticalSpace,
                 Text(
                   'View charts of your transactions',
-                  style: context.textTheme.labelSmall,
-                  // maxLines: 2,
-                  overflow: TextOverflow.clip,
+                  style: context.textTheme.labelMedium,
                 ),
               ],
             ),
           ),
-          AppSvgIcon(
-            path: Assets.svgs.chevronDown,
+          12.horizontalSpace,
+          SizedBox(
+            width: 24,
+            height: 24,
+            child: AppSvgIcon(
+              path: Assets.svgs.chevronDown,
+            ),
           ),
+          8.horizontalSpace,
         ],
       ).withContainer(
         color: AppColors.white,

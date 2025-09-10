@@ -125,19 +125,23 @@ class PinController extends ChangeNotifier {
             ? failure.properties.join('\n')
             : "Failed to create PIN",
       );
-    }, (data) {
+    }, (data) async {
       if (data.status == "success") {
-        Navigator.push(
+        final userEmail = await _storage.getRememberedEmail();
+        if (userEmail != null) {
+          await _storage.setPin(userEmail, pin);
+        }
+        unawaited(Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (ctx) => TransactionSuccessful(
+            builder: (ctx) => const TransactionSuccessful(
               title: 'Account pin created!',
               subTitle:
                   'You can now use your account PIN when performing transactions.',
               isBasicInfo: true,
             ),
           ),
-        );
+        ));
       }
     });
   }
@@ -160,7 +164,13 @@ class PinController extends ChangeNotifier {
         );
         return false;
       },
-      (_) => true,
+      (_) async {
+        final userEmail = await _storage.getRememberedEmail();
+        if (userEmail != null) {
+          await _storage.clearPin(userEmail);
+        }
+        return true;
+      },
     );
   }
 

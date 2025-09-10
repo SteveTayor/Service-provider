@@ -69,7 +69,7 @@ class _HistoryScreenState<T> extends ConsumerState<HistoryScreen<T>> {
             child: AppTextField(
               decoration: const InputDecoration().search(), //
               onChange: widget.onSearchChanged,
-              label: 'Search...',
+              hintText: 'Search...',
             ),
           ),
           16.verticalSpace,

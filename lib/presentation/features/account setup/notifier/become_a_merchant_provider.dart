@@ -29,6 +29,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 final becomeAgentProvider = ChangeNotifierProvider<BecomeAgentProvider>((ref) {
   return BecomeAgentProvider(ref, ref.read(apiServiceProvider));
@@ -61,7 +62,7 @@ class BecomeAgentProvider extends ChangeNotifier {
 
       if (parsedBalance < requiredAmount) {
         context.dismissDialog();
-        Navigator.pushReplacement(
+        unawaited(Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (ctx) => FailedResultScreen(
@@ -74,7 +75,7 @@ class BecomeAgentProvider extends ChangeNotifier {
               },
             ),
           ),
-        );
+        ));
         // unawaited(context.showPopUp(
         //   ErrorPopup(
         //     title: 'Insufficient Funds',
@@ -133,6 +134,8 @@ class BecomeAgentProvider extends ChangeNotifier {
       final ipAddress = await _getIpAddress();
       final position = await _getCurrentPosition();
       final platform = await _getPlatform();
+      final packageInfo = await PackageInfo.fromPlatform();
+      final appVersion = packageInfo.version;
 
       final req = BecomeAMerchantRequest(
         macAddress: macAddress,
@@ -140,6 +143,7 @@ class BecomeAgentProvider extends ChangeNotifier {
         latitude: position.latitude.toString(),
         longitude: position.longitude.toString(),
         platform: platform,
+        // appVersion: appVersion,
       );
 
       final result = await _api.becomeMerchant(token, req);

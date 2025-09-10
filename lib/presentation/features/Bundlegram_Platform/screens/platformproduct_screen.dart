@@ -19,6 +19,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/wid
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformproductitem_widget.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/productuserprice_widget.dart';
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/bulk%20e-pin/bulkE-pin_screen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/serviceProviders_history_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
@@ -176,6 +177,27 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                       if (serviceType == PlatformProductType.ePinVoucher ||
                           serviceType == PlatformProductType.bulkEPin)
                         ProductuserpriceWidget(serviceType: serviceType),
+
+                      if (serviceType == PlatformProductType.education) ...[
+                        24.verticalSpace,
+                        AppTextField(
+                          hintText: 'Enter amount',
+                          controller: state.amountController,
+                          keyboardType: TextInputType.number,
+                          readOnly:
+                              true, // Price is set from dropdown selection
+                          inputFormatters: [CurrencyTextInputFormatter()],
+                          prefixIcon: Padding(
+                            padding: context.symmetricPadding(24, 0),
+                            child:
+                                Text('₦', style: context.textTheme.bodyMedium),
+                          ),
+                          onChange: (_) {
+                            notifier
+                                .clearSelectedPresetAmount(); // Optional: deselect preset if user types
+                          },
+                        ),
+                      ],
                       24.verticalSpace,
                       Row(
                         children: [
@@ -211,7 +233,24 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                         text: 'Continue',
                         isLoading: state.isValidating,
                         onPressed: () {
-                          if (notifier.requiresValidation) {
+                          if (serviceType == PlatformProductType.ePinVoucher) {
+                            final isAgent = ref
+                                    .read(globalProvider)
+                                    .profile
+                                    .value
+                                    ?.data
+                                    ?.userType ==
+                                "agent";
+                            if (isAgent) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const BulkEpinScreen()),
+                              );
+                            } else {
+                              notifier.showBulkEPinPrompt(context);
+                            }
+                          } else if (notifier.requiresValidation) {
                             final input =
                                 serviceType == PlatformProductType.betting ||
                                         serviceType ==
@@ -288,8 +327,24 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                               // fontSize: 18,
                               fontWeight: FontWeight.w500,
                             ),
-                            onPressed: () =>
-                                notifier.showBulkEPinPrompt(context),
+                            onPressed: () {
+                              final isAgent = ref
+                                      .read(globalProvider)
+                                      .profile
+                                      .value
+                                      ?.data
+                                      ?.userType ==
+                                  "agent";
+                              if (isAgent) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const BulkEpinScreen()),
+                                );
+                              } else {
+                                notifier.showBulkEPinPrompt(context);
+                              }
+                            },
                             color: AppColors.white,
                           ),
                         ),

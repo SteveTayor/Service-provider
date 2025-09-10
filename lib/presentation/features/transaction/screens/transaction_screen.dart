@@ -14,6 +14,7 @@ import 'package:bundlegram/presentation/features/transaction/screens/widgets/fil
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
+import 'package:bundlegram/presentation/general_widget/async_value/app_future_builder.dart';
 import 'package:bundlegram/presentation/general_widget/receipt_widget.dart';
 import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
 import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
@@ -144,44 +145,59 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
             ),
             20.verticalSpace,
             Expanded(
-              child: allTxns.isEmpty
-                  ? const Padding(
+              child: AppAsyncBuilder(
+                state: ref
+                    .watch(globalProvider.select((g) => g.usersTransactions)),
+                onRetry: () async {
+                  await ref
+                      .read(globalProvider.notifier)
+                      .fetchUsersTransactions(context, force: true);
+                  ref.read(transactionHistoryProvider.notifier).refresh();
+                },
+                builder: (context, ref, txnsResponse) {
+                  final allTxns =
+                      ref.watch(transactionHistoryProvider).filteredServices;
+
+                  if (allTxns.isEmpty) {
+                    return const Padding(
                       padding: EdgeInsets.all(20),
                       child: Center(child: EmptytransactionWidget()),
-                    )
-                  : ListView.separated(
-                      controller: _scrollController,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10.w, vertical: 25),
-                      itemCount: allTxns.length + 1,
-                      separatorBuilder: (_, __) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8, top: 10),
-                        child: Divider(color: AppColors.divider),
-                      ),
-                      itemBuilder: (ctx, index) {
-                        if (index == allTxns.length) {
-                          final isLoadingMore = state.isLoadingMore;
-                          final hasMore = state.hasMore;
+                    );
+                  }
 
-                          if (!hasMore) return const SizedBox.shrink();
-                          if (isLoadingMore) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              child: Center(
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2)),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        }
-
-                        final txn = allTxns[index];
-                        return InkWell(
-                          onTap: () => _showTransactionDetails(txn),
-                          child: ServiceListItem(transaction: txn),
-                        );
-                      },
+                  return ListView.separated(
+                    controller: _scrollController,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 25),
+                    itemCount: allTxns.length + 1,
+                    separatorBuilder: (_, __) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8, top: 10),
+                      child: Divider(color: AppColors.divider),
                     ),
+                    itemBuilder: (ctx, index) {
+                      if (index == allTxns.length) {
+                        final state = ref.watch(transactionHistoryProvider);
+                        if (!state.hasMore) return const SizedBox.shrink();
+                        if (state.isLoadingMore) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Center(
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2)),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }
+
+                      final txn = allTxns[index];
+                      return InkWell(
+                        onTap: () => _showTransactionDetails(txn),
+                        child: ServiceListItem(transaction: txn),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -341,7 +357,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
-              balanceBefore: txn.balanceBefore?.toCurrency(),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
         userBalance: txn.balanceAfter?.toCurrency(),
       );
     }

@@ -60,7 +60,7 @@ class AccountitemWidget extends ConsumerWidget {
             if (bvn == null) {
               WalletNotifier().showLinkBVNSnackBar(
                 context,
-                'verify your BVN for this feature.',
+                'BVN verification required to withdraw from your wallet',
                 'Link now',
               );
               return;

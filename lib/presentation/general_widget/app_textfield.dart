@@ -100,6 +100,36 @@ class AppTextField extends StatefulWidget {
 
 class _AppTextFieldState extends State<AppTextField> {
   String? error;
+
+  // Helper method to determine the appropriate border color
+  Color _getBorderColor() {
+    if (widget.bordercolor != null) {
+      return widget.bordercolor!;
+    }
+
+    // If the field is disabled, use a lighter/muted border color
+    if (widget.enabled == false) {
+      return AppColors.greyEE; // Much lighter color for disabled state
+    }
+
+    // Default active/enabled border color
+    return AppColors.greyD0;
+  }
+
+  // Helper method to determine background color
+  Color _getBackgroundColor() {
+    if (widget.backgroundColor != null) {
+      return widget.backgroundColor!;
+    }
+
+    // If disabled, use a muted background
+    if (widget.enabled == false) {
+      return AppColors.greyF5; // Light grey background for disabled state
+    }
+
+    return AppColors.white;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -140,8 +170,9 @@ class _AppTextFieldState extends State<AppTextField> {
             },
             style: widget.textStyle ??
                 context.textTheme.bodySmall?.copyWith(
-                  // fontSize: 14,
-                  color: widget.cursorColor ?? AppColors.grey19,
+                  color: widget.enabled == false
+                      ? AppColors.grey80 // Muted text color for disabled state
+                      : (widget.cursorColor ?? AppColors.grey19),
                 ),
             cursorColor: widget.cursorColor ?? AppColors.grey80,
             key: widget.key,
@@ -156,11 +187,12 @@ class _AppTextFieldState extends State<AppTextField> {
                 InputDecoration(
                   contentPadding:
                       EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                  filled: widget.isFilled,
+                  filled: widget.isFilled ??
+                      (widget.enabled == false), // Fill disabled fields
                   constraints: BoxConstraints(
                     minHeight: 40.h,
                   ),
-                  fillColor: widget.backgroundColor ?? AppColors.white,
+                  fillColor: _getBackgroundColor(),
                   prefixIconConstraints: BoxConstraints(
                     minWidth: 40.w,
                     minHeight: 18.h,
@@ -169,7 +201,6 @@ class _AppTextFieldState extends State<AppTextField> {
                   suffixIconConstraints:
                       BoxConstraints(minWidth: 50.w, minHeight: 18.h),
                   suffixIcon: widget.suffixIcon,
-                  enabled: false,
                   errorStyle: context.textTheme.bodySmall!.copyWith(
                     fontSize: 0,
                     color: AppColors.errorText,
@@ -178,23 +209,45 @@ class _AppTextFieldState extends State<AppTextField> {
                   errorMaxLines: 1,
                   hintStyle: widget.hintStyle ??
                       context.textTheme.bodySmall!.copyWith(
-                        // fontSize: 14,
-                        color: AppColors.grey33,
-                      ),
+                          color:
+                              // widget.enabled == false ?
+                              AppColors
+                                  .grey8E // Lighter hint text for disabled state
+                          // : AppColors.grey33,
+                          ),
+                  // Enabled border (when field is enabled but not focused)
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6.r),
                     borderSide: BorderSide(
-                      color: widget.bordercolor ?? AppColors.greyD0,
+                      color: _getBorderColor(),
                     ),
                   ),
+                  // Focused border (when field is enabled and focused)
                   focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.r),
                     borderSide: BorderSide(
-                      color: widget.bordercolor ?? AppColors.greyD0,
+                      color: widget.enabled == false
+                          ? _getBorderColor() // Keep same border color if disabled
+                          : (widget.bordercolor ??
+                              AppColors.greyD0), // Normal focus color
+                      width: widget.enabled == false
+                          ? 1.0
+                          : 1.5, // Thicker border when focused and enabled
                     ),
                   ),
-                  border: OutlineInputBorder(
+                  // Disabled border (when field is disabled)
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.r),
                     borderSide: BorderSide(
-                      color: widget.bordercolor ?? AppColors.greyD0,
+                      color: AppColors
+                          .greyEE, // Very light border for disabled state
+                    ),
+                  ),
+                  // Default border
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.r),
+                    borderSide: BorderSide(
+                      color: _getBorderColor(),
                     ),
                   ),
                 ),
@@ -208,7 +261,6 @@ class _AppTextFieldState extends State<AppTextField> {
           Text(
             error!,
             style: context.textTheme.bodySmall?.copyWith(
-              // fontSize: 14,
               color: AppColors.errorText,
             ),
           ),

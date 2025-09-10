@@ -1,4 +1,3 @@
-// lib/presentation/features/setting/provider/change_password_notifier.dart
 import 'dart:async';
 
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
@@ -12,14 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-// final changePasswordProvider =
-//     ChangeNotifierProvider.autoDispose<ChangePasswordController>((ref) {
-//   return ChangePasswordController(
-//     ref,
-//     ref.read(apiServiceProvider),
-//     ref.read(secureStorageHelperProvider),
-//   );
-// });
 final changePasswordProvider = ChangeNotifierProvider.autoDispose
     .family<ChangePasswordController, String>((ref, email) {
   return ChangePasswordController(
@@ -53,8 +44,19 @@ class ChangePasswordController extends ChangeNotifier {
   bool showNewPassword = true;
   bool showConfirmPassword = true;
 
+  // ✅ Add getter to determine if new password fields should be enabled
+  bool get enableNewPasswordFields =>
+      currentPasswordController.text.trim().length >= 6;
+
   void validateForm() {
-    isFormValid = formKey.currentState?.validate() ?? false;
+    final formIsValid = formKey.currentState?.validate() ?? false;
+
+    // ✅ Only enable submit button when form is valid AND all required fields have input
+    isFormValid = formIsValid &&
+        currentPasswordController.text.trim().isNotEmpty &&
+        newPasswordController.text.trim().isNotEmpty &&
+        confirmPasswordController.text.trim().isNotEmpty;
+
     notifyListeners();
   }
 

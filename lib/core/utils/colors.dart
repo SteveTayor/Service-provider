@@ -21,6 +21,7 @@ class AppColors {
   static const Color grey5B = Color(0xff5B5B5B);
   static const Color grey2F = Color(0xff332F2F);
   static const Color pink = Color(0xffEE4878);
+  static const Color resultwidgetColor = Color(0xff333333);
   // Status color
   static const Color success = Color(0xFF0F9624);
   static const Color error = Color(0xFFE24934);
@@ -35,4 +36,5 @@ class AppColors {
   static const Color subtitleColor = Color(0xFF808080);
 
   static const Color searchHintColor = Color(0xFF8E8E8E);
+  static const Color closeAcctColor = Color(0xFF333333);
 }

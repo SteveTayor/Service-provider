@@ -20,25 +20,48 @@ import 'package:go_router/go_router.dart';
 class WalletNotifier {
   Future<void> showAddMoney(BuildContext context, WidgetRef ref) async {
     await ref.read(globalProvider.notifier).fetchVirtualAccount(context);
+
     ref.read(globalProvider).virtualAccounts.when(
-      data: (resp) {
-        final sterling = resp!.data?.sterling;
-        final wema = resp.data?.wema;
-        context.showBottomSheet(
-          child: AddfundWidget(
-            sterlingAccount: sterling,
-            wemaAccount: wema,
-          ),
+          data: (resp) {
+            final accounts = resp?.data ?? {};
+            if (accounts.isEmpty) {
+              showAddMoneyViaDebitCard(context);
+              context.showErrorSnackBar('No virtual accounts available yet.');
+              return;
+            } else {
+              context.showBottomSheet(
+                child: AddfundWidget(accounts: accounts),
+              );
+            }
+          },
+          loading: () => AppLoader(),
+          error: (_, __) {
+            context.showErrorSnackBar('Virtual accounts not available yet.');
+          },
         );
-      },
-      loading: () {
-        AppLoader();
-      },
-      error: (_, __) {
-        context.showErrorSnackBar('Virtual accounts not available yet.');
-      },
-    );
   }
+
+  // Future<void> showAddMoney(BuildContext context, WidgetRef ref) async {
+  //   await ref.read(globalProvider.notifier).fetchVirtualAccount(context);
+  //   ref.read(globalProvider).virtualAccounts.when(
+  //     data: (resp) {
+  //       final sterling = resp!.data?.sterling;
+  //       final wema = resp.data?.wema;
+  //       context.showBottomSheet(
+  //         child: AddfundWidget(
+  //           sterlingAccount: sterling,
+  //           wemaAccount: wema,
+  //         ),
+  //       );
+  //     },
+  //     loading: () {
+  //       AppLoader();
+  //     },
+  //     error: (_, __) {
+  //       context.showErrorSnackBar('Virtual accounts not available yet.');
+  //     },
+  //   );
+  // }
 
   Future<void> showAddMoneyViaDebitCard(BuildContext context) async {
     return context.showBottomSheet(

@@ -47,16 +47,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:network_info_plus/network_info_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+// import 'package:device_info_plus/device_info_plus.dart';
+// import 'package:geolocator/geolocator.dart';
+// import 'package:network_info_plus/network_info_plus.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 const List<PlatformProductType> kValidationRequiredServices = [
   PlatformProductType.betting,
   PlatformProductType.cableTv,
   PlatformProductType.electricity,
-  PlatformProductType.education,
+  // PlatformProductType.education,
   PlatformProductType.internetServices,
 ];
 
@@ -70,6 +71,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   final ApiService _apiService;
   final PlatformProductType _serviceType;
   final Ref _ref;
+  final Map<int, List<SubProduct>> _subProductsCache = {};
 
   Timer? _debounce;
 
@@ -79,6 +81,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   Future<void> fetchProducts(BuildContext context) async {
     state = state.copyWith(isLoading: true, error: null);
     final result = await _ref.read(productsProvider(_serviceType).future);
+
     state = state.copyWith(
       isLoading: false,
       products: result.data ?? [],
@@ -99,6 +102,17 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     if (result.status != 'success') {
       context.showErrorSnackBar(result.message ?? 'Failed to load products');
     }
+  }
+
+  Future<bool> hasSubProducts(int productId) async {
+    if (_subProductsCache.containsKey(productId)) {
+      return _subProductsCache[productId]!.isNotEmpty;
+    }
+
+    final result = await _ref.read(subProductsProvider(productId).future);
+    final subs = result.data ?? [];
+    _subProductsCache[productId] = subs; // Cache the result
+    return subs.isNotEmpty;
   }
 
   Future<void> fetchSubProducts(BuildContext context, int productId) async {
@@ -364,6 +378,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             double.parse(state.amountController.text) <= 0) {
           return 'Please enter a valid amount';
         }
+        if (double.parse(state.amountController.text) <= 50) {
+          return 'Minimum airtime amount is 50 naira';
+        }
         break;
 
       case PlatformProductType.mobileData:
@@ -426,20 +443,20 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         break;
 
       case PlatformProductType.education:
-        if (state.secondaryInputController.text.isEmpty) {
-          return 'Please enter a valid account number';
-        }
+        // if (state.secondaryInputController.text.isEmpty) {
+        //   return 'Please enter a valid Transaction ID';
+        // }
         if (state.selectedSubProduct == null) {
           return 'Please select an education package';
         }
-        if (!state.isValidated) {
-          return 'Please validate your account number';
-        }
+        // if (!state.isValidated) {
+        //   return 'Please validate your account number';
+        // }
         break;
 
       case PlatformProductType.internetServices:
-        if (state.secondaryInputController.text.length != 10) {
-          return 'Account number must be 10 digits';
+        if (state.secondaryInputController.text == null) {
+          return 'Beneficiary number is required';
         }
         if (state.selectedSubProduct == null) {
           return 'Please select an internet package';
@@ -598,7 +615,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       case PlatformProductType.ePinVoucher:
       case PlatformProductType.bulkEPin:
         // Use a generic e-pin asset or specific providers if available
-        return Assets.svgs.ePin; // Adjust if you have specific e-pin providers
+        providers = PlatFormData.serviceProviderWidget;
+        break;
+      // return Assets.svgs.ePin; // Adjust if you have specific e-pin providers
       default:
         print(
             'Returning fallback for unknown service type: ${_getFallbackAsset(serviceType ?? _serviceType)}');
@@ -701,7 +720,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       debugPrint('Validation aborted: shouldValidate=$shouldValidate, '
           'selectedProduct=${state.selectedProduct == null ? 'null' : state.selectedProduct!.id}');
       context.showErrorSnackBar(
-        'Please enter a valid ${_serviceType == PlatformProductType.airtime || _serviceType == PlatformProductType.mobileData ? 'phone number' : _serviceType == PlatformProductType.betting ? 'user ID' : _serviceType == PlatformProductType.cableTv ? 'smart card number' : 'meter number'}',
+        'Please enter a valid ${_serviceType == PlatformProductType.airtime || _serviceType == PlatformProductType.mobileData ? 'phone number' : _serviceType == PlatformProductType.betting ? 'user ID' : _serviceType == PlatformProductType.cableTv ? 'smart card number' : _serviceType == PlatformProductType.electricity ? 'meter number' : 'number'}',
       );
       return;
     }
@@ -985,12 +1004,14 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       final latitude = deviceInfo['latitude']!;
       final longitude = deviceInfo['longitude']!;
       final platform = deviceInfo['platform']!;
+      final packageInfo = await PackageInfo.fromPlatform();
+      final appVersion = packageInfo.version;
 
       unawaited(context.showLoadingDialog(message: "Initiating payment..."));
       final request = InitiateTransactionRequest(
         amount: _serviceType == PlatformProductType.mobileData
             ? originalAmount
-            : discountedAmount,
+            : originalAmount,
         macAddress: macAddress,
         ipAddress: ipAddress,
         latitude: latitude,
@@ -1005,6 +1026,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                 _serviceType != PlatformProductType.mobileData
             ? validatedName
             : null,
+        appVersion: appVersion,
       );
 
       final result = _serviceType == PlatformProductType.mobileData ||
@@ -1132,10 +1154,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             BundlegramButton(
               text: 'Continue',
               onPressed: () {
-                context.pop();
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => BulkEpinScreen()),
-                );
+                context
+                  ..pop()
+                  ..push(RouteConstants.becomeagent);
               },
             ),
             18.verticalSpace,

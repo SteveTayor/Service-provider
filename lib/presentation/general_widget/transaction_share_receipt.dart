@@ -313,7 +313,7 @@ class _TransactionDetailItem extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  value,
+                  value.replaceAll("_", " "),
                   style: valueStyle ??
                       context.textTheme.labelMedium?.copyWith(
                         fontWeight: FontWeight.w600,

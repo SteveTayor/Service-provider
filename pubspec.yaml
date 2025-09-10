@@ -1,6 +1,6 @@
 name: bundlegram
 description: A Very Good Project created by Very Good CLI.
-version: 1.0.0+1
+version: 1.0.10+10
 publish_to: none
 
 environment:
@@ -46,6 +46,8 @@ dependencies:
   webview_flutter: ^4.13.0
   connectivity_plus: ^6.1.5
   image_gallery_saver_plus: ^4.0.1
+  fluttertoast: ^8.2.12
+  clipboard: ^2.0.2
   
 
 dev_dependencies:
@@ -78,17 +80,6 @@ flutter_launcher_icons:
       image_path: "assets/images/ic_launcher-playstore.png"
     production:
       image_path: "assets/images/ic_launcher-playstore.png"
-
-flutter_native_splash:
-  color: "#E24934" # 🔁 change to your desired hex color
-  image: assets/images/logo.png
-  android: true
-  ios: true
-  fullscreen: true
-
-  android_gravity: center
-  ios_content_mode: center
-
 
 flutter:
   uses-material-design: true
