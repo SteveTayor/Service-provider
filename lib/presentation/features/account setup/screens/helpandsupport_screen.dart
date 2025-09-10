@@ -12,6 +12,8 @@ import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 class HelpandsupportScreen extends ConsumerWidget {
   const HelpandsupportScreen({super.key});
@@ -220,10 +222,10 @@ class HelpandsupportScreen extends ConsumerWidget {
                       height: 40,
                       path: Assets.svgs.igInstagramIcon,
                       onTap: () => provider.openInstagram()),
-                  AppSvgIcon(
-                      height: 40,
-                      path: Assets.svgs.linkedinAppIcon,
-                      onTap: () => provider.openLinkedIn()),
+                  // AppSvgIcon(
+                  //     height: 40,
+                  //     path: Assets.svgs.linkedinAppIcon,
+                  //     onTap: () => provider.openLinkedIn()),
                   AppSvgIcon(
                       height: 40,
                       path: Assets.svgs.telegramIcon,
@@ -234,6 +236,7 @@ class HelpandsupportScreen extends ConsumerWidget {
                       onTap: () => provider.openTikTok()),
                   AppSvgIcon(
                       height: 40,
+                      color: null,
                       path: Assets.svgs.whatsappColorIcon,
                       onTap: () => provider.openWhatsapp()),
                 ],

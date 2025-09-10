@@ -1,10 +1,11 @@
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final helpSupportProvider = ChangeNotifierProvider<HelpSupportProvider>((ref) {
   return HelpSupportProvider();
@@ -60,10 +61,12 @@ class HelpSupportProvider extends ChangeNotifier {
   //   final uri = Uri.parse(url);
   //   await _launchUri(uri, "Could not open $url");
   // }
-  Future<void> copyToClipboard(BuildContext context, String text) async {
-    await Clipboard.setData(ClipboardData(text: text));
+  void copyToClipboard(BuildContext context, String text) {
+    FlutterClipboard.copy(text)
+        .then((value) => context.showSuccessSnackBar('Copied'));
+    // await Clipboard.setData(ClipboardData(text: text));
 
-    context.showSuccessSnackBar('Copied to clipboard');
+    // context.showSuccessSnackBar('Copied to clipboard');
   }
 
   Future<void> launchEmail(String email) async {
