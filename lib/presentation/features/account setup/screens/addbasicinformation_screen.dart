@@ -45,7 +45,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //               borderRadius: BorderRadius.circular(8),
 //               border: Border.all(color: AppColors.greyD0),
 //             ),
-//             SizedBox(height: 12.h),
+//             SizedBox(height: 18.h),
 //             Text(profileinfoProv.email!).withContainer(
 //               width: context.width,
 //               color: AppColors.greyD0.withOpacity(0.3),
@@ -55,23 +55,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //             ),
 //           ] else ...[
 //             const AppTextField(hintText: 'First Name'),
-//             SizedBox(height: 12.h),
+//             SizedBox(height: 18.h),
 //             const AppTextField(hintText: 'Last Name'),
-//             SizedBox(height: 12.h),
+//             SizedBox(height: 18.h),
 //             const AppTextField(hintText: 'Email'),
-//             SizedBox(height: 12.h),
+//             SizedBox(height: 18.h),
 //             const AppTextField(hintText: 'Phone Number'),
 //           ],
-//           SizedBox(height: 12.h),
+//           SizedBox(height: 18.h),
 //           const AppDropdown(
 //             title: 'Gender',
 //             options: ['Male', 'Female'],
 //           ),
-//           SizedBox(height: 12.h),
+//           SizedBox(height: 18.h),
 //           const AppTextField(hintText: 'Address'),
-//           SizedBox(height: 12.h),
+//           SizedBox(height: 18.h),
 //           const AppDatetextfield(title: 'Date of birth'),
-//           SizedBox(height: 12.h),
+//           SizedBox(height: 18.h),
 //           BundlegramButton(
 //             text: '${userAction.isCreate ? 'Submit' : 'Update'} details',
 //             onPressed: () {
@@ -149,7 +149,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
               isFilled: true,
               backgroundColor: AppColors.greyD0.withOpacity(0.3),
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 18.h),
             AppTextField(
               label: 'Last Name',
               controller: notifier.lastName,
@@ -160,7 +160,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
               // readOnly: userAction.isCreate ? false : true,
               backgroundColor: AppColors.greyD0.withOpacity(0.3),
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 18.h),
             AppTextField(
               label: "Email",
               controller: notifier.email,
@@ -169,7 +169,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
               isFilled: true,
               backgroundColor: AppColors.greyD0.withOpacity(0.3),
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 18.h),
             AppTextField(
               label: 'Phone Number',
               controller: notifier.phone,
@@ -187,7 +187,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
                 notifier.phone.text = value;
               },
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 18.h),
             AppDropdown(
               title: provider.gender != "" ? provider.gender : "Gender",
               options: const ['Male', 'Female'],
@@ -197,7 +197,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
                   userAction.isCreate ? false : (bvnLinked ? hasGender : false),
               // editable unless BVN is linked
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 18.h),
             AppTextField(
               label: 'Address',
               controller: notifier.address,
@@ -209,7 +209,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
               backgroundColor: AppColors.greyD0.withOpacity(0.3),
               validateFunction: notifier.validateNotEmpty,
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 18.h),
             AppDatetextfield(
               controller: notifier.dob,
               title: '',
@@ -222,7 +222,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
             ),
             SizedBox(height: 32.h),
             Opacity(
-              opacity: userAction.isCreate ? 1 : 0.5,
+              opacity: userAction.isCreate ? 1 : 0.9,
               child: BundlegramButton(
                 isEnabled: provider.loading
                     ? false

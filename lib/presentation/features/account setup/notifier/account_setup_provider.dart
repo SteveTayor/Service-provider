@@ -87,7 +87,8 @@ class AccountSetupProvider extends ChangeNotifier {
     final bvnLinkedNow = profile?.bvn?.toString().isNotEmpty ?? false;
 
     // Allow email verification anytime
-    if (step.title.toLowerCase().contains('verify email')) {
+    if (step.title.toLowerCase().contains('verify email') ||
+        step.title.toLowerCase().contains('add basic information')) {
       if (step.isBottomSheet && step.bottomSheet != null) {
         context.showBottomSheet(child: step.bottomSheet!);
       } else if (step.route != null) {

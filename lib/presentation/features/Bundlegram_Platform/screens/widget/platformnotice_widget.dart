@@ -142,7 +142,7 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
             // }
 
             // if (!isAgent) {
-            advertItems.add(Assets.images.becomeanagent.path);
+            advertItems.add(Assets.svgs.becomeagent);
             advertActions.add(() => context.push(RouteConstants.becomeagent));
             // }
 

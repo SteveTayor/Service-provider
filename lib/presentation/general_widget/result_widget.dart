@@ -44,7 +44,8 @@ class ResultWidget extends StatelessWidget {
               Text(
                 subText,
                 textAlign: TextAlign.center,
-                style: context.textTheme.bodySmall,
+                style: context.textTheme.bodyMedium?.copyWith(
+                    fontSize: 18, color: AppColors.resultwidgetColor),
               ),
             ],
           ),
