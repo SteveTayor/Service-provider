@@ -61,7 +61,7 @@ class BecomeAgentProvider extends ChangeNotifier {
 
       if (parsedBalance < requiredAmount) {
         context.dismissDialog();
-        Navigator.pushReplacement(
+        unawaited(Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (ctx) => FailedResultScreen(
@@ -74,7 +74,7 @@ class BecomeAgentProvider extends ChangeNotifier {
               },
             ),
           ),
-        );
+        ));
         // unawaited(context.showPopUp(
         //   ErrorPopup(
         //     title: 'Insufficient Funds',

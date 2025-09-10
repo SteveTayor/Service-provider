@@ -79,17 +79,6 @@ flutter_launcher_icons:
     production:
       image_path: "assets/images/ic_launcher-playstore.png"
 
-flutter_native_splash:
-  color: "#E24934" # 🔁 change to your desired hex color
-  image: assets/images/logo.png
-  android: true
-  ios: true
-  fullscreen: true
-
-  android_gravity: center
-  ios_content_mode: center
-
-
 flutter:
   uses-material-design: true
   generate: true

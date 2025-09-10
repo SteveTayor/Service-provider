@@ -260,8 +260,10 @@ class _AddfundviadebitcardWidgetState
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Add money via debit card',
-              style: context.textTheme.displaySmall),
+          Text(
+            'Add money via debit card',
+            style: context.textTheme.displaySmall,
+          ),
           28.verticalSpace,
           AppTextField(
             controller: _amountController,
@@ -269,7 +271,7 @@ class _AddfundviadebitcardWidgetState
             keyboardType: TextInputType.number,
             inputFormatters: [CurrencyTextInputFormatter()],
           ),
-          20.verticalSpace,
+          24.verticalSpace,
           BundlegramButton(
               text: 'Continue',
               onPressed: () async {
@@ -344,6 +346,7 @@ class _AddfundviadebitcardWidgetState
                       "Something went wrong in the payment flow.");
                 }
               }),
+          50.verticalSpace
         ],
       ),
     );

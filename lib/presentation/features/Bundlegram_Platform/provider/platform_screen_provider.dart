@@ -8,6 +8,7 @@ import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/statisticvisual.dart';
+import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bundlegram/data/models/banks/get_virtual_account_response.dart';
@@ -39,17 +40,15 @@ class PlatformProvider extends ChangeNotifier {
     return "${value.toCurrency()}";
   }
 
-  List<Sterling> get virtualAccounts {
+  List<VirtualAccount> get virtualAccounts {
     final va = _ref.read(globalProvider).virtualAccounts;
 
     if (va is AsyncData<GetVirtualAccountsResponse>) {
       final data = va.value.data;
       if (data == null) return [];
 
-      return [
-        if (data.sterling != null) data.sterling!,
-        if (data.wema != null) data.wema!,
-      ];
+      // Convert map values to list, ignore nulls
+      return data.values.whereType<VirtualAccount>().toList();
     }
 
     return [];
@@ -84,7 +83,18 @@ class PlatformProvider extends ChangeNotifier {
   }
 
   void goToWithdrawFund(BuildContext context) {
-    context.push(RouteConstants.withdrawFund);
+    final profile = _ref.read(globalProvider).profile;
+    final bvn = profile.value?.data?.bvn;
+
+    if (bvn == null) {
+      WalletNotifier().showLinkBVNSnackBar(
+        context,
+        'BVN verification required to withdraw from your wallet.',
+        'Link now',
+      );
+    } else {
+      context.push(RouteConstants.withdrawFund);
+    }
   }
 
   void goToProduct(BuildContext context, PlatformProductType type) {

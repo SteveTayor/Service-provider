@@ -377,6 +377,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             double.parse(state.amountController.text) <= 0) {
           return 'Please enter a valid amount';
         }
+        if (double.parse(state.amountController.text) <= 50) {
+          return 'Minimum airtime amount is 50 naira';
+        }
         break;
 
       case PlatformProductType.mobileData:
@@ -1005,7 +1008,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       final request = InitiateTransactionRequest(
         amount: _serviceType == PlatformProductType.mobileData
             ? originalAmount
-            : discountedAmount,
+            : originalAmount,
         macAddress: macAddress,
         ipAddress: ipAddress,
         latitude: latitude,

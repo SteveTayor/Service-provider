@@ -62,7 +62,7 @@ class TransactionSummary extends ConsumerWidget {
 
           // Value + optional icon - takes remaining space
           Expanded(
-            flex: 6,
+            flex: 2,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,6 +75,7 @@ class TransactionSummary extends ConsumerWidget {
                           fit: BoxFit.scaleDown,
                           width: 20.w,
                           height: 20.h,
+                          useCircleAvatar: true,
                         )
                       : Image.asset(
                           assetPath!,
@@ -111,7 +112,25 @@ class TransactionSummary extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final walletBalanceAsync =
         ref.watch(globalProvider.select((s) => s.walletBalance));
-    final walletBalance = walletBalanceAsync.value?.wallet ?? 0.0;
+    // Helper to safely convert various types (num, String like "₦1,000.00") to double
+    double toDouble(dynamic v) {
+      if (v == null) return 0.0;
+      if (v is num) return v.toDouble();
+      if (v is String) {
+        final cleaned = v.replaceAll(
+            RegExp(r'[^\d.]'), ''); // removes commas, currency symbols
+        return double.tryParse(cleaned) ?? 0.0;
+      }
+      return 0.0;
+    }
+
+    final rawWallet = walletBalanceAsync.value?.wallet;
+    final walletBalance = toDouble(rawWallet);
+
+    final amountValue = toDouble(amount);
+
+    // now both are doubles — comparison is valid
+    final isEnabled = walletBalance >= amountValue;
 
     return Container(
       constraints: BoxConstraints(
@@ -268,7 +287,8 @@ class TransactionSummary extends ConsumerWidget {
             ),
             child: BundlegramButton(
               text: 'Pay',
-              onPressed: onPay,
+              onPressed: isEnabled ? onPay : null,
+              isEnabled: isEnabled,
             ),
           ),
         ],
