@@ -184,6 +184,28 @@ class Validators {
     return matchPattern(emailPattern, 'email', text);
   }
 
+  static Validator emailOrUsername() {
+    return (String? value) {
+      if (value == null || value.trim().isEmpty) {
+        return 'This field cannot be empty.';
+      }
+
+      final trimmed = value.trim();
+
+      // If it matches email pattern → accept
+      if (emailPattern.hasMatch(trimmed)) {
+        return null;
+      }
+
+      // If not an email, treat as username (must be at least 3 chars)
+      if (trimmed.length < 3) {
+        return 'Username must be at least 3 characters.';
+      }
+
+      return null;
+    };
+  }
+
   static Validator password([int minimumLength = 8]) => multiple(
         [
           containsUpper('Password'),

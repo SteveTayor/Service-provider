@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
@@ -119,9 +120,10 @@ class WithdrawalProvider extends ChangeNotifier {
       final result = await _api.getUserBanks(token);
       result.fold(
         (fail) {
-          context.showErrorSnackBar(fail.properties.isNotEmpty
-              ? fail.properties.join('\n')
-              : 'Failed to fetch user banks');
+          final userMsg = userFacingMessageFromFailure(fail);
+          context.showErrorSnackBar(userMsg);
+          // _setLoading(false);
+          return false;
         },
         (data) {
           _userBanks = data.data ?? [];

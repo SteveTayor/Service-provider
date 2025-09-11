@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
@@ -52,12 +54,12 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     final bvn = profile.value?.data?.bvn;
 
     if (bvn == null) {
-      WalletNotifier().showLinkBVNSnackBar(
-        context,
-        'Complete account setup before funding wallet.',
-        'Setup',
-      );
-      // return;
+      // WalletNotifier().showLinkBVNSnackBar(
+      //   context,
+      //   'BVN verification required to withdraw from your wallet.',
+      //   'Link now',
+      // );
+      unawaited(WalletNotifier().showAddMoneyViaDebitCard(context));
     } else {
       await WalletNotifier().showAddMoney(context, ref);
     }

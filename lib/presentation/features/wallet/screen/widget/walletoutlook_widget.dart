@@ -31,11 +31,11 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
     final bvn = profile.value?.data?.bvn;
 
     if (bvn == null) {
-      WalletNotifier().showLinkBVNSnackBar(
-        context,
-        'BVN verification required to withdraw from your wallet.',
-        'Link now',
-      );
+      // WalletNotifier().showLinkBVNSnackBar(
+      //   context,
+      //   'BVN verification required to withdraw from your wallet.',
+      //   'Link now',
+      // );
       unawaited(WalletNotifier().showAddMoneyViaDebitCard(context));
     } else {
       await WalletNotifier().showAddMoney(context, ref);
