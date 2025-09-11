@@ -68,7 +68,7 @@ class _AccountsetupScreenState extends ConsumerState<AccountsetupScreen> {
         child: Column(
           children: [
             Text(
-              'Hi${firstName.isNotEmpty ? firstName : 'there'}, finish setting up your account to enjoy Bundlegram fully.',
+              'Hi ${firstName.isNotEmpty ? firstName : 'there'}, finish setting up your account to enjoy Bundlegram fully.',
               textAlign: TextAlign.center,
               style: context.textTheme.bodyMedium,
             ),

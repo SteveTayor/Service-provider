@@ -1088,8 +1088,20 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         },
         (response) {
           if (response.success) {
-            final successBody =
-                '${_serviceType.title} purchase of ${originalAmount.toCurrency()} for $beneficiary was successful.';
+            final isMobileData = _serviceType == PlatformProductType.mobileData;
+            final dataValue = state.selectedSubProduct?.subName ??
+                state.selectedDataType ??
+                ''; // your plan name (e.g. "GloCG 200MB")
+            final displayTarget = isMobileData && dataValue.isNotEmpty
+                ? dataValue
+                : originalAmount.toCurrency();
+
+            final successBody = isMobileData
+                ? '${_serviceType.title} purchase of $displayTarget for $beneficiary was successful.'
+                : '${_serviceType.title} purchase of $displayTarget for $beneficiary was successful.';
+
+            // final successBody =
+            //     '${_serviceType.title} purchase of ${originalAmount.toCurrency()} for $beneficiary was successful.';
             final notifPayload = jsonEncode({
               'route':
                   '/transactions/detail', // change to your transaction/detail route
