@@ -279,12 +279,15 @@ class LinkBvnProvider extends ChangeNotifier {
 
   // Validators
   String? validateBVN(String? v) => Validators.notEmpty()(v);
-  String? validatePhone(String? v) =>
-      Validators.validateNigerianPhoneNumber()(v);
+  String? validatePhone(String? v) => Validators.validateNGNPhoneNumber()(v);
   String? validateDate(String? v) => Validators.date()(v);
   String? validateBank(String? v) =>
       v == null || v.isEmpty ? 'Select a bank' : null;
-  String? validateAccount(String? v) => Validators.notEmpty()(v);
+  String? validateAccount(String? v) {
+    if (v == null || v.isEmpty) return 'Account number is required';
+    if (v.length != 10) return 'Account number must be 10 digits';
+    return null;
+  }
 
   void _setLoading(bool v) {
     _loading = v;

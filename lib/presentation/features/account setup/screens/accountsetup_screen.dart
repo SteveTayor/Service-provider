@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bundlegram/presentation/features/account%20setup/notifier/account_setup_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,8 +27,21 @@ class _AccountsetupScreenState extends ConsumerState<AccountsetupScreen> {
     super.initState();
     // fetch banks once on screen load
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(globalProvider.notifier).fetchBanks(context);
-      ref.read(globalProvider.notifier).fetchProfile(context);
+      // run in a microtask so we can use async/await safely
+      Future.microtask(() async {
+        try {
+          await ref.read(globalProvider.notifier).fetchBanks(context);
+        } catch (e, st) {
+          // log but do not rethrow — prevents framework error overlay
+          log('fetchBanks() failed in AccountsetupScreen: $e', stackTrace: st);
+        }
+        try {
+          await ref.read(globalProvider.notifier).fetchProfile(context);
+        } catch (e, st) {
+          log('fetchProfile() failed in AccountsetupScreen: $e',
+              stackTrace: st);
+        }
+      });
     });
   }
 
@@ -35,8 +50,15 @@ class _AccountsetupScreenState extends ConsumerState<AccountsetupScreen> {
     final provider = ref.watch(accountSetupProvider);
     final steps = provider.steps;
     final profileAsync = ref.watch(globalProvider).profile;
-    final firstName = profileAsync.value?.data?.firstName ?? '';
-
+    // final firstName = profileAsync.value?.data?.firstName ?? '';
+    // final profileAsync = ref.watch(globalProvider).profile;
+    String firstName = '';
+    try {
+      firstName = profileAsync.value?.data?.firstName ?? '';
+    } catch (_) {
+      // defensive: if accessing value throws, swallow and use empty string
+      firstName = '';
+    }
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(
         titleText: 'Complete account set up',
@@ -46,7 +68,7 @@ class _AccountsetupScreenState extends ConsumerState<AccountsetupScreen> {
         child: Column(
           children: [
             Text(
-              'Hi $firstName, finish setting up your account to enjoy Bundlegram fully.',
+              'Hi${firstName.isNotEmpty ? firstName : 'there'}, finish setting up your account to enjoy Bundlegram fully.',
               textAlign: TextAlign.center,
               style: context.textTheme.bodyMedium,
             ),

@@ -79,6 +79,20 @@ class Validators {
     };
   }
 
+  static Validator validateNGNPhoneNumber() {
+    return (String? value) {
+      if (value == null || value.isEmpty) return 'This field is required';
+
+      final digitsOnly = value.replaceAll(RegExp(r'\D'), '');
+
+      if (digitsOnly.length != 11 || !digitsOnly.startsWith('0')) {
+        return 'Phone number must be 11 digits starting with 0';
+      }
+
+      return null;
+    };
+  }
+
   static Validator withdrawSafe(num safeAmount) {
     return (value) {
       if (value == null) {
