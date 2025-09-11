@@ -160,7 +160,9 @@ class BasicInfoProvider extends ChangeNotifier {
         },
       );
     } catch (e) {
-      context.showErrorSnackBar(e.toString());
+// Friendly UI for users
+      context.dismissDialog();
+      context.showErrorSnackBar('An error occurred. Please try again.');
     } finally {
       _setLoading(false);
       // dismiss dialog ONCE at the end if still mounted

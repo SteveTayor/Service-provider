@@ -39,6 +39,8 @@ class App extends ConsumerWidget {
             darkTheme: AppTheme.darkTheme,
             debugShowCheckedModeBanner: false,
             locale: const Locale('en', 'NG'),
+            // builder: DevicePreview.appBuilder,
+            // locale: DevicePreview.locale(context),
             supportedLocales: const [Locale('en', 'NG')],
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,

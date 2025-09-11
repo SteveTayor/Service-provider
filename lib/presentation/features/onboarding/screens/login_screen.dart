@@ -78,23 +78,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 extraWidget: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // Checkbox(
-                    //   value: prov.rememberMe,
-                    //   onChanged: ctrl.toggleRememberMe,
-                    //   activeColor: AppColors.primaryColor,
-                    //   side: const BorderSide(
-                    //     color: AppColors.primaryColor,
-                    //   ),
-                    //   checkColor: AppColors.white,
-                    // ),
-                    // Text(
-                    //   'Remember me',
-                    //   style: context.textTheme.bodySmall!.copyWith(
-                    //     // fontSize: 16,
-                    //     color: AppColors.grey83,
-                    //   ),
-                    // ),
-                    // const Spacer(),
+                    Checkbox(
+                      value: prov.rememberMe,
+                      onChanged: ctrl.toggleRememberMe,
+                      activeColor: AppColors.primaryColor,
+                      side: const BorderSide(
+                        color: AppColors.primaryColor,
+                      ),
+                      checkColor: AppColors.white,
+                    ),
+                    Text(
+                      'Remember me',
+                      style: context.textTheme.bodySmall!.copyWith(
+                        // fontSize: 16,
+                        color: AppColors.grey83,
+                      ),
+                    ),
+                    const Spacer(),
                     InkWell(
                       onTap: () => context.push(
                         RouteConstants.forgetPassword,

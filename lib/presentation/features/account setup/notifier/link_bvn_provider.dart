@@ -187,9 +187,8 @@ class LinkBvnProvider extends ChangeNotifier {
       unawaited(
         res.fold(
           (fail) async {
-            fail.properties.isNotEmpty
-                ? fail.properties.join('\n')
-                : 'Failed to fetch account name';
+            final userMsg = userFacingMessageFromFailure(fail);
+            debugPrint(userMsg);
             _setLoading(false);
           },
           (bankData) {

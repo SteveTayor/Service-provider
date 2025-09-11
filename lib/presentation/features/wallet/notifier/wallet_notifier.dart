@@ -24,16 +24,24 @@ class WalletNotifier {
     ref.read(globalProvider).virtualAccounts.when(
           data: (resp) {
             final accounts = resp?.data ?? {};
-            if (accounts.isEmpty) {
-              showAddMoneyViaDebitCard(context);
-              context.showErrorSnackBar('No virtual accounts available yet.');
-              return;
-            } else {
-              context.showBottomSheet(
-                child: AddfundWidget(accounts: accounts),
-              );
-            }
+
+            context.showBottomSheet(
+              child: AddfundWidget(accounts: accounts),
+            );
           },
+          // data: (resp) {
+          //   final accounts = resp?.data ?? {};
+
+          //   if (accounts.isEmpty) {
+          //     showAddMoneyViaDebitCard(context);
+          //     context.showErrorSnackBar('No virtual accounts available yet.');
+          //     return;
+          //   } else {
+          //     context.showBottomSheet(
+          //       child: AddfundWidget(accounts: accounts),
+          //     );
+          //   }
+          // },
           loading: () => AppLoader(),
           error: (_, __) {
             context.showErrorSnackBar('Virtual accounts not available yet.');

@@ -59,7 +59,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
       //   'BVN verification required to withdraw from your wallet.',
       //   'Link now',
       // );
-      unawaited(WalletNotifier().showAddMoneyViaDebitCard(context));
+      // unawaited(WalletNotifier().showAddMoneyViaDebitCard(context));
+      await WalletNotifier().showAddMoney(context, ref);
     } else {
       await WalletNotifier().showAddMoney(context, ref);
     }

@@ -134,6 +134,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
     bool hasAddress = (profileProv.address?.toString().isNotEmpty ?? false);
     bool hasDob = (profileProv.dob != null);
     return BundlegramScaffold(
+      resizeToAvoidBottomInset: true,
       appBar: BundlegramAppbar(titleText: titleText),
       body: Form(
         key: provider.formKey,
