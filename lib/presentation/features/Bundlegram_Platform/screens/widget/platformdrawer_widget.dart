@@ -12,11 +12,84 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class PlatFormDrawer extends ConsumerWidget {
+class PlatFormDrawer extends ConsumerStatefulWidget {
   const PlatFormDrawer({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PlatFormDrawer> createState() => _PlatFormDrawerState();
+}
+
+class _PlatFormDrawerState extends ConsumerState<PlatFormDrawer>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  List<Animation<Offset>> _slideAnimations = [];
+  late List<Animation<double>> _fadeAnimations;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize animation controller
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    // Start animation when widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _animationController.forward();
+    });
+  }
+
+  void _initializeAnimations(int itemCount) {
+    _slideAnimations = [];
+    _fadeAnimations = [];
+
+    for (int i = 0; i < itemCount; i++) {
+      // Calculate staggered delay for each item
+      final delay = i * 0.1; // 100ms delay between each item
+      final animationStart = delay;
+      final animationEnd = (delay + 0.5).clamp(0.0, 1.0);
+
+      // Slide animation (from bottom to top)
+      final slideAnimation = Tween<Offset>(
+        begin: const Offset(0.0, 1.0), // Start from bottom
+        end: Offset.zero, // End at original position
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(
+          animationStart,
+          animationEnd,
+          curve: Curves.easeOutCubic,
+        ),
+      ));
+
+      // Fade animation
+      final fadeAnimation = Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(
+          animationStart,
+          animationEnd,
+          curve: Curves.easeOut,
+        ),
+      ));
+
+      _slideAnimations.add(slideAnimation);
+      _fadeAnimations.add(fadeAnimation);
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final userName = ref.watch(platformProvider).userName;
     final global = ref.watch(globalProvider).profile;
     final profileProv = global.value?.data;
@@ -36,6 +109,12 @@ class PlatFormDrawer extends ConsumerWidget {
         .map((entry) => entry.value)
         .toList();
 
+    // Initialize animations based on the number of drawer items
+    if (_slideAnimations.isEmpty ||
+        _slideAnimations.length != drawerItems.length) {
+      _initializeAnimations(drawerItems.length);
+    }
+
     return Material(
       color: AppColors.background,
       child: SizedBox(
@@ -50,9 +129,20 @@ class PlatFormDrawer extends ConsumerWidget {
                   children: List.generate(
                     drawerItems.length,
                     (index) {
-                      return drawerItems[index].withContainer(
-                        padding: context.symmetricPadding(0, 10.h),
-                        margin: context.symmetricPadding(20.w, 10.h),
+                      return AnimatedBuilder(
+                        animation: _animationController,
+                        builder: (context, child) {
+                          return SlideTransition(
+                            position: _slideAnimations[index],
+                            child: FadeTransition(
+                              opacity: _fadeAnimations[index],
+                              child: drawerItems[index].withContainer(
+                                padding: context.symmetricPadding(0, 10.h),
+                                margin: context.symmetricPadding(20.w, 10.h),
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
                   ),
