@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
@@ -45,6 +46,7 @@ import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.d
 import 'package:bundlegram/presentation/features/wallet/screen/topup_failed_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
+import 'package:bundlegram/services/notification_services/notification_services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -1086,6 +1088,25 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         },
         (response) {
           if (response.success) {
+            final successBody =
+                '${_serviceType.title} purchase of ${originalAmount.toCurrency()} for $beneficiary was successful.';
+            final notifPayload = jsonEncode({
+              'route':
+                  '/transactions/detail', // change to your transaction/detail route
+              'type': 'transaction_success',
+              'service': _serviceType.title,
+              'amount': originalAmount,
+              'beneficiary': beneficiary,
+              // optionally include an id from 'response' if available:
+              // 'transactionId': response.data ?? '',
+            });
+            final notifId = DateTime.now().millisecondsSinceEpoch % 100000;
+            unawaited(NotificationService().showNotification(
+              id: notifId,
+              title: 'Payment Successful',
+              body: successBody,
+              payload: notifPayload,
+            ));
             final screen =
                 _buildSuccessScreen(originalAmount.toCurrency(), beneficiary);
             context.dismissDialog();
@@ -1100,6 +1121,20 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                         response.message.toLowerCase().contains('incorrect pin')
                     ? response.message
                     : 'Please try again later.';
+            final notifId = DateTime.now().millisecondsSinceEpoch % 100000;
+            final notifPayload = jsonEncode({
+              'route': RouteConstants.dashboard,
+              'type': 'transaction_failed',
+              'service': _serviceType.title,
+              'message': displayMessage,
+            });
+
+            unawaited(NotificationService().showNotification(
+              id: notifId,
+              title: 'Payment Failed',
+              body: displayMessage,
+              payload: notifPayload,
+            ));
             debugPrint(displayMessage);
             Navigator.pushReplacement(
               context,
