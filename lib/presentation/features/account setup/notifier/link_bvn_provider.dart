@@ -1,6 +1,9 @@
 // lib/presentation/features/account_setup/providers/link_bvn_provider.dart
 import 'dart:async';
+import 'dart:developer';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
@@ -8,6 +11,7 @@ import 'package:bundlegram/data/models/banks/fetch_account_name_request.dart';
 import 'package:bundlegram/data/models/banks/get_all_banks_response.dart';
 import 'package:bundlegram/data/models/bvn/link_bvn/link_bvn_request.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -39,6 +43,8 @@ class LinkBvnProvider extends ChangeNotifier {
   final TextEditingController _acct = TextEditingController();
   String _acctName = '';
   bool _fetchingName = false;
+  DateTime? _selectedDob; // store the picked DOB
+  DateTime? get selectedDob => _selectedDob;
 
   // Expose controllers & fields
   TextEditingController get bvn => _bvn;
@@ -125,9 +131,44 @@ class LinkBvnProvider extends ChangeNotifier {
     );
 
     if (picked != null) {
+      _selectedDob = picked;
       _dob.text = DateFormat('dd/MM/yyyy').format(picked);
       notifyListeners();
     }
+  }
+
+  String _formatDobForBackend() {
+    // If user picked a date using the picker, use that directly
+    if (_selectedDob != null) {
+      return DateFormat('yyyy-MM-dd').format(_selectedDob!);
+    }
+
+    // Try multiple manual input formats
+    final possibleFormats = ['dd/MM/yyyy', 'yyyy-MM-dd', 'dd-MM-yyyy'];
+    DateTime? parsed;
+    for (var f in possibleFormats) {
+      try {
+        parsed = DateFormat(f).parseStrict(_dob.text.trim());
+        break;
+      } catch (_) {
+        // ignore and try next
+      }
+    }
+
+    // Fallback to ISO parse
+    if (parsed == null) {
+      try {
+        parsed = DateTime.parse(_dob.text.trim());
+      } catch (_) {
+        parsed = null;
+      }
+    }
+
+    if (parsed == null) {
+      throw FormatException('Invalid date format for DOB: "${_dob.text}"');
+    }
+
+    return DateFormat('yyyy-MM-dd').format(parsed);
   }
 
   /// Fetch account name when account number changes
@@ -146,9 +187,8 @@ class LinkBvnProvider extends ChangeNotifier {
       unawaited(
         res.fold(
           (fail) async {
-            fail.properties.isNotEmpty
-                ? fail.properties.join('\n')
-                : 'Failed to fetch account name';
+            final userMsg = userFacingMessageFromFailure(fail);
+            debugPrint(userMsg);
             _setLoading(false);
           },
           (bankData) {
@@ -176,20 +216,19 @@ class LinkBvnProvider extends ChangeNotifier {
       final req = LinkBvnRequest(
         bvn: _bvn.text.trim(),
         phoneNumber: _phone.text.trim(),
-        dateOfBirth: DateFormat('yyyy-MM-dd')
-            .format(DateFormat('dd/MM/yyyy').parse(_dob.text)),
+        // dateOfBirth: DateFormat('yyyy-MM-dd')
+        //     .format(DateFormat('dd/MM/yyyy').parse(_dob.text)),
+        dateOfBirth: _formatDobForBackend(),
         bankCode: _selectedBankCode.toString(),
         accountNumber: _acct.text.trim(),
         accountName: _acctName,
       );
-
       final result = await _api.linkBvn(token!, req);
       result.fold(
         (fail) {
           context.dismissDialog();
-          context.showErrorSnackBar(fail.properties.isNotEmpty
-              ? fail.properties.join('\n')
-              : 'Failed to link BVN');
+          final userMsg = userFacingMessageFromFailure(fail);
+          context.showErrorSnackBar(userMsg);
           _setLoading(false);
           return false;
         },
@@ -210,6 +249,8 @@ class LinkBvnProvider extends ChangeNotifier {
             _setLoading(false);
             return true;
           } else {
+            // final userMsg = sanitizeErrorMessage(resp.message);
+            // context.showErrorSnackBar(userMsg);
             context.dismissDialog();
             context.showErrorSnackBar(resp.message ?? 'Failed to link BVN');
             _setLoading(false);
@@ -217,9 +258,18 @@ class LinkBvnProvider extends ChangeNotifier {
           }
         },
       );
-    } catch (e) {
-      context.dismissDialog();
-      context.showErrorSnackBar(e.toString());
+    } catch (e, stack) {
+      final msg = kDebugMode
+          ? sanitizeErrorMessage(e)
+          : 'An error occurred. Please try again.';
+
+      log('submit() error: $e', stackTrace: stack, name: 'submit');
+      // Optionally: Sentry.captureException(e, stackTrace: stack);
+
+      // Friendly UI for users
+      context
+        ..dismissDialog()
+        ..showErrorSnackBar(msg);
     } finally {
       context.dismissDialog();
       _setLoading(false);
@@ -228,12 +278,15 @@ class LinkBvnProvider extends ChangeNotifier {
 
   // Validators
   String? validateBVN(String? v) => Validators.notEmpty()(v);
-  String? validatePhone(String? v) =>
-      Validators.validateNigerianPhoneNumber()(v);
+  String? validatePhone(String? v) => Validators.validateNGNPhoneNumber()(v);
   String? validateDate(String? v) => Validators.date()(v);
   String? validateBank(String? v) =>
       v == null || v.isEmpty ? 'Select a bank' : null;
-  String? validateAccount(String? v) => Validators.notEmpty()(v);
+  String? validateAccount(String? v) {
+    if (v == null || v.isEmpty) return 'Account number is required';
+    if (v.length != 10) return 'Account number must be 10 digits';
+    return null;
+  }
 
   void _setLoading(bool v) {
     _loading = v;

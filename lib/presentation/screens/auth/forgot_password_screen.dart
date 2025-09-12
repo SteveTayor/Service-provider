@@ -1,3 +1,5 @@
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,7 +9,8 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
 }
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
@@ -32,16 +35,17 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       // await ref.read(authProvider.notifier).requestPasswordReset(
       //   email: _emailController.text.trim(),
       // );
-      
+
       if (mounted) {
         setState(() => _emailSent = true);
       }
     } catch (e) {
       if (!mounted) return;
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text(e.toString())),
+      // );
+      context.showErrorSnackBar("An error occurred");
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -71,9 +75,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  _emailSent 
-                    ? 'We\'ve sent password reset instructions to your email'
-                    : 'Enter your email address and we\'ll send you instructions to reset your password',
+                  _emailSent
+                      ? 'We\'ve sent password reset instructions to your email'
+                      : 'Enter your email address and we\'ll send you instructions to reset your password',
                   style: Theme.of(context).textTheme.bodyLarge,
                   textAlign: TextAlign.center,
                 ),
@@ -125,4 +129,4 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       ),
     );
   }
-} 
+}

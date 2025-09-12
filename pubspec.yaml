@@ -1,6 +1,6 @@
 name: bundlegram
 description: A Very Good Project created by Very Good CLI.
-version: 1.0.10+10
+version: 1.0.11+11
 publish_to: none
 
 environment:
@@ -48,7 +48,9 @@ dependencies:
   image_gallery_saver_plus: ^4.0.1
   fluttertoast: ^8.2.12
   clipboard: ^2.0.2
-  
+  firebase_core: ^4.1.0
+  firebase_messaging: ^16.0.1
+  flutter_local_notifications: ^19.4.1
 
 dev_dependencies:
   bloc_test: ^10.0.0

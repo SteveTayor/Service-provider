@@ -44,15 +44,15 @@ class BundlegramScaffold extends StatelessWidget {
         data: Theme.of(context).copyWith(
           dividerTheme: const DividerThemeData(color: Colors.transparent),
         ),
-        child: SafeArea(
-          child: Scaffold(
-            appBar: appBar ??
-                const BundlegramAppbar(
-                  showBackButton: false,
-                ),
-            backgroundColor: backgroundColor,
-            resizeToAvoidBottomInset: resizeToAvoidBottomInset ?? false,
-            body: Padding(
+        child: Scaffold(
+          appBar: appBar ??
+              const BundlegramAppbar(
+                showBackButton: false,
+              ),
+          backgroundColor: backgroundColor,
+          resizeToAvoidBottomInset: resizeToAvoidBottomInset ?? false,
+          body: SafeArea(
+            child: Padding(
               padding: sidePadding ?? const EdgeInsets.all(16),
               child: Column(
                 children: [
@@ -91,30 +91,30 @@ class BundlegramScaffold extends StatelessWidget {
                 ],
               ),
             ),
-            floatingActionButton: floatingActionButton,
-            bottomNavigationBar: bottomNavigationBar,
-            persistentFooterButtons: (footerButton != null)
-                ? [
-                    Padding(
-                      padding: footerPadding ??
-                          EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                          ),
-                      child: Container(
-                        margin: context.bottomPaddingForTextField,
-                        child: Column(
-                          children: [
-                            footerButton!,
-                            16.verticalSpace,
-                            if (underFooterChild != null) underFooterChild!,
-                          ],
+          ),
+          floatingActionButton: floatingActionButton,
+          bottomNavigationBar: bottomNavigationBar,
+          persistentFooterButtons: (footerButton != null)
+              ? [
+                  Padding(
+                    padding: footerPadding ??
+                        EdgeInsets.symmetric(
+                          horizontal: 10.w,
                         ),
+                    child: Container(
+                      margin: context.bottomPaddingForTextField,
+                      child: Column(
+                        children: [
+                          footerButton!,
+                          16.verticalSpace,
+                          if (underFooterChild != null) underFooterChild!,
+                        ],
                       ),
                     ),
-                  ]
-                : null,
-            extendBody: extendBody,
-          ),
+                  ),
+                ]
+              : null,
+          extendBody: extendBody,
         ),
       ),
     );

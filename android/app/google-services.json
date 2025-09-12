@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "199730017351",
+    "project_id": "bundlegram-c601e",
+    "storage_bucket": "bundlegram-c601e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199730017351:android:12e9983921674a09592d62",
+        "android_client_info": {
+          "package_name": "com.verygoodcore.bundlegram"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB82mJYyuEI-NBNDOlGNxrggy-VCaqlAyg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

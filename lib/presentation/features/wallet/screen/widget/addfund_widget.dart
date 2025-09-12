@@ -5,11 +5,14 @@ import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/styles.dart';
 import 'package:bundlegram/data/models/banks/get_virtual_account_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
+import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -239,58 +242,110 @@ class _AddfundWidgetState extends ConsumerState<AddfundWidget> {
     final keys = widget.accounts.keys.where((k) => k.isNotEmpty).toList();
 
     // Pick selected account
-    final selectedAccount = widget.accounts[keys[index]];
+    // final selectedAccount = widget.accounts[keys[index]];
 
     return Padding(
       padding: context.symmetricPadding(16, 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            'Add money via bank transfer',
-            style: context.textTheme.displaySmall,
-          ),
-          28.verticalSpace,
-
-          // Show tabs only if there are multiple banks
-          if (keys.length > 1)
-            Row(
-              children: List.generate(keys.length, (i) {
-                final bankName = keys[i];
-                return Expanded(
-                  child: InkWell(
-                    onTap: () => setState(() => index = i),
-                    child: Text(
-                      bankName,
-                      style: context.textTheme.bodyMedium,
-                    ).withContainer(
-                      color: index == i ? AppColors.white : Colors.transparent,
-                      alignment: Alignment.center,
-                      borderRadius: BorderRadius.circular(8.r),
-                      padding: context.symmetricPadding(0, 12.h),
+          if (keys.isEmpty) ...[
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        'BVN verification required to use the virtual account feature.',
+                        style: context.textTheme.bodyMedium!.copyWith(
+                          color: AppColors.primaryColor,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
                     ),
-                  ),
-                );
-              }),
-            ).withContainer(
-              color: AppColors.greyF5,
-              borderRadius: BorderRadius.circular(8.r),
-              padding: context.symmetricPadding(4, 4),
+                    8.horizontalSpace,
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: AppColors.primaryColor,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12.w, vertical: 8.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                      ),
+                      onPressed: () {
+                        context.pop(); // close sheet
+                        context.push(RouteConstants.accountSetup);
+                      },
+                      child: Text(
+                        'Verify BVN',
+                        style: context.textTheme.bodySmall!.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                12.verticalSpace,
+                Text('Or', style: context.textTheme.labelMedium),
+                20.verticalSpace,
+              ],
             ),
+            Text(
+              'Add money via bank transfer',
+              style: context.textTheme.displaySmall,
+            ),
+            28.verticalSpace,
+          ] else ...[
+            Text(
+              'Add money via bank transfer',
+              style: context.textTheme.displaySmall,
+            ),
+            28.verticalSpace,
 
-          if (keys.length > 1) 24.verticalSpace,
+            // Show tabs only if there are multiple banks
+            if (keys.length > 1)
+              Row(
+                children: List.generate(keys.length, (i) {
+                  final bankName = keys[i];
+                  return Expanded(
+                    child: InkWell(
+                      onTap: () => setState(() => index = i),
+                      child: Text(
+                        bankName,
+                        style: context.textTheme.bodyMedium,
+                      ).withContainer(
+                        color:
+                            index == i ? AppColors.white : Colors.transparent,
+                        alignment: Alignment.center,
+                        borderRadius: BorderRadius.circular(8.r),
+                        padding: context.symmetricPadding(0, 12.h),
+                      ),
+                    ),
+                  );
+                }),
+              ).withContainer(
+                color: AppColors.greyF5,
+                borderRadius: BorderRadius.circular(8.r),
+                padding: context.symmetricPadding(4, 4),
+              ),
 
-          _bankDetailWidget(
-            selectedAccount?.bankName ?? 'Not available yet',
-            'Bank name',
-          ),
-          32.verticalSpace,
-          _bankDetailWidget(
-            selectedAccount?.accountNum ?? 'Not available yet',
-            'Account number',
-          ),
-          28.verticalSpace,
+            if (keys.length > 1) 24.verticalSpace,
 
+            _bankDetailWidget(
+              widget.accounts[keys[index]]?.bankName ?? 'Not available yet',
+              'Bank name',
+            ),
+            32.verticalSpace,
+            _bankDetailWidget(
+              widget.accounts[keys[index]]?.accountNum ?? 'Not available yet',
+              'Account number',
+            ),
+            28.verticalSpace,
+          ],
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -308,7 +363,6 @@ class _AddfundWidgetState extends ConsumerState<AddfundWidget> {
             padding: context.symmetricPadding(16, 16),
             border: Border.all(color: AppColors.primaryColor),
           ),
-
           28.verticalSpace,
           InkWell(
             onTap: () {

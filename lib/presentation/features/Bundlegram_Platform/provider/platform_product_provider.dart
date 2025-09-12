@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
@@ -43,6 +46,8 @@ import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.d
 import 'package:bundlegram/presentation/features/wallet/screen/topup_failed_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
+import 'package:bundlegram/services/notification_services/notification_services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -762,7 +767,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               error: failure.properties.join('\n'),
             );
             debugPrint('Validation failed: error=${state.error}');
-            context.showErrorSnackBar(failure.properties.join('\n'));
+            final userMsg = userFacingMessageFromFailure(failure);
+            context.showErrorSnackBar(userMsg);
           },
           (response) {
             final validated = response.status == 'success';
@@ -796,7 +802,10 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
           error: e.toString(),
         );
         debugPrint('Exception during validation: $e');
-        context.showErrorSnackBar(e.toString());
+        final msg = kDebugMode
+            ? sanitizeErrorMessage(e)
+            : 'Something went wrong while submitting. Please try again.';
+        context.showErrorSnackBar(msg);
       }
     });
   }
@@ -1037,13 +1046,33 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       return result.fold(
         (failure) {
           context.dismissDialog();
-          final message = failure.properties.join('\n');
+          final sanitizedParts = failure.properties
+              .map((p) => sanitizeErrorMessage(p))
+              .where((s) => s.isNotEmpty)
+              .toList();
+
+          final sanitizedJoined = sanitizedParts.join('\n');
+
+          // Decide what to show on the failed result screen:
+          final lower = sanitizedJoined.toLowerCase();
+          final shouldShowSpecific =
+              lower.contains('insufficient') || lower.contains('incorrect pin');
+
+          // If specific sensitive/meaningful text exists, use it; otherwise, fallback.
           final displayMessage =
-              message.toLowerCase().contains('insufficient') ||
-                      message.toLowerCase().contains('incorrect pin')
-                  ? message
+              shouldShowSpecific && sanitizedJoined.isNotEmpty
+                  ? sanitizedJoined
                   : 'Transaction failed. Please try again later.';
-          debugPrint(message.isNotEmpty ? message : 'Transaction failed');
+
+          // For snackbars use the centralized mapper (respects kDebugMode)
+          final userMsg = userFacingMessageFromFailure(failure);
+          debugPrint(userMsg.toString());
+
+          // Debug print sanitized content only
+          debugPrint(sanitizedJoined.isNotEmpty
+              ? sanitizedJoined
+              : 'Transaction failed');
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -1059,6 +1088,37 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         },
         (response) {
           if (response.success) {
+            final isMobileData = _serviceType == PlatformProductType.mobileData;
+            final dataValue = state.selectedSubProduct?.subName ??
+                state.selectedDataType ??
+                ''; // your plan name (e.g. "GloCG 200MB")
+            final displayTarget = isMobileData && dataValue.isNotEmpty
+                ? dataValue
+                : originalAmount.toCurrency();
+
+            final successBody = isMobileData
+                ? '${_serviceType.title} purchase of $displayTarget for $beneficiary was successful.'
+                : '${_serviceType.title} purchase of $displayTarget for $beneficiary was successful.';
+
+            // final successBody =
+            //     '${_serviceType.title} purchase of ${originalAmount.toCurrency()} for $beneficiary was successful.';
+            final notifPayload = jsonEncode({
+              'route':
+                  '/transactions/detail', // change to your transaction/detail route
+              'type': 'transaction_success',
+              'service': _serviceType.title,
+              'amount': originalAmount,
+              'beneficiary': beneficiary,
+              // optionally include an id from 'response' if available:
+              // 'transactionId': response.data ?? '',
+            });
+            final notifId = DateTime.now().millisecondsSinceEpoch % 100000;
+            unawaited(NotificationService().showNotification(
+              id: notifId,
+              title: 'Payment Successful',
+              body: successBody,
+              payload: notifPayload,
+            ));
             final screen =
                 _buildSuccessScreen(originalAmount.toCurrency(), beneficiary);
             context.dismissDialog();
@@ -1073,6 +1133,20 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                         response.message.toLowerCase().contains('incorrect pin')
                     ? response.message
                     : 'Please try again later.';
+            final notifId = DateTime.now().millisecondsSinceEpoch % 100000;
+            final notifPayload = jsonEncode({
+              'route': RouteConstants.dashboard,
+              'type': 'transaction_failed',
+              'service': _serviceType.title,
+              'message': displayMessage,
+            });
+
+            unawaited(NotificationService().showNotification(
+              id: notifId,
+              title: 'Payment Failed',
+              body: displayMessage,
+              payload: notifPayload,
+            ));
             debugPrint(displayMessage);
             Navigator.pushReplacement(
               context,
@@ -1091,9 +1165,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
-      context
-        ..dismissDialog()
-        ..showErrorSnackBar(e.toString());
+      context.dismissDialog();
+      final msg = kDebugMode
+          ? sanitizeErrorMessage(e)
+          : 'Something went wrong while submitting. Please try again.';
+      debugPrint(msg.toString());
       unawaited(
         Navigator.pushReplacement(
           context,

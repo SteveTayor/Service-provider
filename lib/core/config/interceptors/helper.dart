@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:bundlegram/core/error/failures.dart';
@@ -125,7 +126,7 @@ Future<Either<Failure, T>> handleApi<T>(Future<T> Function() call) async {
             // Common keys: message, error, errors, data
             final rawMessage = data['message'] ?? data['error'];
             if (rawMessage != null) {
-              message = _sanitizeErrorMessage(rawMessage);
+              message = sanitizeErrorMessage(rawMessage);
             }
 
             // Validation / structured errors
@@ -135,15 +136,15 @@ Future<Either<Failure, T>> handleApi<T>(Future<T> Function() call) async {
                 for (final entry in validation.entries) {
                   final val = entry.value;
                   if (val is List) {
-                    errors.addAll(val.map((e) => _sanitizeErrorMessage(e)));
+                    errors.addAll(val.map((e) => sanitizeErrorMessage(e)));
                   } else {
-                    errors.add(_sanitizeErrorMessage(val));
+                    errors.add(sanitizeErrorMessage(val));
                   }
                 }
               } else if (validation is List) {
-                errors.addAll(validation.map((e) => _sanitizeErrorMessage(e)));
+                errors.addAll(validation.map((e) => sanitizeErrorMessage(e)));
               } else if (validation is String) {
-                errors.add(_sanitizeErrorMessage(validation));
+                errors.add(sanitizeErrorMessage(validation));
               }
             }
 
@@ -153,23 +154,23 @@ Future<Either<Failure, T>> handleApi<T>(Future<T> Function() call) async {
               if (raw is Map<String, dynamic>) {
                 for (final v in raw.values) {
                   if (v is List)
-                    errors.addAll(v.map((e) => _sanitizeErrorMessage(e)));
+                    errors.addAll(v.map((e) => sanitizeErrorMessage(e)));
                   else
-                    errors.add(_sanitizeErrorMessage(v));
+                    errors.add(sanitizeErrorMessage(v));
                 }
               } else if (raw is List) {
-                errors.addAll(raw.map((e) => _sanitizeErrorMessage(e)));
+                errors.addAll(raw.map((e) => sanitizeErrorMessage(e)));
               } else if (raw is String) {
-                errors.add(_sanitizeErrorMessage(raw));
+                errors.add(sanitizeErrorMessage(raw));
               }
             }
           } else if (data is String) {
             // If the server returned a plain text error message
-            message = _sanitizeErrorMessage(data);
+            message = sanitizeErrorMessage(data);
           }
         } catch (inner) {
           // If parsing fails for any reason, fall back to sanitized string
-          message = _sanitizeErrorMessage(data);
+          message = sanitizeErrorMessage(data);
         }
       }
 
@@ -206,7 +207,7 @@ Future<Either<Failure, T>> handleApi<T>(Future<T> Function() call) async {
   } catch (e, stack) {
     log('[API ERROR] Unknown Exception: $e',
         name: 'handleApi', stackTrace: stack);
-    return Left(UnknownFailure([_sanitizeErrorMessage(e.toString())]));
+    return Left(UnknownFailure([sanitizeErrorMessage(e.toString())]));
   }
 }
 
@@ -239,21 +240,21 @@ bool _isHtmlResponse(Response? resp) {
 }
 
 /// Sanitize raw error message: strip HTML tags, collapse whitespace, truncate long messages
-String _sanitizeErrorMessage(dynamic rawMessage) {
-  if (rawMessage == null) return 'An unexpected error occurred';
+// String sanitizeErrorMessage(dynamic rawMessage) {
+//   if (rawMessage == null) return 'An unexpected error occurred';
 
-  String message = rawMessage.toString();
+//   String message = rawMessage.toString();
 
-  // Strip HTML tags
-  message = message.replaceAll(RegExp(r'<[^>]*>'), ' ').trim();
+//   // Strip HTML tags
+//   message = message.replaceAll(RegExp(r'<[^>]*>'), ' ').trim();
 
-  // Collapse whitespace
-  message = message.replaceAll(RegExp(r'\s+'), ' ').trim();
+//   // Collapse whitespace
+//   message = message.replaceAll(RegExp(r'\s+'), ' ').trim();
 
-  // Limit length to avoid giant snackbars
-  if (message.length > 200) {
-    message = message.substring(0, 200) + '...';
-  }
+//   // Limit length to avoid giant snackbars
+//   if (message.length > 200) {
+//     message = message.substring(0, 200) + '...';
+//   }
 
-  return message.isEmpty ? 'An unexpected error occurred' : message;
-}
+//   return message.isEmpty ? 'An unexpected error occurred' : message;
+// }

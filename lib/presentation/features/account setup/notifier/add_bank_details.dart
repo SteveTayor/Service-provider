@@ -152,7 +152,8 @@ class AddBankProvider extends ChangeNotifier {
       );
     } catch (e) {
       context.dismissDialog();
-      context.showErrorSnackBar(e.toString());
+      // Friendly UI for users
+      context.showErrorSnackBar('An error occurred. Please try again.');
     } finally {
       _setLoading(false);
       context.dismissDialog();
