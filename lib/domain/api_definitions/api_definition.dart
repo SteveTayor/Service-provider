@@ -25,6 +25,8 @@ import 'package:bundlegram/data/models/bvn/link_bvn/link_bvn_request.dart';
 import 'package:bundlegram/data/models/bvn/link_bvn/link_bvn_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_data_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
+import 'package:bundlegram/data/models/notification/mark_notifications_asread_response.dart';
+import 'package:bundlegram/data/models/notification/notification_response.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/profile/profile_response.dart';
@@ -304,5 +306,17 @@ abstract class ApiDefinition {
     @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
     @Body() BecomeAMerchantRequest body,
+  );
+
+  @GET(Endpoints.allNotifications)
+  Future<AllNotificationResponse> getAllNotifications(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+  );
+
+  @POST(Endpoints.markNotificationAsRead)
+  Future<MarkNotificationAsReadResponse> markAllNotificationsAsRead(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
   );
 }

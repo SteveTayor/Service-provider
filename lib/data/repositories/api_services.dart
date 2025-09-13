@@ -29,6 +29,8 @@ import 'package:bundlegram/data/models/bvn/link_bvn/link_bvn_request.dart';
 import 'package:bundlegram/data/models/bvn/link_bvn/link_bvn_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_data_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
+import 'package:bundlegram/data/models/notification/mark_notifications_asread_response.dart';
+import 'package:bundlegram/data/models/notification/notification_response.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/profile/profile_response.dart';
@@ -300,6 +302,18 @@ class ApiService {
       String token, WithdrawRequest req) {
     return handleApi(
         () => _api.userWithdraw('Bearer $token', _sterilizer, req));
+  }
+
+  Future<Either<Failure, AllNotificationResponse>> getAllNotifications(
+      String token) {
+    return handleApi(
+        () => _api.getAllNotifications('Bearer $token', _sterilizer));
+  }
+
+  Future<Either<Failure, MarkNotificationAsReadResponse>>
+      markAllNotificationsAsRead(String token) {
+    return handleApi(
+        () => _api.markAllNotificationsAsRead('Bearer $token', _sterilizer));
   }
 
   // other endpoint …

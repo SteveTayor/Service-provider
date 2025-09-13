@@ -2,21 +2,32 @@ import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/data/models/notification_model.dart';
+import 'package:bundlegram/presentation/features/notifications/provider/notification_providers.dart';
 import 'package:bundlegram/presentation/features/notifications/screens/widgets/emptynotification_widget.dart';
 import 'package:bundlegram/presentation/features/notifications/screens/widgets/notification_list.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class NotificationScreen extends StatefulWidget {
+class NotificationScreen extends ConsumerStatefulWidget {
   const NotificationScreen({super.key});
 
   @override
-  State<NotificationScreen> createState() => _NotificationScreenState();
+  ConsumerState<NotificationScreen> createState() => _NotificationScreenState();
 }
 
-class _NotificationScreenState extends State<NotificationScreen> {
-  // Sample notification data - replace with your actual data source
+class _NotificationScreenState extends ConsumerState<NotificationScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch notifications when the screen is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(notificationProvider.notifier).fetchNotifications(context);
+    });
+  }
+
+  // Sample notification data
   List<NotificationItem> notifications = [
     // NotificationItem(
     //   id: '1',
@@ -58,24 +69,35 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Listen to the notification provider
+    final notificationState = ref.watch(notificationProvider);
     return BundlegramScaffold(
       appBar: BundlegramAppbar(
         titleText: 'Notifications',
-        trailing: notifications.isNotEmpty
+        trailing: notificationState.notifications.isNotEmpty
             ? TextButton(
-                onPressed: _clearAllNotifications,
+                onPressed: notificationState.isMarkingAllRead
+                    ? null // Disable button while marking all as read
+                    : () => _clearAllNotifications(context),
                 child: Text(
                   'Clear all',
+                  style: context.textTheme.labelMedium?.copyWith(
+                    color: notificationState.isMarkingAllRead
+                        ? Colors.grey
+                        : Theme.of(context).primaryColor,
+                  ),
                 ),
               )
             : null,
       ),
-      body: notifications.isEmpty
-          ? const EmptynotificationWidget()
-          : NotificationListWidget(
-              notifications: notifications,
-              onNotificationTap: _handleNotificationTap,
-            ),
+      body: notificationState.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : notificationState.notifications.isEmpty
+              ? const EmptynotificationWidget()
+              : NotificationListWidget(
+                  notifications: notificationState.notifications,
+                  onNotificationTap: _handleNotificationTap,
+                ),
     );
   }
 
@@ -105,10 +127,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
 
-  void _clearAllNotifications() {
-    setState(() {
-      notifications.clear();
-    });
-    context.showCustomSnackBar('All notifications has been cleared');
+  // void _clearAllNotifications() {
+  //   setState(() {
+  //     notifications.clear();
+  //   });
+  //   context.showCustomSnackBar('All notifications has been cleared');
+  // }
+  Future<void> _clearAllNotifications(BuildContext context) async {
+    await ref
+        .read(notificationProvider.notifier)
+        .markAllNotificationsAsRead(context);
   }
 }

@@ -107,6 +107,9 @@ class $AssetsImagesGen {
   AssetGenImage get mtnVoucher =>
       const AssetGenImage('assets/images/mtn_voucher.png');
 
+  /// File path: assets/images/pnglogo.png
+  AssetGenImage get pnglogo => const AssetGenImage('assets/images/pnglogo.png');
+
   /// File path: assets/images/smile.png
   AssetGenImage get smile => const AssetGenImage('assets/images/smile.png');
 
@@ -167,6 +170,7 @@ class $AssetsImagesGen {
         merrybet,
         mtn,
         mtnVoucher,
+        pnglogo,
         smile,
         spectranet,
         startimes,

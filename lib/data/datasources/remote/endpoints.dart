@@ -109,4 +109,11 @@ class Endpoints {
   // Misc
   // ====================
   static const String walletBalance = '/wallet';
+
+  // ====================
+  // Notifications
+  // ====================
+  static const String allNotifications = "/notifications";
+  static const String markNotificationAsRead =
+      "/notifications/mark-all-as-read";
 }
