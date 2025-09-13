@@ -33,6 +33,8 @@ class NotificationProvider extends ChangeNotifier {
     _setLoading(true);
     try {
       final token = await _ref.read(secureStorageHelperProvider).getAuthToken();
+      debugPrint('fetchNotifications: retrieved token = $token');
+
       if (token == null) {
         context.showErrorSnackBar('Authentication token not found');
         _setLoading(false);
@@ -40,49 +42,83 @@ class NotificationProvider extends ChangeNotifier {
       }
 
       final result = await _api.getAllNotifications(token);
+      debugPrint('fetchNotifications: API call completed, result = $result');
+
       result.fold(
         (failure) {
           final userMsg = userFacingMessageFromFailure(failure);
+          debugPrint(
+              'fetchNotifications: API failure = $failure, userMsg = $userMsg');
           context.showErrorSnackBar(userMsg ?? "Failed to fetch notifications");
         },
         (response) {
-          final apiNotifications = response.notifications?.map((n) {
-                NotificationType type;
-                switch (n.data?.type) {
-                  case 'mobile_data':
-                    type = NotificationType.transaction;
-                    break;
-                  case 'airtime':
-                    type = NotificationType.transaction;
-                    break;
-                  case 'payment':
-                    type = NotificationType.payment;
-                    break;
-                  case 'promo':
-                    type = NotificationType.promo;
-                    break;
-                  default:
-                    type = NotificationType.system;
+          debugPrint('fetchNotifications: API success, response = $response');
+
+          final apiNotifications = (response.notifications ?? [])
+              .where((n) => n != null)
+              .map((n) {
+                try {
+                  final type = _mapApiType(n.data?.type);
+                  debugPrint(
+                    'fetchNotifications: mapping notification id=${n.id}, '
+                    'apiType=${n.data?.type}, mappedType=$type, createdAt=${n.createdAt}',
+                  );
+
+                  debugPrint(
+                    'fetchNotifications: mapping notification id=${n.id}, '
+                    'type=${n.data?.type}, createdAt=${n.createdAt}',
+                  );
+
+                  return NotificationItem(
+                    id: n.id ?? '',
+                    title: _getNotificationTitle(n),
+                    description: n.data?.message ?? '',
+                    time: _formatNotificationTime(n.createdAt),
+                    type: type,
+                    isRead: n.readAt != null,
+                    isBroadcast: false,
+                  );
+                } catch (e, st) {
+                  debugPrint(
+                      'fetchNotifications: error mapping notification ${n.id} -> $e\n$st');
+                  return null; // skip bad notifications
                 }
-                return NotificationItem(
-                  id: n.id ?? '',
-                  title: _getNotificationTitle(n),
-                  description: n.data?.message ?? '',
-                  time: _formatNotificationTime(n.createdAt),
-                  type: type,
-                  isRead: n.readAt != null,
-                  isBroadcast: false,
-                );
-              }).toList() ??
-              [];
+              })
+              .whereType<NotificationItem>()
+              .toList();
+
+          debugPrint(
+              'fetchNotifications: mapped ${apiNotifications.length} notifications');
           _mergeNotifications(apiNotifications);
         },
       );
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('fetchNotifications: unexpected error = $e\n$st');
       context
           .showErrorSnackBar('An error occurred while fetching notifications');
     } finally {
       _setLoading(false);
+    }
+  }
+
+  NotificationType _mapApiType(String? type) {
+    switch (type?.toLowerCase()) {
+      case 'airtime':
+        return NotificationType.airtime;
+      case 'mobile_data':
+        return NotificationType.mobileData;
+      case 'betting':
+        return NotificationType.betting;
+      case 'electricity':
+        return NotificationType.electricity;
+      case 'cable':
+        return NotificationType.cable;
+      case 'payment':
+        return NotificationType.payment;
+      case 'promo':
+        return NotificationType.promo;
+      default:
+        return NotificationType.system;
     }
   }
 
@@ -130,11 +166,17 @@ class NotificationProvider extends ChangeNotifier {
   }
 
   String _getNotificationTitle(Notfication notification) {
-    switch (notification.data?.type) {
+    switch (notification.data?.type?.toLowerCase()) {
       case 'mobile_data':
         return 'Data Subscription Successful';
       case 'airtime':
         return 'Airtime Recharge Successful';
+      case 'betting':
+        return 'Betting Transaction Successful';
+      case 'electricity':
+        return 'Electricity Bill Payment Successful';
+      case 'cable':
+        return 'Cable Subscription Successful';
       case 'payment':
         return 'Payment Successful';
       case 'promo':
@@ -177,10 +219,17 @@ class NotificationProvider extends ChangeNotifier {
 
   // Map broadcast type to NotificationType
   NotificationType _mapBroadcastType(String type) {
-    switch (type.toLowerCase()) {
-      case 'mobile_data':
+    switch (type?.toLowerCase()) {
       case 'airtime':
-        return NotificationType.transaction;
+        return NotificationType.airtime;
+      case 'mobile_data':
+        return NotificationType.mobileData;
+      case 'betting':
+        return NotificationType.betting;
+      case 'electricity':
+        return NotificationType.electricity;
+      case 'cable':
+        return NotificationType.cable;
       case 'payment':
         return NotificationType.payment;
       case 'promo':

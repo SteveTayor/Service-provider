@@ -12,7 +12,7 @@ class AllNotificationResponse {
         status: json["status"] as String?,
         notifications: json["notifications"] == null
             ? []
-            : (json['data'] as List<dynamic>)
+            : (json['notifications'] as List<dynamic>)
                 .map((e) => Notfication.fromJson(e as Map<String, dynamic>))
                 .toList(),
       );

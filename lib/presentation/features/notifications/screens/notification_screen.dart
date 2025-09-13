@@ -75,16 +75,18 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
       appBar: BundlegramAppbar(
         titleText: 'Notifications',
         trailing: notificationState.notifications.isNotEmpty
-            ? TextButton(
-                onPressed: notificationState.isMarkingAllRead
-                    ? null // Disable button while marking all as read
-                    : () => _clearAllNotifications(context),
-                child: Text(
-                  'Clear all',
-                  style: context.textTheme.labelMedium?.copyWith(
-                    color: notificationState.isMarkingAllRead
-                        ? Colors.grey
-                        : Theme.of(context).primaryColor,
+            ? FittedBox(
+                child: TextButton(
+                  onPressed: notificationState.isMarkingAllRead
+                      ? null
+                      : () => _clearAllNotifications(context),
+                  child: Text(
+                    'Clear all',
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: notificationState.isMarkingAllRead
+                          ? Colors.grey
+                          : Theme.of(context).primaryColor,
+                    ),
                   ),
                 ),
               )
@@ -115,12 +117,31 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
       case NotificationType.promo:
         // Navigate to promo/offer screen
         break;
-      case NotificationType.transaction:
-        // Navigate to transaction details
+
+      case NotificationType.airtime:
+        // Navigate to airtime transaction details
         break;
+
+      case NotificationType.mobileData:
+        // Navigate to mobile data transaction details
+        break;
+
+      case NotificationType.betting:
+        // Navigate to betting history / receipt
+        break;
+
+      case NotificationType.electricity:
+        // Navigate to electricity bill details
+        break;
+
+      case NotificationType.cable:
+        // Navigate to cable subscription details
+        break;
+
       case NotificationType.payment:
-        // Navigate to payment history
+        // Navigate to general payment history
         break;
+
       case NotificationType.system:
         // Handle system notifications
         break;

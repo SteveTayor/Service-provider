@@ -105,10 +105,21 @@ class NotificationTile extends StatelessWidget {
         return AppSvgIcon(
           path: Assets.images.logo.path,
         );
-      case NotificationType.transaction:
-        iconData = Icons.swap_horiz;
-        backgroundColor = Colors.blue;
+      case NotificationType.airtime:
         return AppSvgIcon(path: Assets.svgs.airtime);
+
+      case NotificationType.mobileData:
+        return AppSvgIcon(path: Assets.svgs.mobileData);
+
+      case NotificationType.betting:
+        return AppSvgIcon(path: Assets.svgs.betting);
+
+      case NotificationType.electricity:
+        return AppSvgIcon(path: Assets.svgs.electricity);
+
+      case NotificationType.cable:
+        return AppSvgIcon(path: Assets.svgs.cableTv);
+
       case NotificationType.payment:
         iconData = Icons.payment;
         backgroundColor = Colors.green;

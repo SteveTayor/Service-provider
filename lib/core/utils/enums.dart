@@ -22,9 +22,13 @@ enum SecurityToggleType {
 
 enum NotificationType {
   promo,
-  transaction,
-  payment,
   system,
+  airtime,
+  mobileData,
+  betting,
+  electricity,
+  cable,
+  payment,
 }
 
 enum OverLayType { loader, message, none }

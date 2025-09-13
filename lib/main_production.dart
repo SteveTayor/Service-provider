@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bundlegram/bootstrap.dart';
 import 'package:bundlegram/firebase_options.dart';
 import 'package:bundlegram/presentation/app.dart';
@@ -31,29 +33,63 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await dotenv.load(fileName: ".env");
+
+//   // Initialize Firebase
+//   await Firebase.initializeApp(
+//     name: 'bundlegram',
+//     options: DefaultFirebaseOptions.currentPlatform,
+//   );
+
+//   // Register FCM background handler
+//   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+//   // Initialize NotificationService (local + FCM listeners)
+//   await NotificationService().initialize();
+
+//   // Launch app
+//   await bootstrap(
+//     () => ProviderScope(
+//       child: DevicePreview(
+//         enabled: false, // set to false in production
+//         builder: (context) => const App(),
+//       ),
+//     ),
+//   );
+// }
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    name: 'bundlegram',
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  // Register FCM background handler
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // Initialize NotificationService (local + FCM listeners)
-  await NotificationService().initialize();
-
-  // Launch app
+  // Run the app immediately
   await bootstrap(
     () => ProviderScope(
       child: DevicePreview(
-        enabled: false, // set to false in production
+        enabled: false,
         builder: (context) => const App(),
       ),
     ),
   );
+
+  // Then initialize Firebase & notifications in the background
+  unawaited(_initializeFirebaseAndMessaging());
+}
+
+Future<void> _initializeFirebaseAndMessaging() async {
+  try {
+    await Firebase.initializeApp(
+      name: 'bundlegram',
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    await NotificationService().initialize();
+
+    debugPrint("Firebase + Messaging initialized ✅");
+  } catch (e, st) {
+    debugPrint("Error initializing Firebase/Notifications: $e\n$st");
+  }
 }
