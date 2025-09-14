@@ -117,6 +117,8 @@ class NotificationProvider extends ChangeNotifier {
         return NotificationType.payment;
       case 'promo':
         return NotificationType.promo;
+      case 'withdrawal':
+        return NotificationType.withdrawal;
       default:
         return NotificationType.system;
     }

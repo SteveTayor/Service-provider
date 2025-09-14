@@ -23,14 +23,14 @@ class NotificationTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: notification.isRead
-              ? Colors.transparent
-              : Color(0xFFBBC6D0).withOpacity(0.3),
-        ),
+            color: notification.isRead
+                ? Colors.transparent
+                : Color(0xFFBBC6D0).withOpacity(0.3),
+            borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
               child: Column(
                 children: [
                   Row(
@@ -84,7 +84,7 @@ class NotificationTile extends StatelessWidget {
                 ],
               ),
             ),
-            8.verticalSpace,
+            6.verticalSpace,
             Divider(
               color: Colors.grey.withOpacity(0.2),
             ),
@@ -119,8 +119,10 @@ class NotificationTile extends StatelessWidget {
 
       case NotificationType.cable:
         return AppSvgIcon(path: Assets.svgs.cableTv);
+
       case NotificationType.withdrawal:
         return AppSvgIcon(path: Assets.svgs.topup);
+
       case NotificationType.payment:
         iconData = Icons.payment;
         backgroundColor = Colors.green;

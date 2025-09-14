@@ -106,6 +106,26 @@ class _LockScreenState extends ConsumerState<LockScreen>
     }
   }
 
+  Future<void> _simulatePinEntry(String storedPin) async {
+    setState(() {
+      _pin.fillRange(0, 4, '');
+      _currentIndex = 0;
+    });
+
+    for (int i = 0; i < storedPin.length; i++) {
+      await Future.delayed(
+          const Duration(milliseconds: 250)); // delay between digits
+      setState(() {
+        _pin[_currentIndex] = storedPin[i];
+        _currentIndex++;
+      });
+    }
+
+    // Once all digits are entered, verify
+    final enteredPin = _pin.join();
+    await _verifyPin(enteredPin);
+  }
+
   Future<void> _verifyPin(String enteredPin) async {
     final storage = ref.read(secureStorageHelperProvider);
     final userEmail = await storage.getRememberedEmail();
@@ -311,8 +331,12 @@ class _LockScreenState extends ConsumerState<LockScreen>
                                 final email = await storage.getBiometricEmail();
                                 final password =
                                     await storage.getBiometricPassword();
-
+                                final storedPin = email != null
+                                    ? await storage.getPin(email)
+                                    : null;
                                 if (email != null && password != null) {
+                                  // simulate UI filling the pin before continuing
+                                  await _simulatePinEntry(storedPin.toString());
                                   final lockService =
                                       ref.read(lockScreenServiceProvider);
                                   await lockService.performLogin(

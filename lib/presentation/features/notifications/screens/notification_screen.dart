@@ -81,7 +81,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                       ? null
                       : () => _clearAllNotifications(context),
                   child: Text(
-                    'Clear all',
+                    'Mark all',
                     style: context.textTheme.labelSmall?.copyWith(
                       color: notificationState.isMarkingAllRead
                           ? Colors.grey
