@@ -81,33 +81,36 @@ class _PrivacysecurityScreenState extends ConsumerState<PrivacysecurityScreen> {
     final biometricService = ref.read(biometricServiceProvider);
     final securityNotifier = ref.read(securityProvider.notifier);
 
+    // Update notifier immediately for UI feedback
     if (toggleType == SecurityToggleType.faceId ||
         toggleType == SecurityToggleType.fingerprintLogin) {
-      if (value) {
-        await biometricService.enableBiometricLogin();
-        securityNotifier.useFaceId =
-            true; // This also sets useFingerprint due to setter
-      } else {
-        await biometricService.disableBiometricLogin();
-        securityNotifier.useFaceId =
-            false; // This also sets useFingerprint due to setter
-      }
+      securityNotifier.useFaceId = value;
     } else if (toggleType == SecurityToggleType.fingerprintPayment) {
-      if (value) {
+      securityNotifier.useFingerprintForPayment = value;
+    }
+
+    // Then persist async
+    if (value) {
+      if (toggleType == SecurityToggleType.faceId ||
+          toggleType == SecurityToggleType.fingerprintLogin) {
+        await biometricService.enableBiometricLogin();
+      } else {
         await biometricService.enableBiometricTransaction();
-        securityNotifier.useFingerprintForPayment = true;
+      }
+    } else {
+      if (toggleType == SecurityToggleType.faceId ||
+          toggleType == SecurityToggleType.fingerprintLogin) {
+        await biometricService.disableBiometricLogin();
       } else {
         await biometricService.disableBiometricTransaction();
-        securityNotifier.useFingerprintForPayment = false;
       }
     }
 
-    setState(() {
-      pendingToggle = null;
-      isLoading = false;
-    });
-
     if (mounted) {
+      setState(() {
+        pendingToggle = null;
+        isLoading = false;
+      });
       context.showCustomSnackBar(
         '${_getSecurityTypeDisplayName(toggleType)} ${value ? 'enabled' : 'disabled'} successfully',
       );

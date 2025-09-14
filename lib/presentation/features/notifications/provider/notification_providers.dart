@@ -168,19 +168,21 @@ class NotificationProvider extends ChangeNotifier {
   String _getNotificationTitle(Notfication notification) {
     switch (notification.data?.type?.toLowerCase()) {
       case 'mobile_data':
-        return 'Data Subscription Successful';
+        return 'Data Subscription';
       case 'airtime':
-        return 'Airtime Recharge Successful';
+        return 'Airtime Recharge';
       case 'betting':
-        return 'Betting Transaction Successful';
+        return 'Betting Transaction';
       case 'electricity':
-        return 'Electricity Bill Payment Successful';
+        return 'Electricity Bill Payment';
       case 'cable':
-        return 'Cable Subscription Successful';
+        return 'Cable Subscription';
       case 'payment':
         return 'Payment Successful';
       case 'promo':
         return 'New Offer Available';
+      case 'withdrawal':
+        return 'Withdrawal';
       default:
         return 'System Notification';
     }

@@ -10,6 +10,7 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
 import 'package:bundlegram/presentation/features/lock_screen/provider/lock_screen_provider.dart';
 import 'package:bundlegram/presentation/features/onboarding/notifier/login_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
@@ -294,8 +295,37 @@ class _LockScreenState extends ConsumerState<LockScreen>
                             (index) => _buildNumberButton('${index + 1}'),
                           ),
                           GestureDetector(
-                            onTap: () {
-                              // Handle biometric authentication
+                            onTap: () async {
+                              final biometricService =
+                                  ref.read(biometricServiceProvider);
+                              final storage =
+                                  ref.read(secureStorageHelperProvider);
+
+                              final didAuth =
+                                  await biometricService.authenticate(
+                                biometricHint: '',
+                                type: BiometricAuthType.login,
+                              );
+
+                              if (didAuth) {
+                                final email = await storage.getBiometricEmail();
+                                final password =
+                                    await storage.getBiometricPassword();
+
+                                if (email != null && password != null) {
+                                  final lockService =
+                                      ref.read(lockScreenServiceProvider);
+                                  await lockService.performLogin(
+                                      email, password, context);
+                                } else {
+                                  context.showErrorSnackBar(
+                                    'Biometric credentials not found, please USE PIN',
+                                  );
+                                }
+                              } else {
+                                context.showErrorSnackBar(
+                                    'Biometric authentication failed');
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.all(20.w),

@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
 import 'package:bundlegram/presentation/features/onboarding/notifier/login_notifier.dart';
+import 'package:bundlegram/presentation/features/setting/provider/security_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
@@ -22,10 +26,57 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
+  bool _showBiometric = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBiometricEnabled();
+  }
+
+  Future<void> _checkBiometricEnabled() async {
+    final biometricService = ref.read(biometricServiceProvider);
+    final security = ref.read(securityProvider);
+
+    final enabled = await biometricService.isBiometricLoginEnabled;
+    if (enabled && (security.useFingerprint || security.useFaceId)) {
+      setState(() => _showBiometric = true);
+
+      // Prefetch & debug print
+      final email = await biometricService.getBiometricEmail();
+      final password = await biometricService.getBiometricPassword();
+      debugPrint('[Biometric] Prefetch → email=$email, password=$password');
+    }
+  }
+
+  Future<void> _handleBiometricLogin(BuildContext context) async {
+    final biometricService = ref.read(biometricServiceProvider);
+    final ctrl = ref.read(loginProvider);
+
+    final authenticated = await biometricService.authenticate(
+      type: BiometricAuthType.login,
+    );
+
+    if (authenticated) {
+      final email = await biometricService.getBiometricEmail();
+      final password = await biometricService.getBiometricPassword();
+
+      if (email != null && password != null) {
+        ctrl.emailCtrl.text = email;
+        ctrl.passwordCtrl.text = password;
+        unawaited(ctrl.submit(context)); // trigger normal login flow
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final prov = ref.watch(loginProvider);
     final ctrl = ref.read(loginProvider);
+    final biometricService = ref.watch(biometricServiceProvider);
+    final security = ref.watch(securityProvider);
+
+    final showBiometric = security.useFingerprint || security.useFaceId;
     return WillPopScope(
       onWillPop: () async {
         context.pushReplacement(RouteConstants.walkThrough);
@@ -147,23 +198,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
             40.verticalSpace,
-            Visibility(
-              visible: false, // biometric toggle off for now
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AppSvgIcon(path: Assets.svgs.fingerCricle),
-                  8.horizontalSpace,
-                  Flexible(
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      'Sign in with fingerprint / face ID',
-                      style: context.textTheme.bodyMedium,
+            if (showBiometric)
+              InkWell(
+                onTap: () => _handleBiometricLogin(context),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AppSvgIcon(path: Assets.svgs.fingerCricle),
+                    8.horizontalSpace,
+                    Flexible(
+                      child: Text(
+                        'Sign in with fingerprint / face ID',
+                        textAlign: TextAlign.center,
+                        style: context.textTheme.bodyMedium,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),

@@ -29,6 +29,7 @@ enum NotificationType {
   electricity,
   cable,
   payment,
+  withdrawal,
 }
 
 enum OverLayType { loader, message, none }

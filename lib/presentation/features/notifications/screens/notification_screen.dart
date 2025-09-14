@@ -122,6 +122,9 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
         // Navigate to airtime transaction details
         break;
 
+      case NotificationType.withdrawal:
+        break;
+
       case NotificationType.mobileData:
         // Navigate to mobile data transaction details
         break;

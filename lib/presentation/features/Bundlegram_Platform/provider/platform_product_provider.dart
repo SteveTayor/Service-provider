@@ -31,6 +31,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/model/platf
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/choosebiller.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/purchase_bill_wrapper.dart';
+import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/airtime/widget/airtime_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/betting/widget/betting_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/bulk%20e-pin/bulkE-pin_screen.dart';
@@ -968,6 +969,49 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   Future<void> initiatePurchase(BuildContext context, String originalAmount,
       String discountedAmount, String beneficiary) async {
     context.pop(); // Close the bottom sheet
+    final biometricService = _ref.read(biometricServiceProvider);
+
+    // Check if biometric for transactions is enabled
+    final isBiometricEnabled =
+        await biometricService.isBiometricTransactionEnabled;
+
+    if (isBiometricEnabled) {
+      final didAuth = await biometricService.authenticate(
+        type: BiometricAuthType.transaction,
+      );
+
+      if (didAuth) {
+        // Get the stored PIN
+        final email =
+            await _ref.read(secureStorageHelperProvider).getRememberedEmail();
+        if (email == null) {
+          debugPrint("No stored account found, please login again");
+          // context.go(RouteConstants.login);
+          return;
+        }
+
+        final storedPin =
+            await _ref.read(secureStorageHelperProvider).getPin(email);
+        if (storedPin == null) {
+          debugPrint("No stored PIN found, please set up your PIN");
+          return;
+        }
+
+        // Call purchase directly with stored PIN
+        await purchase(
+          context,
+          pin: storedPin,
+          originalAmount: originalAmount,
+          discountedAmount: discountedAmount,
+          beneficiary: beneficiary,
+          validatedName: state.validatedName,
+        );
+        return;
+      } else {
+        context.showErrorSnackBar("Biometric authentication failed");
+        // fallback → open PIN screen
+      }
+    }
     unawaited(
       Navigator.push(
         context,

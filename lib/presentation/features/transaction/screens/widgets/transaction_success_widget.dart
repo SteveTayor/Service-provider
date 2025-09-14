@@ -24,7 +24,7 @@ class TransactionSuccessful extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        context.pushReplacement(RouteConstants.dashboard);
+        context.go(RouteConstants.dashboard);
         return false;
       },
       child: BundlegramScaffold(
@@ -41,7 +41,7 @@ class TransactionSuccessful extends StatelessWidget {
                   ? 'Continue'
                   : 'Go to home',
           onPressed: () {
-            context.pushReplacement(RouteConstants.dashboard);
+            context.go(RouteConstants.dashboard);
           },
         ),
       ),

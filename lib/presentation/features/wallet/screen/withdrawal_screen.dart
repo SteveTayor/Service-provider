@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -9,7 +10,10 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatter.dart';
+import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/banks/get_all_users_banks_response.dart';
+import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
+import 'package:bundlegram/presentation/features/transaction/notifier/model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/withdraw_from_wallet_provider.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
@@ -160,6 +164,73 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                           final isValid = await provider
                               .validateAndPrepareWithdrawal(context);
                           if (!isValid) return;
+
+                          final biometricService =
+                              ref.read(biometricServiceProvider);
+                          final isBiometricEnabled = await biometricService
+                              .isBiometricTransactionEnabled;
+
+                          if (isBiometricEnabled) {
+                            final didAuth = await biometricService.authenticate(
+                              type: BiometricAuthType.transaction,
+                              biometricHint: "",
+                              biometricRequiredTitle: "",
+                            );
+
+                            if (didAuth) {
+                              final email = await ref
+                                  .read(secureStorageHelperProvider)
+                                  .getRememberedEmail();
+                              if (email == null) {
+                                debugPrint(
+                                    "No login email found, please login again");
+                                // context.go(RouteConstants.login);
+                                return;
+                              }
+
+                              final storedPin = await ref
+                                  .read(secureStorageHelperProvider)
+                                  .getPin(email);
+                              if (storedPin == null) {
+                                debugPrint(
+                                    "No stored PIN found, please set up your PIN");
+                                return;
+                              }
+
+                              // withdrawal request directly with stored PIN
+                              final success = await provider.requestWithdrawal(
+                                  context, storedPin);
+                              if (!success) return;
+
+                              // unawaited(
+                              //   Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //       builder: (ctx) => TransactionSuccessful(
+                              //         title: 'Withdrawal request received!',
+                              //         subTitle:
+                              //             'Your withdrawal request of ${provider.amountController.text.toCurrency()} from your Bundlegram wallet has been successfully received.',
+                              //       ),
+                              //     ),
+                              //   ),
+                              // );
+                              context.go(
+                                RouteConstants.transactionSuccess,
+                                extra: TransactionSuccessArgs(
+                                  title: 'Withdrawal request received!',
+                                  subTitle:
+                                      'Your withdrawal request of ${provider.amountController.text.toCurrency()} from your Bundlegram wallet has been successfully received.',
+                                ),
+                              );
+                              return;
+                            } else {
+                              context.showErrorSnackBar(
+                                  "Biometric authentication cancelled");
+                              // fallback → PIN entry
+                            }
+                          }
+
+                          // 🔒 fallback if biometrics not available/enabled
                           unawaited(
                             Navigator.push(
                               context,
@@ -167,12 +238,12 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                                 builder: (ctx) => EnterPinScreen(
                                   onVerified: (pin) async {
                                     final success = await provider
-                                        .requestWithdrawal(context, pin);
+                                        .requestWithdrawal(ctx, pin);
                                     if (!success) return;
 
                                     unawaited(
                                       Navigator.pushReplacement(
-                                        context,
+                                        ctx,
                                         MaterialPageRoute(
                                           builder: (ctx) =>
                                               TransactionSuccessful(
@@ -190,6 +261,43 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                             ),
                           );
                         },
+
+                  // onPressed: provider.amountController.text.isEmpty
+                  //     ? null
+                  //     : () async {
+                  //         final isValid = await provider
+                  //             .validateAndPrepareWithdrawal(context);
+                  //         if (!isValid) return;
+                  //         unawaited(
+                  //           Navigator.push(
+                  //             context,
+                  //             MaterialPageRoute(
+                  //               builder: (ctx) => EnterPinScreen(
+                  //                 onVerified: (pin) async {
+                  //                   final success = await provider
+                  //                       .requestWithdrawal(context, pin);
+                  //                   if (!success) return;
+
+                  //                   unawaited(
+                  //                     Navigator.pushReplacement(
+                  //                       context,
+                  //                       MaterialPageRoute(
+                  //                         builder: (ctx) =>
+                  //                             TransactionSuccessful(
+                  //                           title:
+                  //                               'Withdrawal request received!',
+                  //                           subTitle:
+                  //                               'Your withdrawal request of ${provider.amountController.text.toCurrency()} from your Bundlegram wallet has been successfully received.',
+                  //                         ),
+                  //                       ),
+                  //                     ),
+                  //                   );
+                  //                 },
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         );
+                  //       },
                 ),
               ],
             ),

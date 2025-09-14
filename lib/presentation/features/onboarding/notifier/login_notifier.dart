@@ -237,6 +237,11 @@ class LoginProvider extends ChangeNotifier {
         final enteredIdentifier = emailCtrl.text.trim();
         final storedEmail = await _storage.getRememberedEmail();
         final storedUsername = await _storage.getUsername();
+        await _storage.storeBiometricCredentials(
+          email: loginData.data?.payload?.email ?? enteredIdentifier,
+          password: passwordCtrl.text.trim(),
+          displayName: loginData.data?.payload?.username,
+        );
 
         final isSameUser = enteredIdentifier == storedEmail ||
             enteredIdentifier == storedUsername;
@@ -314,6 +319,11 @@ class LoginProvider extends ChangeNotifier {
           _setLoading(false);
           return;
         }
+        // Add debug verification
+        final savedEmail = await _storage.getBiometricEmail();
+        final savedPassword = await _storage.getBiometricPassword();
+        debugPrint(
+            '[Biometric] Just saved creds → email=$savedEmail, password=$savedPassword');
         // Fetch and cache users' transactions before routing
         await _ref
             .read(globalProvider.notifier)

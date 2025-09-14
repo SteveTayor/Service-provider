@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/utils/enums.dart';
@@ -123,11 +124,8 @@ class BasicInfoProvider extends ChangeNotifier {
 
       result.fold(
         (fail) {
-          context.showErrorSnackBar(
-            fail.properties.isNotEmpty
-                ? fail.properties.join('\n')
-                : 'Failed to update profile',
-          );
+          final userMsg = userFacingMessageFromFailure(fail);
+          context.showErrorSnackBar(userMsg);
         },
         (resp) async {
           if (resp.status == 'success') {
