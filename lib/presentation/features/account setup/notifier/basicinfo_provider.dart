@@ -85,17 +85,23 @@ class BasicInfoProvider extends ChangeNotifier {
       child: SizedBox(
         width: double.infinity,
         height: 350,
-        child: CupertinoDatePicker(
-          backgroundColor: CupertinoColors.white,
-          mode: CupertinoDatePickerMode.date,
-          initialDateTime: _selectedDate,
-          minimumDate: DateTime(1900),
-          maximumDate: now,
-          onDateTimeChanged: (DateTime newDate) {
-            _selectedDate = newDate;
-            _dob.text = DateFormat('dd/MM/yyyy').format(newDate);
-            notifyListeners();
-          },
+        child: CupertinoTheme(
+          data: const CupertinoThemeData(
+            brightness: Brightness.light, // forces light theme
+            primaryColor: CupertinoColors.black, // forces black text
+          ),
+          child: CupertinoDatePicker(
+            backgroundColor: CupertinoColors.white,
+            mode: CupertinoDatePickerMode.date,
+            initialDateTime: _selectedDate,
+            minimumDate: DateTime(1900),
+            maximumDate: now,
+            onDateTimeChanged: (DateTime newDate) {
+              _selectedDate = newDate;
+              _dob.text = DateFormat('dd/MM/yyyy').format(newDate);
+              notifyListeners();
+            },
+          ),
         ),
       ),
     ));

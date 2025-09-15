@@ -66,7 +66,7 @@ final dioProvider = Provider<Dio>((ref) {
           if (context != null) {
             final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
 
-            if (!currentRoute.contains(RouteConstants.login)) {
+            if (!currentRoute.contains(RouteConstants.lockScreen)) {
               //Clear token
               await secureStorage.deleteAuthToken();
               // Show snackbar
@@ -75,7 +75,7 @@ final dioProvider = Provider<Dio>((ref) {
 
               // Navigate to login
               Future.microtask(() {
-                context.go(RouteConstants.login);
+                context.go(RouteConstants.lockScreen);
               });
             }
           }
