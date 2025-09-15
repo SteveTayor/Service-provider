@@ -35,6 +35,16 @@ class SecureStorageHelper {
     );
   }
 
+  Future<void> saveBool(String key, bool value) async {
+    await _storage.write(key: key, value: value.toString());
+  }
+
+  Future<bool?> getBool(String key) async {
+    final value = await _storage.read(key: key);
+    if (value == null) return null;
+    return value.toLowerCase() == 'true';
+  }
+
   Future<int?> getAppVersionCode() async {
     final value = await _storage.read(key: _appVersionCodeKey);
     return int.tryParse(value ?? '');
@@ -178,19 +188,19 @@ class SecureStorageHelper {
         key: _biometricLoginEnabledKey, value: value.toString());
   }
 
-  Future<bool> isBiometricLoginEnabled() async {
-    final value = await _storage.read(key: _biometricLoginEnabledKey);
-    return value == 'true';
-  }
-
   Future<void> setBiometricTransactionEnabled(bool value) async {
     await _storage.write(
         key: _biometricTransactionEnabledKey, value: value.toString());
   }
 
+  Future<bool> isBiometricLoginEnabled() async {
+    final value = await _storage.read(key: _biometricLoginEnabledKey);
+    return value?.toLowerCase() == 'true';
+  }
+
   Future<bool> isBiometricTransactionEnabled() async {
     final value = await _storage.read(key: _biometricTransactionEnabledKey);
-    return value == 'true';
+    return value?.toLowerCase() == 'true';
   }
 }
 

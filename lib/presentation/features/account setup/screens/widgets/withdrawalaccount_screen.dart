@@ -49,29 +49,6 @@ class _WithdrawalaccountScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Display user name and wallet balance (uncomment if needed)
-                    /*
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            provider.userName ?? 'Loading...',
-                            style: context.textTheme.titleLarge,
-                          ),
-                          8.verticalSpace,
-                          Text(
-                            'Wallet Balance: ₦${provider.formattedBalance}',
-                            style: context.textTheme.bodyMedium!.copyWith(
-                              color: AppColors.grey5B,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    */
                     // Display bank details
                     ...provider.userBanks.asMap().entries.map((entry) {
                       final index = entry.key;

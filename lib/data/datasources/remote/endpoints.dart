@@ -116,4 +116,10 @@ class Endpoints {
   static const String allNotifications = "/notifications";
   static const String markNotificationAsRead =
       "/notifications/mark-all-as-read";
+
+  //============================
+  //Promo
+  // ================
+  static const String allPromos = "/promos";
+  static const String redeemPromo = "/promos/redeem";
 }

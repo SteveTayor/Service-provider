@@ -51,6 +51,28 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   final Ref _ref;
 
   GlobalProvider(super.state, this._api, this._storage, this._ref);
+// NEW: Restore session using existing token
+  Future<void> restoreSession(BuildContext context) async {
+    final token = await _storage.getAuthToken();
+    if (token == null) {
+      _handleError('No saved session found', context);
+      final ctx = navigatorKey.currentContext;
+      if (ctx != null) ctx.go(RouteConstants.login);
+      return;
+    }
+
+    // Re-fetch essential data
+    await Future.wait([
+      fetchProfile(context),
+      fetchWalletBalance(context),
+      fetchBanks(context),
+    ]);
+
+    // Fetch background data without blocking UI
+    unawaited(fetchUserBanks(context));
+    unawaited(fetchVirtualAccount(context));
+    unawaited(fetchUsersTransactions(context, force: true));
+  }
 
   Future<void> initializeWalletandAccounts(BuildContext context) async {
     await Future.wait([

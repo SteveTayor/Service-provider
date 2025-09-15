@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/utils/enums.dart';
@@ -239,19 +241,21 @@ class _PrivacysecurityScreenState extends ConsumerState<PrivacysecurityScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ListtileswitchWidget(
-                  title: 'Use Face ID to log in',
-                  label:
-                      'A face recognition scan will be done anytime you log in to your account.',
-                  switchValue: security.useFaceId,
-                  onToggle: _handleFaceIdToggle,
-                ),
-                ListtileswitchWidget(
-                  title: 'Use fingerprint to log in',
-                  label: 'Enable your fingerprint to log in the app',
-                  switchValue: security.useFingerprint,
-                  onToggle: _handleFingerprintToggle,
-                ),
+                if (Platform.isIOS)
+                  ListtileswitchWidget(
+                    title: 'Use Face ID to log in',
+                    label:
+                        'A face recognition scan will be done anytime you log in to your account.',
+                    switchValue: security.useFaceId,
+                    onToggle: _handleFaceIdToggle,
+                  ),
+                if (Platform.isAndroid)
+                  ListtileswitchWidget(
+                    title: 'Use fingerprint to log in',
+                    label: 'Enable your fingerprint to log in the app',
+                    switchValue: security.useFingerprint,
+                    onToggle: _handleFingerprintToggle,
+                  ),
                 ListtileswitchWidget(
                   title: 'Use fingerprint for payment',
                   label:
