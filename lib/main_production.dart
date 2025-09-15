@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bundlegram/bootstrap.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/firebase_options.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/general_widget/async_value/error_widget.dart';
@@ -130,8 +131,9 @@ void _handleGlobalError(Object error, StackTrace? stack) {
     // so it works even when no Scaffold is directly available
     ScaffoldMessenger.of(navContext).showSnackBar(
       SnackBar(
-        content: Text(sanitizedMessage),
+        content: Text(sanitizedMessage, style: TextStyle(color: Colors.white)),
         behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColors.primaryColor,
       ),
     );
   } else {
