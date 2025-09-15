@@ -124,8 +124,14 @@ class TransactionSummary extends ConsumerWidget {
       return 0.0;
     }
 
-    final rawWallet = walletBalanceAsync.value?.wallet;
-    final walletBalance = toDouble(rawWallet);
+    // Handle error or loading states safely
+    final walletBalance = walletBalanceAsync.maybeWhen(
+      data: (balance) => toDouble(balance?.wallet),
+      orElse: () => 0.0,
+    );
+
+    // final rawWallet = walletBalanceAsync.value?.wallet;
+    // final walletBalance = toDouble(rawWallet);
 
     final amountValue = toDouble(amount);
 

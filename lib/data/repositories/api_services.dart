@@ -36,6 +36,8 @@ import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/profile/profile_response.dart';
 import 'package:bundlegram/data/models/profile/profile_setup_request.dart';
 import 'package:bundlegram/data/models/profile/profile_setup_response.dart';
+import 'package:bundlegram/data/models/promo/get_allpromo_response.dart';
+import 'package:bundlegram/data/models/promo/redeem_promo_request.dart';
 import 'package:bundlegram/data/models/transaction/initiate_transactcion_requests.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction/validate_bill_request.dart';
@@ -316,5 +318,15 @@ class ApiService {
         () => _api.markAllNotificationsAsRead('Bearer $token', _sterilizer));
   }
 
+  Future<Either<Failure, GetAllPromoResponse>> getAllAvailablePromos(
+      String token) {
+    return handleApi(() => _api.getAllPromos('Bearer $token', _sterilizer));
+  }
+
+  Future<Either<Failure, BaseResponse>> redeemAPromo(
+      String token, RedeemAPromoRequest req) {
+    return handleApi(
+        () => _api.redeemAPromo('Bearer $token', _sterilizer, req));
+  }
   // other endpoint …
 }

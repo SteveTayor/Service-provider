@@ -290,7 +290,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                               state.selectedSubProduct?.autoSubProdId ??
                                   state.selectedProduct?.autoProdId,
                               onSuccess: () async {
-                                // ✅ Check wallet balance before showing transaction summary
+                                // Check wallet balance before showing transaction summary
                                 final walletBalanceStr = ref
                                     .read(globalProvider)
                                     .walletBalance

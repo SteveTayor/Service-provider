@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/promo/provider/promo_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,7 @@ class PromoRewardsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final promoState = ref.watch(promoProvider);
-
+    final provider = ref.watch(platformProvider);
     return Container(
       padding: EdgeInsets.all(16.w),
       child: Column(
@@ -31,9 +31,9 @@ class PromoRewardsSection extends ConsumerWidget {
             children: [
               Text(
                 // '₦${promoState.totalRewards.toStringAsFixed(2)}',
-                '₦0.00',
+                provider.formattedPromoBalance,
                 style: context.textTheme.titleLarge?.copyWith(
-                  fontSize: 36.sp,
+                  fontSize: 32.sp,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),

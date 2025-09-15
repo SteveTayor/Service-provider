@@ -32,6 +32,8 @@ import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/profile/profile_response.dart';
 import 'package:bundlegram/data/models/profile/profile_setup_request.dart';
 import 'package:bundlegram/data/models/profile/profile_setup_response.dart';
+import 'package:bundlegram/data/models/promo/get_allpromo_response.dart';
+import 'package:bundlegram/data/models/promo/redeem_promo_request.dart';
 import 'package:bundlegram/data/models/transaction/initiate_transactcion_requests.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction/validate_bill_request.dart';
@@ -318,5 +320,18 @@ abstract class ApiDefinition {
   Future<MarkNotificationAsReadResponse> markAllNotificationsAsRead(
     @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
+  );
+
+  @GET(Endpoints.allPromos)
+  Future<GetAllPromoResponse> getAllPromos(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+  );
+
+  @POST(Endpoints.redeemPromo)
+  Future<BaseResponse> redeemAPromo(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+    @Body() RedeemAPromoRequest body,
   );
 }

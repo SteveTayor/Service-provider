@@ -929,7 +929,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
     if (amount > walletBalance) {
       context.showErrorSnackBar(
-          'Insufficient wallet balance: ${walletBalance.toCurrency()} available');
+          'Insufficient wallet balance ${walletBalance.toCurrency()} available');
       return;
     }
     final discountedAmount =

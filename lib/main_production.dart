@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:bundlegram/bootstrap.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/firebase_options.dart';
 import 'package:bundlegram/presentation/app.dart';
+import 'package:bundlegram/presentation/general_widget/async_value/error_widget.dart';
 import 'package:bundlegram/services/notification_services/notification_services.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -62,15 +64,33 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  // Prefer runZonedGuarded to capture uncaught async errors too.
+  await runZonedGuarded(
+    () async {
+      // Framework errors
+      FlutterError.onError = (FlutterErrorDetails details) {
+        // keep default logging
+        FlutterError.presentError(details);
+        _handleGlobalError(details.exception, details.stack);
+      };
 
-  // Run the app immediately
-  await bootstrap(
-    () => ProviderScope(
-      child: DevicePreview(
-        enabled: false,
-        builder: (context) => const App(),
-      ),
-    ),
+      // Uncaught errors on the platform dispatcher (async)
+      PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+        _handleGlobalError(error, stack);
+        return true; // prevent default red screen
+      };
+
+      // start the app
+      await bootstrap(
+        () => ProviderScope(
+          child: DevicePreview(
+            enabled: false,
+            builder: (context) => const App(),
+          ),
+        ),
+      );
+    },
+    _handleGlobalError,
   );
 
   // Then initialize Firebase & notifications in the background
@@ -88,8 +108,35 @@ Future<void> _initializeFirebaseAndMessaging() async {
 
     await NotificationService().initialize();
 
-    debugPrint("Firebase + Messaging initialized ✅");
+    debugPrint("Firebase + Messaging initialized");
   } catch (e, st) {
     debugPrint("Error initializing Firebase/Notifications: $e\n$st");
+  }
+}
+
+/// Global error handling helper
+void _handleGlobalError(Object error, StackTrace? stack) {
+  final sanitizedMessage = ErrorMessageSanitizer.sanitize(error);
+
+  // Always log for diagnostics
+  debugPrint('Global error caught: $sanitizedMessage');
+  if (stack != null) debugPrintStack(stackTrace: stack);
+
+  // If the app UI (navigator) is mounted.
+  final navState = navigatorKey.currentState;
+  final navContext = navigatorKey.currentContext;
+
+  if (navState?.mounted == true && navContext != null) {
+    // so it works even when no Scaffold is directly available
+    ScaffoldMessenger.of(navContext).showSnackBar(
+      SnackBar(
+        content: Text(sanitizedMessage),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  } else {
+    // UI not ready — swallow gracefully, log or persist if needed
+    debugPrint(
+        'UI not available to show error snack. Error: $sanitizedMessage');
   }
 }

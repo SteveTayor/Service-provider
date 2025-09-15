@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:bundlegram/core/extensions/biometric_extension_helper.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
@@ -130,7 +131,9 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
   Future<void> _verifyPin(String enteredPin) async {
     final storage = ref.read(secureStorageHelperProvider);
-    final userEmail = await storage.getRememberedEmail();
+
+    // use fallback chain instead of only rememberedEmail
+    final userEmail = await storage.getSafeEmail();
     if (userEmail == null) {
       setState(() {
         _errorMessage = 'User not authenticated. Please log in.';
@@ -143,7 +146,6 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
     final storedPin = await storage.getPin(userEmail);
     if (storedPin == enteredPin) {
-      // Successful verification, navigate back to dashboard
       final password = await storage.getPassword();
       if (password == null) {
         debugPrint('[Password stored] stored password is $password');
@@ -153,17 +155,15 @@ class _LockScreenState extends ConsumerState<LockScreen>
         return;
       }
 
-      // Use the LockScreenService instead of loginProvider
       final lockService = ref.read(lockScreenServiceProvider);
       await lockService.performLogin(userEmail, password, context);
-      // context.pushReplacement(RouteConstants.dashboard);
     } else {
       setState(() {
         _errorMessage = 'Incorrect PIN';
         _currentIndex = 0;
         _pin.fillRange(0, 4, '');
       });
-      unawaited(_shakeController.forward(from: 0)); // Trigger shake animation
+      unawaited(_shakeController.forward(from: 0));
     }
   }
 
@@ -341,12 +341,12 @@ class _LockScreenState extends ConsumerState<LockScreen>
                                 if (didAuth) {
                                   final storage =
                                       ref.read(secureStorageHelperProvider);
-                                  final email =
-                                      await storage.getBiometricEmail();
+                                  final email = await storage.getSafeEmail();
                                   final token = await storage.getAuthToken();
                                   final storedPin = email != null
                                       ? await storage.getPin(email)
                                       : null;
+
                                   debugPrint(
                                       '[Biometric] Retrieved email: $email');
                                   debugPrint(
@@ -372,10 +372,9 @@ class _LockScreenState extends ConsumerState<LockScreen>
                                     // fallback: use saved biometric credentials
                                     debugPrint(
                                         '[Biometric] No token found → using saved credentials');
-                                    final email =
-                                        await storage.getBiometricEmail();
-                                    final password =
-                                        await storage.getBiometricPassword();
+                                    final email = await storage.getSafeEmail();
+                                    final password = await storage
+                                        .getBiometricPassword(); // still biometric only
                                     final storedPin = email != null
                                         ? await storage.getPin(email)
                                         : null;
