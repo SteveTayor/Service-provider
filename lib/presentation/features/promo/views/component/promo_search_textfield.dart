@@ -34,6 +34,7 @@ class _PromoInputSectionState extends ConsumerState<PromoInputSection> {
   @override
   Widget build(BuildContext context) {
     final promoState = ref.watch(promoProvider);
+    final hasPromos = promoState.availablePromos.isNotEmpty;
 
     return Container(
       padding: EdgeInsets.all(16.w),
@@ -43,9 +44,14 @@ class _PromoInputSectionState extends ConsumerState<PromoInputSection> {
             child: AppTextField(
               hintText: 'Enter promo code',
               controller: _controller,
-              onChange: (value) {
-                ref.read(promoProvider.notifier).updatePromoCode(value);
-              },
+              // only allow changes when there are promos
+              onChange: hasPromos
+                  ? (value) {
+                      ref.read(promoProvider.notifier).updatePromoCode(value);
+                    }
+                  : null,
+              // mark readOnly when there are no promos
+              readOnly: !hasPromos,
               borderRadius: 8,
             ),
           ),
