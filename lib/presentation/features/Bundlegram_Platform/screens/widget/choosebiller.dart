@@ -266,36 +266,83 @@ class ChoosebillerWidget extends ConsumerWidget {
                                 : imagePath, // Use imagePath for non-SVGs
                             subtitle: item.subName,
                             onPressed: () {
+                              debugPrint(
+                                  '[BETTING] onPressed -> tapped "$name"');
+
                               final notifier = ref.read(
                                   platformProductProvider(serviceType)
                                       .notifier);
 
-// Manually select the first product (since betting has only one product)
                               final products = ref
                                       .read(productsProvider(serviceType))
                                       .value
                                       ?.data ??
                                   [];
+                              debugPrint(
+                                  '[BETTING] Products length = ${products.length}');
+
                               final product =
                                   products.isNotEmpty ? products.first : null;
 
-                              if (product != null) {
-                                notifier
-                                  ..selectProduct(
-                                    product,
-                                    imagePath ?? '',
-                                  )
-                                  ..selectSubProduct(
-                                    item,
-                                  ); // ← this is what was missing
-
-                                onProviderSelected(
-                                  imagePath,
-                                  name,
-                                  product.id!,
-                                );
-                                context.pop();
+                              if (product == null) {
+                                debugPrint(
+                                    '[BETTING] ❌ product is null, not continuing');
+                                return;
                               }
+
+                              debugPrint(
+                                  '[BETTING] ✅ selecting productId=${product.id} name=${product.productName}');
+                              notifier
+                                ..selectProduct(product, imagePath ?? '')
+                                ..selectSubProduct(item);
+
+                              debugPrint(
+                                  '[BETTING] calling onProviderSelected...');
+                              // onProviderSelected(imagePath, name, product.id!);
+                              // pass the subproduct id for betting
+                              try {
+                                onProviderSelected(
+                                    imagePath, name, product.id!);
+                              } catch (e, st) {
+                                debugPrint(
+                                    '[BETTING] onProviderSelected threw: $e');
+                                debugPrintStack(stackTrace: st);
+                              }
+
+                              debugPrint('[BETTING] calling Navigator.pop...');
+                              Navigator.of(context).pop();
+                              debugPrint('[BETTING] ✅ pop called');
+//                               final notifier = ref.read(
+//                                   platformProductProvider(serviceType)
+//                                       .notifier);
+
+// // Manually select the first product (since betting has only one product)
+//                               final products = ref
+//                                       .read(productsProvider(serviceType))
+//                                       .value
+//                                       ?.data ??
+//                                   [];
+//                               final product =
+//                                   products.isNotEmpty ? products.first : null;
+
+//                               if (product != null) {
+//                                 notifier
+//                                   ..selectProduct(
+//                                     product,
+//                                     imagePath ?? '',
+//                                   )
+//                                   ..selectSubProduct(
+//                                     item,
+//                                   ); // ← this is what was missing
+
+//                                 onProviderSelected(
+//                                   imagePath,
+//                                   name,
+//                                   product.id!,
+//                                 );
+
+//                                 Navigator.of(context).pop();
+                              // }
                             },
                             title: name,
                           );

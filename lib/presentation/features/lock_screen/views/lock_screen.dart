@@ -52,6 +52,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
   String? _errorMessage;
   DateTime? _lastBack;
   String? _displayName;
+  bool _autoAuthAttempted = false;
 
   late AnimationController _shakeController;
   late Animation<double> _offsetAnimation;
@@ -69,6 +70,76 @@ class _LockScreenState extends ConsumerState<LockScreen>
         .animate(_shakeController);
 
     _loadCachedName();
+    // schedule auto biometric attempt after first frame
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _tryAutoAuthenticate();
+    // });
+    Future.microtask(() {
+      if (!mounted) return;
+      _tryAutoAuthenticate();
+    });
+  }
+
+  // --- attempt biometric automatically if enabled ---
+  Future<void> _tryAutoAuthenticate() async {
+    if (_autoAuthAttempted) return;
+    _autoAuthAttempted = true;
+
+    // Check security flags from provider (same check you use in build)
+    final security = ref.read(securityProvider);
+    final showBiometric = security.useFingerprint || security.useFaceId;
+    if (!showBiometric) return; // not enabled — nothing to do
+
+    final biometricService = ref.read(biometricServiceProvider);
+
+    try {
+      debugPrint('[Biometric] Auto attempt starting...');
+      final didAuth = await biometricService.authenticate(
+        biometricHint: '',
+        type: BiometricAuthType.login,
+      );
+
+      debugPrint('[Biometric] Auto attempt result: $didAuth');
+
+      if (!mounted) return;
+
+      if (didAuth) {
+        final storage = ref.read(secureStorageHelperProvider);
+        final email = await storage.getSafeEmail();
+        final token = await storage.getAuthToken();
+        final storedPin = email != null ? await storage.getPin(email) : null;
+
+        if (token != null) {
+          // We have a token — restore session and navigate
+          if (storedPin != null) await _simulatePinEntry(storedPin.toString());
+          unawaited(context.showLoadingDialog());
+          await ref.read(globalProvider.notifier).restoreSession(context);
+          context.dismissDialog();
+          if (mounted) context.go(RouteConstants.dashboard);
+          return;
+        }
+
+        // fallback: try biometric-stored credentials (email+password)
+        final password = await storage.getBiometricPassword();
+        if (email != null && password != null) {
+          if (storedPin != null) await _simulatePinEntry(storedPin.toString());
+          final lockService = ref.read(lockScreenServiceProvider);
+          await lockService.performLogin(email, password, context);
+          return;
+        }
+
+        // no token and no biometric password stored
+        context.showErrorSnackBar(
+            'Biometric authenticated but credentials missing. Please use PIN.');
+      } else {
+        // biometric auth was cancelled or failed — do nothing (user can enter PIN)
+        debugPrint('[Biometric] Auto auth failed or cancelled by user.');
+      }
+    } catch (e, st) {
+      debugPrint('[Biometric] Auto auth exception: $e\n$st');
+      // not blocking the UI
+      // context.showErrorSnackBar('Biometric unavailable. Use PIN to continue.');
+    }
   }
 
   Future<void> _loadCachedName() async {

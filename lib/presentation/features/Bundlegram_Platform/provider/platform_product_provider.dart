@@ -338,9 +338,24 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         onProviderSelected: (path, name, id) {
           if (_serviceType == PlatformProductType.betting) {
             // 'id' is a subproduct ID
-            final selectedSubProduct = state.subProducts.firstWhere(
-              (s) => s.id == id,
-            );
+            SubProduct? selectedSubProduct;
+            for (final s in state.subProducts) {
+              if (s.id == id) {
+                selectedSubProduct = s;
+                break;
+              }
+            }
+            // final selectedSubProduct = state.subProducts.firstWhere(
+            //   (s) => s.id == id,
+            //   orElse: () => null,
+            // );
+            if (selectedSubProduct == null) {
+              debugPrint('[BETTING] subproduct not found for id=$id');
+              return;
+            }
+
+            debugPrint(
+                "✅ Found subProduct: ${selectedSubProduct.subName} (id: ${selectedSubProduct.id})");
 
             if (selectedSubProduct != null && state.selectedProduct != null) {
               selectSubProduct(selectedSubProduct);
@@ -384,7 +399,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             double.parse(state.amountController.text) <= 0) {
           return 'Please enter a valid amount';
         }
-        if (double.parse(state.amountController.text) <= 50) {
+        if (double.parse(state.amountController.text) <= 49) {
           return 'Minimum airtime amount is 50 naira';
         }
         break;
@@ -1141,8 +1156,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                 : originalAmount.toCurrency();
 
             final successBody = isMobileData
-                ? '${_serviceType.title} purchase of $displayTarget for $beneficiary was successful.'
-                : '${_serviceType.title} purchase of $displayTarget for $beneficiary was successful.';
+                ? '${_serviceType.title} subscription of $displayTarget for $beneficiary was successful.'
+                : '${_serviceType.title} subscription of $displayTarget for $beneficiary was successful.';
 
             // final successBody =
             //     '${_serviceType.title} purchase of ${originalAmount.toCurrency()} for $beneficiary was successful.';

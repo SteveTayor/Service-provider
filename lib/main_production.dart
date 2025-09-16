@@ -129,13 +129,14 @@ void _handleGlobalError(Object error, StackTrace? stack) {
 
   if (navState?.mounted == true && navContext != null) {
     // so it works even when no Scaffold is directly available
-    ScaffoldMessenger.of(navContext).showSnackBar(
-      SnackBar(
-        content: Text(sanitizedMessage, style: TextStyle(color: Colors.white)),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.primaryColor,
-      ),
-    );
+    // ScaffoldMessenger.of(navContext).showSnackBar(
+    //   SnackBar(
+    //     content: Text(sanitizedMessage, style: TextStyle(color: Colors.white)),
+    //     behavior: SnackBarBehavior.floating,
+    //     backgroundColor: AppColors.primaryColor,
+    //   ),
+    // );
+    debugPrint('UI available. Error: $sanitizedMessage');
   } else {
     // UI not ready — swallow gracefully, log or persist if needed
     debugPrint(

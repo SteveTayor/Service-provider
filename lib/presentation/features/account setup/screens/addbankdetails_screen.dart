@@ -10,6 +10,7 @@ import 'package:bundlegram/presentation/general_widget/app_dropdown.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -55,6 +56,10 @@ class AddBankDetailsScreen extends ConsumerWidget {
                   controller: provider.acct,
                   hintText: 'Account number',
                   keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(10),
+                  ],
                   onChange: notifier.onAccountNumberChanged,
                   validateFunction: notifier.validateAccount,
                 ),
