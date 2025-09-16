@@ -108,7 +108,7 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
 
     return Column(
       children: [
-        // 👇 Wrap balance with AppAsyncBuilder
+        //  Wrap balance with AppAsyncBuilder
         AppAsyncBuilder(
           state: walletBalance,
           onRetry: () =>

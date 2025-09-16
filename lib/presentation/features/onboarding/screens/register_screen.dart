@@ -5,6 +5,7 @@ import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/phone_number_formatter.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/presentation/features/onboarding/notifier/register_notifier.dart';
+import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
@@ -29,13 +30,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final ctrl = ref.read(registerProvider);
     return WillPopScope(
       onWillPop: () async {
-        context.pushReplacement(RouteConstants.walkThrough);
+        debugPrint('onWillPop pressed -> navigate to walkthrough');
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.go(RouteConstants.walkThrough);
+        });
         return false;
       },
       child: BundlegramScaffold(
         resizeToAvoidBottomInset: true,
         sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
-        // appBar: const BundlegramAppbar(),
+        appBar: BundlegramAppbar(
+            showBackButton: true,
+            onTap: () {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                context.go(RouteConstants.walkThrough);
+              });
+            }),
         body: Column(
           children: [
             Column(

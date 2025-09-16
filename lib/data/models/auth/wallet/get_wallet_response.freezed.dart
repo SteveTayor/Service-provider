@@ -22,6 +22,8 @@ GetWalletResponse _$GetWalletResponseFromJson(Map<String, dynamic> json) {
 mixin _$GetWalletResponse {
   @JsonKey(name: "wallet")
   String? get wallet => throw _privateConstructorUsedError;
+  @JsonKey(name: "promo_bonus", fromJson: _toDouble)
+  double? get promoBonus => throw _privateConstructorUsedError;
 
   /// Serializes this GetWalletResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,7 +41,9 @@ abstract class $GetWalletResponseCopyWith<$Res> {
           GetWalletResponse value, $Res Function(GetWalletResponse) then) =
       _$GetWalletResponseCopyWithImpl<$Res, GetWalletResponse>;
   @useResult
-  $Res call({@JsonKey(name: "wallet") String? wallet});
+  $Res call(
+      {@JsonKey(name: "wallet") String? wallet,
+      @JsonKey(name: "promo_bonus", fromJson: _toDouble) double? promoBonus});
 }
 
 /// @nodoc
@@ -58,12 +62,17 @@ class _$GetWalletResponseCopyWithImpl<$Res, $Val extends GetWalletResponse>
   @override
   $Res call({
     Object? wallet = freezed,
+    Object? promoBonus = freezed,
   }) {
     return _then(_value.copyWith(
       wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
               as String?,
+      promoBonus: freezed == promoBonus
+          ? _value.promoBonus
+          : promoBonus // ignore: cast_nullable_to_non_nullable
+              as double?,
     ) as $Val);
   }
 }
@@ -76,7 +85,9 @@ abstract class _$$GetWalletResponseImplCopyWith<$Res>
       __$$GetWalletResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({@JsonKey(name: "wallet") String? wallet});
+  $Res call(
+      {@JsonKey(name: "wallet") String? wallet,
+      @JsonKey(name: "promo_bonus", fromJson: _toDouble) double? promoBonus});
 }
 
 /// @nodoc
@@ -93,12 +104,17 @@ class __$$GetWalletResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? wallet = freezed,
+    Object? promoBonus = freezed,
   }) {
     return _then(_$GetWalletResponseImpl(
       wallet: freezed == wallet
           ? _value.wallet
           : wallet // ignore: cast_nullable_to_non_nullable
               as String?,
+      promoBonus: freezed == promoBonus
+          ? _value.promoBonus
+          : promoBonus // ignore: cast_nullable_to_non_nullable
+              as double?,
     ));
   }
 }
@@ -106,7 +122,9 @@ class __$$GetWalletResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetWalletResponseImpl implements _GetWalletResponse {
-  const _$GetWalletResponseImpl({@JsonKey(name: "wallet") this.wallet});
+  const _$GetWalletResponseImpl(
+      {@JsonKey(name: "wallet") this.wallet,
+      @JsonKey(name: "promo_bonus", fromJson: _toDouble) this.promoBonus});
 
   factory _$GetWalletResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$GetWalletResponseImplFromJson(json);
@@ -114,10 +132,13 @@ class _$GetWalletResponseImpl implements _GetWalletResponse {
   @override
   @JsonKey(name: "wallet")
   final String? wallet;
+  @override
+  @JsonKey(name: "promo_bonus", fromJson: _toDouble)
+  final double? promoBonus;
 
   @override
   String toString() {
-    return 'GetWalletResponse(wallet: $wallet)';
+    return 'GetWalletResponse(wallet: $wallet, promoBonus: $promoBonus)';
   }
 
   @override
@@ -125,12 +146,14 @@ class _$GetWalletResponseImpl implements _GetWalletResponse {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$GetWalletResponseImpl &&
-            (identical(other.wallet, wallet) || other.wallet == wallet));
+            (identical(other.wallet, wallet) || other.wallet == wallet) &&
+            (identical(other.promoBonus, promoBonus) ||
+                other.promoBonus == promoBonus));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, wallet);
+  int get hashCode => Object.hash(runtimeType, wallet, promoBonus);
 
   /// Create a copy of GetWalletResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -151,8 +174,9 @@ class _$GetWalletResponseImpl implements _GetWalletResponse {
 
 abstract class _GetWalletResponse implements GetWalletResponse {
   const factory _GetWalletResponse(
-          {@JsonKey(name: "wallet") final String? wallet}) =
-      _$GetWalletResponseImpl;
+      {@JsonKey(name: "wallet") final String? wallet,
+      @JsonKey(name: "promo_bonus", fromJson: _toDouble)
+      final double? promoBonus}) = _$GetWalletResponseImpl;
 
   factory _GetWalletResponse.fromJson(Map<String, dynamic> json) =
       _$GetWalletResponseImpl.fromJson;
@@ -160,6 +184,9 @@ abstract class _GetWalletResponse implements GetWalletResponse {
   @override
   @JsonKey(name: "wallet")
   String? get wallet;
+  @override
+  @JsonKey(name: "promo_bonus", fromJson: _toDouble)
+  double? get promoBonus;
 
   /// Create a copy of GetWalletResponse
   /// with the given fields replaced by the non-null parameter values.

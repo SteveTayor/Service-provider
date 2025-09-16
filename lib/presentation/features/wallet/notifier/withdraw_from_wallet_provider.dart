@@ -222,19 +222,30 @@ class WithdrawalProvider extends ChangeNotifier {
             : 'Failed to request withdrawal';
         // context.showErrorSnackBar(
         //     message.isNotEmpty ? message : 'Transaction failed');
-        Navigator.pushReplacement(
-          context,
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (ctx) => FailedResultScreen(
+        //       serviceContent: 'Withdrawal',
+        //       title: 'Withdrawal Failed',
+        //       errorMessage: displayMessage,
+        //       onRetry: () {
+        //         context.pushReplacement(RouteConstants.dashboard);
+        //       },
+        //     ),
+        //   ),
+        // );
+        Navigator.of(context, rootNavigator: true).push(
           MaterialPageRoute(
             builder: (ctx) => FailedResultScreen(
               serviceContent: 'Withdrawal',
               title: 'Withdrawal Failed',
               errorMessage: displayMessage,
-              onRetry: () {
-                context.pushReplacement(RouteConstants.dashboard);
-              },
+              onRetry: () => context.go(RouteConstants.dashboard),
             ),
           ),
         );
+
         return false;
       },
       (_) {

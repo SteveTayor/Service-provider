@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:bundlegram/bootstrap.dart';
+import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/firebase_options.dart';
 import 'package:bundlegram/presentation/app.dart';
+import 'package:bundlegram/presentation/general_widget/async_value/error_widget.dart';
 import 'package:bundlegram/services/notification_services/notification_services.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -31,29 +36,110 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await dotenv.load(fileName: ".env");
+
+//   // Initialize Firebase
+//   await Firebase.initializeApp(
+//     name: 'bundlegram',
+//     options: DefaultFirebaseOptions.currentPlatform,
+//   );
+
+//   // Register FCM background handler
+//   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+//   // Initialize NotificationService (local + FCM listeners)
+//   await NotificationService().initialize();
+
+//   // Launch app
+//   await bootstrap(
+//     () => ProviderScope(
+//       child: DevicePreview(
+//         enabled: false, // set to false in production
+//         builder: (context) => const App(),
+//       ),
+//     ),
+//   );
+// }
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  // Prefer runZonedGuarded to capture uncaught async errors too.
+  await runZonedGuarded(
+    () async {
+      // Framework errors
+      FlutterError.onError = (FlutterErrorDetails details) {
+        // keep default logging
+        FlutterError.presentError(details);
+        _handleGlobalError(details.exception, details.stack);
+      };
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    name: 'bundlegram',
-    options: DefaultFirebaseOptions.currentPlatform,
+      // Uncaught errors on the platform dispatcher (async)
+      PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+        _handleGlobalError(error, stack);
+        return true; // prevent default red screen
+      };
+
+      // start the app
+      await bootstrap(
+        () => ProviderScope(
+          child: DevicePreview(
+            enabled: false,
+            builder: (context) => const App(),
+          ),
+        ),
+      );
+    },
+    _handleGlobalError,
   );
 
-  // Register FCM background handler
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // Then initialize Firebase & notifications in the background
+  unawaited(_initializeFirebaseAndMessaging());
+}
 
-  // Initialize NotificationService (local + FCM listeners)
-  await NotificationService().initialize();
+Future<void> _initializeFirebaseAndMessaging() async {
+  try {
+    await Firebase.initializeApp(
+      name: 'bundlegram',
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-  // Launch app
-  await bootstrap(
-    () => ProviderScope(
-      child: DevicePreview(
-        enabled: false, // set to false in production
-        builder: (context) => const App(),
-      ),
-    ),
-  );
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    await NotificationService().initialize();
+
+    debugPrint("Firebase + Messaging initialized");
+  } catch (e, st) {
+    debugPrint("Error initializing Firebase/Notifications: $e\n$st");
+  }
+}
+
+/// Global error handling helper
+void _handleGlobalError(Object error, StackTrace? stack) {
+  final sanitizedMessage = ErrorMessageSanitizer.sanitize(error);
+
+  // Always log for diagnostics
+  debugPrint('Global error caught: $sanitizedMessage');
+  if (stack != null) debugPrintStack(stackTrace: stack);
+
+  // If the app UI (navigator) is mounted.
+  final navState = navigatorKey.currentState;
+  final navContext = navigatorKey.currentContext;
+
+  if (navState?.mounted == true && navContext != null) {
+    // so it works even when no Scaffold is directly available
+    // ScaffoldMessenger.of(navContext).showSnackBar(
+    //   SnackBar(
+    //     content: Text(sanitizedMessage, style: TextStyle(color: Colors.white)),
+    //     behavior: SnackBarBehavior.floating,
+    //     backgroundColor: AppColors.primaryColor,
+    //   ),
+    // );
+    debugPrint('UI available. Error: $sanitizedMessage');
+  } else {
+    // UI not ready — swallow gracefully, log or persist if needed
+    debugPrint(
+        'UI not available to show error snack. Error: $sanitizedMessage');
+  }
 }

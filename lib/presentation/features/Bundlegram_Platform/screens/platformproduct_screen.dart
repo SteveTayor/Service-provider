@@ -119,6 +119,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                           hintText: 'Amount',
                           controller: state.amountController,
                           inputFormatters: [CurrencyTextInputFormatter()],
+                          keyboardType: TextInputType.number,
                           validateFunction: (val) {
                             final enteredAmount =
                                 double.tryParse(val?.replaceAll(',', '') ?? '');
@@ -131,7 +132,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
 
                             if (enteredAmount > wallet!) {
                               context.showErrorSnackBar(
-                                'Insufficient wallet balance: ${walletBalance.toCurrency()} available',
+                                'Insufficient wallet balance ${walletBalance.toCurrency()} available',
                               );
                               return '';
                             }
@@ -187,6 +188,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                           readOnly:
                               true, // Price is set from dropdown selection
                           inputFormatters: [CurrencyTextInputFormatter()],
+
                           prefixIcon: Padding(
                             padding: context.symmetricPadding(24, 0),
                             child:
@@ -281,35 +283,37 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                             //         'Please enter a valid amount');
                             //   }
                             // }
+                            notifier
+                              ..validateForm()
+                              ..validateBill(
+                                context,
+                                input,
+                                state.selectedProduct?.id ??
+                                    state.selectedSubProduct?.id,
+                                state.selectedSubProduct?.autoSubProdId ??
+                                    state.selectedProduct?.autoProdId,
+                                onSuccess: () async {
+                                  // Check wallet balance before showing transaction summary
+                                  final walletBalanceStr = ref
+                                      .read(globalProvider)
+                                      .walletBalance
+                                      .value
+                                      ?.wallet;
+                                  final walletBalance =
+                                      double.tryParse(walletBalanceStr ?? '') ??
+                                          0.0;
+                                  final amount =
+                                      notifier.getTransactionAmount();
+                                  if (amount > walletBalance) {
+                                    context.showErrorSnackBar(
+                                      'Insufficient balance. You have ${walletBalance.toCurrency()}',
+                                    );
+                                    return;
+                                  }
 
-                            notifier.validateBill(
-                              context,
-                              input,
-                              state.selectedProduct?.id ??
-                                  state.selectedSubProduct?.id,
-                              state.selectedSubProduct?.autoSubProdId ??
-                                  state.selectedProduct?.autoProdId,
-                              onSuccess: () async {
-                                // ✅ Check wallet balance before showing transaction summary
-                                final walletBalanceStr = ref
-                                    .read(globalProvider)
-                                    .walletBalance
-                                    .value
-                                    ?.wallet;
-                                final walletBalance =
-                                    double.tryParse(walletBalanceStr ?? '') ??
-                                        0.0;
-                                final amount = notifier.getTransactionAmount();
-                                if (amount > walletBalance) {
-                                  context.showErrorSnackBar(
-                                    'Insufficient balance. You have ${walletBalance.toCurrency()}',
-                                  );
-                                  return;
-                                }
-
-                                notifier.showTransactionSummary(context);
-                              },
-                            );
+                                  notifier.showTransactionSummary(context);
+                                },
+                              );
                           } else {
                             notifier.showTransactionSummary(context);
                           }

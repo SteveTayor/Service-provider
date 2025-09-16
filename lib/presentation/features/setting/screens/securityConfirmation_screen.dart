@@ -1,15 +1,17 @@
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/utils/validators.dart';
+import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class SecurityConfirmationScreen extends StatefulWidget {
+class SecurityConfirmationScreen extends ConsumerStatefulWidget {
   final VoidCallback onSuccess;
-  final VoidCallback? onCancel; // Add optional cancel callback
+  final VoidCallback? onCancel;
   final String securityType;
 
   const SecurityConfirmationScreen({
@@ -20,12 +22,12 @@ class SecurityConfirmationScreen extends StatefulWidget {
   });
 
   @override
-  State<SecurityConfirmationScreen> createState() =>
+  ConsumerState<SecurityConfirmationScreen> createState() =>
       _SecurityConfirmationScreenState();
 }
 
 class _SecurityConfirmationScreenState
-    extends State<SecurityConfirmationScreen> {
+    extends ConsumerState<SecurityConfirmationScreen> {
   bool _isFormValid = false;
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
@@ -61,8 +63,13 @@ class _SecurityConfirmationScreenState
     });
 
     try {
-      // Simulate password verification
-      await Future.delayed(const Duration(seconds: 1));
+      // Verify password against stored password
+      final secureStorage = ref.read(secureStorageHelperProvider);
+      final storedPassword = await secureStorage.getPassword();
+      if (_passwordController.text != storedPassword) {
+        context.showErrorSnackBar('Incorrect password');
+        return;
+      }
 
       // Call success callback
       widget.onSuccess();
@@ -73,8 +80,7 @@ class _SecurityConfirmationScreenState
       }
     } catch (e) {
       if (mounted) {
-        context
-            .showErrorSnackBar('Failed to verify password. Please try again.');
+        context.showErrorSnackBar('Failed to verify password: $e');
       }
     } finally {
       if (mounted) {
@@ -89,7 +95,6 @@ class _SecurityConfirmationScreenState
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvoked: (didPop) {
-        // Call cancel callback when user goes back
         if (didPop && widget.onCancel != null) {
           widget.onCancel!();
         }

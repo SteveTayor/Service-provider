@@ -86,18 +86,17 @@ class PromoCard extends StatelessWidget {
                   width: double.infinity,
                   height: 36.h,
                   child: ElevatedButton(
-                    onPressed: promo.isClaimed ? null : onClaim,
+                    onPressed: onClaim,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: promo.isClaimed
-                          ? Colors.grey.shade400
-                          : Colors.red.shade400,
+                      backgroundColor: Colors.red.shade400,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6.r),
                       ),
                       elevation: 0,
                     ),
                     child: Text(
-                      promo.isClaimed ? 'Claimed' : 'Claim now',
+                      // promo.isClaimed! ? 'Claimed' :
+                      'Claim now',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14.sp,

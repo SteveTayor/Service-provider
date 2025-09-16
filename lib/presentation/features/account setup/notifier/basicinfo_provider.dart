@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/utils/enums.dart';
@@ -84,17 +85,23 @@ class BasicInfoProvider extends ChangeNotifier {
       child: SizedBox(
         width: double.infinity,
         height: 350,
-        child: CupertinoDatePicker(
-          backgroundColor: CupertinoColors.white,
-          mode: CupertinoDatePickerMode.date,
-          initialDateTime: _selectedDate,
-          minimumDate: DateTime(1900),
-          maximumDate: now,
-          onDateTimeChanged: (DateTime newDate) {
-            _selectedDate = newDate;
-            _dob.text = DateFormat('dd/MM/yyyy').format(newDate);
-            notifyListeners();
-          },
+        child: CupertinoTheme(
+          data: const CupertinoThemeData(
+            brightness: Brightness.light, // forces light theme
+            primaryColor: CupertinoColors.black, // forces black text
+          ),
+          child: CupertinoDatePicker(
+            backgroundColor: CupertinoColors.white,
+            mode: CupertinoDatePickerMode.date,
+            initialDateTime: _selectedDate,
+            minimumDate: DateTime(1900),
+            maximumDate: now,
+            onDateTimeChanged: (DateTime newDate) {
+              _selectedDate = newDate;
+              _dob.text = DateFormat('dd/MM/yyyy').format(newDate);
+              notifyListeners();
+            },
+          ),
         ),
       ),
     ));
@@ -123,11 +130,8 @@ class BasicInfoProvider extends ChangeNotifier {
 
       result.fold(
         (fail) {
-          context.showErrorSnackBar(
-            fail.properties.isNotEmpty
-                ? fail.properties.join('\n')
-                : 'Failed to update profile',
-          );
+          final userMsg = userFacingMessageFromFailure(fail);
+          context.showErrorSnackBar(userMsg);
         },
         (resp) async {
           if (resp.status == 'success') {

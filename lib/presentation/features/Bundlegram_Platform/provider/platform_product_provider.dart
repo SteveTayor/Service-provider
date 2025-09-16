@@ -31,6 +31,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/model/platf
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/choosebiller.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/purchase_bill_wrapper.dart';
+import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/airtime/widget/airtime_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/betting/widget/betting_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/bulk%20e-pin/bulkE-pin_screen.dart';
@@ -337,9 +338,24 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         onProviderSelected: (path, name, id) {
           if (_serviceType == PlatformProductType.betting) {
             // 'id' is a subproduct ID
-            final selectedSubProduct = state.subProducts.firstWhere(
-              (s) => s.id == id,
-            );
+            SubProduct? selectedSubProduct;
+            for (final s in state.subProducts) {
+              if (s.id == id) {
+                selectedSubProduct = s;
+                break;
+              }
+            }
+            // final selectedSubProduct = state.subProducts.firstWhere(
+            //   (s) => s.id == id,
+            //   orElse: () => null,
+            // );
+            if (selectedSubProduct == null) {
+              debugPrint('[BETTING] subproduct not found for id=$id');
+              return;
+            }
+
+            debugPrint(
+                "✅ Found subProduct: ${selectedSubProduct.subName} (id: ${selectedSubProduct.id})");
 
             if (selectedSubProduct != null && state.selectedProduct != null) {
               selectSubProduct(selectedSubProduct);
@@ -383,7 +399,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             double.parse(state.amountController.text) <= 0) {
           return 'Please enter a valid amount';
         }
-        if (double.parse(state.amountController.text) <= 50) {
+        if (double.parse(state.amountController.text) <= 49) {
           return 'Minimum airtime amount is 50 naira';
         }
         break;
@@ -928,7 +944,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
     if (amount > walletBalance) {
       context.showErrorSnackBar(
-          'Insufficient wallet balance: ${walletBalance.toCurrency()} available');
+          'Insufficient wallet balance ${walletBalance.toCurrency()} available');
       return;
     }
     final discountedAmount =
@@ -968,6 +984,49 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   Future<void> initiatePurchase(BuildContext context, String originalAmount,
       String discountedAmount, String beneficiary) async {
     context.pop(); // Close the bottom sheet
+    final biometricService = _ref.read(biometricServiceProvider);
+
+    // Check if biometric for transactions is enabled
+    final isBiometricEnabled =
+        await biometricService.isBiometricTransactionEnabled;
+
+    if (isBiometricEnabled) {
+      final didAuth = await biometricService.authenticate(
+        type: BiometricAuthType.transaction,
+      );
+
+      if (didAuth) {
+        // Get the stored PIN
+        final email =
+            await _ref.read(secureStorageHelperProvider).getRememberedEmail();
+        if (email == null) {
+          debugPrint("No stored account found, please login again");
+          // context.go(RouteConstants.login);
+          return;
+        }
+
+        final storedPin =
+            await _ref.read(secureStorageHelperProvider).getPin(email);
+        if (storedPin == null) {
+          debugPrint("No stored PIN found, please set up your PIN");
+          return;
+        }
+
+        // Call purchase directly with stored PIN
+        await purchase(
+          context,
+          pin: storedPin,
+          originalAmount: originalAmount,
+          discountedAmount: discountedAmount,
+          beneficiary: beneficiary,
+          validatedName: state.validatedName,
+        );
+        return;
+      } else {
+        context.showErrorSnackBar("Biometric authentication failed");
+        // fallback → open PIN screen
+      }
+    }
     unawaited(
       Navigator.push(
         context,
@@ -1097,8 +1156,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                 : originalAmount.toCurrency();
 
             final successBody = isMobileData
-                ? '${_serviceType.title} purchase of $displayTarget for $beneficiary was successful.'
-                : '${_serviceType.title} purchase of $displayTarget for $beneficiary was successful.';
+                ? '${_serviceType.title} subscription of $displayTarget for $beneficiary was successful.'
+                : '${_serviceType.title} subscription of $displayTarget for $beneficiary was successful.';
 
             // final successBody =
             //     '${_serviceType.title} purchase of ${originalAmount.toCurrency()} for $beneficiary was successful.';

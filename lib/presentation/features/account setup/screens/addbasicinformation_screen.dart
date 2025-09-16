@@ -97,6 +97,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //   }
 // }
 
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+
 class AddBasicInformationScreen extends ConsumerWidget {
   final UserAction userAction;
   const AddBasicInformationScreen({
@@ -110,134 +112,194 @@ class AddBasicInformationScreen extends ConsumerWidget {
     final notifier = ref.read(basicInfoProvider(userAction));
     final globalUserProvider = ref.watch(globalProvider).profile;
     final profileProv = globalUserProvider.value?.data;
+
     // Configure title based on action
     final titleText = userAction.isCreate
         ? 'Add Basic Information'
         : 'Update Account Details';
-    String phoneNumber = notifier.phone.text; // e.g., "+23490891272181"
+
+    String phoneNumber = notifier.phone.text;
     String localPhoneNumber =
         phoneNumber.startsWith('+234') ? phoneNumber.substring(4) : phoneNumber;
+
+    // If it's 11 digits and starts with "0", drop the leading "0"
+    if (localPhoneNumber.length == 11 && localPhoneNumber.startsWith('0')) {
+      localPhoneNumber = localPhoneNumber.substring(1);
+    }
+
+    // Put back into controller
     notifier.phone.text = localPhoneNumber;
+
     String fullName = profileProv!.name!;
     final bvnLinked = profileProv.bvn?.toString().isNotEmpty ?? false;
 
     List<String> parts = fullName.trim().split(' ');
-
     String firstName = parts.isNotEmpty ? parts.first : '';
     String lastName = parts.length > 1 ? parts.last : '';
 
-// Set values into the controllers
+    // Set values into the controllers
     notifier.firstName.text = profileProv.firstName!;
-    // notifier.lastName.text = lastName;
-// Helpers
+
+    // Helpers
     bool hasGender = (profileProv.gender?.toString().isNotEmpty ?? false);
     bool hasAddress = (profileProv.address?.toString().isNotEmpty ?? false);
     bool hasDob = (profileProv.dob != null);
+
+    // Form fields data for cleaner animation mapping
+    final formFields = [
+      {
+        'widget': AppTextField(
+          label: "First Name",
+          controller: notifier.firstName,
+          hintText: 'First Name',
+          validateFunction: notifier.validateName,
+          readOnly: true,
+          isFilled: true,
+          backgroundColor: AppColors.greyD0.withOpacity(0.3),
+        ),
+        'delay': 0,
+      },
+      {
+        'widget': AppTextField(
+          label: 'Last Name',
+          controller: notifier.lastName,
+          hintText: 'Last Name',
+          validateFunction: notifier.validateName,
+          readOnly: true,
+          isFilled: true,
+          backgroundColor: AppColors.greyD0.withOpacity(0.3),
+        ),
+        'delay': 100,
+      },
+      {
+        'widget': AppTextField(
+          label: "Email",
+          controller: notifier.email,
+          hintText: 'Email',
+          readOnly: true,
+          isFilled: true,
+          backgroundColor: AppColors.greyD0.withOpacity(0.3),
+        ),
+        'delay': 200,
+      },
+      {
+        'widget': AppTextField(
+          label: 'Phone Number',
+          controller: notifier.phone,
+          hintText: 'Phone Number',
+          readOnly: !userAction.isCreate,
+          isFilled: !userAction.isCreate,
+          backgroundColor: AppColors.greyD0.withOpacity(0.3),
+          prefixIcon: Padding(
+            padding: context.symmetricPadding(16, 0),
+            child: Text('+234', style: context.textTheme.bodyMedium),
+          ),
+          validateFunction: notifier.validatePhone,
+          onChange: (value) {
+            notifier.phone.text = value;
+          },
+        ),
+        'delay': 300,
+      },
+      {
+        'widget': AppDropdown(
+          title: provider.gender != "" ? provider.gender : "Gender",
+          options: const ['Male', 'Female'],
+          selected: provider.gender,
+          onChanged: notifier.setGender,
+          isFilled:
+              userAction.isCreate ? false : (bvnLinked ? hasGender : false),
+        ),
+        'delay': 400,
+      },
+      {
+        'widget': AppTextField(
+          label: 'Address',
+          controller: notifier.address,
+          hintText: 'Enter Address',
+          isFilled:
+              userAction.isCreate ? false : (bvnLinked ? hasAddress : false),
+          readOnly: bvnLinked,
+          backgroundColor: AppColors.greyD0.withOpacity(0.3),
+          validateFunction: notifier.validateNotEmpty,
+        ),
+        'delay': 500,
+      },
+      {
+        'widget': AppDatetextfield(
+          controller: notifier.dob,
+          title: '',
+          hintText: 'DD/MM/YYYY',
+          isFilled: userAction.isCreate ? false : (bvnLinked ? hasDob : false),
+          readOnly: bvnLinked,
+          validator: notifier.validateDate,
+          onTap: () => notifier.pickDob(context),
+        ),
+        'delay': 600,
+      },
+    ];
+
     return BundlegramScaffold(
       resizeToAvoidBottomInset: true,
       appBar: BundlegramAppbar(titleText: titleText),
       body: Form(
         key: provider.formKey,
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
-          children: [
-            AppTextField(
-              label: "First Name",
-              controller: notifier.firstName,
-              hintText: 'First Name',
-              validateFunction: notifier.validateName,
-              readOnly: true,
-              isFilled: true,
-              backgroundColor: AppColors.greyD0.withOpacity(0.3),
-            ),
-            SizedBox(height: 18.h),
-            AppTextField(
-              label: 'Last Name',
-              controller: notifier.lastName,
-              hintText: 'Last Name',
-              validateFunction: notifier.validateName,
-              readOnly: true,
-              isFilled: true,
-              // readOnly: userAction.isCreate ? false : true,
-              backgroundColor: AppColors.greyD0.withOpacity(0.3),
-            ),
-            SizedBox(height: 18.h),
-            AppTextField(
-              label: "Email",
-              controller: notifier.email,
-              hintText: 'Email',
-              readOnly: true,
-              isFilled: true,
-              backgroundColor: AppColors.greyD0.withOpacity(0.3),
-            ),
-            SizedBox(height: 18.h),
-            AppTextField(
-              label: 'Phone Number',
-              controller: notifier.phone,
-              hintText: 'Phone Number',
-              readOnly: !userAction.isCreate,
-              isFilled: !userAction.isCreate,
-              backgroundColor: AppColors.greyD0.withOpacity(0.3),
-              prefixIcon: Padding(
-                padding: context.symmetricPadding(16, 0),
-                child: Text('+234', style: context.textTheme.bodyMedium),
-              ),
-              validateFunction: notifier.validatePhone,
-              onChange: (value) {
-                // Ensure the controller holds only the local part
-                notifier.phone.text = value;
-              },
-            ),
-            SizedBox(height: 18.h),
-            AppDropdown(
-              title: provider.gender != "" ? provider.gender : "Gender",
-              options: const ['Male', 'Female'],
-              selected: provider.gender,
-              onChanged: notifier.setGender,
-              isFilled:
-                  userAction.isCreate ? false : (bvnLinked ? hasGender : false),
-              // editable unless BVN is linked
-            ),
-            SizedBox(height: 18.h),
-            AppTextField(
-              label: 'Address',
-              controller: notifier.address,
-              hintText: 'Enter Address',
-              isFilled: userAction.isCreate
-                  ? false
-                  : (bvnLinked ? hasAddress : false),
-              readOnly: bvnLinked,
-              backgroundColor: AppColors.greyD0.withOpacity(0.3),
-              validateFunction: notifier.validateNotEmpty,
-            ),
-            SizedBox(height: 18.h),
-            AppDatetextfield(
-              controller: notifier.dob,
-              title: '',
-              hintText: 'DD/MM/YYYY',
-              isFilled:
-                  userAction.isCreate ? false : (bvnLinked ? hasDob : false),
-              readOnly: bvnLinked,
-              validator: notifier.validateDate,
-              onTap: () => notifier.pickDob(context),
-            ),
-            SizedBox(height: 32.h),
-            Opacity(
-              opacity: userAction.isCreate ? 1 : 0.9,
-              child: BundlegramButton(
-                isEnabled: provider.loading
-                    ? false
-                    : userAction.isCreate ||
-                        (!hasGender || !hasAddress || !hasDob),
-                text: userAction.isCreate ? 'Submit' : 'Update',
-                onPressed: provider.loading
-                    ? null
-                    : () async {
-                        await provider.submit(context);
-                      },
-              ),
-            ),
-          ],
+        child: AnimationLimiter(
+          child: ListView.builder(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+            itemCount: formFields.length + 1, // +1 for the submit button
+            itemBuilder: (context, index) {
+              if (index == formFields.length) {
+                // Submit button with its own animation
+                return AnimationConfiguration.staggeredList(
+                  position: index,
+                  delay: const Duration(milliseconds: 100),
+                  child: SlideAnimation(
+                    verticalOffset: 50.0,
+                    child: FadeInAnimation(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 32.h),
+                        child: ScaleAnimation(
+                          scale: 0.8,
+                          child: Opacity(
+                            opacity: userAction.isCreate ? 1 : 0.9,
+                            child: BundlegramButton(
+                              isEnabled: provider.loading
+                                  ? false
+                                  : userAction.isCreate ||
+                                      (!hasGender || !hasAddress || !hasDob),
+                              text: userAction.isCreate ? 'Submit' : 'Update',
+                              onPressed: provider.loading
+                                  ? null
+                                  : () async {
+                                      await provider.submit(context);
+                                    },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              final field = formFields[index];
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                delay: Duration(milliseconds: field['delay'] as int),
+                child: SlideAnimation(
+                  verticalOffset: 30.0,
+                  child: FadeInAnimation(
+                    duration: const Duration(milliseconds: 600),
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 18.h),
+                      child: field['widget'] as Widget,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

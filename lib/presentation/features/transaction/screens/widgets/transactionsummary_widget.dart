@@ -62,10 +62,10 @@ class TransactionSummary extends ConsumerWidget {
 
           // Value + optional icon - takes remaining space
           Expanded(
-            flex: 2,
+            flex: 3,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              // crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (label == 'Transaction type' && assetPath != null) ...[
@@ -85,7 +85,7 @@ class TransactionSummary extends ConsumerWidget {
                         ),
                   4.horizontalSpace,
                 ],
-                Expanded(
+                Flexible(
                   child: Text(
                     value.contains('Buy')
                         ? value.replaceFirst('Buy', '').trim()
@@ -124,8 +124,14 @@ class TransactionSummary extends ConsumerWidget {
       return 0.0;
     }
 
-    final rawWallet = walletBalanceAsync.value?.wallet;
-    final walletBalance = toDouble(rawWallet);
+    // Handle error or loading states safely
+    final walletBalance = walletBalanceAsync.maybeWhen(
+      data: (balance) => toDouble(balance?.wallet),
+      orElse: () => 0.0,
+    );
+
+    // final rawWallet = walletBalanceAsync.value?.wallet;
+    // final walletBalance = toDouble(rawWallet);
 
     final amountValue = toDouble(amount);
 

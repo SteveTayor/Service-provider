@@ -12,6 +12,7 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
+import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/recenttransaction_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
@@ -95,6 +96,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               ref.read(globalProvider.notifier).fetchWalletBalance(context),
               ref.read(globalProvider.notifier).fetchUsersTransactions(context),
             ]);
+            unawaited(
+                ref.read(dashboardProvider.notifier).initDashboard(context));
             ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
           } finally {
             context.dismissDialog();
@@ -203,7 +206,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                           ],
                         ),
                         Text(
-                          provider.isBalanceVisible ? "₦0.00" : '⁕⁕⁕⁕',
+                          provider.isBalanceVisible
+                              ? provider.formattedPromoBalance
+                              : '⁕⁕⁕⁕',
                           // wallet.value?.wallet.toCurrency() ?? '₦0.00',
                           style: context.textTheme.titleLarge?.copyWith(
                             fontSize: provider.isBalanceVisible ? 34 : 24,
@@ -257,7 +262,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               //     title: "Wallet Transactions",
               //     transactionProvider: walletTransactionsProvider,
               //   ),
-              // ✅ Wrapped transactions with AppAsyncBuilder
+              // Wrapped transactions with AppAsyncBuilder
               AppAsyncBuilder(
                 state: ref
                     .watch(globalProvider.select((g) => g.usersTransactions)),

@@ -25,7 +25,7 @@ class FailedResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        context.pushReplacement(RouteConstants.dashboard);
+        context.go(RouteConstants.dashboard);
         return false;
       },
       child: BundlegramScaffold(
@@ -37,8 +37,7 @@ class FailedResultScreen extends StatelessWidget {
           title: title,
           subText: 'Your ${serviceContent} failed. $errorMessage',
           buttonText: 'Go Home',
-          onPressed: onRetry ??
-              () => context.pushReplacement(RouteConstants.dashboard),
+          onPressed: onRetry ?? () => context.go(RouteConstants.dashboard),
         ),
       ),
     );

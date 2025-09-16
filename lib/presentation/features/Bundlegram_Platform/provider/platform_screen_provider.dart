@@ -40,6 +40,13 @@ class PlatformProvider extends ChangeNotifier {
     return "${value.toCurrency()}";
   }
 
+  String get formattedPromoBalance {
+    final wallet = _ref.read(globalProvider).walletBalance;
+    final value = wallet.value?.promoBonus ?? 0.0;
+    debugPrint("[Formatted Promo Balance is ${value.toString()}]");
+    return value.toCurrency();
+  }
+
   List<VirtualAccount> get virtualAccounts {
     final va = _ref.read(globalProvider).virtualAccounts;
 
