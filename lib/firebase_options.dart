@@ -78,4 +78,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'bundlegram-c601e.firebasestorage.app',
     iosBundleId: 'com.example.myApp',
   );
+
 }
