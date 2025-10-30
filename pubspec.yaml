@@ -65,7 +65,7 @@ dev_dependencies:
   json_serializable: ^6.7.1
   freezed: ^2.4.7
   riverpod_generator: ^2.3.9
-  custom_lint: ^0.6.2
+#  custom_lint: ^0.6.2
   riverpod_lint: ^2.3.7
   retrofit_generator: ^9.1.5
   flutter_launcher_icons: ^0.14.4
