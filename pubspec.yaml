@@ -51,6 +51,8 @@ dependencies:
   firebase_core: ^4.1.0
   flutter_local_notifications: ^19.4.1
   firebase_messaging: ^16.0.1
+  local_auth: ^2.3.0
+  flutter_staggered_animations: ^1.1.1
 
 dev_dependencies:
   bloc_test: ^10.0.0
