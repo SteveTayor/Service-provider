@@ -35,7 +35,7 @@ class FailedResultScreen extends StatelessWidget {
             path: Assets.svgs.failedIllustration,
           ),
           title: title,
-          subText: 'Your ${serviceContent} failed. $errorMessage',
+          subText: errorMessage,
           buttonText: 'Go Home',
           onPressed: onRetry ?? () => context.go(RouteConstants.dashboard),
         ),

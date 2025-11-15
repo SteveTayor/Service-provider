@@ -1113,13 +1113,14 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
           final sanitizedJoined = sanitizedParts.join('\n');
 
           // Decide what to show on the failed result screen:
-          final lower = sanitizedJoined.toLowerCase();
-          final shouldShowSpecific =
-              lower.contains('insufficient') || lower.contains('incorrect pin');
+          // final lower = sanitizedJoined.toLowerCase();
+          // final shouldShowSpecific =
+          //     lower.contains('insufficient') || lower.contains('incorrect pin');
 
           // If specific sensitive/meaningful text exists, use it; otherwise, fallback.
           final displayMessage =
-              shouldShowSpecific && sanitizedJoined.isNotEmpty
+              // shouldShowSpecific &&
+              sanitizedJoined.isNotEmpty
                   ? sanitizedJoined
                   : 'Transaction failed. Please try again later.';
 
@@ -1162,8 +1163,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             // final successBody =
             //     '${_serviceType.title} purchase of ${originalAmount.toCurrency()} for $beneficiary was successful.';
             final notifPayload = jsonEncode({
-              'route':
-                  '/transactions/detail', // change to your transaction/detail route
+              'route': '/transactions/detail', //  to transaction/detail route
               'type': 'transaction_success',
               'service': _serviceType.title,
               'amount': originalAmount,
@@ -1188,10 +1188,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
           } else {
             context.dismissDialog();
             final displayMessage =
-                response.message.toLowerCase().contains('insufficient') ||
-                        response.message.toLowerCase().contains('incorrect pin')
-                    ? response.message
-                    : 'Please try again later.';
+                // response.message.toLowerCase().contains('insufficient') ||
+                //         response.message.toLowerCase().contains('incorrect pin')
+                //     ?
+                response.message;
+            // : 'Please try again later.';
             final notifId = DateTime.now().millisecondsSinceEpoch % 100000;
             final notifPayload = jsonEncode({
               'route': RouteConstants.dashboard,

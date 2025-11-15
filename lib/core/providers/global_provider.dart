@@ -53,32 +53,64 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
   GlobalProvider(super.state, this._api, this._storage, this._ref);
 //  Restore session using existing token
-  Future<void> restoreSession(BuildContext context) async {
-    final token = await _storage.getAuthToken();
-    if (token == null) {
-      _handleError('No saved session found', context);
-      final ctx = navigatorKey.currentContext;
+  // Future<void> restoreSession(BuildContext context) async {
+  //   final token = await _storage.getAuthToken();
+  //   if (token == null) {
+  //     _handleError('No saved session found', context);
+  //     final ctx = navigatorKey.currentContext;
 
-      if (ctx != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          ctx.go(RouteConstants.login);
-        });
-      }
-      //  ctx.go(RouteConstants.login);
-      return;
+  //     if (ctx != null) {
+  //       WidgetsBinding.instance.addPostFrameCallback((_) {
+  //         ctx.go(RouteConstants.login);
+  //       });
+  //     }
+  //     //  ctx.go(RouteConstants.login);
+  //     return;
+  //   }
+
+  //   // Re-fetch essential data
+  //   await Future.wait([
+  //     fetchProfile(context),
+  //     fetchWalletBalance(context),
+  //     fetchBanks(context),
+  //   ]);
+
+  //   // Fetch background data without blocking UI
+  //   unawaited(fetchUserBanks(context));
+  //   unawaited(fetchVirtualAccount(context));
+  //   unawaited(fetchUsersTransactions(context, force: true));
+  // }
+
+  Future<bool> restoreSession(BuildContext context) async {
+    final token = await _storage.getAuthToken();
+    if (token == null) return false;
+
+    //fetchProfile ONLY (sequential)
+    final profileResult = await _api.getProfile(token);
+    bool profileOk = true;
+
+    profileResult.fold(
+      (fail) {
+        profileOk = false;
+      },
+      (data) {
+        state = state.copyWith(profile: AsyncData(data));
+      },
+    );
+
+    if (!profileOk) {
+      log('[restoreSession] Token invalid → fallback to email/password');
+      return false;
     }
 
-    // Re-fetch essential data
-    await Future.wait([
-      fetchProfile(context),
-      fetchWalletBalance(context),
-      fetchBanks(context),
-    ]);
-
-    // Fetch background data without blocking UI
+    // Token confirmed valid → proceed to other calls
+    unawaited(fetchWalletBalance(context));
+    unawaited(fetchBanks(context));
     unawaited(fetchUserBanks(context));
     unawaited(fetchVirtualAccount(context));
     unawaited(fetchUsersTransactions(context, force: true));
+
+    return true;
   }
 
   Future<void> initializeWalletandAccounts(BuildContext context) async {

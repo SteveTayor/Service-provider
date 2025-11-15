@@ -23,15 +23,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class LockScreen extends ConsumerStatefulWidget {
-  const LockScreen({
-    super.key,
-  });
-
-  @override
-  ConsumerState<LockScreen> createState() => _LockScreenState();
-}
-
 extension TimeGreeting on DateTime {
   String getGreeting() {
     final hour = this.hour;
@@ -43,6 +34,15 @@ extension TimeGreeting on DateTime {
       return 'Good evening';
     }
   }
+}
+
+class LockScreen extends ConsumerStatefulWidget {
+  const LockScreen({
+    super.key,
+  });
+
+  @override
+  ConsumerState<LockScreen> createState() => _LockScreenState();
 }
 
 class _LockScreenState extends ConsumerState<LockScreen>
@@ -85,7 +85,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
     if (_autoAuthAttempted) return;
     _autoAuthAttempted = true;
 
-    // Check security flags from provider (same check you use in build)
+    // Check security flags from provider
     final security = ref.read(securityProvider);
     final showBiometric = security.useFingerprint || security.useFaceId;
     if (!showBiometric) return; // not enabled — nothing to do
@@ -106,30 +106,39 @@ class _LockScreenState extends ConsumerState<LockScreen>
       if (didAuth) {
         final storage = ref.read(secureStorageHelperProvider);
         final email = await storage.getSafeEmail();
-        final token = await storage.getAuthToken();
+        final password = await storage.getBiometricPassword();
         final storedPin = email != null ? await storage.getPin(email) : null;
+        if (storedPin != null) {
+          await _simulatePinEntry(storedPin);
+        }
 
-        if (token != null) {
-          // We have a token — restore session and navigate
-          if (storedPin != null) await _simulatePinEntry(storedPin.toString());
-          unawaited(context.showLoadingDialog());
-          await ref.read(globalProvider.notifier).restoreSession(context);
+        // We have a token — restore session and navigate
+        unawaited(context.showLoadingDialog());
+        final didRestore =
+            await ref.read(globalProvider.notifier).restoreSession(context);
+        if (didRestore) {
           context.dismissDialog();
           if (mounted) context.go(RouteConstants.dashboard);
           return;
         }
 
         // fallback: try biometric-stored credentials (email+password)
-        final password = await storage.getBiometricPassword();
         if (email != null && password != null) {
-          if (storedPin != null) await _simulatePinEntry(storedPin.toString());
           final lockService = ref.read(lockScreenServiceProvider);
-          await lockService.performLogin(email, password, context);
-          return;
+          await lockService.performLogin(
+            email,
+            password,
+            context,
+          );
+          context.dismissDialog();
+          if (mounted) {
+            context.go(RouteConstants.dashboard);
+            return;
+          }
         }
 
         // no token and no biometric password stored
-        context.showErrorSnackBar(
+        debugPrint(
             'Biometric authenticated but credentials missing. Please use PIN.');
       } else {
         // biometric auth was cancelled or failed — do nothing (user can enter PIN)
@@ -299,8 +308,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
           sidePadding: EdgeInsets.fromLTRB(
               20.w, 10.h, 20.w, 20.h), // ✅ Reduced bottom padding
           body: SingleChildScrollView(
-            // ✅ Make entire screen scrollable
-            physics: const AlwaysScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 minHeight: MediaQuery.of(context).size.height -
@@ -315,12 +323,12 @@ class _LockScreenState extends ConsumerState<LockScreen>
                     // Top section with logo and greeting
                     Column(
                       children: [
-                        Image(
-                          image: Assets.images.bBundlegram.provider(),
-                          fit: BoxFit.contain,
-                        ).withContainer(
-                          height: 34.h,
-                        ),
+                        // Image(
+                        //   image: Assets.images.bBundlegram.provider(),
+                        //   fit: BoxFit.contain,
+                        // ).withContainer(
+                        //   height: 34.h,
+                        // ),
                         30.verticalSpace,
                         AppSvgIcon(
                           path: Assets.svgs.lockIcon,
@@ -396,95 +404,93 @@ class _LockScreenState extends ConsumerState<LockScreen>
                           if (showBiometric) ...[
                             GestureDetector(
                               onTap: () async {
-                                final biometricService =
-                                    ref.read(biometricServiceProvider);
-                                final storage =
-                                    ref.read(secureStorageHelperProvider);
-                                debugPrint(
-                                    '[Biometric] Starting authentication...');
-                                final didAuth =
-                                    await biometricService.authenticate(
-                                  biometricHint: '',
-                                  type: BiometricAuthType.login,
-                                );
-                                debugPrint(
-                                    '[Biometric] Authentication result: $didAuth');
-                                if (didAuth) {
-                                  final storage =
-                                      ref.read(secureStorageHelperProvider);
-                                  final email = await storage.getSafeEmail();
-                                  final token = await storage.getAuthToken();
-                                  final storedPin = email != null
-                                      ? await storage.getPin(email)
-                                      : null;
-
-                                  debugPrint(
-                                      '[Biometric] Retrieved email: $email');
-                                  debugPrint(
-                                      '[Biometric] Retrieved token: $token');
-                                  debugPrint(
-                                      '[Biometric] Retrieved storedPin: $storedPin');
-                                  if (token != null) {
-                                    debugPrint(
-                                        '[Biometric] Token exists → restoring session');
-                                    await _simulatePinEntry(
-                                        storedPin.toString());
-                                    //  Restore existing session, no new login
-                                    unawaited(context.showLoadingDialog());
-                                    await ref
-                                        .read(globalProvider.notifier)
-                                        .restoreSession(context);
-                                    debugPrint(
-                                        '[Biometric] Session restored, navigating to dashboard');
-                                    context
-                                      ..dismissDialog()
-                                      ..go(RouteConstants.dashboard);
-                                  } else {
-                                    // fallback: use saved biometric credentials
-                                    debugPrint(
-                                        '[Biometric] No token found → using saved credentials');
-                                    final email = await storage.getSafeEmail();
-                                    final password = await storage
-                                        .getBiometricPassword(); // still biometric only
-                                    final storedPin = email != null
-                                        ? await storage.getPin(email)
-                                        : null;
-
-                                    debugPrint(
-                                        '[Biometric] Retrieved password: $password');
-                                    debugPrint(
-                                        '[Biometric] Retrieved storedPin (fallback): $storedPin');
-                                    debugPrint(
-                                        '[Biometric] Retrieved password: $password');
-                                    debugPrint(
-                                        '[Biometric] Retrieved storedPin (fallback): $storedPin');
-                                    if (email != null && password != null) {
-                                      // simulate UI filling the pin before continuing
-                                      debugPrint(
-                                          '[Biometric] Credentials available → performing login');
-                                      await _simulatePinEntry(
-                                          storedPin.toString());
-
-                                      final lockService =
-                                          ref.read(lockScreenServiceProvider);
-                                      await lockService.performLogin(
-                                          email, password, context);
-                                      debugPrint(
-                                          '[Biometric] Login completed with email/password');
-                                    } else {
-                                      debugPrint(
-                                          '[Biometric] Missing biometric credentials → showing error');
-                                      context.showErrorSnackBar(
-                                        'Biometric credentials not found, please USE PIN',
-                                      );
-                                    }
-                                  }
-                                } else {
-                                  debugPrint(
-                                      '[Biometric] Authentication failed → showing error');
-                                  context.showErrorSnackBar(
-                                      'Biometric authentication failed');
-                                }
+                                await _tryAutoAuthenticate();
+                                // final biometricService =
+                                //     ref.read(biometricServiceProvider);
+                                // final storage =
+                                //     ref.read(secureStorageHelperProvider);
+                                // debugPrint(
+                                //     '[Biometric] Starting authentication...');
+                                // final didAuth =
+                                //     await biometricService.authenticate(
+                                //   biometricHint: '',
+                                //   type: BiometricAuthType.login,
+                                // );
+                                // debugPrint(
+                                //     '[Biometric] Authentication result: $didAuth');
+                                // if (didAuth) {
+                                //   final storage =
+                                //       ref.read(secureStorageHelperProvider);
+                                //   final email = await storage.getSafeEmail();
+                                //   final token = await storage.getAuthToken();
+                                //   final storedPin = email != null
+                                //       ? await storage.getPin(email)
+                                //       : null;
+                                //   debugPrint(
+                                //       '[Biometric] Retrieved email: $email');
+                                //   debugPrint(
+                                //       '[Biometric] Retrieved token: $token');
+                                //   debugPrint(
+                                //       '[Biometric] Retrieved storedPin: $storedPin');
+                                //   if (token != null) {
+                                //     debugPrint(
+                                //         '[Biometric] Token exists → restoring session');
+                                //     await _simulatePinEntry(
+                                //         storedPin.toString());
+                                //     //  Restore existing session, no new login
+                                //     unawaited(context.showLoadingDialog());
+                                //     await ref
+                                //         .read(globalProvider.notifier)
+                                //         .restoreSession(context);
+                                //     debugPrint(
+                                //         '[Biometric] Session restored, navigating to dashboard');
+                                //     context
+                                //       ..dismissDialog()
+                                //       ..go(RouteConstants.dashboard);
+                                //   } else {
+                                //     // fallback: use saved biometric credentials
+                                //     debugPrint(
+                                //         '[Biometric] No token found → using saved credentials');
+                                //     final email = await storage.getSafeEmail();
+                                //     final password = await storage
+                                //         .getBiometricPassword(); // still biometric only
+                                //     final storedPin = email != null
+                                //         ? await storage.getPin(email)
+                                //         : null;
+                                //     debugPrint(
+                                //         '[Biometric] Retrieved password: $password');
+                                //     debugPrint(
+                                //         '[Biometric] Retrieved storedPin (fallback): $storedPin');
+                                //     debugPrint(
+                                //         '[Biometric] Retrieved password: $password');
+                                //     debugPrint(
+                                //         '[Biometric] Retrieved storedPin (fallback): $storedPin');
+                                //     if (email != null && password != null) {
+                                //       // simulate UI filling the pin before continuing
+                                //       debugPrint(
+                                //           '[Biometric] Credentials available → performing login');
+                                //       await _simulatePinEntry(
+                                //           storedPin.toString());
+                                //       final lockService =
+                                //           ref.read(lockScreenServiceProvider);
+                                //       await lockService.performLogin(
+                                //           email, password, context);
+                                //       debugPrint(
+                                //           '[Biometric] Login completed with email/password');
+                                //     } else {
+                                //       debugPrint(
+                                //           '[Biometric] Missing biometric credentials → showing error');
+                                //       context.showErrorSnackBar(
+                                //         'Biometric credentials not found, please USE PIN',
+                                //       );
+                                //     }
+                                //   }
+                                // } else {
+                                //   debugPrint(
+                                //       '[Biometric] Authentication failed → showing error');
+                                //   context.showErrorSnackBar(
+                                //       'Biometric authentication failed');
+                                // }
                               },
                               child: Container(
                                 padding: EdgeInsets.all(20.w),
