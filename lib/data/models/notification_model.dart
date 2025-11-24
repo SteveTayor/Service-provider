@@ -7,6 +7,7 @@ class NotificationItem {
   final String time;
   final NotificationType type;
   final bool isRead;
+  bool? isBroadcast;
 
   NotificationItem({
     required this.id,
@@ -15,6 +16,7 @@ class NotificationItem {
     required this.time,
     required this.type,
     this.isRead = false,
+    this.isBroadcast = false,
   });
 
   NotificationItem copyWith({
@@ -24,6 +26,7 @@ class NotificationItem {
     String? time,
     NotificationType? type,
     bool? isRead,
+    bool? isBroadcast,
   }) {
     return NotificationItem(
       id: id ?? this.id,
@@ -32,6 +35,7 @@ class NotificationItem {
       time: time ?? this.time,
       type: type ?? this.type,
       isRead: isRead ?? this.isRead,
+      isBroadcast: isBroadcast ?? this.isBroadcast,
     );
   }
 }

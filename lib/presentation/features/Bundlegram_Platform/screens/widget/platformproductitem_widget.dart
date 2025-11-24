@@ -186,6 +186,7 @@ class ProductItemGrid extends ConsumerWidget {
             hintText: 'Enter amount',
             controller: state.amountController,
             inputFormatters: [CurrencyTextInputFormatter()],
+            keyboardType: TextInputType.number,
             prefixIcon: Padding(
               padding: context.symmetricPadding(24, 0),
               child: Text('₦', style: context.textTheme.bodyMedium),

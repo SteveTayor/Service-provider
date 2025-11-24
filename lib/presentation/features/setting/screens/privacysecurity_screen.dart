@@ -1,31 +1,30 @@
+import 'dart:io';
+
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/utils/enums.dart';
-import 'package:bundlegram/core/utils/validators.dart';
+import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
+import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
+import 'package:bundlegram/presentation/features/setting/provider/security_provider.dart';
 import 'package:bundlegram/presentation/features/setting/screens/securityConfirmation_screen.dart';
 import 'package:bundlegram/presentation/features/setting/screens/widget/listtileswitch_widget.dart';
 import 'package:bundlegram/presentation/features/setting/screens/widget/popUp_reusable.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
-import 'package:bundlegram/presentation/general_widget/app_form.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
-import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class PrivacysecurityScreen extends StatefulWidget {
+class PrivacysecurityScreen extends ConsumerStatefulWidget {
   const PrivacysecurityScreen({super.key});
 
   @override
-  State<PrivacysecurityScreen> createState() => _PrivacysecurityScreenState();
+  ConsumerState<PrivacysecurityScreen> createState() =>
+      _PrivacysecurityScreenState();
 }
 
-class _PrivacysecurityScreenState extends State<PrivacysecurityScreen> {
-  bool useFaceId = false;
-  bool useFingerprint = false;
-  bool useFingerprintForPayment = false;
+class _PrivacysecurityScreenState extends ConsumerState<PrivacysecurityScreen> {
   bool isLoading = false;
-
-  // Track which toggle is being processed
   SecurityToggleType? pendingToggle;
   bool pendingValue = false;
 
@@ -52,7 +51,7 @@ class _PrivacysecurityScreenState extends State<PrivacysecurityScreen> {
       MaterialPageRoute(
         builder: (ctx) => SecurityConfirmationScreen(
           onSuccess: () => _applySecurityToggle(toggleType, value),
-          onCancel: () => _resetLoadingState(), // Add cancel callback
+          onCancel: _resetLoadingState,
           securityType: _getSecurityTypeDisplayName(toggleType),
         ),
       ),
@@ -79,33 +78,59 @@ class _PrivacysecurityScreenState extends State<PrivacysecurityScreen> {
     }
   }
 
-  void _applySecurityToggle(SecurityToggleType toggleType, bool value) {
-    setState(() {
-      switch (toggleType) {
-        case SecurityToggleType.faceId:
-          useFaceId = value;
-          break;
-        case SecurityToggleType.fingerprintLogin:
-          useFingerprint = value;
-          break;
-        case SecurityToggleType.fingerprintPayment:
-          useFingerprintForPayment = value;
-          break;
-      }
-      // Clear loading state immediately
-      pendingToggle = null;
-      isLoading = false;
-    });
+  Future<void> _applySecurityToggle(
+      SecurityToggleType toggleType, bool value) async {
+    final biometricService = ref.read(biometricServiceProvider);
+    final securityNotifier = ref.read(securityProvider.notifier);
 
-    // Show success message
+    // Update notifier immediately for UI feedback
+    if (toggleType == SecurityToggleType.faceId ||
+        toggleType == SecurityToggleType.fingerprintLogin) {
+      securityNotifier.useFaceId = value;
+    } else if (toggleType == SecurityToggleType.fingerprintPayment) {
+      securityNotifier.useFingerprintForPayment = value;
+    }
+
+    // Then persist async
+    if (value) {
+      if (toggleType == SecurityToggleType.faceId ||
+          toggleType == SecurityToggleType.fingerprintLogin) {
+        await biometricService.enableBiometricLogin();
+      } else {
+        await biometricService.enableBiometricTransaction();
+      }
+    } else {
+      if (toggleType == SecurityToggleType.faceId ||
+          toggleType == SecurityToggleType.fingerprintLogin) {
+        await biometricService.disableBiometricLogin();
+      } else {
+        await biometricService.disableBiometricTransaction();
+      }
+    }
+
     if (mounted) {
+      setState(() {
+        pendingToggle = null;
+        isLoading = false;
+      });
       context.showCustomSnackBar(
-          '${_getSecurityTypeDisplayName(toggleType)} ${value ? 'enabled' : 'disabled'} successfully');
+        '${_getSecurityTypeDisplayName(toggleType)} ${value ? 'enabled' : 'disabled'} successfully',
+      );
     }
   }
 
-  void _handleSecurityToggle(SecurityToggleType toggleType, bool value) {
-    if (isLoading) return; // Prevent multiple simultaneous operations
+  Future<void> _handleSecurityToggle(
+      SecurityToggleType toggleType, bool value) async {
+    if (isLoading) return;
+
+    final biometricService = ref.read(biometricServiceProvider);
+    final secureStorage = ref.read(secureStorageHelperProvider);
+
+    if (!await biometricService.isAvailable()) {
+      context.showErrorSnackBar(
+          'Biometric authentication is not available on this device');
+      return;
+    }
 
     setState(() {
       pendingToggle = toggleType;
@@ -113,20 +138,50 @@ class _PrivacysecurityScreenState extends State<PrivacysecurityScreen> {
       isLoading = true;
     });
 
+    final email = await secureStorage.getRememberedEmail();
+    if (email == null) {
+      _resetLoadingState();
+      context.showErrorSnackBar('No remembered email found');
+      return;
+    }
+
+    final hasPin = await secureStorage.getPin(email) != null;
+    if (!hasPin) {
+      _resetLoadingState();
+      context.showErrorSnackBar('Please set your transaction PIN first');
+      return;
+    }
+
+    if (value &&
+        (toggleType == SecurityToggleType.faceId ||
+            toggleType == SecurityToggleType.fingerprintLogin)) {
+      final hasCredentials = await biometricService.hasBiometricCredentials();
+      // if (!hasCredentials) {
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (ctx) => BiometricSetupScreen(
+      //         onSuccess: () => _applySecurityToggle(toggleType, value),
+      //         securityType: _getSecurityTypeDisplayName(toggleType),
+      //       ),
+      //     ),
+      //   );
+      //   return;
+      // }
+    }
+
     if (value) {
-      // Show confirmation bottom sheet before enabling
       final config = _getToggleConfig(toggleType);
       _showSecurityBottomSheet(
         header: config['header']!,
         content: config['content']!,
         buttonTitle: 'Proceed',
         onConfirm: () {
-          context.pop(); // Close bottom sheet
+          context.pop();
           _navigateToSecurityConfirmation(toggleType, value);
         },
       );
     } else {
-      // For disabling, navigate directly to confirmation
       _navigateToSecurityConfirmation(toggleType, value);
     }
   }
@@ -166,7 +221,6 @@ class _PrivacysecurityScreenState extends State<PrivacysecurityScreen> {
     _handleSecurityToggle(SecurityToggleType.fingerprintPayment, value);
   }
 
-  // Handle back navigation - reset pending state if user cancels
   void _onPopInvoked(bool didPop) {
     if (isLoading && pendingToggle != null) {
       _resetLoadingState();
@@ -175,6 +229,7 @@ class _PrivacysecurityScreenState extends State<PrivacysecurityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final security = ref.watch(securityProvider);
     return PopScope(
       onPopInvoked: _onPopInvoked,
       child: BundlegramScaffold(
@@ -186,31 +241,27 @@ class _PrivacysecurityScreenState extends State<PrivacysecurityScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ListtileswitchWidget(
-                  title: 'Use Face ID to log in',
-                  label:
-                      'A face recognition scan will be done anytime you log in to your account.',
-                  switchValue: useFaceId,
-                  onToggle: _handleFaceIdToggle,
-                  // isLoading:
-                  //     isLoading && pendingToggle == SecurityToggleType.faceId,
-                ),
-                ListtileswitchWidget(
-                  title: 'Use fingerprint to log in',
-                  label: 'Enable your fingerprint to log in the app',
-                  switchValue: useFingerprint,
-                  onToggle: _handleFingerprintToggle,
-                  // isLoading: isLoading &&
-                  //     pendingToggle == SecurityToggleType.fingerprintLogin,
-                ),
+                if (Platform.isIOS)
+                  ListtileswitchWidget(
+                    title: 'Use Face ID to log in',
+                    label:
+                        'A face recognition scan will be done anytime you log in to your account.',
+                    switchValue: security.useFaceId,
+                    onToggle: _handleFaceIdToggle,
+                  ),
+                if (Platform.isAndroid)
+                  ListtileswitchWidget(
+                    title: 'Use fingerprint to log in',
+                    label: 'Enable your fingerprint to log in the app',
+                    switchValue: security.useFingerprint,
+                    onToggle: _handleFingerprintToggle,
+                  ),
                 ListtileswitchWidget(
                   title: 'Use fingerprint for payment',
                   label:
                       'You can make payment with your fingerprint instead of account pin.',
-                  switchValue: useFingerprintForPayment,
+                  switchValue: security.useFingerprintForPayment,
                   onToggle: _handleFingerprintPaymentToggle,
-                  // isLoading: isLoading &&
-                  //     pendingToggle == SecurityToggleType.fingerprintPayment,
                 ),
               ],
             ),

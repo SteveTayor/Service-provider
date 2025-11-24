@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -29,11 +31,14 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
     final bvn = profile.value?.data?.bvn;
 
     if (bvn == null) {
-      WalletNotifier().showLinkBVNSnackBar(
-        context,
-        'To ensure that you get a virtual account number, verify your BVN for this feature.',
-        'Link now',
-      );
+      // WalletNotifier().showLinkBVNSnackBar(
+      //   context,
+      //   'BVN verification required to withdraw from your wallet.',
+      //   'Link now',
+      // );
+      await WalletNotifier().showAddMoney(context, ref);
+
+      // unawaited(WalletNotifier().showAddMoneyViaDebitCard(context));
     } else {
       await WalletNotifier().showAddMoney(context, ref);
     }
@@ -103,7 +108,7 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
 
     return Column(
       children: [
-        // 👇 Wrap balance with AppAsyncBuilder
+        //  Wrap balance with AppAsyncBuilder
         AppAsyncBuilder(
           state: walletBalance,
           onRetry: () =>

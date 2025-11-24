@@ -6,6 +6,8 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/notifier/become_a_merchant_provider.dart';
+import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/animated_containers/animated_become_agent_benefits.dart'
+    show AnimatedBenfitList;
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/verifyemail_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transactionsummary_widget.dart';
@@ -26,46 +28,6 @@ class BecomeagentScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final globalUserProvider = ref.watch(globalProvider).profile;
     final profileProv = globalUserProvider.value?.data;
-    // Helper method to build each benefit row
-    Widget buildItemRow(
-      String asset,
-      String title,
-      String label, {
-      VoidCallback? onPressed,
-    }) {
-      return InkWell(
-        onTap: onPressed,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppSvgIcon(path: asset),
-            12.horizontalSpace,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: context.textTheme.bodyMedium,
-                  ),
-                  8.verticalSpace,
-                  Text(
-                    label,
-                    style: context.textTheme.labelMedium,
-                    maxLines: null,
-                    softWrap: true,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ).withContainer(
-          padding: context.symmetricPadding(0, 8),
-          margin: EdgeInsets.only(bottom: 24.h),
-        ),
-      );
-    }
 
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(
@@ -74,74 +36,30 @@ class BecomeagentScreen extends ConsumerWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Text(
-              'What’s in it for you?',
-              textAlign: TextAlign.center,
-              style: context.textTheme.titleMedium!.copyWith(
-                color: AppColors.grey33,
-                // fontSize: 22,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            24.verticalSpace,
-            Column(
-              children: [
-                // Use spread operator to map benefits to widgets
-                ...benefits.map(
-                  (benefit) => buildItemRow(
-                    benefit.asset,
-                    benefit.title,
-                    benefit.label,
-                  ),
-                ),
-                40.verticalSpace,
-                BundlegramButton(
-                  isEnabled: profileProv?.userType != "agent",
-                  text: 'Continue',
-                  onPressed: profileProv?.userType == "agent"
-                      ? null
-                      : () {
-                          context.showBottomSheet(
-                            child: TransactionSummary(
-                              isBecomeAnAgent: true,
-                              transactionType: 'Agent fee',
-                              amount: '₦10,000.00',
-                              paymentMethod: 'Wallet',
-                              onPay: () {
-                                // context.pop(); // Close the sheet first
-                                ref
-                                    .read(becomeAgentProvider.notifier)
-                                    .checkAndInitiatePayment(context);
-                              },
+            // Replace the entire benefits section with this single widget
+            AnimatedBenfitList(benefits: benefits),
 
-                              // onPay: () {
-                              //   // Handle payment
-                              //   context.pop(); // Close the bottom sheet
-                              //   Navigator.of(context).push(
-                              //     MaterialPageRoute(
-                              //       builder: (ctx) => EnterPinScreen(
-                              //         onVerified: (pin) {
-                              //           // Handle verification
-                              //           Navigator.pushReplacement(
-                              //             context,
-                              //             MaterialPageRoute(
-                              //               builder: (ctx) => TransactionSuccessful(
-                              //                 title: 'Congratulations!',
-                              //                 subTitle:
-                              //                     'You are now officially a Bundlegram agent.',
-                              //               ),
-                              //             ),
-                              //           );
-                              //         },
-                              //       ),
-                              //     ),
-                              //   );
-                              // },
-                            ),
-                          );
-                        },
-                ),
-              ],
+            40.verticalSpace,
+            BundlegramButton(
+              isEnabled: profileProv?.userType != "agent",
+              text: 'Continue',
+              onPressed: profileProv?.userType == "agent"
+                  ? null
+                  : () {
+                      context.showBottomSheet(
+                        child: TransactionSummary(
+                          isBecomeAnAgent: true,
+                          transactionType: 'Agent fee',
+                          amount: '₦10,000.00',
+                          paymentMethod: 'Wallet',
+                          onPay: () {
+                            ref
+                                .read(becomeAgentProvider.notifier)
+                                .checkAndInitiatePayment(context);
+                          },
+                        ),
+                      );
+                    },
             ),
             50.verticalSpace,
           ],
@@ -151,51 +69,50 @@ class BecomeagentScreen extends ConsumerWidget {
   }
 }
 
-// Define the Benefit class to hold benefit properties
-class Benefit {
+// Keep your existing Benefit class and benefits list
+class Benfit {
   final String asset;
   final String title;
   final String label;
 
-  Benefit({required this.asset, required this.title, required this.label});
+  Benfit({required this.asset, required this.title, required this.label});
 }
 
-// Define the list of benefits
-final List<Benefit> benefits = [
-  Benefit(
+final List<Benfit> benefits = [
+  Benfit(
     asset: Assets.svgs.union,
     title: 'Easy Onboarding Process',
     label:
         'No need to fill out forms or go through a verification process. Create an account instantly to start reselling airtime and data.',
   ),
-  Benefit(
+  Benfit(
     asset: Assets.svgs.box,
     title: 'Discounts and Withdrawals',
     label:
         'Enjoy discounts on every data top-up and airtime top-up of all networks, with an instant settlement of all agent withdrawal transactions.',
   ),
-  Benefit(
+  Benfit(
     asset: Assets.svgs.chartBarSquare,
     title: 'Monitor Your Business',
     label:
         'Our in-depth dashboards and advanced analytics offer complete visibility over every single aspect of your daily transactions, leaving no room for ambiguity.',
   ),
-  Benefit(
+  Benfit(
     asset: Assets.svgs.call,
     title: '24/7 Customer Support',
     label:
         'Bundlegram provides 24/7 customer support to ensure success. Our support channels are always available to assist you.',
   ),
-  Benefit(
+  Benfit(
     asset: Assets.svgs.banknotes,
     title: 'Earn More Money',
     label:
         'Become a Bundlegram agent and start making money on every transaction you make. With our low pricing, you can make money daily.',
   ),
-  Benefit(
+  Benfit(
     asset: Assets.svgs.noapineeded,
     title: 'No API Required',
     label:
-        'It’s easy to become a Bundlegram agent - just create an account, complete KYC, and start selling airtime and data to your customers.',
+        'It\'s easy to become a Bundlegram agent - just create an account, complete KYC, and start selling airtime and data to your customers.',
   ),
 ];

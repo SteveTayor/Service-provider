@@ -34,8 +34,12 @@ class AvailablePromosSection extends ConsumerWidget {
             ...promoState.availablePromos.map(
               (promo) => PromoCard(
                 promo: promo,
-                onClaim: () =>
-                    ref.read(promoProvider.notifier).claimPromo(promo.code),
+                onClaim: () {
+                  ref.read(promoProvider.notifier).updatePromoCode(promo.code);
+                  ref
+                      .read(promoProvider.notifier)
+                      .claimPromo(promo.code, context);
+                },
               ),
             ),
         ],

@@ -1,19 +1,19 @@
-class NotificationResponse {
+class AllNotificationResponse {
   final String? status;
-  final List<Notification>? notifications;
+  final List<Notfication>? notifications;
 
-  NotificationResponse({
+  AllNotificationResponse({
     this.status,
     this.notifications,
   });
 
-  factory NotificationResponse.fromJson(Map<String, dynamic> json) =>
-      NotificationResponse(
+  factory AllNotificationResponse.fromJson(Map<String, dynamic> json) =>
+      AllNotificationResponse(
         status: json["status"] as String?,
         notifications: json["notifications"] == null
             ? []
-            : (json['data'] as List<dynamic>)
-                .map((e) => Notification.fromJson(e as Map<String, dynamic>))
+            : (json['notifications'] as List<dynamic>)
+                .map((e) => Notfication.fromJson(e as Map<String, dynamic>))
                 .toList(),
       );
 
@@ -25,7 +25,7 @@ class NotificationResponse {
       };
 }
 
-class Notification {
+class Notfication {
   final String? id;
   final String? type;
   final String? notifiableType;
@@ -35,7 +35,7 @@ class Notification {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  Notification({
+  Notfication({
     this.id,
     this.type,
     this.notifiableType,
@@ -46,7 +46,7 @@ class Notification {
     this.updatedAt,
   });
 
-  factory Notification.fromJson(Map<String, dynamic> json) => Notification(
+  factory Notfication.fromJson(Map<String, dynamic> json) => Notfication(
         id: json["id"] as String?,
         type: json["type"] as String?,
         notifiableType: json["notifiable_type"] as String?,

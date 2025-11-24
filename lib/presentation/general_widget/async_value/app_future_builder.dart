@@ -37,20 +37,20 @@ class AppAsyncBuilder<T> extends ConsumerWidget {
           ),
       error: (error, stack) => Center(
         child: Container(
-          padding: EdgeInsets.all(16.w),
+          padding: EdgeInsets.all(8.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 Icons.error_outline,
-                size: 48.sp,
+                size: 28.sp,
                 color: AppColors.error.withOpacity(0.7),
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: 8.h),
               Text(
                 errorMessage ?? ErrorMessageSanitizer.sanitize(error),
-                style: context.textTheme.bodyMedium?.copyWith(
+                style: context.textTheme.labelSmall?.copyWith(
                   color: AppColors.black.withOpacity(0.8),
                 ),
                 textAlign: TextAlign.center,

@@ -1,6 +1,6 @@
-// lib/presentation/features/account_setup/providers/basic_info_provider.dart
 import 'dart:async';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/utils/enums.dart';
@@ -85,17 +85,23 @@ class BasicInfoProvider extends ChangeNotifier {
       child: SizedBox(
         width: double.infinity,
         height: 350,
-        child: CupertinoDatePicker(
-          backgroundColor: CupertinoColors.white,
-          mode: CupertinoDatePickerMode.date,
-          initialDateTime: _selectedDate,
-          minimumDate: DateTime(1900),
-          maximumDate: now,
-          onDateTimeChanged: (DateTime newDate) {
-            _selectedDate = newDate;
-            _dob.text = DateFormat('dd/MM/yyyy').format(newDate);
-            notifyListeners();
-          },
+        child: CupertinoTheme(
+          data: const CupertinoThemeData(
+            brightness: Brightness.light, // forces light theme
+            primaryColor: CupertinoColors.black, // forces black text
+          ),
+          child: CupertinoDatePicker(
+            backgroundColor: CupertinoColors.white,
+            mode: CupertinoDatePickerMode.date,
+            initialDateTime: _selectedDate,
+            minimumDate: DateTime(1900),
+            maximumDate: now,
+            onDateTimeChanged: (DateTime newDate) {
+              _selectedDate = newDate;
+              _dob.text = DateFormat('dd/MM/yyyy').format(newDate);
+              notifyListeners();
+            },
+          ),
         ),
       ),
     ));
@@ -105,10 +111,10 @@ class BasicInfoProvider extends ChangeNotifier {
     if (!formKey.currentState!.validate()) return;
     _setLoading(true);
     unawaited(context.showLoadingDialog(message: 'Adding Basic info...'));
+
     try {
       final parsed = DateFormat('dd/MM/yyyy').parse(_dob.text);
       final iso = DateFormat('yyyy-MM-dd').format(parsed);
-
       final token = await _ref.read(secureStorageHelperProvider).getAuthToken();
 
       final req = ProfileSetupRequest(
@@ -121,20 +127,20 @@ class BasicInfoProvider extends ChangeNotifier {
       );
 
       final result = await _api.updateProfileInformation(token!, req);
+
       result.fold(
         (fail) {
-          context.showErrorSnackBar(fail.properties.isNotEmpty
-              ? fail.properties.join('\n')
-              : 'Failed to update profile');
-          _setLoading(false);
-          return false;
+          final userMsg = userFacingMessageFromFailure(fail);
+          context.showErrorSnackBar(userMsg);
         },
-        (resp) {
+        (resp) async {
           if (resp.status == 'success') {
             _ref.read(globalProvider.notifier).fetchProfile(context);
-            context.dismissDialog();
+
             if (userAction.isCreate) {
-              Navigator.push(
+              // dismiss dialog before navigation
+              context.dismissDialog();
+              await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => const TransactionSuccessful(
@@ -146,30 +152,27 @@ class BasicInfoProvider extends ChangeNotifier {
                 ),
               );
             } else {
-              context.showSuccessSnackBar('Basic information updated');
-              context.pop();
+              context
+                ..dismissDialog()
+                ..showSuccessSnackBar('Basic information updated')
+                ..pop(); // safe pop after dialog closed
             }
-            _setLoading(false);
-            context.dismissDialog();
-
-            return true;
           } else {
             context
                 .showErrorSnackBar(resp.message ?? 'Failed to update profile');
-            _setLoading(false);
-            context.dismissDialog();
-
-            return false;
           }
         },
       );
     } catch (e) {
-      context.showErrorSnackBar(e.toString());
+// Friendly UI for users
       context.dismissDialog();
+      context.showErrorSnackBar('An error occurred. Please try again.');
     } finally {
-      context.dismissDialog();
-
       _setLoading(false);
+      // dismiss dialog ONCE at the end if still mounted
+      if (Navigator.of(context).canPop()) {
+        context.dismissDialog();
+      }
     }
   }
 

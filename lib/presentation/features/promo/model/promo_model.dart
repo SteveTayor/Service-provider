@@ -4,7 +4,7 @@ class PromoModel {
   final String title;
   final String description;
   final double amount;
-  final bool isClaimed;
+  final bool? isClaimed;
   final String? backgroundColor;
   final String? textColor;
 
@@ -14,7 +14,7 @@ class PromoModel {
     required this.title,
     required this.description,
     required this.amount,
-    this.isClaimed = false,
+    this.isClaimed,
     this.backgroundColor,
     this.textColor,
   });

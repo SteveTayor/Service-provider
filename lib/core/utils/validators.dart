@@ -79,6 +79,20 @@ class Validators {
     };
   }
 
+  static Validator validateNGNPhoneNumber() {
+    return (String? value) {
+      if (value == null || value.isEmpty) return 'This field is required';
+
+      final digitsOnly = value.replaceAll(RegExp(r'\D'), '');
+
+      if (digitsOnly.length != 11 || !digitsOnly.startsWith('0')) {
+        return 'Phone number must be 11 digits starting with 0';
+      }
+
+      return null;
+    };
+  }
+
   static Validator withdrawSafe(num safeAmount) {
     return (value) {
       if (value == null) {
@@ -182,6 +196,28 @@ class Validators {
 
   static Validator email([String? text]) {
     return matchPattern(emailPattern, 'email', text);
+  }
+
+  static Validator emailOrUsername() {
+    return (String? value) {
+      if (value == null || value.trim().isEmpty) {
+        return 'This field cannot be empty.';
+      }
+
+      final trimmed = value.trim();
+
+      // If it matches email pattern → accept
+      if (emailPattern.hasMatch(trimmed)) {
+        return null;
+      }
+
+      // If not an email, treat as username (must be at least 3 chars)
+      if (trimmed.length < 3) {
+        return 'Username must be at least 3 characters.';
+      }
+
+      return null;
+    };
   }
 
   static Validator password([int minimumLength = 8]) => multiple(

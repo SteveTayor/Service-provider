@@ -92,6 +92,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
 
+  /// File path: assets/images/logo_color.png
+  AssetGenImage get logoColor =>
+      const AssetGenImage('assets/images/logo_color.png');
+
   /// File path: assets/images/merrybet.png
   AssetGenImage get merrybet =>
       const AssetGenImage('assets/images/merrybet.png');
@@ -102,6 +106,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/mtn_voucher.png
   AssetGenImage get mtnVoucher =>
       const AssetGenImage('assets/images/mtn_voucher.png');
+
+  /// File path: assets/images/pnglogo.png
+  AssetGenImage get pnglogo => const AssetGenImage('assets/images/pnglogo.png');
 
   /// File path: assets/images/smile.png
   AssetGenImage get smile => const AssetGenImage('assets/images/smile.png');
@@ -159,9 +166,11 @@ class $AssetsImagesGen {
         ikejaPhcn,
         jamb,
         logo,
+        logoColor,
         merrybet,
         mtn,
         mtnVoucher,
+        pnglogo,
         smile,
         spectranet,
         startimes,
@@ -411,6 +420,10 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/eye.svg
   String get eye => 'assets/svgs/eye.svg';
 
+  /// File path: assets/svgs/facebook-round-color-icon.svg
+  String get facebookRoundColorIcon =>
+      'assets/svgs/facebook-round-color-icon.svg';
+
   /// File path: assets/svgs/failed illustration.svg
   String get failedIllustration => 'assets/svgs/failed illustration.svg';
 
@@ -433,6 +446,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/homeinactive.svg
   String get homeinactive => 'assets/svgs/homeinactive.svg';
 
+  /// File path: assets/svgs/ig-instagram-icon.svg
+  String get igInstagramIcon => 'assets/svgs/ig-instagram-icon.svg';
+
   /// File path: assets/svgs/info-circle (1).svg
   String get infoCircle1 => 'assets/svgs/info-circle (1).svg';
 
@@ -441,6 +457,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/internetservice.svg
   String get internetservice => 'assets/svgs/internetservice.svg';
+
+  /// File path: assets/svgs/linkedin-app-icon.svg
+  String get linkedinAppIcon => 'assets/svgs/linkedin-app-icon.svg';
 
   /// File path: assets/svgs/linkyourbvn.svg
   String get linkyourbvn => 'assets/svgs/linkyourbvn.svg';
@@ -531,8 +550,14 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/simcard-2.svg
   String get simcard2 => 'assets/svgs/simcard-2.svg';
 
+  /// File path: assets/svgs/telegram-icon.svg
+  String get telegramIcon => 'assets/svgs/telegram-icon.svg';
+
   /// File path: assets/svgs/tick-circle.svg
   String get tickCircle => 'assets/svgs/tick-circle.svg';
+
+  /// File path: assets/svgs/tiktok-color-icon.svg
+  String get tiktokColorIcon => 'assets/svgs/tiktok-color-icon.svg';
 
   /// File path: assets/svgs/topup.svg
   String get topup => 'assets/svgs/topup.svg';
@@ -567,6 +592,12 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/walletactive.svg
   String get walletactive => 'assets/svgs/walletactive.svg';
+
+  /// File path: assets/svgs/whatsapp-color-icon.svg
+  String get whatsappColorIcon => 'assets/svgs/whatsapp-color-icon.svg';
+
+  /// File path: assets/svgs/x-social-media-logo-icon.svg
+  String get xSocialMediaLogoIcon => 'assets/svgs/x-social-media-logo-icon.svg';
 
   /// List of all assets
   List<dynamic> get values => [
@@ -642,6 +673,7 @@ class $AssetsSvgsGen {
         educationSvg,
         electricity,
         eye,
+        facebookRoundColorIcon,
         failedIllustration,
         fingerCricle1,
         fingerCricle,
@@ -649,9 +681,11 @@ class $AssetsSvgsGen {
         heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
         home,
         homeinactive,
+        igInstagramIcon,
         infoCircle1,
         infoCircle,
         internetservice,
+        linkedinAppIcon,
         linkyourbvn,
         lockIcon,
         logout1ArrowExitFrameLeaveLogoutRectangleRight1,
@@ -680,7 +714,9 @@ class $AssetsSvgsGen {
         shiftKeyShiftUpArrowKeyboard,
         simcard21,
         simcard2,
+        telegramIcon,
         tickCircle,
+        tiktokColorIcon,
         topup,
         transaction,
         unveirifycheck,
@@ -691,7 +727,9 @@ class $AssetsSvgsGen {
         walletAdd,
         walletMinus,
         wallet,
-        walletactive
+        walletactive,
+        whatsappColorIcon,
+        xSocialMediaLogoIcon
       ];
 }
 

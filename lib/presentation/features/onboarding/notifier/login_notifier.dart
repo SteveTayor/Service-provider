@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -175,12 +176,19 @@ class LoginProvider extends ChangeNotifier {
   }
 
   Future<void> _loadRememberedEmail() async {
-    final remembered = await _storage.getRememberedEmail();
-    if (remembered != null) {
-      emailCtrl.text = remembered;
+    final rememberedEmail = await _storage.getRememberedEmail();
+    final rememberedUsername = await _storage.getUsername();
+
+    // Prefer showing email if both exist, otherwise fallback to username
+    if (rememberedEmail != null) {
+      emailCtrl.text = rememberedEmail;
       _rememberMe = true;
-      notifyListeners();
+    } else if (rememberedUsername != null) {
+      emailCtrl.text = rememberedUsername;
+      _rememberMe = true;
     }
+
+    notifyListeners();
   }
 
   Future<void> submit(BuildContext context) async {
@@ -205,11 +213,12 @@ class LoginProvider extends ChangeNotifier {
         FocusScope.of(context).unfocus();
 
         await Future.delayed(const Duration(milliseconds: 100));
-        final message = fail.properties.isNotEmpty
-            ? fail.properties.join('\n')
-            : 'Login failed';
-
-        context.showErrorSnackBar(message);
+        // final message = fail.properties.isNotEmpty
+        //     ? fail.properties.join('\n')
+        //     : 'Login failed';
+        final userMsg = userFacingMessageFromFailure(fail);
+        context.showErrorSnackBar(userMsg);
+        // context.showErrorSnackBar(message);
         _setLoading(false);
       },
       (loginData) async {
@@ -225,9 +234,31 @@ class LoginProvider extends ChangeNotifier {
         await _storage.setAuthToken(token);
         await _storage.setPassword(passwordCtrl.text.trim());
         final userEmail = emailCtrl.text.trim();
+        final enteredIdentifier = emailCtrl.text.trim();
+        final storedEmail = await _storage.getRememberedEmail();
+        final storedUsername = await _storage.getUsername();
+        await _storage.storeBiometricCredentials(
+          email: loginData.data?.payload?.email ?? enteredIdentifier,
+          password: passwordCtrl.text.trim(),
+          displayName: loginData.data?.payload?.username,
+        );
+
+        final isSameUser = enteredIdentifier == storedEmail ||
+            enteredIdentifier == storedUsername;
+        if (!isSameUser) {
+          // New login → clear previous cache
+          await _storage.clearRememberedEmail();
+          await _storage.clearUsername();
+          // Also clear old PIN to avoid mismatch
+          if (storedEmail != null) await _storage.clearPin(storedEmail);
+          if (storedUsername != null) await _storage.clearPin(storedUsername);
+        }
 
         // if (_rememberMe) {
-        await _storage.setRememberedEmail(emailCtrl.text.trim());
+        // Now save fresh identifiers
+        await _storage.setRememberedEmail(
+          loginData.data?.payload?.email ?? enteredIdentifier,
+        );
         // } else {
         //   await _storage.clearRememberedEmail();
         // }
@@ -288,6 +319,11 @@ class LoginProvider extends ChangeNotifier {
           _setLoading(false);
           return;
         }
+        // Add debug verification
+        final savedEmail = await _storage.getBiometricEmail();
+        final savedPassword = await _storage.getBiometricPassword();
+        debugPrint(
+            '[Biometric] Just saved creds → email=$savedEmail, password=$savedPassword');
         // Fetch and cache users' transactions before routing
         await _ref
             .read(globalProvider.notifier)
@@ -356,20 +392,23 @@ class LoginProvider extends ChangeNotifier {
 
     result.fold(
       (failure) {
-        context.showErrorSnackBar(
-          failure.properties.join('\n') ?? 'Logout failed',
-        );
+        context.go(RouteConstants.login);
+        context.showErrorSnackBar('Logout Succssful');
+        // context.showErrorSnackBar(
+        //   failure.properties.join('\n') ?? 'Logout failed',
+        // );
       },
       (response) async {
         if (response.success) {
 // Clear all secure storage, including device info
-          await _storage.clearAll();
+          // await _storage.clearAll();
           _ref.read(dashboardProvider).resetIndex();
           // Navigate to login
           context.go(RouteConstants.login);
           // ..showSuccessSnackBar(response.message ?? 'Logged out');
         } else {
-          context.showErrorSnackBar(response.message ?? 'Logout failed');
+          context.go(RouteConstants.login);
+          context.showErrorSnackBar('Logout Succssful');
         }
       },
     );

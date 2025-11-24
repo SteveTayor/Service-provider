@@ -40,8 +40,12 @@ class AppSvgIcon extends StatelessWidget {
         width: useCircleAvatar ? iconSize - (circlePadding * 2) : width,
         height: useCircleAvatar ? iconSize - (circlePadding * 2) : height,
         fit: fit,
-        colorFilter:
-            color == null ? null : ColorFilter.mode(color!, BlendMode.srcIn),
+        colorFilter: color == null
+            ? null
+            : ColorFilter.mode(
+                color!,
+                BlendMode.srcIn,
+              ),
       );
     } else {
       iconWidget = Image.asset(

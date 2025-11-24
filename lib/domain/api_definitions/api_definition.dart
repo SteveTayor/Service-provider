@@ -25,11 +25,15 @@ import 'package:bundlegram/data/models/bvn/link_bvn/link_bvn_request.dart';
 import 'package:bundlegram/data/models/bvn/link_bvn/link_bvn_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_data_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
+import 'package:bundlegram/data/models/notification/mark_notifications_asread_response.dart';
+import 'package:bundlegram/data/models/notification/notification_response.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/profile/profile_response.dart';
 import 'package:bundlegram/data/models/profile/profile_setup_request.dart';
 import 'package:bundlegram/data/models/profile/profile_setup_response.dart';
+import 'package:bundlegram/data/models/promo/get_allpromo_response.dart';
+import 'package:bundlegram/data/models/promo/redeem_promo_request.dart';
 import 'package:bundlegram/data/models/transaction/initiate_transactcion_requests.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction/validate_bill_request.dart';
@@ -304,5 +308,30 @@ abstract class ApiDefinition {
     @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
     @Body() BecomeAMerchantRequest body,
+  );
+
+  @GET(Endpoints.allNotifications)
+  Future<AllNotificationResponse> getAllNotifications(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+  );
+
+  @POST(Endpoints.markNotificationAsRead)
+  Future<MarkNotificationAsReadResponse> markAllNotificationsAsRead(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+  );
+
+  @GET(Endpoints.allPromos)
+  Future<GetAllPromoResponse> getAllPromos(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+  );
+
+  @POST(Endpoints.redeemPromo)
+  Future<BaseResponse> redeemAPromo(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+    @Body() RedeemAPromoRequest body,
   );
 }

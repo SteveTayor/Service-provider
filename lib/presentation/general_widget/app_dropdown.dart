@@ -35,8 +35,8 @@ class AppDropdown extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title,
-              style: context.textTheme.bodyMedium
-                  ?.copyWith(fontSize: 16, overflow: TextOverflow.ellipsis)),
+              style: context.textTheme.bodySmall
+                  ?.copyWith(overflow: TextOverflow.ellipsis)),
           AppSvgIcon(path: Assets.svgs.chevronDown),
         ],
       ).withContainer(

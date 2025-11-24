@@ -91,7 +91,7 @@ class LockScreenService {
 
         context
           ..dismissDialog()
-          ..pushReplacement(RouteConstants.dashboard);
+          ..go(RouteConstants.dashboard);
       },
     );
   }

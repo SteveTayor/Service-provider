@@ -3,26 +3,24 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:bundlegram/core/error/failures.dart';
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
-import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
-import 'package:bundlegram/data/models/auth/wallet/get_wallet_response.dart';
 import 'package:bundlegram/data/models/banks/get_all_users_banks_response.dart';
 import 'package:bundlegram/data/models/transaction/withdraw_request.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/topup_failed_screen.dart';
-import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 
 final withdrawalProvider = ChangeNotifierProvider<WithdrawalProvider>(
   (ref) => WithdrawalProvider(
@@ -62,8 +60,13 @@ class WithdrawalProvider extends ChangeNotifier {
 
   Future<String> getMacAddress() async {
     final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    final androidInfo = await deviceInfo.androidInfo;
-    return androidInfo.id ?? 'unknown';
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      return androidInfo.id ?? 'unknown';
+    } else {
+      final iosInfo = await deviceInfo.iosInfo;
+      return iosInfo.identifierForVendor ?? "Unknown";
+    }
   }
 
   Future<Position?> getCurrentLocation() async {
@@ -118,9 +121,10 @@ class WithdrawalProvider extends ChangeNotifier {
       final result = await _api.getUserBanks(token);
       result.fold(
         (fail) {
-          context.showErrorSnackBar(fail.properties.isNotEmpty
-              ? fail.properties.join('\n')
-              : 'Failed to fetch user banks');
+          final userMsg = userFacingMessageFromFailure(fail);
+          context.showErrorSnackBar(userMsg);
+          // _setLoading(false);
+          return false;
         },
         (data) {
           _userBanks = data.data ?? [];
@@ -138,6 +142,7 @@ class WithdrawalProvider extends ChangeNotifier {
 
   Future<bool> validateAndPrepareWithdrawal(BuildContext context) async {
     if (_selectedBank == null) {
+      print("False");
       context.showErrorSnackBar('Please select a bank account');
       return false;
     }
@@ -191,6 +196,8 @@ class WithdrawalProvider extends ChangeNotifier {
     final position = await getCurrentLocation();
     final platform = Platform.isIOS ? 'ios' : 'android';
     final mac = await getMacAddress();
+    final packageInfo = await PackageInfo.fromPlatform();
+    final appVersion = packageInfo.version; //
 
     final req = WithdrawRequest(
       amount: amount.toString(),
@@ -201,6 +208,7 @@ class WithdrawalProvider extends ChangeNotifier {
       accountNumber: _selectedBank!.accountNumber!,
       platform: platform,
       pin: pin,
+      appVersion: appVersion,
     );
 
     final result = await _api.requestWithdraw(token, req);
@@ -216,19 +224,30 @@ class WithdrawalProvider extends ChangeNotifier {
             : 'Failed to request withdrawal';
         // context.showErrorSnackBar(
         //     message.isNotEmpty ? message : 'Transaction failed');
-        Navigator.pushReplacement(
-          context,
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (ctx) => FailedResultScreen(
+        //       serviceContent: 'Withdrawal',
+        //       title: 'Withdrawal Failed',
+        //       errorMessage: displayMessage,
+        //       onRetry: () {
+        //         context.pushReplacement(RouteConstants.dashboard);
+        //       },
+        //     ),
+        //   ),
+        // );
+        Navigator.of(context, rootNavigator: true).push(
           MaterialPageRoute(
             builder: (ctx) => FailedResultScreen(
               serviceContent: 'Withdrawal',
               title: 'Withdrawal Failed',
               errorMessage: displayMessage,
-              onRetry: () {
-                context.pushReplacement(RouteConstants.dashboard);
-              },
+              onRetry: () => context.go(RouteConstants.dashboard),
             ),
           ),
         );
+
         return false;
       },
       (_) {

@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart'
     as saver;
 import 'package:path_provider/path_provider.dart';
@@ -277,17 +278,8 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
 
   Future<void> _captureAndShare() async {
     try {
-      // ─── RENDERED WIDGET BOUNDARY ──────────────────────────────────────────
-      RenderRepaintBoundary? boundary;
-      int attempts = 0;
-      while ((boundary = _boundaryKey.currentContext?.findRenderObject()
-                      as RenderRepaintBoundary?)
-                  ?.debugNeedsPaint ==
-              true &&
-          attempts < 5) {
-        await Future.delayed(const Duration(milliseconds: 300));
-        attempts++;
-      }
+      final boundary = _boundaryKey.currentContext?.findRenderObject()
+          as RenderRepaintBoundary?;
 
       if (boundary == null) {
         _showError("Unable to capture receipt: boundary not ready.");
@@ -297,64 +289,63 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
 
       // ─── CONVERT TO PNG BYTES ─────────────────────────────────────────────
       context.showLoadingDialog(message: 'Downloading ...');
-      final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      final ui.Image image =
+          await boundary.toImage(pixelRatio: 2); // use 2.0 for stability
       final ByteData? byteData =
           await image.toByteData(format: ui.ImageByteFormat.png);
+
       if (byteData == null) {
         context.dismissDialog();
-        _showError("Failed to convert receipt to image.");
+        debugPrint("Failed to convert receipt to image.");
         if (mounted) Navigator.pop(context);
         return;
       }
+
       final Uint8List pngBytes = byteData.buffer.asUint8List();
 
-      // ─── WRITE TO TEMP FILE ───────────────────────────────────────────────
-      final Directory tempDir = await getTemporaryDirectory();
-      final String filePath =
-          '${tempDir.path}/bundlegram_receipt_${widget.data.transactionId ?? DateTime.now().millisecondsSinceEpoch}.png';
-      final File file = File(filePath);
-      await file.writeAsBytes(pngBytes);
+      // ─── CREATE XFILE DIRECTLY (no temp file needed) ──────────────────────
+      final xFile = XFile.fromData(
+        pngBytes,
+        name:
+            "bundlegram_receipt_${widget.data.transactionId ?? DateTime.now().millisecondsSinceEpoch}.png",
+        mimeType: 'image/png',
+      );
 
       // ─── ATTEMPT TO SHARE ─────────────────────────────────────────────────
-      try {
-        final result = await Share.shareXFiles(
-          [
-            XFile(
-              file.path,
-              name:
-                  "bundlegram_receipt_${widget.data.transactionId ?? DateTime.now().millisecondsSinceEpoch}.png",
-            ),
-          ],
-          text: 'TXN_bundlegram_receipt',
-          subject: 'Transaction Receipt',
-        );
+      final result = await Share.shareXFiles(
+        [xFile],
+        text: 'TXN_bundlegram_receipt',
+        subject: 'Transaction Receipt',
+      );
 
-        context.dismissDialog();
-        if (result.status == ShareResultStatus.success) {
-          debugPrint("Share successful");
+      context.dismissDialog();
+      if (result.status == ShareResultStatus.success) {
+        debugPrint("Share successful");
+        if (mounted) {
           context.showCustomSnackBar('Transaction receipt shared successfully');
-        } else {
-          debugPrint("Share cancelled or failed: ${result.status}");
-          await _saveToGallery(pngBytes);
+          context.pop(); // close after success
         }
-      } catch (e) {
-        context.dismissDialog();
-        debugPrint("SharePlus exception: $e");
-        await _saveToGallery(pngBytes);
+      } else if (result.status == ShareResultStatus.unavailable) {
+        debugPrint("Sharing unavailable");
+        await _saveToGallery(pngBytes, shouldPop: true); // fallback + close
+      } else {
+        debugPrint("Share cancelled or failed: ${result.status}");
+        await _saveToGallery(pngBytes, shouldPop: false); // fallback
       }
 
       // ─── NAVIGATE BACK ───────────────────────────────────────────────────
-      if (mounted) Navigator.pop(context);
+      if (mounted) context.pop();
     } catch (e) {
       context.dismissDialog();
       debugPrint("Error capturing/sharing receipt: $e");
-      // _showError("An unexpected error occurred.");
-      // if (mounted) Navigator.pop(context);
+      _showError("An unexpected error occurred.");
+      if (mounted) Navigator.pop(context);
     }
   }
 
-  /// Saves the receipt image to the gallery using `image_gallery_saver_plus`.
-  Future<void> _saveToGallery(Uint8List pngBytes) async {
+  // /// Saves the receipt image to the gallery using `image_gallery_saver_plus`.
+  Future<void> _saveToGallery(Uint8List pngBytes,
+      {bool shouldPop = true}) async {
     try {
       final result = await saver.ImageGallerySaverPlus.saveImage(
         pngBytes,
@@ -364,6 +355,7 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
 
       if (result['isSuccess'] == true) {
         context.showCustomSnackBar("Receipt saved to gallery 📸");
+        if (shouldPop) Navigator.pop(context);
       } else {
         _showError("Failed to save receipt to gallery.");
       }

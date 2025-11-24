@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/state/global_state.dart';
@@ -51,6 +52,34 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   final Ref _ref;
 
   GlobalProvider(super.state, this._api, this._storage, this._ref);
+//  Restore session using existing token
+  Future<void> restoreSession(BuildContext context) async {
+    final token = await _storage.getAuthToken();
+    if (token == null) {
+      _handleError('No saved session found', context);
+      final ctx = navigatorKey.currentContext;
+
+      if (ctx != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ctx.go(RouteConstants.login);
+        });
+      }
+      //  ctx.go(RouteConstants.login);
+      return;
+    }
+
+    // Re-fetch essential data
+    await Future.wait([
+      fetchProfile(context),
+      fetchWalletBalance(context),
+      fetchBanks(context),
+    ]);
+
+    // Fetch background data without blocking UI
+    unawaited(fetchUserBanks(context));
+    unawaited(fetchVirtualAccount(context));
+    unawaited(fetchUsersTransactions(context, force: true));
+  }
 
   Future<void> initializeWalletandAccounts(BuildContext context) async {
     await Future.wait([
@@ -90,13 +119,15 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     if (failure is AuthenticationFailure &&
         failure.properties.contains(
             'Your session has expired or you are already logged in on another device.')) {
-      await _storage.clearAll();
+      await _storage.deleteAuthToken();
       final ctx = navigatorKey.currentContext;
       if (ctx != null) {
         ctx.go(RouteConstants.login);
       }
     } else {
-      context.showErrorSnackBar(message);
+      final userMsg = userFacingMessageFromFailure(failure);
+      context.showErrorSnackBar(userMsg);
+      // context.showErrorSnackBar(message);
     }
   }
 

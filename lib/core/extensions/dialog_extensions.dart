@@ -42,6 +42,8 @@ extension DialogLoaderExtension on BuildContext {
   }
 
   void dismissDialog() {
-    Navigator.of(this, rootNavigator: true).pop();
+    if (Navigator.of(this, rootNavigator: true).canPop()) {
+      Navigator.of(this, rootNavigator: true).pop();
+    }
   }
 }

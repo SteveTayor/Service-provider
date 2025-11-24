@@ -32,8 +32,10 @@ class AppDatetextfield extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: context.textTheme.bodySmall),
-        8.verticalSpace,
+        if (title != "") ...[
+          Text(title, style: context.textTheme.bodySmall),
+          8.verticalSpace,
+        ],
         GestureDetector(
           onTap: readOnly && onTap != null ? onTap : null,
           child: TextFormField(
@@ -55,10 +57,10 @@ class AppDatetextfield extends StatelessWidget {
                   : AppColors.white,
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-              suffixIcon: Padding(
-                padding: EdgeInsets.only(right: 12.w),
-                child: AppSvgIcon(path: Assets.svgs.calendar),
-              ),
+              // suffixIcon: Padding(
+              //   padding: EdgeInsets.only(right: 12.w),
+              //   child: AppSvgIcon(path: Assets.svgs.calendar),
+              // ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6.r),
                 borderSide: BorderSide(color: AppColors.greyD0),

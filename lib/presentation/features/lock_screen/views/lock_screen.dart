@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:bundlegram/core/extensions/biometric_extension_helper.dart';
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
@@ -10,8 +12,10 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
 import 'package:bundlegram/presentation/features/lock_screen/provider/lock_screen_provider.dart';
 import 'package:bundlegram/presentation/features/onboarding/notifier/login_notifier.dart';
+import 'package:bundlegram/presentation/features/setting/provider/security_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +52,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
   String? _errorMessage;
   DateTime? _lastBack;
   String? _displayName;
+  bool _autoAuthAttempted = false;
 
   late AnimationController _shakeController;
   late Animation<double> _offsetAnimation;
@@ -65,6 +70,76 @@ class _LockScreenState extends ConsumerState<LockScreen>
         .animate(_shakeController);
 
     _loadCachedName();
+    // schedule auto biometric attempt after first frame
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _tryAutoAuthenticate();
+    // });
+    Future.microtask(() {
+      if (!mounted) return;
+      _tryAutoAuthenticate();
+    });
+  }
+
+  // --- attempt biometric automatically if enabled ---
+  Future<void> _tryAutoAuthenticate() async {
+    if (_autoAuthAttempted) return;
+    _autoAuthAttempted = true;
+
+    // Check security flags from provider (same check you use in build)
+    final security = ref.read(securityProvider);
+    final showBiometric = security.useFingerprint || security.useFaceId;
+    if (!showBiometric) return; // not enabled — nothing to do
+
+    final biometricService = ref.read(biometricServiceProvider);
+
+    try {
+      debugPrint('[Biometric] Auto attempt starting...');
+      final didAuth = await biometricService.authenticate(
+        biometricHint: '',
+        type: BiometricAuthType.login,
+      );
+
+      debugPrint('[Biometric] Auto attempt result: $didAuth');
+
+      if (!mounted) return;
+
+      if (didAuth) {
+        final storage = ref.read(secureStorageHelperProvider);
+        final email = await storage.getSafeEmail();
+        final token = await storage.getAuthToken();
+        final storedPin = email != null ? await storage.getPin(email) : null;
+
+        if (token != null) {
+          // We have a token — restore session and navigate
+          if (storedPin != null) await _simulatePinEntry(storedPin.toString());
+          unawaited(context.showLoadingDialog());
+          await ref.read(globalProvider.notifier).restoreSession(context);
+          context.dismissDialog();
+          if (mounted) context.go(RouteConstants.dashboard);
+          return;
+        }
+
+        // fallback: try biometric-stored credentials (email+password)
+        final password = await storage.getBiometricPassword();
+        if (email != null && password != null) {
+          if (storedPin != null) await _simulatePinEntry(storedPin.toString());
+          final lockService = ref.read(lockScreenServiceProvider);
+          await lockService.performLogin(email, password, context);
+          return;
+        }
+
+        // no token and no biometric password stored
+        context.showErrorSnackBar(
+            'Biometric authenticated but credentials missing. Please use PIN.');
+      } else {
+        // biometric auth was cancelled or failed — do nothing (user can enter PIN)
+        debugPrint('[Biometric] Auto auth failed or cancelled by user.');
+      }
+    } catch (e, st) {
+      debugPrint('[Biometric] Auto auth exception: $e\n$st');
+      // not blocking the UI
+      // context.showErrorSnackBar('Biometric unavailable. Use PIN to continue.');
+    }
   }
 
   Future<void> _loadCachedName() async {
@@ -73,7 +148,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
     final email = await storage.getRememberedEmail();
 
     setState(() {
-      _displayName = username ?? email ?? "User";
+      _displayName = username ?? email ?? 'User';
     });
   }
 
@@ -105,9 +180,31 @@ class _LockScreenState extends ConsumerState<LockScreen>
     }
   }
 
+  Future<void> _simulatePinEntry(String storedPin) async {
+    setState(() {
+      _pin.fillRange(0, 4, '');
+      _currentIndex = 0;
+    });
+
+    for (int i = 0; i < storedPin.length; i++) {
+      await Future.delayed(
+          const Duration(milliseconds: 250)); // delay between digits
+      setState(() {
+        _pin[_currentIndex] = storedPin[i];
+        _currentIndex++;
+      });
+    }
+
+    // Once all digits are entered, verify
+    final enteredPin = _pin.join();
+    // await _verifyPin(enteredPin);
+  }
+
   Future<void> _verifyPin(String enteredPin) async {
     final storage = ref.read(secureStorageHelperProvider);
-    final userEmail = await storage.getRememberedEmail();
+
+    // use fallback chain instead of only rememberedEmail
+    final userEmail = await storage.getSafeEmail();
     if (userEmail == null) {
       setState(() {
         _errorMessage = 'User not authenticated. Please log in.';
@@ -120,25 +217,24 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
     final storedPin = await storage.getPin(userEmail);
     if (storedPin == enteredPin) {
-      // Successful verification, navigate back to dashboard
       final password = await storage.getPassword();
       if (password == null) {
-        context.showErrorSnackBar("Password not found, please login again");
-        context.go(RouteConstants.login);
+        debugPrint('[Password stored] stored password is $password');
+        context
+          ..showErrorSnackBar('Password not found, please login again')
+          ..go(RouteConstants.login);
         return;
       }
 
-      // Use the LockScreenService instead of loginProvider
       final lockService = ref.read(lockScreenServiceProvider);
       await lockService.performLogin(userEmail, password, context);
-      // context.pushReplacement(RouteConstants.dashboard);
     } else {
       setState(() {
         _errorMessage = 'Incorrect PIN';
         _currentIndex = 0;
         _pin.fillRange(0, 4, '');
       });
-      unawaited(_shakeController.forward(from: 0)); // Trigger shake animation
+      unawaited(_shakeController.forward(from: 0));
     }
   }
 
@@ -163,7 +259,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
         setState(() => _errorMessage = null);
         _updatePin(number);
       },
-      style: TextButton.styleFrom(padding: EdgeInsets.all(20.w)),
+      style: TextButton.styleFrom(padding: EdgeInsets.all(16.w)),
       child: Text(
         number,
         style: context.textTheme.titleMedium?.copyWith(
@@ -177,6 +273,10 @@ class _LockScreenState extends ConsumerState<LockScreen>
   Widget build(BuildContext context) {
     final globalUserProvider = ref.watch(globalProvider).profile;
     final profileProv = globalUserProvider.value?.data;
+    // final biometricService = ref.watch(biometricServiceProvider);
+    final security = ref.watch(securityProvider);
+
+    final showBiometric = security.useFingerprint || security.useFaceId;
 
     return WillPopScope(
       onWillPop: () async {
@@ -221,7 +321,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                         ).withContainer(
                           height: 34.h,
                         ),
-                        45.verticalSpace,
+                        30.verticalSpace,
                         AppSvgIcon(
                           path: Assets.svgs.lockIcon,
                           width: 40,
@@ -239,8 +339,8 @@ class _LockScreenState extends ConsumerState<LockScreen>
                         8.verticalSpace,
                         Text(
                           Platform.isIOS
-                              ? 'Use Face ID or enter account pin'
-                              : 'Verify fingerprint or enter account pin',
+                              ? '${showBiometric ? "Use Face ID or" : ""} Enter account pin'
+                              : '${showBiometric ? "Verify fingerprint or" : ""} Enter account pin',
                           textAlign: TextAlign.center,
                           style: context.textTheme.bodySmall!.copyWith(
                             color: AppColors.grey33,
@@ -252,7 +352,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                     // Middle section with PIN dots
                     Column(
                       children: [
-                        40.verticalSpace, // ✅ Reduced from 60
+                        30.verticalSpace, // ✅ Reduced from 60
                         AnimatedBuilder(
                           animation: _shakeController,
                           builder: (context, child) {
@@ -276,37 +376,129 @@ class _LockScreenState extends ConsumerState<LockScreen>
                             ),
                           ),
                         ],
-                        30.verticalSpace, // ✅ Add space before number pad
+                        20.verticalSpace, // ✅ Add space before number pad
                       ],
                     ),
 
                     // Number pad - fixed height instead of Expanded
                     SizedBox(
-                      height: 280.h, // ✅ Fixed height
+                      height: 230.h, // Fixed height
                       child: GridView.count(
                         physics:
-                            const NeverScrollableScrollPhysics(), // ✅ Disable GridView scrolling
+                            const NeverScrollableScrollPhysics(), // Disable GridView scrolling
                         crossAxisCount: 3,
-                        childAspectRatio: 1.75,
+                        childAspectRatio: 1.9,
                         children: [
                           ...List.generate(
                             9,
                             (index) => _buildNumberButton('${index + 1}'),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              // Handle biometric authentication
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(20.w),
-                              child: AppSvgIcon(
-                                path: Assets.svgs.fingerCricle1,
-                                fit: BoxFit.scaleDown,
-                                width: 24,
-                                height: 24,
+                          if (showBiometric) ...[
+                            GestureDetector(
+                              onTap: () async {
+                                final biometricService =
+                                    ref.read(biometricServiceProvider);
+                                final storage =
+                                    ref.read(secureStorageHelperProvider);
+                                debugPrint(
+                                    '[Biometric] Starting authentication...');
+                                final didAuth =
+                                    await biometricService.authenticate(
+                                  biometricHint: '',
+                                  type: BiometricAuthType.login,
+                                );
+                                debugPrint(
+                                    '[Biometric] Authentication result: $didAuth');
+                                if (didAuth) {
+                                  final storage =
+                                      ref.read(secureStorageHelperProvider);
+                                  final email = await storage.getSafeEmail();
+                                  final token = await storage.getAuthToken();
+                                  final storedPin = email != null
+                                      ? await storage.getPin(email)
+                                      : null;
+
+                                  debugPrint(
+                                      '[Biometric] Retrieved email: $email');
+                                  debugPrint(
+                                      '[Biometric] Retrieved token: $token');
+                                  debugPrint(
+                                      '[Biometric] Retrieved storedPin: $storedPin');
+                                  if (token != null) {
+                                    debugPrint(
+                                        '[Biometric] Token exists → restoring session');
+                                    await _simulatePinEntry(
+                                        storedPin.toString());
+                                    //  Restore existing session, no new login
+                                    unawaited(context.showLoadingDialog());
+                                    await ref
+                                        .read(globalProvider.notifier)
+                                        .restoreSession(context);
+                                    debugPrint(
+                                        '[Biometric] Session restored, navigating to dashboard');
+                                    context
+                                      ..dismissDialog()
+                                      ..go(RouteConstants.dashboard);
+                                  } else {
+                                    // fallback: use saved biometric credentials
+                                    debugPrint(
+                                        '[Biometric] No token found → using saved credentials');
+                                    final email = await storage.getSafeEmail();
+                                    final password = await storage
+                                        .getBiometricPassword(); // still biometric only
+                                    final storedPin = email != null
+                                        ? await storage.getPin(email)
+                                        : null;
+
+                                    debugPrint(
+                                        '[Biometric] Retrieved password: $password');
+                                    debugPrint(
+                                        '[Biometric] Retrieved storedPin (fallback): $storedPin');
+                                    debugPrint(
+                                        '[Biometric] Retrieved password: $password');
+                                    debugPrint(
+                                        '[Biometric] Retrieved storedPin (fallback): $storedPin');
+                                    if (email != null && password != null) {
+                                      // simulate UI filling the pin before continuing
+                                      debugPrint(
+                                          '[Biometric] Credentials available → performing login');
+                                      await _simulatePinEntry(
+                                          storedPin.toString());
+
+                                      final lockService =
+                                          ref.read(lockScreenServiceProvider);
+                                      await lockService.performLogin(
+                                          email, password, context);
+                                      debugPrint(
+                                          '[Biometric] Login completed with email/password');
+                                    } else {
+                                      debugPrint(
+                                          '[Biometric] Missing biometric credentials → showing error');
+                                      context.showErrorSnackBar(
+                                        'Biometric credentials not found, please USE PIN',
+                                      );
+                                    }
+                                  }
+                                } else {
+                                  debugPrint(
+                                      '[Biometric] Authentication failed → showing error');
+                                  context.showErrorSnackBar(
+                                      'Biometric authentication failed');
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(20.w),
+                                child: AppSvgIcon(
+                                  path: Assets.svgs.fingerCricle1,
+                                  fit: BoxFit.scaleDown,
+                                  width: 24,
+                                  height: 24,
+                                ),
                               ),
                             ),
-                          ),
+                          ] else ...[
+                            SizedBox.shrink(),
+                          ],
                           _buildNumberButton('0'),
                           IconButton(
                             onPressed: _deletePin,
@@ -323,7 +515,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                     // Bottom section with switch account and sign in options
                     Column(
                       children: [
-                        20.verticalSpace,
+                        0.verticalSpace,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -340,9 +532,10 @@ class _LockScreenState extends ConsumerState<LockScreen>
                             ),
                             TextButton(
                               onPressed: () {
-                                ref
-                                    .read(loginProvider.notifier)
-                                    .logoutUser(context);
+                                // ref
+                                //     .read(loginProvider.notifier)
+                                //     .logoutUser(context);
+                                context.go(RouteConstants.login);
                               },
                               child: Text(
                                 'Sign in with password',
@@ -353,7 +546,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                             ),
                           ],
                         ),
-                        20.verticalSpace, // ✅ Reduced bottom spacing
+                        20.verticalSpace, // Reduced bottom spacing
                       ],
                     ),
                   ],

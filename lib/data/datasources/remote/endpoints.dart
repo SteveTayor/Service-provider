@@ -1,7 +1,7 @@
 class Endpoints {
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://api.bundlegram.com/api',
+    defaultValue: 'https://apiv2.bundlegram.com/api',
   );
 
   // ====================
@@ -109,4 +109,17 @@ class Endpoints {
   // Misc
   // ====================
   static const String walletBalance = '/wallet';
+
+  // ====================
+  // Notifications
+  // ====================
+  static const String allNotifications = "/notifications";
+  static const String markNotificationAsRead =
+      "/notifications/mark-all-as-read";
+
+  //============================
+  //Promo
+  // ================
+  static const String allPromos = "/promos";
+  static const String redeemPromo = "/promos/redeem";
 }

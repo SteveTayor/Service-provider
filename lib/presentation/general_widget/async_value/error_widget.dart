@@ -1,4 +1,3 @@
-/// Utility class to sanitize and format error messages
 class ErrorMessageSanitizer {
   static const int _maxMessageLength = 100;
   static const List<String> _commonNetworkErrors = [
@@ -14,6 +13,19 @@ class ErrorMessageSanitizer {
     if (error == null) return 'Something went wrong';
 
     String message = error.toString();
+
+    // Handle custom NetworkFailure(...) or similar errors
+    final networkFailureMatch =
+        RegExp(r'NetworkFailure\((.*?)\)').firstMatch(message);
+    if (networkFailureMatch != null) {
+      return 'Network failure, please try again later';
+    }
+
+    // Remove any text inside parentheses for general errors
+    final bracketMatch = RegExp(r'^[\w]+?\((.*?)\)$').firstMatch(message);
+    if (bracketMatch != null) {
+      message = message.split('(').first.trim();
+    }
 
     // Handle common network errors
     if (_isNetworkError(message)) {

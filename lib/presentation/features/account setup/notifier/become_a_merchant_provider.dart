@@ -1,5 +1,3 @@
-// lib/presentation/features/agent/notifier/become_agent_provider.dart
-
 import 'dart:async';
 import 'dart:io';
 
@@ -17,6 +15,7 @@ import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/error_popup_widget.dart';
+import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
@@ -29,6 +28,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 final becomeAgentProvider = ChangeNotifierProvider<BecomeAgentProvider>((ref) {
   return BecomeAgentProvider(ref, ref.read(apiServiceProvider));
@@ -61,7 +61,7 @@ class BecomeAgentProvider extends ChangeNotifier {
 
       if (parsedBalance < requiredAmount) {
         context.dismissDialog();
-        Navigator.pushReplacement(
+        unawaited(Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (ctx) => FailedResultScreen(
@@ -74,7 +74,7 @@ class BecomeAgentProvider extends ChangeNotifier {
               },
             ),
           ),
-        );
+        ));
         // unawaited(context.showPopUp(
         //   ErrorPopup(
         //     title: 'Insufficient Funds',
@@ -98,6 +98,44 @@ class BecomeAgentProvider extends ChangeNotifier {
 
         return;
       }
+      // Biometric verification
+      final biometricService = _ref.read(biometricServiceProvider);
+      final isBiometricEnabled =
+          await biometricService.isBiometricTransactionEnabled;
+
+      if (isBiometricEnabled) {
+        final didAuth = await biometricService.authenticate(
+          type: BiometricAuthType.transaction,
+        );
+
+        if (didAuth) {
+          final email =
+              await _ref.read(secureStorageHelperProvider).getRememberedEmail();
+          if (email == null) {
+            debugPrint("No stored account found, please login again");
+            context.dismissDialog();
+            return;
+          }
+
+          final storedPin =
+              await _ref.read(secureStorageHelperProvider).getPin(email);
+          if (storedPin == null) {
+            debugPrint("No stored PIN found, please set up your PIN");
+            context.dismissDialog();
+            return;
+          }
+
+          // merchant registration directly with stored PIN
+          context.dismissDialog();
+          await _processMerchantRegistration(context, storedPin);
+          _setLoading(false);
+          return;
+        } else {
+          context.showErrorSnackBar("Biometric authentication failed");
+        }
+      }
+
+      // ❌ If not biometric or failed → fallback to EnterPinScreen
 
       // If balance is sufficient, navigate to EnterPinScreen
       context.pop(); // Close the bottom sheet
@@ -133,6 +171,8 @@ class BecomeAgentProvider extends ChangeNotifier {
       final ipAddress = await _getIpAddress();
       final position = await _getCurrentPosition();
       final platform = await _getPlatform();
+      final packageInfo = await PackageInfo.fromPlatform();
+      final appVersion = packageInfo.version;
 
       final req = BecomeAMerchantRequest(
         macAddress: macAddress,
@@ -140,6 +180,7 @@ class BecomeAgentProvider extends ChangeNotifier {
         latitude: position.latitude.toString(),
         longitude: position.longitude.toString(),
         platform: platform,
+        // appVersion: appVersion,
       );
 
       final result = await _api.becomeMerchant(token, req);

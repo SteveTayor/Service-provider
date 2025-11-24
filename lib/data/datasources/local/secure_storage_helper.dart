@@ -15,6 +15,12 @@ class SecureStorageHelper {
   static const _platformKey = 'platform';
   static const _appVersionCodeKey = 'app_version_code';
   static const _usernameKey = 'cached_username';
+  static const _biometricEmailKey = 'biometric_email';
+  static const _biometricPasswordKey = 'biometric_password';
+  static const _biometricDisplayNameKey = 'biometric_display_name';
+  static const _biometricLoginEnabledKey = 'biometric_login_enabled';
+  static const _biometricTransactionEnabledKey =
+      'biometric_transaction_enabled';
 
   SecureStorageHelper(this._storage);
 
@@ -27,6 +33,16 @@ class SecureStorageHelper {
       key: _appVersionCodeKey,
       value: versionCode.toString(),
     );
+  }
+
+  Future<void> saveBool(String key, bool value) async {
+    await _storage.write(key: key, value: value.toString());
+  }
+
+  Future<bool?> getBool(String key) async {
+    final value = await _storage.read(key: key);
+    if (value == null) return null;
+    return value.toLowerCase() == 'true';
   }
 
   Future<int?> getAppVersionCode() async {
@@ -126,6 +142,65 @@ class SecureStorageHelper {
 
   Future<void> clearAll() async {
     await _storage.deleteAll();
+  }
+
+  Future<void> storeBiometricCredentials({
+    required String email,
+    required String password,
+    String? displayName,
+  }) async {
+    await _storage.write(key: _biometricEmailKey, value: email);
+    await _storage.write(key: _biometricPasswordKey, value: password);
+    if (displayName != null) {
+      await _storage.write(key: _biometricDisplayNameKey, value: displayName);
+    }
+  }
+
+  Future<String?> getBiometricEmail() async {
+    return await _storage.read(key: _biometricEmailKey);
+  }
+
+  Future<String?> getBiometricPassword() async {
+    return await _storage.read(key: _biometricPasswordKey);
+  }
+
+  Future<String?> getBiometricDisplayName() async {
+    return await _storage.read(key: _biometricDisplayNameKey);
+  }
+
+  Future<bool> hasBiometricCredentials() async {
+    final email = await getBiometricEmail();
+    final password = await getBiometricPassword();
+    return email != null &&
+        password != null &&
+        email.isNotEmpty &&
+        password.isNotEmpty;
+  }
+
+  Future<void> clearBiometricCredentials() async {
+    await _storage.delete(key: _biometricEmailKey);
+    await _storage.delete(key: _biometricPasswordKey);
+    await _storage.delete(key: _biometricDisplayNameKey);
+  }
+
+  Future<void> setBiometricLoginEnabled(bool value) async {
+    await _storage.write(
+        key: _biometricLoginEnabledKey, value: value.toString());
+  }
+
+  Future<void> setBiometricTransactionEnabled(bool value) async {
+    await _storage.write(
+        key: _biometricTransactionEnabledKey, value: value.toString());
+  }
+
+  Future<bool> isBiometricLoginEnabled() async {
+    final value = await _storage.read(key: _biometricLoginEnabledKey);
+    return value?.toLowerCase() == 'true';
+  }
+
+  Future<bool> isBiometricTransactionEnabled() async {
+    final value = await _storage.read(key: _biometricTransactionEnabledKey);
+    return value?.toLowerCase() == 'true';
   }
 }
 

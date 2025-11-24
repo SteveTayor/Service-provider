@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
@@ -66,9 +67,10 @@ class WithdrawalAccountProvider extends ChangeNotifier {
       final result = await _api.getUserBanks(token);
       result.fold(
         (fail) {
-          context.showErrorSnackBar(fail.properties.isNotEmpty
-              ? fail.properties.join('\n')
-              : 'Failed to fetch user banks');
+          final userMsg = userFacingMessageFromFailure(fail);
+          context.showErrorSnackBar(userMsg);
+          _setLoading(false);
+          return false;
         },
         (data) {
           _userBanks = data.data ?? [];
@@ -92,9 +94,9 @@ class WithdrawalAccountProvider extends ChangeNotifier {
     final result = await _api.deleteBank(token, bankId!);
     return result.fold(
       (fail) {
-        context.showErrorSnackBar(fail.properties.isNotEmpty
-            ? fail.properties.join('\n')
-            : 'Failed to delete bank');
+        final userMsg = userFacingMessageFromFailure(fail);
+        context.showErrorSnackBar(userMsg);
+
         _setDeleting(false);
         return false;
       },

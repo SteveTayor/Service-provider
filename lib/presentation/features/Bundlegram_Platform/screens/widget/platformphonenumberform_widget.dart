@@ -111,6 +111,7 @@ class _PlatformPhoneNumberFormWidgetState
                   : state.selectedProduct?.productName ?? 'Select biller',
           readOnly: !allowsFreeText,
           controller: state.firstInputController,
+          hintStyle: TextStyle(color: Colors.black),
           keyboardType: TextInputType.number,
           inputFormatters: [
             LengthLimitingTextInputFormatter(11,
