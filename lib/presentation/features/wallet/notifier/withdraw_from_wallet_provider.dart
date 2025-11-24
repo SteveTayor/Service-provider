@@ -4,20 +4,16 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
-import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
-import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
-import 'package:bundlegram/data/models/auth/wallet/get_wallet_response.dart';
 import 'package:bundlegram/data/models/banks/get_all_users_banks_response.dart';
 import 'package:bundlegram/data/models/transaction/withdraw_request.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/topup_failed_screen.dart';
-import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,8 +60,13 @@ class WithdrawalProvider extends ChangeNotifier {
 
   Future<String> getMacAddress() async {
     final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    final androidInfo = await deviceInfo.androidInfo;
-    return androidInfo.id ?? 'unknown';
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      return androidInfo.id ?? 'unknown';
+    } else {
+      final iosInfo = await deviceInfo.iosInfo;
+      return iosInfo.identifierForVendor ?? "Unknown";
+    }
   }
 
   Future<Position?> getCurrentLocation() async {
@@ -141,6 +142,7 @@ class WithdrawalProvider extends ChangeNotifier {
 
   Future<bool> validateAndPrepareWithdrawal(BuildContext context) async {
     if (_selectedBank == null) {
+      print("False");
       context.showErrorSnackBar('Please select a bank account');
       return false;
     }

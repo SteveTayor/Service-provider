@@ -8,10 +8,8 @@ import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
-import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatter.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
-import 'package:bundlegram/data/models/banks/get_all_users_banks_response.dart';
 import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
@@ -71,6 +69,9 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                   children: [
                     // Account Selection Dropdown
                     AppDropdown(
+                      selected: provider.selectedBank != null
+                          ? '${provider.selectedBank}'
+                          : null,
                       title: provider.selectedBank != null
                           ? 'Account ${provider.userBanks.indexOf(provider.selectedBank!) + 1}'
                           : 'Select account',
