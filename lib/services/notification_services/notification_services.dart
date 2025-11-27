@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -111,6 +112,7 @@ class NotificationService {
       // token refresh
       _firebaseMessaging.onTokenRefresh.listen((newToken) async {
         if (kDebugMode) debugPrint('FCM token refreshed: $newToken');
+        // await SecureStorageHelper.saveFcmToken(token);
         await _saveTokenToServer(newToken);
       });
 
@@ -247,7 +249,7 @@ class NotificationService {
     );
   }
 
-  // Hook: plug your network client here to register token with your server
+  //to register token with server
   Future<void> _saveTokenToServer(String token) async {
     try {
       // TODO: Replace with DioClient/locator post to your backend:
@@ -258,7 +260,7 @@ class NotificationService {
     }
   }
 
-  // Use your app navigatorKey to navigate to specific route on tap
+  //to navigate to specific route on tap
   void _handleNotificationTap(String? payload) {
     if (kDebugMode) debugPrint('Handling tap with payload: $payload');
     try {

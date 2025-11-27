@@ -22,6 +22,10 @@ LoginRequest _$LoginRequestFromJson(Map<String, dynamic> json) {
 mixin _$LoginRequest {
   String get email => throw _privateConstructorUsedError;
   String get password => throw _privateConstructorUsedError;
+  @JsonKey(name: 'device_token')
+  String? get deviceToken => throw _privateConstructorUsedError;
+  @JsonKey(name: 'fcm_token')
+  String? get fcmToken => throw _privateConstructorUsedError;
 
   /// Serializes this LoginRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,7 +43,11 @@ abstract class $LoginRequestCopyWith<$Res> {
           LoginRequest value, $Res Function(LoginRequest) then) =
       _$LoginRequestCopyWithImpl<$Res, LoginRequest>;
   @useResult
-  $Res call({String email, String password});
+  $Res call(
+      {String email,
+      String password,
+      @JsonKey(name: 'device_token') String? deviceToken,
+      @JsonKey(name: 'fcm_token') String? fcmToken});
 }
 
 /// @nodoc
@@ -59,6 +67,8 @@ class _$LoginRequestCopyWithImpl<$Res, $Val extends LoginRequest>
   $Res call({
     Object? email = null,
     Object? password = null,
+    Object? deviceToken = freezed,
+    Object? fcmToken = freezed,
   }) {
     return _then(_value.copyWith(
       email: null == email
@@ -69,6 +79,14 @@ class _$LoginRequestCopyWithImpl<$Res, $Val extends LoginRequest>
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
               as String,
+      deviceToken: freezed == deviceToken
+          ? _value.deviceToken
+          : deviceToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -81,7 +99,11 @@ abstract class _$$LoginRequestImplCopyWith<$Res>
       __$$LoginRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String email, String password});
+  $Res call(
+      {String email,
+      String password,
+      @JsonKey(name: 'device_token') String? deviceToken,
+      @JsonKey(name: 'fcm_token') String? fcmToken});
 }
 
 /// @nodoc
@@ -99,6 +121,8 @@ class __$$LoginRequestImplCopyWithImpl<$Res>
   $Res call({
     Object? email = null,
     Object? password = null,
+    Object? deviceToken = freezed,
+    Object? fcmToken = freezed,
   }) {
     return _then(_$LoginRequestImpl(
       email: null == email
@@ -109,6 +133,14 @@ class __$$LoginRequestImplCopyWithImpl<$Res>
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
               as String,
+      deviceToken: freezed == deviceToken
+          ? _value.deviceToken
+          : deviceToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -116,7 +148,11 @@ class __$$LoginRequestImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$LoginRequestImpl with DiagnosticableTreeMixin implements _LoginRequest {
-  const _$LoginRequestImpl({required this.email, required this.password});
+  const _$LoginRequestImpl(
+      {required this.email,
+      required this.password,
+      @JsonKey(name: 'device_token') this.deviceToken,
+      @JsonKey(name: 'fcm_token') this.fcmToken});
 
   factory _$LoginRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$LoginRequestImplFromJson(json);
@@ -125,10 +161,16 @@ class _$LoginRequestImpl with DiagnosticableTreeMixin implements _LoginRequest {
   final String email;
   @override
   final String password;
+  @override
+  @JsonKey(name: 'device_token')
+  final String? deviceToken;
+  @override
+  @JsonKey(name: 'fcm_token')
+  final String? fcmToken;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'LoginRequest(email: $email, password: $password)';
+    return 'LoginRequest(email: $email, password: $password, deviceToken: $deviceToken, fcmToken: $fcmToken)';
   }
 
   @override
@@ -137,7 +179,9 @@ class _$LoginRequestImpl with DiagnosticableTreeMixin implements _LoginRequest {
     properties
       ..add(DiagnosticsProperty('type', 'LoginRequest'))
       ..add(DiagnosticsProperty('email', email))
-      ..add(DiagnosticsProperty('password', password));
+      ..add(DiagnosticsProperty('password', password))
+      ..add(DiagnosticsProperty('deviceToken', deviceToken))
+      ..add(DiagnosticsProperty('fcmToken', fcmToken));
   }
 
   @override
@@ -147,12 +191,17 @@ class _$LoginRequestImpl with DiagnosticableTreeMixin implements _LoginRequest {
             other is _$LoginRequestImpl &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
-                other.password == password));
+                other.password == password) &&
+            (identical(other.deviceToken, deviceToken) ||
+                other.deviceToken == deviceToken) &&
+            (identical(other.fcmToken, fcmToken) ||
+                other.fcmToken == fcmToken));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, email, password);
+  int get hashCode =>
+      Object.hash(runtimeType, email, password, deviceToken, fcmToken);
 
   /// Create a copy of LoginRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -173,7 +222,9 @@ class _$LoginRequestImpl with DiagnosticableTreeMixin implements _LoginRequest {
 abstract class _LoginRequest implements LoginRequest {
   const factory _LoginRequest(
       {required final String email,
-      required final String password}) = _$LoginRequestImpl;
+      required final String password,
+      @JsonKey(name: 'device_token') final String? deviceToken,
+      @JsonKey(name: 'fcm_token') final String? fcmToken}) = _$LoginRequestImpl;
 
   factory _LoginRequest.fromJson(Map<String, dynamic> json) =
       _$LoginRequestImpl.fromJson;
@@ -182,6 +233,12 @@ abstract class _LoginRequest implements LoginRequest {
   String get email;
   @override
   String get password;
+  @override
+  @JsonKey(name: 'device_token')
+  String? get deviceToken;
+  @override
+  @JsonKey(name: 'fcm_token')
+  String? get fcmToken;
 
   /// Create a copy of LoginRequest
   /// with the given fields replaced by the non-null parameter values.

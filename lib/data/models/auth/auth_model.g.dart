@@ -10,12 +10,16 @@ _$LoginRequestImpl _$$LoginRequestImplFromJson(Map<String, dynamic> json) =>
     _$LoginRequestImpl(
       email: json['email'] as String,
       password: json['password'] as String,
+      deviceToken: json['device_token'] as String?,
+      fcmToken: json['fcm_token'] as String?,
     );
 
 Map<String, dynamic> _$$LoginRequestImplToJson(_$LoginRequestImpl instance) =>
     <String, dynamic>{
       'email': instance.email,
       'password': instance.password,
+      'device_token': instance.deviceToken,
+      'fcm_token': instance.fcmToken,
     };
 
 _$RegisterRequestImpl _$$RegisterRequestImplFromJson(

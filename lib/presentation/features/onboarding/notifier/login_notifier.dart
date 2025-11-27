@@ -197,11 +197,21 @@ class LoginProvider extends ChangeNotifier {
 
     _setError(null);
     _setLoading(true);
+    final deviceInfo = await _storage.getDeviceInfo();
+    final deviceToken = deviceInfo['macAddress'] ?? 'unknown';
+    final fcmToken = await _storage.getFcmToken() ?? 'unknown';
 
     final request = LoginRequest(
       email: emailCtrl.text.trim(),
       password: passwordCtrl.text.trim(),
+      deviceToken: deviceToken,
+      fcmToken: fcmToken,
     );
+
+    // final request = LoginRequest(
+    //   email: emailCtrl.text.trim(),
+    //   password: passwordCtrl.text.trim(),
+    // );
 
     unawaited(context.showLoadingDialog(message: 'Logging in...'));
 
