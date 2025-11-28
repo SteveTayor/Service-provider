@@ -303,7 +303,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
                   // Top section with logo and greeting
                   Flexible(
-                    flex: 1.5,
+                    flex: 1,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -370,7 +370,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
                   // Number pad - responsive
                   Flexible(
-                    flex: 4,
+                    flex: 3,
                     child: Center(
                       child: GridView.count(
                         shrinkWrap: true,
@@ -505,6 +505,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                   Flexible(
                     flex: 1,
                     child: Column(
+                      // spacing: 10.h,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Row(
@@ -534,6 +535,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                             ),
                           ],
                         ),
+                        SizedBox(height: constraints.maxHeight * 0.02),
                       ],
                     ),
                   ),

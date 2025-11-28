@@ -22,6 +22,7 @@ class SecureStorageHelper {
   static const _biometricTransactionEnabledKey =
       'biometric_transaction_enabled';
   static const _fcmTokenKey = 'fcm_token';
+  static const _hasSeenPromoKey = 'has_seen_promo_modal';
 
   SecureStorageHelper(this._storage);
 
@@ -151,6 +152,15 @@ class SecureStorageHelper {
 
   Future<String?> getFcmToken() async {
     return await _storage.read(key: _fcmTokenKey);
+  }
+
+  Future<bool> hasSeenPromoModal() async {
+    final value = await _storage.read(key: _hasSeenPromoKey);
+    return value == 'true';
+  }
+
+  Future<void> setHasSeenPromoModal(bool value) async {
+    await _storage.write(key: _hasSeenPromoKey, value: value.toString());
   }
 
   Future<void> storeBiometricCredentials({

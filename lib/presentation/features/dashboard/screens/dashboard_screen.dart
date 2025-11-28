@@ -1,3 +1,4 @@
+import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platform_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/account_screen.dart';
@@ -5,6 +6,7 @@ import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_pr
 import 'package:bundlegram/presentation/features/transaction/screens/transaction_screen.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/wallet_screen.dart';
 import 'package:bundlegram/presentation/general_widget/nav_bar.dart';
+import 'package:bundlegram/presentation/general_widget/promo_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,7 +28,22 @@ class _DashboardState extends ConsumerState<Dashboard> {
       Future.microtask(() {
         ref.read(dashboardProvider.notifier).initDashboard(context);
         hasInitialized = true;
+        _checkAndShowPromo();
       });
+    }
+  }
+
+  Future<void> _checkAndShowPromo() async {
+    final storage = ref.read(secureStorageHelperProvider);
+    final hasSeenPromo = await storage.hasSeenPromoModal();
+
+    if (!hasSeenPromo && mounted) {
+      // for dashboard to fully load
+      await Future.delayed(const Duration(milliseconds: 1000));
+      if (mounted) {
+        showPromoModal(context);
+        await storage.setHasSeenPromoModal(true);
+      }
     }
   }
 

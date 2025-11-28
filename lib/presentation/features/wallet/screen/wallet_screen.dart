@@ -17,7 +17,6 @@ import 'package:bundlegram/presentation/features/transaction/screens/widgets/emp
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/recenttransaction_widget.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_transactions_notifier.dart';
-// import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_notifier.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
@@ -55,12 +54,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     final bvn = profile.value?.data?.bvn;
 
     if (bvn == null) {
-      // WalletNotifier().showLinkBVNSnackBar(
-      //   context,
-      //   'BVN verification required to withdraw from your wallet.',
-      //   'Link now',
-      // );
-      // unawaited(WalletNotifier().showAddMoneyViaDebitCard(context));
       await WalletNotifier().showAddMoney(context, ref);
     } else {
       await WalletNotifier().showAddMoney(context, ref);
@@ -108,139 +101,159 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Wallet balance',
-                              style: context.textTheme.bodyMedium?.copyWith(
-                                color: AppColors.white,
-                                fontSize: 16.sp,
-                              ),
-                            ),
-                            8.horizontalSpace,
-                            GestureDetector(
-                              onTap: () => ref
-                                  .read(platformProvider.notifier)
-                                  .toggleBalanceVisibility(),
-                              child: Icon(
-                                provider.isBalanceVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: AppColors.white,
-                                size: 20,
-                              ),
-                            ),
-                            const Spacer(),
-                            Flexible(
-                              child: BundlegramButton(
-                                width: 105.w,
-                                height: 40.h,
-                                color: AppColors.white,
-                                cornerRadius: 4.r,
-                                text: 'Withdraw',
-                                textStyle:
-                                    context.textTheme.bodyMedium!.copyWith(
-                                  color: AppColors.primaryColor,
-                                  fontSize: 16.sp,
-                                ),
-                                onPressed: () {
-                                  final profile =
-                                      ref.read(globalProvider).profile;
-                                  final bvn = profile.value?.data?.bvn;
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  // Calculate responsive height based on screen size
+                  final screenHeight = MediaQuery.of(context).size.height;
+                  final containerHeight = screenHeight > 700 ? 360.h : 320.h;
 
-                                  if (bvn == null) {
-                                    WalletNotifier().showLinkBVNSnackBar(
-                                      context,
-                                      'BVN verification required to withdraw from your wallet.',
-                                      'Link now',
-                                    );
-                                  } else {
-                                    context.push(RouteConstants.withdrawFund);
-                                  }
-                                },
-                              ),
+                  return Container(
+                    color: AppColors.primaryColor,
+                    height: containerHeight,
+                    width: context.width,
+                    child: Stack(
+                      children: [
+                        // Content section
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Wallet balance',
+                                      style: context.textTheme.bodyMedium
+                                          ?.copyWith(
+                                        color: AppColors.white,
+                                        fontSize: 16.sp,
+                                      ),
+                                    ),
+                                    8.horizontalSpace,
+                                    GestureDetector(
+                                      onTap: () => ref
+                                          .read(platformProvider.notifier)
+                                          .toggleBalanceVisibility(),
+                                      child: Icon(
+                                        provider.isBalanceVisible
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: AppColors.white,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Flexible(
+                                      child: BundlegramButton(
+                                        width: 105.w,
+                                        height: 40.h,
+                                        color: AppColors.white,
+                                        cornerRadius: 4.r,
+                                        text: 'Withdraw',
+                                        textStyle: context.textTheme.bodyMedium!
+                                            .copyWith(
+                                          color: AppColors.primaryColor,
+                                          fontSize: 16.sp,
+                                        ),
+                                        onPressed: () {
+                                          final profile =
+                                              ref.read(globalProvider).profile;
+                                          final bvn = profile.value?.data?.bvn;
+
+                                          if (bvn == null) {
+                                            WalletNotifier()
+                                                .showLinkBVNSnackBar(
+                                              context,
+                                              'BVN verification required to withdraw from your wallet.',
+                                              'Link now',
+                                            );
+                                          } else {
+                                            context.push(
+                                                RouteConstants.withdrawFund);
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  provider.isBalanceVisible
+                                      ? provider.formattedBalance
+                                      : '⁕⁕⁕⁕',
+                                  style: context.textTheme.titleLarge?.copyWith(
+                                    fontSize:
+                                        provider.isBalanceVisible ? 34 : 24,
+                                    color: AppColors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                16.verticalSpace,
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Promo rewards',
+                                      style: context.textTheme.bodyMedium
+                                          ?.copyWith(
+                                        color: AppColors.white,
+                                        fontSize: 16.sp,
+                                      ),
+                                    ),
+                                    8.horizontalSpace,
+                                    GestureDetector(
+                                      onTap: () => ref
+                                          .read(platformProvider.notifier)
+                                          .toggleBalanceVisibility(),
+                                      child: Icon(
+                                        provider.isBalanceVisible
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: AppColors.white,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  provider.isBalanceVisible
+                                      ? provider.formattedPromoBalance
+                                      : '⁕⁕⁕⁕',
+                                  style: context.textTheme.titleLarge?.copyWith(
+                                    fontSize:
+                                        provider.isBalanceVisible ? 34 : 24,
+                                    color: AppColors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        Text(
-                          provider.isBalanceVisible
-                              ? provider.formattedBalance
-                              : '⁕⁕⁕⁕',
-                          // wallet.value?.wallet.toCurrency() ?? '₦0.00',
-                          style: context.textTheme.titleLarge?.copyWith(
-                            fontSize: provider.isBalanceVisible ? 34 : 24,
-                            color: AppColors.white,
-                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        16.verticalSpace,
-                        Row(
-                          children: [
-                            Text(
-                              'Promo rewards',
-                              style: context.textTheme.bodyMedium?.copyWith(
-                                color: AppColors.white,
-                                fontSize: 16.sp,
-                              ),
+                        // Growth image - positioned at bottom with constraints
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: containerHeight *
+                                  0.45, // 45% of container height
+                              minHeight: 80.h,
                             ),
-                            8.horizontalSpace,
-                            GestureDetector(
-                              onTap: () => ref
-                                  .read(platformProvider.notifier)
-                                  .toggleBalanceVisibility(),
-                              child: Icon(
-                                provider.isBalanceVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: AppColors.white,
-                                size: 20,
-                              ),
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              alignment: Alignment.bottomCenter,
+                              child: Assets.images.growth.image(),
                             ),
-                          ],
-                        ),
-                        Text(
-                          provider.isBalanceVisible
-                              ? provider.formattedPromoBalance
-                              : '⁕⁕⁕⁕',
-                          // wallet.value?.wallet.toCurrency() ?? '₦0.00',
-                          style: context.textTheme.titleLarge?.copyWith(
-                            fontSize: provider.isBalanceVisible ? 34 : 24,
-                            color: AppColors.white,
-                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const Spacer(),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Assets.images.growth.image(),
-                  ),
-                  // Positioned(
-                  //   bottom: 0,
-                  //   left: 0,
-                  //   right: 0,
-                  //   child: SizedBox(
-                  //     // height: 100.h, // Set a specific height
-                  //     child: Align(
-                  //       alignment: Alignment.bottomCenter,
-                  //       child: Assets.images.growth.image(),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ).withContainer(
-                color: AppColors.primaryColor,
-                height: 360.h,
-                width: context.width,
+                  );
+                },
               ),
               32.verticalSpace,
               BundlegramButton(
@@ -251,18 +264,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                     _isProcessing ? null : () => _handleFundWallet(context),
               ),
               40.verticalSpace,
-              // if (walletTxns == null || walletTxns.isEmpty)
-              //   const Padding(
-              //     padding: EdgeInsets.symmetric(vertical: 32),
-              //     child: Center(child: EmptytransactionWidget()),
-              //   )
-              // else
-              //   RecentTransactionWidget(
-              //     SizedBox(height: 30),
-              //     title: "Wallet Transactions",
-              //     transactionProvider: walletTransactionsProvider,
-              //   ),
-              // Wrapped transactions with AppAsyncBuilder
               AppAsyncBuilder(
                 state: ref
                     .watch(globalProvider.select((g) => g.usersTransactions)),
