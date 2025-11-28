@@ -70,10 +70,6 @@ class _LockScreenState extends ConsumerState<LockScreen>
         .animate(_shakeController);
 
     _loadCachedName();
-    // schedule auto biometric attempt after first frame
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _tryAutoAuthenticate();
-    // });
     Future.microtask(() {
       if (!mounted) return;
       _tryAutoAuthenticate();
@@ -85,10 +81,9 @@ class _LockScreenState extends ConsumerState<LockScreen>
     if (_autoAuthAttempted) return;
     _autoAuthAttempted = true;
 
-    // Check security flags from provider
     final security = ref.read(securityProvider);
     final showBiometric = security.useFingerprint || security.useFaceId;
-    if (!showBiometric) return; // not enabled — nothing to do
+    if (!showBiometric) return;
 
     final biometricService = ref.read(biometricServiceProvider);
 
@@ -112,7 +107,6 @@ class _LockScreenState extends ConsumerState<LockScreen>
           await _simulatePinEntry(storedPin);
         }
 
-        // We have a token — restore session and navigate
         unawaited(context.showLoadingDialog());
         final didRestore =
             await ref.read(globalProvider.notifier).restoreSession(context);
@@ -122,7 +116,6 @@ class _LockScreenState extends ConsumerState<LockScreen>
           return;
         }
 
-        // fallback: try biometric-stored credentials (email+password)
         if (email != null && password != null) {
           final lockService = ref.read(lockScreenServiceProvider);
           await lockService.performLogin(
@@ -137,17 +130,13 @@ class _LockScreenState extends ConsumerState<LockScreen>
           }
         }
 
-        // no token and no biometric password stored
         debugPrint(
             'Biometric authenticated but credentials missing. Please use PIN.');
       } else {
-        // biometric auth was cancelled or failed — do nothing (user can enter PIN)
         debugPrint('[Biometric] Auto auth failed or cancelled by user.');
       }
     } catch (e, st) {
       debugPrint('[Biometric] Auto auth exception: $e\n$st');
-      // not blocking the UI
-      // context.showErrorSnackBar('Biometric unavailable. Use PIN to continue.');
     }
   }
 
@@ -196,23 +185,19 @@ class _LockScreenState extends ConsumerState<LockScreen>
     });
 
     for (int i = 0; i < storedPin.length; i++) {
-      await Future.delayed(
-          const Duration(milliseconds: 250)); // delay between digits
+      await Future.delayed(const Duration(milliseconds: 250));
       setState(() {
         _pin[_currentIndex] = storedPin[i];
         _currentIndex++;
       });
     }
 
-    // Once all digits are entered, verify
     final enteredPin = _pin.join();
-    // await _verifyPin(enteredPin);
   }
 
   Future<void> _verifyPin(String enteredPin) async {
     final storage = ref.read(secureStorageHelperProvider);
 
-    // use fallback chain instead of only rememberedEmail
     final userEmail = await storage.getSafeEmail();
     if (userEmail == null) {
       setState(() {
@@ -282,7 +267,6 @@ class _LockScreenState extends ConsumerState<LockScreen>
   Widget build(BuildContext context) {
     final globalUserProvider = ref.watch(globalProvider).profile;
     final profileProv = globalUserProvider.value?.data;
-    // final biometricService = ref.watch(biometricServiceProvider);
     final security = ref.watch(securityProvider);
 
     final showBiometric = security.useFingerprint || security.useFaceId;
@@ -305,37 +289,30 @@ class _LockScreenState extends ConsumerState<LockScreen>
       child: PopScope(
         canPop: false,
         child: BundlegramScaffold(
-          sidePadding: EdgeInsets.fromLTRB(
-              20.w, 10.h, 20.w, 20.h), // ✅ Reduced bottom padding
-          body: SingleChildScrollView(
-            physics: const NeverScrollableScrollPhysics(),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).padding.top -
-                    MediaQuery.of(context).padding.bottom -
-                    40.h,
-              ),
-              child: IntrinsicHeight(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Top section with logo and greeting
-                    Column(
+          sidePadding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+              return Column(
+                children: [
+                  // Image(
+                  //   image: Assets.images.bBundlegram.provider(),
+                  //   fit: BoxFit.contain,
+                  // ).withContainer(
+                  //   height: 34.h,
+                  // ),
+
+                  // Top section with logo and greeting
+                  Flexible(
+                    flex: 1.5,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Image(
-                        //   image: Assets.images.bBundlegram.provider(),
-                        //   fit: BoxFit.contain,
-                        // ).withContainer(
-                        //   height: 34.h,
-                        // ),
-                        30.verticalSpace,
                         AppSvgIcon(
                           path: Assets.svgs.lockIcon,
                           width: 40,
                           height: 40,
                         ),
-                        24.verticalSpace,
+                        SizedBox(height: constraints.maxHeight * 0.02),
                         Text(
                           '${DateTime.now().getGreeting()}, ${profileProv?.username ?? _displayName ?? "User"}',
                           textAlign: TextAlign.center,
@@ -344,7 +321,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                             color: AppColors.black,
                           ),
                         ),
-                        8.verticalSpace,
+                        SizedBox(height: constraints.maxHeight * 0.01),
                         Text(
                           Platform.isIOS
                               ? '${showBiometric ? "Use Face ID or" : ""} Enter account pin'
@@ -356,11 +333,14 @@ class _LockScreenState extends ConsumerState<LockScreen>
                         ),
                       ],
                     ),
+                  ),
 
-                    // Middle section with PIN dots
-                    Column(
+                  // Middle section with PIN dots
+                  Flexible(
+                    flex: 1,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        30.verticalSpace, // ✅ Reduced from 60
                         AnimatedBuilder(
                           animation: _shakeController,
                           builder: (context, child) {
@@ -375,7 +355,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                           },
                         ),
                         if (_errorMessage != null) ...[
-                          10.verticalSpace,
+                          SizedBox(height: 8.h),
                           Text(
                             _errorMessage!,
                             style: const TextStyle(
@@ -384,18 +364,19 @@ class _LockScreenState extends ConsumerState<LockScreen>
                             ),
                           ),
                         ],
-                        20.verticalSpace, // ✅ Add space before number pad
                       ],
                     ),
+                  ),
 
-                    // Number pad - fixed height instead of Expanded
-                    SizedBox(
-                      height: 230.h, // Fixed height
+                  // Number pad - responsive
+                  Flexible(
+                    flex: 4,
+                    child: Center(
                       child: GridView.count(
-                        physics:
-                            const NeverScrollableScrollPhysics(), // Disable GridView scrolling
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
                         crossAxisCount: 3,
-                        childAspectRatio: 1.9,
+                        childAspectRatio: 1.5,
                         children: [
                           ...List.generate(
                             9,
@@ -404,6 +385,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                           if (showBiometric) ...[
                             GestureDetector(
                               onTap: () async {
+                                _autoAuthAttempted = false;
                                 await _tryAutoAuthenticate();
                                 // final biometricService =
                                 //     ref.read(biometricServiceProvider);
@@ -503,7 +485,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
                               ),
                             ),
                           ] else ...[
-                            SizedBox.shrink(),
+                            const SizedBox.shrink(),
                           ],
                           _buildNumberButton('0'),
                           IconButton(
@@ -517,11 +499,14 @@ class _LockScreenState extends ConsumerState<LockScreen>
                         ],
                       ),
                     ),
+                  ),
 
-                    // Bottom section with switch account and sign in options
-                    Column(
+                  // Bottom section with switch account and sign in options
+                  Flexible(
+                    flex: 1,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        0.verticalSpace,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -538,9 +523,6 @@ class _LockScreenState extends ConsumerState<LockScreen>
                             ),
                             TextButton(
                               onPressed: () {
-                                // ref
-                                //     .read(loginProvider.notifier)
-                                //     .logoutUser(context);
                                 context.go(RouteConstants.login);
                               },
                               child: Text(
@@ -552,13 +534,12 @@ class _LockScreenState extends ConsumerState<LockScreen>
                             ),
                           ],
                         ),
-                        20.verticalSpace, // Reduced bottom spacing
                       ],
                     ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),

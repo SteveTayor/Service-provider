@@ -199,7 +199,7 @@ class LoginProvider extends ChangeNotifier {
     _setLoading(true);
     final deviceInfo = await _storage.getDeviceInfo();
     final deviceToken = deviceInfo['macAddress'] ?? 'unknown';
-    final fcmToken = await _storage.getFcmToken() ?? 'unknown';
+    final fcmToken = await _storage.getFcmToken();
 
     final request = LoginRequest(
       email: emailCtrl.text.trim(),
