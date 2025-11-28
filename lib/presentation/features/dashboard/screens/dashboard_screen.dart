@@ -35,6 +35,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
 
   Future<void> _checkAndShowPromo() async {
     final storage = ref.read(secureStorageHelperProvider);
+    await storage.setHasSeenPromoModal(false);
     final hasSeenPromo = await storage.hasSeenPromoModal();
 
     if (!hasSeenPromo && mounted) {

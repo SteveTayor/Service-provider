@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
@@ -76,7 +77,7 @@ class PromoModal extends StatelessWidget {
                 Expanded(
                   child: BundlegramButton(
                     text: 'Buy Data',
-                    height: 48.h,
+                    // height: 48.h,
                     onPressed: () {
                       Navigator.of(context).pop();
                       // Navigate to Buy Data screen
@@ -85,18 +86,17 @@ class PromoModal extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => const PlatformproductScreen(
-                              serviceType: PlatformProductType.airtime),
+                              serviceType: PlatformProductType.mobileData),
                         ),
                       );
                     },
-                    buttonStyle: BundlegramButtonStyle.secondary(),
+                    cornerRadius: 8.r,
+                    buttonStyle: BundlegramButtonStyle.primary(),
                   ),
                 ),
                 12.horizontalSpace,
                 Expanded(
-                  child: BundlegramButton(
-                    text: 'Buy Airtime',
-                    height: 48.h,
+                  child: OutlinedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                       // Navigate to Buy Airtime screen
@@ -108,7 +108,20 @@ class PromoModal extends StatelessWidget {
                         ),
                       );
                     },
-                    buttonStyle: BundlegramButtonStyle.primary(),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: AppColors.primaryColor),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                    ),
+                    child: Text(
+                      'Buy Airtime',
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.primaryColor,
+                        // fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -139,7 +152,7 @@ class PromoModal extends StatelessWidget {
 void showPromoModal(BuildContext context) {
   showDialog(
     context: context,
-    barrierDismissible: true,
+    barrierDismissible: false,
     builder: (context) => const PromoModal(),
   );
 }
