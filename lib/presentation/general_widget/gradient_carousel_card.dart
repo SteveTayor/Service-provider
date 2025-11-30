@@ -144,7 +144,8 @@ class GradientPromoCard extends StatelessWidget {
                 bottom: 0,
                 child: Image.asset(
                   imagePath,
-                  height: 120.h,
+                  colorBlendMode: BlendMode.srcIn,
+                  height: 110.h,
                   fit: BoxFit.cover,
                   alignment: Alignment.centerRight,
                 ),

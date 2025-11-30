@@ -26,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
@@ -35,12 +36,20 @@ class WalletScreen extends ConsumerStatefulWidget {
 }
 
 class _WalletScreenState extends ConsumerState<WalletScreen> {
+  final RefreshController _refreshController = RefreshController();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
     });
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
   }
 
   bool _isProcessing = false;
@@ -64,6 +73,23 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
     }
   }
 
+  Future<void> _onRefresh() async {
+    try {
+      context.showLoadingDialog();
+      await Future.wait([
+        ref.read(globalProvider.notifier).fetchWalletBalance(context),
+        ref.read(globalProvider.notifier).fetchUsersTransactions(context),
+      ]);
+      unawaited(ref.read(dashboardProvider.notifier).initDashboard(context));
+      ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
+      _refreshController.refreshCompleted();
+    } catch (e) {
+      _refreshController.refreshFailed();
+    } finally {
+      context.dismissDialog();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = ref.watch(platformProvider);
@@ -81,23 +107,29 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           ),
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          context.showLoadingDialog();
-          try {
-            await Future.wait([
-              ref.read(globalProvider.notifier).fetchWalletBalance(context),
-              ref.read(globalProvider.notifier).fetchUsersTransactions(context),
-            ]);
-            unawaited(
-                ref.read(dashboardProvider.notifier).initDashboard(context));
-            ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
-          } finally {
-            context.dismissDialog();
-          }
-        },
+      // Use SmartRefresher from pull_to_refresh for a smooth pull-to-refresh experience
+      body: SmartRefresher(
+        controller: _refreshController,
+        enablePullDown: true,
+        header: ClassicHeader(
+          refreshingIcon: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: AppColors.primaryColor,
+          ),
+          idleIcon: const SizedBox.shrink(),
+          idleText: '',
+          releaseText: '',
+          refreshingText: '',
+          completeText: '',
+          failedText: '',
+        ),
+
+        // Keep the child scrollable behaviour intact by wrapping the existing SingleChildScrollView.
+        onRefresh: _onRefresh,
         child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
+          // Keep always scrollable to allow pull even when content is short
+          physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics()),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

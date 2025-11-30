@@ -345,13 +345,16 @@ class LoginProvider extends ChangeNotifier {
               MaterialPageRoute(
                 builder: (ctx) => EnterPinScreen(
                   onVerified: (pin) async {
+                    context.showLoadingDialog(message: 'Verifying PIN...');
                     final result = await _api.verifyPin(token, pin);
                     await result.fold(
                       (failure) {
+                        context.dismissDialog();
                         final userMsg = userFacingMessageFromFailure(failure);
                         context.showErrorSnackBar(userMsg);
                       },
                       (data) async {
+                        context.dismissDialog();
                         if (data.success == true) {
                           await _storage.setPin(userEmail, pin);
                           ctx.pushReplacement(RouteConstants.dashboard);
