@@ -212,6 +212,7 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
                     final item = carouselItems[index];
 
                     return GradientPromoCard(
+                      height: 120.h,
                       title: item['title'] as String,
                       subtitle: item['subtitle'] as String,
                       buttonText: item['buttonText'] as String,
@@ -223,12 +224,14 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
                     autoPlay: true,
                     padEnds: false,
                     onPageChanged: (c, _) => setState(() => indexKey = c),
-                    autoPlayInterval: const Duration(seconds: 3),
+                    autoPlayInterval: const Duration(seconds: 4),
                     enlargeCenterPage: true,
                     viewportFraction: 0.9,
-                    enlargeFactor: .12,
+                    // enlargeFactor: .12,
+                    aspectRatio: 2.2,
                   ),
                 ),
+                12.verticalSpace,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(

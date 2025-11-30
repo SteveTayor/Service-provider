@@ -47,9 +47,9 @@ class GradientPromoCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: height ?? 159.h,
+        height: height ?? 129.h,
         width: width ?? double.infinity,
-        margin: EdgeInsets.symmetric(horizontal: 16.w),
+        margin: EdgeInsets.symmetric(horizontal: 8.w),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -66,14 +66,14 @@ class GradientPromoCard extends StatelessWidget {
           // ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(8.r),
           child: Stack(
             children: [
               // Content Section (Left Side)
               Positioned(
                 left: 24.w,
                 top: 24.h,
-                bottom: 24.h,
+                // bottom: 24.h,
                 child: SizedBox(
                   width: 200.w,
                   child: Column(
@@ -87,30 +87,32 @@ class GradientPromoCard extends StatelessWidget {
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
+                          fontFamily: FontFamily.mabryPro,
                         ),
                       ),
-                      16.verticalSpace,
+                      8.verticalSpace,
 
                       // Subtitle
                       Text(
                         subtitle,
-                        style: context.textTheme.bodyMedium!.copyWith(
+                        style: context.textTheme.labelMedium!.copyWith(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.white,
+                          fontFamily: FontFamily.mabryPro,
                         ),
                         maxLines: 3,
                         overflow: TextOverflow.clip,
                       ),
-                      const Spacer(),
-
+                      // const Spacer(),
+                      26.verticalSpace,
                       // Button
                       GestureDetector(
                         onTap: onTap,
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 24.w,
-                            vertical: 12.h,
+                            horizontal: 18.w,
+                            vertical: 8.h,
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(32.r),
@@ -142,8 +144,8 @@ class GradientPromoCard extends StatelessWidget {
                 bottom: 0,
                 child: Image.asset(
                   imagePath,
-                  height: double.infinity,
-                  fit: BoxFit.contain,
+                  height: 120.h,
+                  fit: BoxFit.cover,
                   alignment: Alignment.centerRight,
                 ),
               ),

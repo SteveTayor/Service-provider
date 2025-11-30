@@ -119,7 +119,8 @@ class PromoModal extends StatelessWidget {
                       'Buy Airtime',
                       style: context.textTheme.bodyMedium?.copyWith(
                         color: AppColors.primaryColor,
-                        // fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: FontFamily.mabryPro,
                       ),
                     ),
                   ),
