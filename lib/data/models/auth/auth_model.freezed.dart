@@ -2291,6 +2291,171 @@ abstract class _CreatePinRequest implements CreatePinRequest {
       throw _privateConstructorUsedError;
 }
 
+VerifyPinRequest _$VerifyPinRequestFromJson(Map<String, dynamic> json) {
+  return _VerifyPinRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$VerifyPinRequest {
+  @JsonKey(name: "pin")
+  String get pin => throw _privateConstructorUsedError;
+
+  /// Serializes this VerifyPinRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of VerifyPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $VerifyPinRequestCopyWith<VerifyPinRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $VerifyPinRequestCopyWith<$Res> {
+  factory $VerifyPinRequestCopyWith(
+          VerifyPinRequest value, $Res Function(VerifyPinRequest) then) =
+      _$VerifyPinRequestCopyWithImpl<$Res, VerifyPinRequest>;
+  @useResult
+  $Res call({@JsonKey(name: "pin") String pin});
+}
+
+/// @nodoc
+class _$VerifyPinRequestCopyWithImpl<$Res, $Val extends VerifyPinRequest>
+    implements $VerifyPinRequestCopyWith<$Res> {
+  _$VerifyPinRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of VerifyPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pin = null,
+  }) {
+    return _then(_value.copyWith(
+      pin: null == pin
+          ? _value.pin
+          : pin // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$VerifyPinRequestImplCopyWith<$Res>
+    implements $VerifyPinRequestCopyWith<$Res> {
+  factory _$$VerifyPinRequestImplCopyWith(_$VerifyPinRequestImpl value,
+          $Res Function(_$VerifyPinRequestImpl) then) =
+      __$$VerifyPinRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({@JsonKey(name: "pin") String pin});
+}
+
+/// @nodoc
+class __$$VerifyPinRequestImplCopyWithImpl<$Res>
+    extends _$VerifyPinRequestCopyWithImpl<$Res, _$VerifyPinRequestImpl>
+    implements _$$VerifyPinRequestImplCopyWith<$Res> {
+  __$$VerifyPinRequestImplCopyWithImpl(_$VerifyPinRequestImpl _value,
+      $Res Function(_$VerifyPinRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VerifyPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pin = null,
+  }) {
+    return _then(_$VerifyPinRequestImpl(
+      pin: null == pin
+          ? _value.pin
+          : pin // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$VerifyPinRequestImpl
+    with DiagnosticableTreeMixin
+    implements _VerifyPinRequest {
+  const _$VerifyPinRequestImpl({@JsonKey(name: "pin") required this.pin});
+
+  factory _$VerifyPinRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$VerifyPinRequestImplFromJson(json);
+
+  @override
+  @JsonKey(name: "pin")
+  final String pin;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'VerifyPinRequest(pin: $pin)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'VerifyPinRequest'))
+      ..add(DiagnosticsProperty('pin', pin));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$VerifyPinRequestImpl &&
+            (identical(other.pin, pin) || other.pin == pin));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, pin);
+
+  /// Create a copy of VerifyPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$VerifyPinRequestImplCopyWith<_$VerifyPinRequestImpl> get copyWith =>
+      __$$VerifyPinRequestImplCopyWithImpl<_$VerifyPinRequestImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$VerifyPinRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _VerifyPinRequest implements VerifyPinRequest {
+  const factory _VerifyPinRequest(
+          {@JsonKey(name: "pin") required final String pin}) =
+      _$VerifyPinRequestImpl;
+
+  factory _VerifyPinRequest.fromJson(Map<String, dynamic> json) =
+      _$VerifyPinRequestImpl.fromJson;
+
+  @override
+  @JsonKey(name: "pin")
+  String get pin;
+
+  /// Create a copy of VerifyPinRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$VerifyPinRequestImplCopyWith<_$VerifyPinRequestImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 ChangePasswordRequest _$ChangePasswordRequestFromJson(
     Map<String, dynamic> json) {
   return _ChangePasswordRequest.fromJson(json);

@@ -137,6 +137,16 @@ class CreatePinRequest with _$CreatePinRequest {
 }
 
 @freezed
+class VerifyPinRequest with _$VerifyPinRequest {
+  const factory VerifyPinRequest({
+    @JsonKey(name: "pin") required String pin,
+  }) = _VerifyPinRequest;
+
+  factory VerifyPinRequest.fromJson(Map<String, dynamic> json) =>
+      _$VerifyPinRequestFromJson(json);
+}
+
+@freezed
 class ChangePasswordRequest with _$ChangePasswordRequest {
   const factory ChangePasswordRequest({
     @JsonKey(name: "oldPassword") required String oldPassword,

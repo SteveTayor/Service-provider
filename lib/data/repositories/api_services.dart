@@ -188,6 +188,16 @@ class ApiService {
     });
   }
 
+  Future<Either<Failure, BaseResponse>> verifyPin(
+    String token,
+    String pin,
+  ) {
+    return handleApi(() {
+      final req = VerifyPinRequest(pin: pin);
+      return _api.verifyPin('Bearer $token', _sterilizer, req);
+    });
+  }
+
   Future<Either<Failure, DashboardDataResponse>> fetchDashboardData(
     String token,
     DashboardDataRequest req,

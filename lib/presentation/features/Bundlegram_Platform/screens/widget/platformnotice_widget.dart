@@ -10,6 +10,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/pl
 import 'package:bundlegram/presentation/features/account%20setup/notifier/account_setup_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/async_value/app_future_builder.dart';
+import 'package:bundlegram/presentation/general_widget/gradient_carousel_card.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -135,41 +136,87 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
             // Determine which slides to show based on state
             final advertItems = <String>[];
             final advertActions = <VoidCallback>[];
+            final carouselItems = <Map<String, dynamic>>[];
 
             // if (!isAccountSetupComplete) {
-            advertItems.add(Assets.svgs.accountsetup);
-            advertActions.add(() => context.push(RouteConstants.accountSetup));
+            // advertItems.add(Assets.svgs.accountsetup);
+            // advertActions.add(() => context.push(RouteConstants.accountSetup));
+            carouselItems.add({
+              'title': 'Complete account set-up',
+              'subtitle':
+                  'Finish setting up your account to enjoy Bundlegram fully.',
+              'buttonText': 'Complete set-up',
+              'imagePath': Assets.images.accountSetup.path,
+              'onTap': () => context.push(RouteConstants.accountSetup),
+            });
             // }
 
             // if (!isAgent) {
-            advertItems.add(Assets.svgs.becomeagent);
-            advertActions.add(() => context.push(RouteConstants.becomeagent));
+            // advertItems.add(Assets.svgs.becomeagent);
+            // advertActions.add(() => context.push(RouteConstants.becomeagent));
+            carouselItems.add({
+              'title': 'Become a Bundlegram agent',
+              'subtitle': 'Enjoy special Bundlegram benefits and discounts.',
+              'buttonText': 'Become an agent',
+              'imagePath': Assets.images.becomeAgent.path,
+              'onTap': () => context.push(RouteConstants.becomeagent),
+            });
             // }
 
-            advertItems.add(Assets.svgs.completesetup);
-            advertActions.add(
-              () =>
+            // advertItems.add(Assets.svgs.completesetup);
+            // advertActions.add(
+            //   () =>
+            //       platform.goToProduct(context, PlatformProductType.mobileData),
+            // );
+            carouselItems.add({
+              'title': 'Enjoy cheap data plans',
+              'subtitle': 'We have cheap data plans for your subscriptions.',
+              'buttonText': 'Complete set-up',
+              'imagePath': Assets.images.buyCheapData.path,
+              'onTap': () =>
                   platform.goToProduct(context, PlatformProductType.mobileData),
-            );
+            });
 
-            advertItems.add(Assets.svgs.promoRewards);
-            advertActions.add(() => context.push(RouteConstants.promo));
+            // advertItems.add(Assets.svgs.promoRewards);
+            // advertActions.add(() => context.push(RouteConstants.promo));
+            carouselItems.add({
+              'title': 'Unlock your bonuses',
+              'subtitle': 'Check out all your available promos and rewards.',
+              'buttonText': 'View promos',
+              'imagePath': Assets.images.promoBonuses.path,
+              'onTap': () => context.push(RouteConstants.promo),
+            });
 
             // If nothing left to show, hide the entire carousel
-            if (advertItems.isEmpty) return const SizedBox.shrink();
+            // if (advertItems.isEmpty) return const SizedBox.shrink();
+
+            // If nothing to show, hide carousel
+            if (carouselItems.isEmpty) return const SizedBox.shrink();
 
             return Column(
               children: [
-                CarouselSlider(
-                  items: List.generate(advertItems.length, (index) {
-                    bool isBecomeAgentItem =
-                        advertItems[index] == Assets.images.becomeanagent.path;
+                // CarouselSlider(
+                //   items: List.generate(advertItems.length, (index) {
+                //     bool isBecomeAgentItem =
+                //         advertItems[index] == Assets.images.becomeanagent.path;
 
-                    return AppSvgIcon(
-                      onTap: advertActions[index],
-                      fit: BoxFit.scaleDown,
-                      path: advertItems[index],
-                      useCircleAvatar: false,
+                //     return AppSvgIcon(
+                //       onTap: advertActions[index],
+                //       fit: BoxFit.scaleDown,
+                //       path: advertItems[index],
+                //       useCircleAvatar: false,
+                //     );
+                //   }),
+                CarouselSlider(
+                  items: List.generate(carouselItems.length, (index) {
+                    final item = carouselItems[index];
+
+                    return GradientPromoCard(
+                      title: item['title'] as String,
+                      subtitle: item['subtitle'] as String,
+                      buttonText: item['buttonText'] as String,
+                      imagePath: item['imagePath'] as String,
+                      onTap: item['onTap'] as VoidCallback,
                     );
                   }),
                   options: CarouselOptions(
@@ -178,12 +225,14 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
                     onPageChanged: (c, _) => setState(() => indexKey = c),
                     autoPlayInterval: const Duration(seconds: 3),
                     enlargeCenterPage: true,
+                    viewportFraction: 0.9,
+                    enlargeFactor: .12,
                   ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
-                    advertItems.length,
+                    carouselItems.length,
                     (index) => Container(
                       width: indexKey == index ? 20.w : 6.w,
                       height: 6.h,

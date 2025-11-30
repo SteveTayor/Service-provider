@@ -312,24 +312,6 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     return amount - (amount * (discountPercent / 100));
   }
 
-  /// Given a raw productIcon string from the server, normalize it down to
-  /// just the filename i have under assets/images/, or return null.
-  // String? normalizeAssetName(String? raw) {
-  //   if (raw == null || raw.isEmpty) return null;
-  //   // 1. Remove any directory parts
-  //   final fileName = raw.split(RegExp(r'[\\/]+')).last;
-  //   //    e.g. "upload/images/mtn.png" → "mtn.png"
-  //   // 2. Ensure it has a known extension (png, jpg, jpeg, webp, svg)
-  //   final lower = fileName.toLowerCase();
-  //   final validExt = ['.png', '.jpg', '.jpeg', '.webp', '.svg'];
-  //   final hasValid = validExt.any((ext) => lower.endsWith(ext));
-  //   if (!hasValid) return null;
-  //   // 3.verify that this file actually exists in your assets/
-  //   //    — you can maintain a Set<String> of your bundled filenames,
-  //   //      or rely on pubspec.yaml audits.
-  //   //    For simplicity, we assume it’s there.
-  //   return fileName;
-  // }
 
   void showBillerPicker(BuildContext ctx) {
     ctx.showBottomSheet(

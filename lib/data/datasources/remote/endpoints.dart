@@ -35,6 +35,7 @@ class Endpoints {
   static const String changePin = '/change-pin';
   static const String createPin = '/create-pin';
   static const String resetPin = '/reset-pin';
+  static const String verifyPin = '/verify-pin';
   static const String linkBvn = '/link-bvn';
   static const String getVirtualAccount = '/get-virtual-account';
   static const String deleteAccount = '/delete-account';

@@ -142,6 +142,13 @@ abstract class ApiDefinition {
     @Body() CreatePinRequest body,
   );
 
+  @POST(Endpoints.verifyPin)
+  Future<BaseResponse> verifyPin(
+    @Header(_authHeader) String bearer,
+    @Header('AccessToken') String accessToken,
+    @Body() VerifyPinRequest body,
+  );
+
   @POST(Endpoints.dashboardData)
   Future<DashboardDataResponse> getDashboardData(
     @Header(_authHeader) String bearer,

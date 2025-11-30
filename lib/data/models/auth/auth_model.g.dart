@@ -174,6 +174,18 @@ Map<String, dynamic> _$$CreatePinRequestImplToJson(
       'pin_confirmation': instance.pinConfirmation,
     };
 
+_$VerifyPinRequestImpl _$$VerifyPinRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$VerifyPinRequestImpl(
+      pin: json['pin'] as String,
+    );
+
+Map<String, dynamic> _$$VerifyPinRequestImplToJson(
+        _$VerifyPinRequestImpl instance) =>
+    <String, dynamic>{
+      'pin': instance.pin,
+    };
+
 _$ChangePasswordRequestImpl _$$ChangePasswordRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$ChangePasswordRequestImpl(

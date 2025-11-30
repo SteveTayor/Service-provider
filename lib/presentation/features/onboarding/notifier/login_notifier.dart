@@ -1,5 +1,3 @@
-// 📦 Login Provider with Remember Me
-
 import 'dart:async';
 import 'dart:io';
 
@@ -347,20 +345,19 @@ class LoginProvider extends ChangeNotifier {
               MaterialPageRoute(
                 builder: (ctx) => EnterPinScreen(
                   onVerified: (pin) async {
-                    final result = await _api.createPin(token, pin, pin);
+                    final result = await _api.verifyPin(token, pin);
                     await result.fold(
                       (failure) {
-                        context.showErrorSnackBar(
-                          'Failed to verify PIN',
-                        );
+                        final userMsg = userFacingMessageFromFailure(failure);
+                        context.showErrorSnackBar(userMsg);
                       },
                       (data) async {
-                        if (data.status == 'success') {
+                        if (data.success == true) {
                           await _storage.setPin(userEmail, pin);
                           ctx.pushReplacement(RouteConstants.dashboard);
                         } else {
                           context.showErrorSnackBar(
-                            'Failed to verify PIN',
+                            data.message ?? 'PIN verification failed',
                           );
                         }
                       },

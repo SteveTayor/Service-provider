@@ -44,6 +44,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/Shapes.png
   AssetGenImage get shapes => const AssetGenImage('assets/images/Shapes.png');
 
+  /// File path: assets/images/account_setup.png
+  AssetGenImage get accountSetup =>
+      const AssetGenImage('assets/images/account_setup.png');
+
   /// File path: assets/images/airtel.png
   AssetGenImage get airtel => const AssetGenImage('assets/images/airtel.png');
 
@@ -52,6 +56,10 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/bars-3.svg
   String get bars3 => 'assets/images/bars-3.svg';
+
+  /// File path: assets/images/become_agent.png
+  AssetGenImage get becomeAgent =>
+      const AssetGenImage('assets/images/become_agent.png');
 
   /// File path: assets/images/becomeanagent.png
   AssetGenImage get becomeanagent =>
@@ -62,6 +70,10 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/betway.png
   AssetGenImage get betway => const AssetGenImage('assets/images/betway.png');
+
+  /// File path: assets/images/buy_cheap_data.png
+  AssetGenImage get buyCheapData =>
+      const AssetGenImage('assets/images/buy_cheap_data.png');
 
   /// File path: assets/images/dstv.png
   AssetGenImage get dstv => const AssetGenImage('assets/images/dstv.png');
@@ -110,6 +122,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/pnglogo.png
   AssetGenImage get pnglogo => const AssetGenImage('assets/images/pnglogo.png');
 
+  /// File path: assets/images/promo_bonuses.png
+  AssetGenImage get promoBonuses =>
+      const AssetGenImage('assets/images/promo_bonuses.png');
+
   /// File path: assets/images/smile.png
   AssetGenImage get smile => const AssetGenImage('assets/images/smile.png');
 
@@ -151,12 +167,15 @@ class $AssetsImagesGen {
     growth,
     nairabetLogo,
     shapes,
+    accountSetup,
     airtel,
     bangbet,
     bars3,
+    becomeAgent,
     becomeanagent,
     bet9ja,
     betway,
+    buyCheapData,
     dstv,
     ekoPhcn,
     glo,
@@ -171,6 +190,7 @@ class $AssetsImagesGen {
     mtn,
     mtnVoucher,
     pnglogo,
+    promoBonuses,
     smile,
     spectranet,
     startimes,
