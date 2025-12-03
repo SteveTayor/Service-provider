@@ -21,6 +21,7 @@ import 'package:bundlegram/data/models/banks/get_virtual_account_response.dart';
 import 'package:bundlegram/data/models/banks/make_bank_default_response.dart';
 import 'package:bundlegram/data/models/base/base_response.dart';
 import 'package:bundlegram/data/models/become_a_merchant/become_a_merchant_request.dart';
+import 'package:bundlegram/data/models/beneficiaries/get_all_beneficiaries.dart';
 import 'package:bundlegram/data/models/bvn/link_bvn/link_bvn_request.dart';
 import 'package:bundlegram/data/models/bvn/link_bvn/link_bvn_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_data_response.dart';
@@ -340,5 +341,17 @@ abstract class ApiDefinition {
     @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
     @Body() RedeemAPromoRequest body,
+  );
+
+  @GET(Endpoints.getAllBeneficiaries)
+  Future<GetAllBeneficiariesResponse> getAllBeneficiaries(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+  );
+
+  @GET(Endpoints.getMinimalBeneficiaries)
+  Future<GetAllBeneficiariesResponse> getMinimalBeneficiaries(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
   );
 }

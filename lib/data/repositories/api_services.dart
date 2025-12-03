@@ -25,6 +25,7 @@ import 'package:bundlegram/data/models/banks/get_virtual_account_response.dart';
 import 'package:bundlegram/data/models/banks/make_bank_default_response.dart';
 import 'package:bundlegram/data/models/base/base_response.dart';
 import 'package:bundlegram/data/models/become_a_merchant/become_a_merchant_request.dart';
+import 'package:bundlegram/data/models/beneficiaries/get_all_beneficiaries.dart';
 import 'package:bundlegram/data/models/bvn/link_bvn/link_bvn_request.dart';
 import 'package:bundlegram/data/models/bvn/link_bvn/link_bvn_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_data_response.dart';
@@ -338,5 +339,18 @@ class ApiService {
     return handleApi(
         () => _api.redeemAPromo('Bearer $token', _sterilizer, req));
   }
+
+  Future<Either<Failure, GetAllBeneficiariesResponse>> getAllBeneficiaries(
+      String token) {
+    return handleApi(
+        () => _api.getAllBeneficiaries('Bearer $token', _sterilizer));
+  }
+
+  Future<Either<Failure, GetAllBeneficiariesResponse>> getMinimalBeneficiaries(
+      String token) {
+    return handleApi(
+        () => _api.getMinimalBeneficiaries('Bearer $token', _sterilizer));
+  }
+
   // other endpoint …
 }

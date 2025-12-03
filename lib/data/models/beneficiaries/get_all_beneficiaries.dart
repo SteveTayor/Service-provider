@@ -20,21 +20,21 @@ class GetAllBeneficiariesResponse {
 
   factory GetAllBeneficiariesResponse.fromJson(Map<String, dynamic> json) =>
       GetAllBeneficiariesResponse(
-        status: json["status"] as String?,
-        data: json["data"] == null
+        status: json['status'] as String?,
+        data: json['data'] == null
             ? <Beneficiary>[]
-            : List<Beneficiary>.from((json["data"] as List<dynamic>)
+            : List<Beneficiary>.from((json['data'] as List<dynamic>)
                 .map<Beneficiary>(
                     (x) => Beneficiary.fromJson(x as Map<String, dynamic>))),
-        message: json["message"] as String?,
+        message: json['message'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
-        "status": status,
-        "data": data == null
+        'status': status,
+        'data': data == null
             ? []
             : List<dynamic>.from(data!.map((x) => x.toJson())),
-        "message": message,
+        'message': message,
       };
 }
 
@@ -50,14 +50,14 @@ class Beneficiary {
   });
 
   factory Beneficiary.fromJson(Map<String, dynamic> json) => Beneficiary(
-        id: json["id"] as int?,
-        network: json["network"] as String?,
-        phoneNumber: json["phone_number"] as String?,
+        id: json['id'] as int?,
+        network: json['network'] as String?,
+        phoneNumber: json['phone_number'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "network": network,
-        "phone_number": phoneNumber,
+        'id': id,
+        'network': network,
+        'phone_number': phoneNumber,
       };
 }

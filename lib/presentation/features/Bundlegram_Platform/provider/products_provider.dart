@@ -1,5 +1,7 @@
+import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
+import 'package:bundlegram/data/models/beneficiaries/get_all_beneficiaries.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
@@ -34,7 +36,7 @@ final authTokenProvider = FutureProvider<String>((ref) async {
   final storage = ref.read(secureStorageHelperProvider);
   final token = await storage.getAuthToken();
   if (token == null) {
-    throw Exception('No auth token found');
+    throw AuthenticationFailure(['No auth token found']);
   }
   return token;
 });
@@ -47,66 +49,72 @@ final productsProvider =
   (ref, serviceType) async {
     final token = await ref.read(authTokenProvider.future);
     final bearer = 'Bearer $token';
+    try {
+      // Airtime uses SERVICE endpoint
+      if (serviceType == PlatformProductType.airtime) {
+        final result = await ref
+            .read(apiServiceProvider)
+            .getProductByService(bearer, 'BUY_AIRTIME_001');
 
-    // Airtime uses SERVICE endpoint
-    if (serviceType == PlatformProductType.airtime) {
-      final result = await ref
-          .read(apiServiceProvider)
-          .getProductByService(bearer, 'BUY_AIRTIME_001');
+        return result.fold(
+          (failure) {
+            // Always sanitize before throwing so UI never shows raw HTML or overly long text
+            final safeMsg = failure.properties.isNotEmpty
+                ? _sanitizeErrorMessage(failure.properties.first)
+                : 'Failed to fetch airtime products';
+
+            throw ServerFailure([safeMsg]);
+          },
+          (data) => data,
+        );
+      }
+
+      // Mobile Data uses SERVICE endpoint
+      if (serviceType == PlatformProductType.mobileData) {
+        final result = await ref
+            .read(apiServiceProvider)
+            .getProductByService(bearer, 'DATA_PUR_01');
+
+        return result.fold(
+          (failure) {
+            final safeMsg = failure.properties.isNotEmpty
+                ? _sanitizeErrorMessage(failure.properties.first)
+                : 'Failed to fetch mobile data products';
+            throw ServerFailure([safeMsg]);
+          },
+          (data) => data,
+        );
+      }
+
+      // All other flows use TYPE endpoint
+      final typeKey = switch (serviceType) {
+        PlatformProductType.betting => 'betting',
+        PlatformProductType.cableTv => 'cable_tv',
+        PlatformProductType.ePinVoucher => 'epin',
+        PlatformProductType.bulkEPin => 'epin',
+        PlatformProductType.electricity => 'electricity',
+        PlatformProductType.education => 'education',
+        PlatformProductType.internetServices => 'internet',
+        _ => null,
+      };
+      if (typeKey == null) {
+        throw ValidationFailure(['Unknown product type']);
+      }
+      final result =
+          await ref.read(apiServiceProvider).getProductByType(bearer, typeKey);
 
       return result.fold(
         (failure) {
-          // Always sanitize before throwing so UI never shows raw HTML or overly long text
           final safeMsg = failure.properties.isNotEmpty
               ? _sanitizeErrorMessage(failure.properties.first)
-              : 'Failed to fetch airtime products';
-          throw Exception(safeMsg);
+              : 'Failed to fetch products for $typeKey';
+          throw ServerFailure([safeMsg]);
         },
         (data) => data,
       );
+    } catch (e) {
+      throw UnknownFailure([_sanitizeErrorMessage(e.toString())]);
     }
-
-    // Mobile Data uses SERVICE endpoint
-    if (serviceType == PlatformProductType.mobileData) {
-      final result = await ref
-          .read(apiServiceProvider)
-          .getProductByService(bearer, 'DATA_PUR_01');
-
-      return result.fold(
-        (failure) {
-          final safeMsg = failure.properties.isNotEmpty
-              ? _sanitizeErrorMessage(failure.properties.first)
-              : 'Failed to fetch mobile data products';
-          throw Exception(safeMsg);
-        },
-        (data) => data,
-      );
-    }
-
-    // All other flows use TYPE endpoint
-    final typeKey = switch (serviceType) {
-      PlatformProductType.betting => 'betting',
-      PlatformProductType.cableTv => 'cable_tv',
-      PlatformProductType.ePinVoucher => 'epin',
-      PlatformProductType.bulkEPin => 'epin',
-      PlatformProductType.electricity => 'electricity',
-      PlatformProductType.education => 'education',
-      PlatformProductType.internetServices => 'internet',
-      _ => throw Exception('Unknown type'),
-    };
-
-    final result =
-        await ref.read(apiServiceProvider).getProductByType(bearer, typeKey);
-
-    return result.fold(
-      (failure) {
-        final safeMsg = failure.properties.isNotEmpty
-            ? _sanitizeErrorMessage(failure.properties.first)
-            : 'Failed to fetch products for $typeKey';
-        throw Exception(safeMsg);
-      },
-      (data) => data,
-    );
   },
 );
 
@@ -117,18 +125,23 @@ final subProductsProvider =
     final token = await ref.read(authTokenProvider.future);
     final bearer = 'Bearer $token';
 
-    final result =
-        await ref.read(apiServiceProvider).getSubProduct(bearer, productId);
+    final api = ref.read(apiServiceProvider);
 
-    return result.fold(
-      (failure) {
-        final safeMsg = failure.properties.isNotEmpty
-            ? _sanitizeErrorMessage(failure.properties.first)
-            : 'Failed to fetch sub-products';
-        throw Exception(safeMsg);
-      },
-      (data) => data,
-    );
+    try {
+      final result = await api.getSubProduct(bearer, productId);
+
+      return result.fold(
+        (failure) {
+          final safeMsg = failure.properties.isNotEmpty
+              ? _sanitizeErrorMessage(failure.properties.first)
+              : 'Failed to fetch sub-products';
+          throw ServerFailure([safeMsg]);
+        },
+        (data) => data,
+      );
+    } catch (e) {
+      throw UnknownFailure([_sanitizeErrorMessage(e.toString())]);
+    }
   },
 );
 
@@ -139,21 +152,86 @@ final subProductsByCategoryProvider = FutureProvider.family<
     final token = await ref.read(authTokenProvider.future);
     final bearer = 'Bearer $token';
 
-    final result = await ref
-        .read(apiServiceProvider)
-        .getSubProductByCategory(bearer, tuple.$1, tuple.$2);
+    final api = ref.read(apiServiceProvider);
+
+    try {
+      final result =
+          await api.getSubProductByCategory(bearer, tuple.$1, tuple.$2);
+
+      return result.fold(
+        (failure) {
+          final safeMsg = failure.properties.isNotEmpty
+              ? _sanitizeErrorMessage(failure.properties.first)
+              : 'Failed to fetch sub-products by category';
+          throw ServerFailure([safeMsg]);
+        },
+        (data) => data,
+      );
+    } catch (e) {
+      throw UnknownFailure([_sanitizeErrorMessage(e.toString())]);
+    }
+  },
+);
+
+/// Fetch all saved beneficiaries → GET /all-beneficiaries
+final beneficiariesProvider =
+    FutureProvider.autoDispose<List<Beneficiary>>((ref) async {
+  final token = await ref.read(authTokenProvider.future);
+  final bearer = 'Bearer $token';
+
+  final api = ref.read(apiServiceProvider);
+
+  try {
+    final result = await api.getAllBeneficiaries(bearer);
 
     return result.fold(
       (failure) {
         final safeMsg = failure.properties.isNotEmpty
             ? _sanitizeErrorMessage(failure.properties.first)
-            : 'Failed to fetch sub-products by category';
-        throw Exception(safeMsg);
+            : 'Failed to load beneficiaries';
+        throw ServerFailure([safeMsg]);
       },
-      (data) => data,
+      (response) {
+        final rawList = response.data as List? ?? [];
+        return rawList
+            .map((json) => Beneficiary.fromJson(json as Map<String, dynamic>))
+            .toList();
+      },
     );
-  },
-);
+  } catch (e) {
+    throw UnknownFailure([_sanitizeErrorMessage(e.toString())]);
+  }
+});
+
+// Fetch minimal beneficiaries → GET /beneficiary
+final minimalBeneficiariesProvider =
+    FutureProvider.autoDispose<List<Beneficiary>>((ref) async {
+  final token = await ref.read(authTokenProvider.future);
+  final bearer = 'Bearer $token';
+
+  final api = ref.read(apiServiceProvider);
+
+  try {
+    final result = await api.getMinimalBeneficiaries(bearer);
+
+    return result.fold(
+      (failure) {
+        final safeMsg = failure.properties.isNotEmpty
+            ? _sanitizeErrorMessage(failure.properties.first)
+            : 'Failed to load beneficiaries';
+        throw ServerFailure([safeMsg]);
+      },
+      (response) {
+        final rawList = response.data as List? ?? [];
+        return rawList
+            .map((json) => Beneficiary.fromJson(json as Map<String, dynamic>))
+            .toList();
+      },
+    );
+  } catch (e) {
+    throw UnknownFailure([_sanitizeErrorMessage(e.toString())]);
+  }
+});
 
 /// Fetch transaction history → GET /userTransactions/{typeKey}
 final transactionsProvider =
@@ -162,6 +240,7 @@ final transactionsProvider =
     final token = await ref.read(authTokenProvider.future);
     final bearer = 'Bearer $token';
 
+    final api = ref.read(apiServiceProvider);
     // map enum → endpoint segment
     final historyKey = switch (serviceType) {
       PlatformProductType.airtime => 'airtime',
@@ -173,21 +252,27 @@ final transactionsProvider =
       PlatformProductType.internetServices => 'internet',
       PlatformProductType.ePinVoucher => 'epin',
       PlatformProductType.bulkEPin => 'epin',
-      _ => throw Exception('Unknown type'),
+      _ => null,
     };
 
-    final result = await ref
-        .read(apiServiceProvider)
-        .getTransactionsByType(bearer, historyKey);
+    if (historyKey == null) {
+      throw ValidationFailure(['Unknown transaction type']);
+    }
 
-    return result.fold(
-      (failure) {
-        final safeMsg = failure.properties.isNotEmpty
-            ? _sanitizeErrorMessage(failure.properties.first)
-            : 'Failed to fetch $historyKey transactions';
-        throw Exception(safeMsg);
-      },
-      (data) => data,
-    );
+    try {
+      final result = await api.getTransactionsByType(bearer, historyKey);
+
+      return result.fold(
+        (failure) {
+          final safeMsg = failure.properties.isNotEmpty
+              ? _sanitizeErrorMessage(failure.properties.first)
+              : 'Failed to fetch $historyKey transactions';
+          throw ServerFailure([safeMsg]);
+        },
+        (data) => data,
+      );
+    } catch (e) {
+      throw UnknownFailure([_sanitizeErrorMessage(e.toString())]);
+    }
   },
 );

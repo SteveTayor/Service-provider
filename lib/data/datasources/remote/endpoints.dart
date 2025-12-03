@@ -123,4 +123,10 @@ class Endpoints {
   // ================
   static const String allPromos = "/promos";
   static const String redeemPromo = "/promos/redeem";
+
+  //============================
+  //Beneficiaries
+  // ================
+  static const String getAllBeneficiaries = "/all-beneficiaries";
+  static const String getMinimalBeneficiaries = "/beneficiary";
 }
