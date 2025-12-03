@@ -47,13 +47,13 @@ class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
           InkWell(
             onTap: () => setState(() => expanded = !expanded),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
               child: Row(
                 children: [
                   Text(
                     // state.selectedBeneficiary == null
                     //     ?
-                    'Beneficiary',
+                    'Beneficiaries',
                     // : "${state.selectedBeneficiary!.network} - ${state.selectedBeneficiary!.phoneNumber}",
                     style: context.textTheme.bodyMedium!
                         .copyWith(fontWeight: FontWeight.w600),
@@ -81,17 +81,22 @@ class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
               data: (list) {
                 // If list empty → show a simple message
                 if (list.isEmpty) {
-                  return Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
-                    child: Center(
-                      child: Text(
-                        'No beneficiaries added yet',
-                        style: context.textTheme.bodySmall!.copyWith(
-                          color: AppColors.grey5B,
+                  return Column(
+                    children: [
+                      Divider(color: AppColors.divider.withOpacity(.8)),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 16.h, horizontal: 12.w),
+                        child: Center(
+                          child: Text(
+                            'No beneficiaries added yet',
+                            style: context.textTheme.bodySmall!.copyWith(
+                              color: AppColors.grey5B,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   );
                 }
 

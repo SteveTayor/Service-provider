@@ -147,9 +147,9 @@ class _PlatformPhoneNumberFormWidgetState
 
         // BENEFICIARY DROPDOWN (only for airtime & mobileData)
         if (showBeneficiaries) ...[
-          12.verticalSpace,
+          16.verticalSpace,
           BeneficiaryDropdown(serviceType: widget.serviceType),
-          12.verticalSpace,
+          // 8.verticalSpace,
         ],
 
         // Secondary input for betting or cable TV (smart card number)
