@@ -18,6 +18,7 @@ import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/base/base_response.dart';
+import 'package:bundlegram/data/models/beneficiaries/get_all_beneficiaries.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/transaction/initiate_transactcion_requests.dart';
@@ -154,74 +155,6 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
   }
 
-  // Future<void> fetchSubProducts(BuildContext context, int productId) async {
-  //   if (!_serviceType.hasSubProducts) return;
-  //   state = state.copyWith(isLoading: true, error: null);
-  //   final result = await _ref.read(subProductsProvider(productId).future);
-  //   final subs = result.data ?? [];
-
-  //   // Extract unique non-null data types
-  //   final options =
-  //       subs.map((e) => e.dataType).whereType<String>().toSet().toList();
-
-  //   // Auto-select first subproduct
-  //   SubProduct? defaultSubProduct;
-  //   if (subs.isNotEmpty) {
-  //     defaultSubProduct = subs.first;
-  //   }
-
-  //   state = state.copyWith(
-  //     isLoading: false,
-  //     subProducts: subs,
-  //     dropdownOptions: options,
-  //     selectedDataType: options.isNotEmpty ? options.first : null,
-  //     selectedSubProduct: defaultSubProduct,
-  //     amountController: _serviceType == PlatformProductType.electricity
-  //         ? state.amountController
-  //         : TextEditingController(text: defaultSubProduct?.subPrice ?? ''),
-  //     error: result.status != 'success' ? result.message : null,
-  //   );
-
-  //   if (result.status != 'success') {
-  //     context.showErrorSnackBar(result.message ?? 'Failed to load subproducts');
-  //   }
-  // }
-  // Future<void> fetchSubProducts(BuildContext context, int productId) async {
-  //   if (!_serviceType.hasSubProducts) return;
-  //   state = state.copyWith(isLoading: true, error: null);
-  //   final result = await _ref.read(subProductsProvider(productId).future);
-  //   final subs = result.data ?? [];
-
-  //   // Extract unique non-null data types
-  //   final options =
-  //       subs.map((e) => e.dataType).whereType<String>().toSet().toList();
-  //   // For airtime, betting always select the subproduct (even if multiple exist)
-  //   if (_serviceType == PlatformProductType.airtime ||
-  //       _serviceType == PlatformProductType.betting) {
-  //     state = state.copyWith(
-  //       selectedSubProduct: subs.first,
-  //       amountController: state.amountController, // Preserve existing amount
-  //     );
-  //   } else if (subs.length == 1) {
-  //     state = state.copyWith(
-  //       selectedSubProduct: subs.first,
-  //       amountController:
-  //           TextEditingController(text: subs.first.subPrice ?? ''),
-  //     );
-  //   }
-
-  //   state = state.copyWith(
-  //     isLoading: false,
-  //     subProducts: subs,
-  //     dropdownOptions: options,
-  //     selectedDataType: options.isNotEmpty ? options.first : null,
-  //     error: result.status != 'success' ? result.message : null,
-  //   );
-  //   if (result.status != 'success') {
-  //     context.showErrorSnackBar(result.message ?? 'Failed to load subproducts');
-  //   }
-  // }
-
   Future<void> fetchSubProductsByCategory(
       BuildContext context, int productId, String category) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -243,6 +176,16 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       context.showErrorSnackBar(
           result.message ?? 'Failed to load subproducts by category');
     }
+  }
+
+  /// Set or clear the selected beneficiary in state.
+  /// Pass `null` to explicitly clear.
+  void setSelectedBeneficiary(Beneficiary? b) {
+    // If clearing, empty the phone field so user can manually type
+    if (b == null) {
+      state.firstInputController.clear();
+    }
+    state = state.copyWith(selectedBeneficiary: b);
   }
 
   void selectProduct(Product product, String providerIcon) {
@@ -295,6 +238,129 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     );
   }
 
+  Future<void> applyBeneficiary(BuildContext ctx, Beneficiary b) async {
+    // only for airtime & mobileData
+    if (!(_serviceType == PlatformProductType.airtime ||
+        _serviceType == PlatformProductType.mobileData)) {
+      debugPrint('applyBeneficiary ignored for serviceType=$_serviceType');
+      return;
+    }
+
+    debugPrint('applyBeneficiary: ${b.phoneNumber} (${b.network})');
+
+    // 1) populate phone controller
+    state.firstInputController.text = b.phoneNumber ?? '';
+
+    // 2) detect/decide network (prefer backend value)
+    final detectedNetwork = (b.network != null && b.network!.isNotEmpty)
+        ? b.network!
+        : _detectNetworkFromPhone(b.phoneNumber!);
+
+    debugPrint('Detected network: $detectedNetwork');
+
+    // 3) find matching product in loaded products
+    Product? matchingProduct;
+    for (final p in state.products) {
+      final prodName = p.productName ?? '';
+      if (_matches(prodName, detectedNetwork)) {
+        matchingProduct = p;
+        break;
+      }
+    }
+
+    // fallback: brand exact match
+    if (matchingProduct == null) {
+      for (final p in state.products) {
+        if (_extractBrand(p.productName ?? '') ==
+            _extractBrand(detectedNetwork)) {
+          matchingProduct = p;
+          break;
+        }
+      }
+    }
+
+    if (matchingProduct == null) {
+      debugPrint('No product matched for $detectedNetwork');
+      ctx.showErrorSnackBar(
+        'Provider not available for this beneficiary. Please select a biller manually.',
+      );
+      return;
+    }
+
+    // 4) select product + fetch subproducts (same flow as manual selection)
+    final providerIcon = normalizeAssetName(
+      matchingProduct.productName,
+      serviceType: _serviceType,
+    );
+    selectProduct(matchingProduct, providerIcon ?? '');
+    await fetchSubProducts(ctx, matchingProduct.id!);
+    debugPrint(
+        'applyBeneficiary: selected product ${matchingProduct.productName} (${matchingProduct.id})');
+  }
+
+  /// Try to detect a common network name from phone prefix (Nigerian prefixes)
+  String _detectNetworkFromPhone(String phone) {
+    final clean = phone.replaceAll(RegExp(r'\s+'), '');
+    if (clean.startsWith('+234')) {
+      // convert to local 0-starting number
+      final local = '0' + clean.substring(4);
+      return _detectNetworkFromPhone(local);
+    }
+    final prefix = clean.length >= 4 ? clean.substring(0, 4) : clean;
+
+    const mtnPrefixes = [
+      '0803',
+      '0806',
+      '0703',
+      '0706',
+      '0813',
+      '0816',
+      '0810',
+      '0814',
+      '0903',
+      '0906',
+      '0913',
+      '0916'
+    ];
+    const airtelPrefixes = [
+      '0802',
+      '0808',
+      '0708',
+      '0701',
+      '0812',
+      '0901',
+      '0902',
+      '0904',
+      '0907',
+      '0912'
+    ];
+    const gloPrefixes = [
+      '0705',
+      '0805',
+      '0807',
+      '0815',
+      '0811',
+      '0905',
+      '0915',
+    ];
+    const nineMobilePrefixes = [
+      '0809',
+      '0817',
+      '0818',
+      '0909',
+      '0908',
+    ];
+
+    if (mtnPrefixes.any((p) => clean.startsWith(p))) return 'MTN';
+    if (airtelPrefixes.any((p) => clean.startsWith(p))) return 'Airtel';
+    if (gloPrefixes.any((p) => clean.startsWith(p))) return 'Glo';
+    if (nineMobilePrefixes.any((p) => clean.startsWith(p))) return '9mobile';
+
+    // fallback: try to use last 3 digits or first 3
+    if (clean.length >= 3) return clean.substring(0, 3);
+    return clean;
+  }
+
   double calculateDiscountedPrice(double amount, SubProduct? subProduct) {
     if (subProduct == null) return amount;
 
@@ -311,7 +377,6 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
     return amount - (amount * (discountPercent / 100));
   }
-
 
   void showBillerPicker(BuildContext ctx) {
     ctx.showBottomSheet(
@@ -472,81 +537,6 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
     return null;
   }
-
-  // String? validateForm() {
-  //   // Check biller
-  //   if (state.selectedProduct == null) {
-  //     return 'Please select a biller';
-  //   }
-
-  //   // Check subproduct (if required)
-  //   if (_serviceType.hasSubProducts && state.selectedSubProduct == null) {
-  //     return 'Please select a package or plan';
-  //   }
-
-  //   // Check amount for airtime, betting, or electricity
-  //   if (_serviceType == PlatformProductType.airtime ||
-  //       _serviceType == PlatformProductType.betting ||
-  //       _serviceType == PlatformProductType.electricity) {
-  //     if (state.amountController.text.isEmpty) {
-  //       return 'Please enter or select an amount';
-  //     }
-  //     final amount = double.tryParse(state.amountController.text) ?? 0.0;
-  //     if (amount <= 0) {
-  //       return 'Please enter a valid amount greater than zero';
-  //     }
-  //   }
-
-  //   // Check input field
-  //   final inputController = _serviceType == PlatformProductType.airtime ||
-  //           _serviceType == PlatformProductType.mobileData
-  //       ? state.firstInputController
-  //       : state.secondaryInputController;
-  //   if (inputController.text.isEmpty) {
-  //     return _serviceType == PlatformProductType.airtime ||
-  //             _serviceType == PlatformProductType.mobileData
-  //         ? 'Please enter a phone number'
-  //         : _serviceType == PlatformProductType.betting
-  //             ? 'Please enter a user ID'
-  //             : _serviceType == PlatformProductType.cableTv
-  //                 ? 'Please enter a smart card number'
-  //                 : _serviceType == PlatformProductType.electricity
-  //                     ? 'Please enter a meter number'
-  //                     : 'Please enter an account number';
-  //   }
-
-  //   // Check validation for services requiring it
-  //   if (requiresValidation && !state.isValidated) {
-  //     return 'Please validate your ${_serviceType == PlatformProductType.betting ? 'user ID' : _serviceType == PlatformProductType.cableTv ? 'smart card number' : _serviceType == PlatformProductType.electricity ? 'meter number' : 'account number'}';
-  //   }
-
-  //   return null;
-  // }
-  // bool validateForm() {
-  //   final inputController = _serviceType == PlatformProductType.airtime ||
-  //           _serviceType == PlatformProductType.mobileData
-  //       ? state.firstInputController
-  //       : state.secondaryInputController;
-
-  //   final baseValidation = state.selectedProduct != null &&
-  //       (_serviceType.hasSubProducts
-  //           ? state.selectedSubProduct != null
-  //           : true) &&
-  //       (_serviceType == PlatformProductType.airtime ||
-  //               _serviceType == PlatformProductType.betting ||
-  //               _serviceType == PlatformProductType.electricity
-  //           ? state.amountController.text.isNotEmpty
-  //           : true) &&
-  //       inputController.text.isNotEmpty &&
-  //       (!requiresValidation || (requiresValidation && state.isValidated));
-
-  //   if (_serviceType == PlatformProductType.electricity) {
-  //     final amount = double.tryParse(state.amountController.text) ?? 0;
-  //     return baseValidation && state.selectedSubProduct != null && amount > 0;
-  //   }
-
-  //   return baseValidation;
-  // }
 
   bool _matches(String a, String b) {
     final cleanA = a.toLowerCase().replaceAll(RegExp(r'\s+'), '');
@@ -807,80 +797,6 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       }
     });
   }
-
-  // void validateBill(
-  //   BuildContext context,
-  //   String userIdOrNumber,
-  //   int? prodEntityId,
-  //   String? autoSubProdId,
-  // ) {
-  //   // Cancel any previous debounce
-  //   _debounce?.cancel();
-
-  //   // Prevent validation if inputs are not yet complete
-  //   final isPrimaryInputReady = userIdOrNumber.trim().length == 11;
-  //   final isSecondaryInputReady =
-  //       state.secondaryInputController.text.trim().length == 10;
-
-  //   final isBillTypeWithSecondary = requiresValidation &&
-  //       (state.selectedProduct?.productName?.toLowerCase().contains("bet") ??
-  //           false);
-
-  //   final shouldValidate =
-  //       isBillTypeWithSecondary ? isSecondaryInputReady : isPrimaryInputReady;
-
-  //   if (!shouldValidate || state.selectedProduct == null) return;
-
-  //   // Show loading state
-  //   state = state.copyWith(
-  //     isValidating: true,
-  //     billValidated: false,
-  //     error: null,
-  //   );
-
-  //   // Debounce 700ms
-  //   _debounce = Timer(const Duration(milliseconds: 700), () async {
-  //     try {
-  //       final token = await _ref.read(authTokenProvider.future);
-  //       final request = ValidateBillRequest(
-  //         number: userIdOrNumber,
-  //         productEntityId: prodEntityId,
-  //         serviceType: autoSubProdId,
-  //       );
-
-  //       final result = await _apiService.validateBill(token, request);
-  //       result.fold(
-  //         (failure) {
-  //           state = state.copyWith(
-  //             isValidating: false,
-  //             billValidated: false,
-  //             error: failure.properties.join('\n'),
-  //           );
-  //           context.showErrorSnackBar(failure.properties.join('\n'));
-  //         },
-  //         (response) {
-  //           final validated = response.status == 'success';
-  //           state = state.copyWith(
-  //             isValidating: false,
-  //             billValidated: validated,
-  //             isValidated: validated,
-  //             validatedName: response.data,
-  //           );
-  //           if (validated) {
-  //             context.showCustomSnackBar('Validated: ${response.data}');
-  //           }
-  //         },
-  //       );
-  //     } catch (e) {
-  //       state = state.copyWith(
-  //         isValidating: false,
-  //         billValidated: false,
-  //         error: e.toString(),
-  //       );
-  //       context.showErrorSnackBar(e.toString());
-  //     }
-  //   });
-  // }
 
   double getTransactionAmount() {
     if (_serviceType == PlatformProductType.airtime ||

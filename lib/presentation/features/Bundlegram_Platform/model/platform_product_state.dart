@@ -1,3 +1,4 @@
+import 'package:bundlegram/data/models/beneficiaries/get_all_beneficiaries.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class PlatformProductState {
   final bool isValidating;
   final bool billValidated;
   final double? discountedAmount;
+  final Beneficiary? selectedBeneficiary;
 
   PlatformProductState({
     this.selectedProduct,
@@ -43,6 +45,7 @@ class PlatformProductState {
     this.isValidating = false,
     this.billValidated = false,
     this.discountedAmount,
+    this.selectedBeneficiary,
   });
 
   factory PlatformProductState.initial() => PlatformProductState(
@@ -53,6 +56,7 @@ class PlatformProductState {
         isValidating: false,
         billValidated: false,
         discountedAmount: null,
+        selectedBeneficiary: null,
       );
 
   PlatformProductState copyWith({
@@ -75,6 +79,7 @@ class PlatformProductState {
     bool? isValidating,
     bool? billValidated,
     double? discountedAmount,
+    Beneficiary? selectedBeneficiary,
   }) {
     return PlatformProductState(
       selectedProduct: selectedProduct ?? this.selectedProduct,
@@ -97,6 +102,7 @@ class PlatformProductState {
       isValidating: isValidating ?? this.isValidating,
       billValidated: billValidated ?? this.billValidated,
       discountedAmount: discountedAmount ?? this.discountedAmount,
+      selectedBeneficiary: selectedBeneficiary ?? this.selectedBeneficiary,
     );
   }
 }

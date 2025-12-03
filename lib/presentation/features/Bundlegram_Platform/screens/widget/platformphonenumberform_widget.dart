@@ -1,6 +1,9 @@
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/validators.dart';
+import 'package:bundlegram/data/models/beneficiaries/get_all_beneficiaries.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/beneficiary_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,6 +40,8 @@ class _PlatformPhoneNumberFormWidgetState
     extends ConsumerState<PlatformPhoneNumberFormWidget>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  String? _selectedBeneficiaryOption; // text shown in dropdown
+  List<Beneficiary> _beneficiaries = [];
 
   @override
   void initState() {
@@ -99,6 +104,11 @@ class _PlatformPhoneNumberFormWidgetState
     final allowsFreeText = widget.serviceType == PlatformProductType.airtime ||
         widget.serviceType == PlatformProductType.mobileData;
 
+    // Only show beneficiaries for airtime & mobile data
+    final showBeneficiaries =
+        widget.serviceType == PlatformProductType.airtime ||
+            widget.serviceType == PlatformProductType.mobileData;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -134,6 +144,13 @@ class _PlatformPhoneNumberFormWidgetState
             ),
           ),
         ),
+
+        // BENEFICIARY DROPDOWN (only for airtime & mobileData)
+        if (showBeneficiaries) ...[
+          12.verticalSpace,
+          BeneficiaryDropdown(serviceType: widget.serviceType),
+          12.verticalSpace,
+        ],
 
         // Secondary input for betting or cable TV (smart card number)
         // Secondary input for betting, cable TV, electricity, and internet services
