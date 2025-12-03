@@ -15,6 +15,7 @@ import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/gen/fonts.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_product_provider.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformphonenumberform_widget.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformproductitem_widget.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/productuserprice_widget.dart';
@@ -53,6 +54,19 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
       ref
           .read(platformProductProvider(widget.serviceType).notifier)
           .fetchProducts(context);
+      //prefetch minimal beneficiaries and full beneficiaries
+      Future.microtask(() {
+        // minimal beneficiary list
+        ref.read(minimalBeneficiariesProvider.future).catchError((e, st) {
+          // optional logging,
+          debugPrint('minimalBeneficiaries prefetch error: $e');
+        });
+
+        // full beneficiary list
+        ref.read(beneficiariesProvider.future).catchError((e, st) {
+          debugPrint('beneficiaries (all) prefetch error: $e');
+        });
+      });
     });
   }
 

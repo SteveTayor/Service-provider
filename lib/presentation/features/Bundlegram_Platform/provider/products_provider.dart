@@ -192,10 +192,7 @@ final beneficiariesProvider =
         throw ServerFailure([safeMsg]);
       },
       (response) {
-        final rawList = response.data as List? ?? [];
-        return rawList
-            .map((json) => Beneficiary.fromJson(json as Map<String, dynamic>))
-            .toList();
+        return response.data ?? [];
       },
     );
   } catch (e) {
@@ -222,10 +219,7 @@ final minimalBeneficiariesProvider =
         throw ServerFailure([safeMsg]);
       },
       (response) {
-        final rawList = response.data as List? ?? [];
-        return rawList
-            .map((json) => Beneficiary.fromJson(json as Map<String, dynamic>))
-            .toList();
+        return response.data ?? [];
       },
     );
   } catch (e) {

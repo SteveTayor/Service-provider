@@ -102,6 +102,7 @@ class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
 
                 return Column(
                   children: [
+                    Divider(color: AppColors.divider.withOpacity(.8)),
                     ...list.map((b) {
                       final network = (b.network ?? '').trim();
                       final asset = notifier.normalizeAssetName(

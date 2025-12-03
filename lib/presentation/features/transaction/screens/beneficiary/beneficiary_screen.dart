@@ -424,9 +424,14 @@ class _AllBeneficiariesScreenState
                         textAlign: TextAlign.center,
                       ),
                       12.verticalSpace,
-                      ElevatedButton(
+                      TextButton(
                         onPressed: () => ref.refresh(beneficiariesProvider),
-                        child: const Text('Retry'),
+                        child: Text(
+                          'Retry',
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -462,10 +467,13 @@ class _AllBeneficiariesScreenState
 
                         // Separator
                         if (index.isOdd) {
-                          return Container(
-                            height: 1,
-                            color: AppColors.greyD0.withOpacity(0.3),
-                            margin: EdgeInsets.symmetric(vertical: 6.h),
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: Container(
+                              height: 1,
+                              color: AppColors.greyD0.withOpacity(0.1),
+                              margin: EdgeInsets.symmetric(vertical: 6.h),
+                            ),
                           );
                         }
 
