@@ -441,12 +441,10 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         if (state.firstInputController.text.length != 11) {
           return 'Phone number must be 11 digits';
         }
-        if (state.amountController.text.isEmpty ||
-            double.tryParse(state.amountController.text) == null ||
-            double.parse(state.amountController.text) <= 0) {
+        if (_parseAmountString(state.amountController.text) <= 0) {
           return 'Please enter a valid amount';
         }
-        if (double.parse(state.amountController.text) <= 49) {
+        if (_parseAmountString(state.amountController.text) <= 49) {
           return 'Minimum airtime amount is 50 naira';
         }
         break;
@@ -464,9 +462,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         if (state.secondaryInputController.text == null) {
           return 'User ID is required';
         }
-        if (state.amountController.text.isEmpty ||
-            double.tryParse(state.amountController.text) == null ||
-            double.parse(state.amountController.text) <= 0) {
+        if (_parseAmountString(state.amountController.text) <= 0) {
           return 'Please enter a valid amount';
         }
         if (!state.isValidated) {
@@ -493,9 +489,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         // if (state.selectedSubProduct == null) {
         //   return 'Please select Prepaid or Postpaid';
         // }
-        if (state.amountController.text.isEmpty ||
-            double.tryParse(state.amountController.text) == null ||
-            double.parse(state.amountController.text) <= 0) {
+        if (_parseAmountString(state.amountController.text) <= 0) {
           return 'Please enter a valid amount';
         }
         if (!state.isValidated) {
@@ -680,6 +674,54 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
   }
 
+  // Parse amounts tolerant of commas and spaces
+  double _parseAmountString(String? raw) {
+    if (raw == null || raw.trim().isEmpty) return 0.0;
+    final cleaned = raw.replaceAll(RegExp(r'[,\s]'), '');
+    return double.tryParse(cleaned) ?? 0.0;
+  }
+
+  // Robust active-check using dynamic access with fallbacks
+  bool _isEntityActive(dynamic entity) {
+    try {
+      if (entity == null) return true;
+      // Try boolean fields first
+      final dyn = entity as dynamic;
+      final cand = (() {
+        try {
+          return dyn.isActive;
+        } catch (_) {}
+        try {
+          return dyn.active;
+        } catch (_) {}
+        try {
+          return dyn.is_active;
+        } catch (_) {}
+        try {
+          return dyn.status;
+        } catch (_) {}
+        try {
+          return dyn.state;
+        } catch (_) {}
+        try {
+          return dyn.statuscode;
+        } catch (_) {}
+        return null;
+      })();
+
+      if (cand == null) return true;
+      if (cand is bool) return cand;
+      if (cand is int) return cand == 1;
+      if (cand is String) {
+        final s = cand.toLowerCase();
+        return s == 'true' || s == '1' || s == 'active' || s == 'enabled';
+      }
+      return true;
+    } catch (_) {
+      return true;
+    }
+  }
+
   void validateBill(
     BuildContext context,
     String number,
@@ -802,12 +844,12 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     if (_serviceType == PlatformProductType.airtime ||
         _serviceType == PlatformProductType.betting ||
         _serviceType == PlatformProductType.electricity) {
-      return double.tryParse(state.amountController.text) ?? 0.0;
+      return _parseAmountString(state.amountController.text);
     }
     if (_serviceType.hasSubProducts && state.selectedSubProduct != null) {
-      return double.tryParse(state.selectedSubProduct!.subPrice ?? '') ?? 0.0;
+      return _parseAmountString(state.selectedSubProduct!.subPrice ?? '');
     }
-    return double.tryParse(state.amountController.text) ?? 0.0;
+    return _parseAmountString(state.amountController.text);
   }
 
   void showTransactionSummary(BuildContext context) {
