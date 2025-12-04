@@ -25,6 +25,8 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen> {
   @override
   void initState() {
     super.initState();
+    final storage = ref.read(secureStorageHelperProvider)
+      ..setHasSeenPromoModal(false);
     _checkAndRequestPermissions();
   }
 
