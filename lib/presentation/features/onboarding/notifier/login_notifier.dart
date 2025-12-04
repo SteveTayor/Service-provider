@@ -9,6 +9,7 @@ import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dartz/dartz.dart';
@@ -197,7 +198,21 @@ class LoginProvider extends ChangeNotifier {
     _setLoading(true);
     final deviceInfo = await _storage.getDeviceInfo();
     final deviceToken = deviceInfo['macAddress'] ?? 'unknown';
-    final fcmToken = await _storage.getFcmToken();
+
+    String? fcmToken;
+    try {
+      final freshToken = await FirebaseMessaging.instance.getToken();
+      if (freshToken != null && freshToken.isNotEmpty) {
+        fcmToken = freshToken;
+        // persist fcm token
+        await _storage.saveFcmToken(freshToken);
+      } else {
+        fcmToken = await _storage.getFcmToken();
+      }
+    } catch (e, st) {
+      debugPrint('Failed to get FCM token at login: $e\n$st');
+      fcmToken = await _storage.getFcmToken();
+    }
 
     final request = LoginRequest(
       email: emailCtrl.text.trim(),
