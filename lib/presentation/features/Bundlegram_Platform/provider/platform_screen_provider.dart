@@ -109,14 +109,14 @@ class PlatformProvider extends ChangeNotifier {
     }
   }
 
-  // void goToProduct(BuildContext context, PlatformProductType type) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (_) => PlatformproductScreen(serviceType: type),
-  //     ),
-  //   );
-  // }
+  void goToProduct(BuildContext context, PlatformProductType type) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PlatformproductScreen(serviceType: type),
+      ),
+    );
+  }
 
   String _unavailableMessageFor(PlatformProductType type,
       [String? serverMessage]) {
@@ -147,80 +147,80 @@ class PlatformProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> goToProduct(BuildContext ctx, PlatformProductType type) async {
-    final context = ctx;
-    unawaited(context.showLoadingDialog(
-        message: 'Checking products availability...'));
+  // Future<void> goToProduct(BuildContext ctx, PlatformProductType type) async {
+  //   final context = ctx;
+  //   unawaited(context.showLoadingDialog(
+  //       message: 'Checking products availability...'));
 
-    try {
-      // Get a Riverpod container from the BuildContext (no `ref` required here)
-      final container = ProviderScope.containerOf(context, listen: false);
+  //   try {
+  //     // Get a Riverpod container from the BuildContext (no `ref` required here)
+  //     final container = ProviderScope.containerOf(context, listen: false);
 
-      // Get the notifier for the requested type
-      final notifier = container.read(platformProductProvider(type).notifier);
+  //     // Get the notifier for the requested type
+  //     final notifier = container.read(platformProductProvider(type).notifier);
 
-      // If nothing loaded yet, fetch products (this will auto-fetch first product's subproducts)
-      if (notifier.state.products.isEmpty) {
-        await notifier.fetchProducts(context);
-      }
+  //     // If nothing loaded yet, fetch products (this will auto-fetch first product's subproducts)
+  //     if (notifier.state.products.isEmpty) {
+  //       await notifier.fetchProducts(context);
+  //     }
 
-      // After fetch (or if pre-loaded), validate the result
-      final products = notifier.state.products;
-      final fetchError = notifier.state.error;
+  //     // After fetch (or if pre-loaded), validate the result
+  //     final products = notifier.state.products;
+  //     final fetchError = notifier.state.error;
 
-      // Use server message if available, otherwise friendly per-type fallback.
-      final errorMsg = _unavailableMessageFor(type, fetchError);
+  //     // Use server message if available, otherwise friendly per-type fallback.
+  //     final errorMsg = _unavailableMessageFor(type, fetchError);
 
-      // Dismiss loader early if there's an error or no products
-      if (fetchError != null || products.isEmpty) {
-        context
-          ..dismissDialog()
-          ..showErrorSnackBar(errorMsg);
-        return;
-      }
+  //     // Dismiss loader early if there's an error or no products
+  //     if (fetchError != null || products.isEmpty) {
+  //       context
+  //         ..dismissDialog()
+  //         ..showErrorSnackBar(errorMsg);
+  //       return;
+  //     }
 
-      // Best-effort: check whether any product has sub-products (use cached-friendly helper)
-      bool hasAnySubProduct = false;
+  //     // Best-effort: check whether any product has sub-products (use cached-friendly helper)
+  //     bool hasAnySubProduct = false;
 
-      // Limit checks to first N products to avoid many network calls
-      const int maxChecks = 3;
-      final toCheck = products.take(maxChecks);
+  //     // Limit checks to first N products to avoid many network calls
+  //     const int maxChecks = 3;
+  //     final toCheck = products.take(maxChecks);
 
-      for (final p in toCheck) {
-        final pid = p.id;
-        if (pid == null) continue;
-        try {
-          final has = await notifier.hasSubProducts(pid);
-          if (has) {
-            hasAnySubProduct = true;
-            break;
-          }
-        } catch (_) {
-          // ignore and continue checking other products
-        }
-      }
+  //     for (final p in toCheck) {
+  //       final pid = p.id;
+  //       if (pid == null) continue;
+  //       try {
+  //         final has = await notifier.hasSubProducts(pid);
+  //         if (has) {
+  //           hasAnySubProduct = true;
+  //           break;
+  //         }
+  //       } catch (_) {
+  //         // ignore and continue checking other products
+  //       }
+  //     }
 
-      context.dismissDialog();
+  //     context.dismissDialog();
 
-      if (!hasAnySubProduct) {
-        context.showErrorSnackBar(_unavailableMessageFor(type));
-        return;
-      }
+  //     if (!hasAnySubProduct) {
+  //       context.showErrorSnackBar(_unavailableMessageFor(type));
+  //       return;
+  //     }
 
-      // All good — navigate to product screen (existing behaviour)
-      unawaited(Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => PlatformproductScreen(serviceType: type),
-        ),
-      ));
-    } catch (e, st) {
-      context
-        ..dismissDialog()
-        ..showErrorSnackBar(_unavailableMessageFor(type));
-      debugPrint('goToProduct error: $e\n$st');
-    }
-  }
+  //     // All good — navigate to product screen (existing behaviour)
+  //     unawaited(Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => PlatformproductScreen(serviceType: type),
+  //       ),
+  //     ));
+  //   } catch (e, st) {
+  //     context
+  //       ..dismissDialog()
+  //       ..showErrorSnackBar(_unavailableMessageFor(type));
+  //     debugPrint('goToProduct error: $e\n$st');
+  //   }
+  // }
 
   void openBillBottomSheet(BuildContext context) {
     context.showBottomSheet(child: const PlatformbillsWidget());
