@@ -8,12 +8,14 @@ import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/internet-services/internet_service_screen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/transaction_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class BillWidgetItem {
@@ -368,14 +370,17 @@ class PlatFormData {
         return AppListTile(
           onPressed: () {
             context.pop();
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PlatformproductScreen(
-                  serviceType: PlatformProductType.mobileData,
-                ),
-              ),
-            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const PlatformproductScreen(
+            //       serviceType: PlatformProductType.mobileData,
+            //     ),
+            //   ),
+            // );
+            final container = ProviderScope.containerOf(context, listen: false);
+            final platform = container.read(platformProvider)
+              ..goToProduct(context, PlatformProductType.mobileData);
           },
           color: AppColors.black,
           assetPath: Assets.svgs.mobile,
@@ -386,19 +391,23 @@ class PlatFormData {
     Builder(
       builder: (context) {
         return AppListTile(
-            onPressed: () {
-              context.pop();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PlatformproductScreen(
-                    serviceType: PlatformProductType.airtime,
-                  ),
-                ),
-              );
-            },
-            assetPath: Assets.svgs.simcard21,
-            title: 'Buy airtime');
+          onPressed: () {
+            context.pop();
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const PlatformproductScreen(
+            //       serviceType: PlatformProductType.airtime,
+            //     ),
+            //   ),
+            // );
+            final container = ProviderScope.containerOf(context, listen: false);
+            final platform = container.read(platformProvider)
+              ..goToProduct(context, PlatformProductType.airtime);
+          },
+          assetPath: Assets.svgs.simcard21,
+          title: 'Buy airtime',
+        );
       },
     ),
     Builder(

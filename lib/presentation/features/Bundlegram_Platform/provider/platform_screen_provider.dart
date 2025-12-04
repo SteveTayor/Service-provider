@@ -118,6 +118,35 @@ class PlatformProvider extends ChangeNotifier {
   //   );
   // }
 
+  String _unavailableMessageFor(PlatformProductType type,
+      [String? serverMessage]) {
+    if (serverMessage != null && serverMessage.trim().isNotEmpty) {
+      return serverMessage.trim();
+    }
+
+    switch (type) {
+      case PlatformProductType.mobileData:
+        return 'Buy data not available at the moment.';
+      case PlatformProductType.airtime:
+        return 'Buy airtime not available at the moment.';
+      case PlatformProductType.cableTv:
+        return 'Cable TV payments not available at the moment.';
+      case PlatformProductType.electricity:
+        return 'Electricity payments not available at the moment.';
+      // case PlatformProductType.education:
+      //   return 'Education payments not available at the moment.';
+      // case PlatformProductType.internetServices:
+      //   return 'Internet services not available at the moment.';
+      // case PlatformProductType.betting:
+      //   return 'Betting purchases not available at the moment.';
+      // case PlatformProductType.ePinVoucher:
+      // case PlatformProductType.bulkEPin:
+      // return 'E-pin purchases not available at the moment.';
+      default:
+        return 'Service not available at the moment.';
+    }
+  }
+
   Future<void> goToProduct(BuildContext ctx, PlatformProductType type) async {
     final context = ctx;
     unawaited(context.showLoadingDialog(
@@ -139,11 +168,14 @@ class PlatformProvider extends ChangeNotifier {
       final products = notifier.state.products;
       final fetchError = notifier.state.error;
 
+      // Use server message if available, otherwise friendly per-type fallback.
+      final errorMsg = _unavailableMessageFor(type, fetchError);
+
       // Dismiss loader early if there's an error or no products
       if (fetchError != null || products.isEmpty) {
         context
           ..dismissDialog()
-          ..showErrorSnackBar('Buy data not available at the moment.');
+          ..showErrorSnackBar(errorMsg);
         return;
       }
 
@@ -171,7 +203,7 @@ class PlatformProvider extends ChangeNotifier {
       context.dismissDialog();
 
       if (!hasAnySubProduct) {
-        context.showErrorSnackBar('Buy data not available at the moment.');
+        context.showErrorSnackBar(_unavailableMessageFor(type));
         return;
       }
 
@@ -185,7 +217,7 @@ class PlatformProvider extends ChangeNotifier {
     } catch (e, st) {
       context
         ..dismissDialog()
-        ..showErrorSnackBar('Buy data not available at the moment.');
+        ..showErrorSnackBar(_unavailableMessageFor(type));
       debugPrint('goToProduct error: $e\n$st');
     }
   }
