@@ -95,8 +95,10 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       error: result.status != 'success' ? result.message : null,
     );
 
-    // Auto-select first product and fetch subproducts
-    if (result.data != null && result.data!.isNotEmpty) {
+    // Auto-select first product only when none is selected yet
+    if (result.data != null &&
+        result.data!.isNotEmpty &&
+        state.selectedProduct == null) {
       final firstProduct = result.data!.first;
       final providerIcon = normalizeAssetName(
         firstProduct.productName,
@@ -236,6 +238,87 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
           ? state.amountController // Retain the current user-entered amount
           : TextEditingController(text: subProduct.subPrice ?? ''),
     );
+  }
+
+  /// Call when the user types a phone number or when pre-filled.
+  ///  to auto-detect the network provider and select the matching product.
+  void detectAndSelectFromPhone(BuildContext ctx, String rawPhone) {
+    _debounce?.cancel();
+    // small debounce so we don't run detection on every keystroke
+    _debounce = Timer(const Duration(milliseconds: 600), () async {
+      try {
+        final phone = rawPhone.trim();
+        // normalize +234 -> 0 form for easier prefix checks
+        final normalized =
+            phone.startsWith('+234') ? '0${phone.substring(4)}' : phone;
+
+        // quick validity check: we expect local 11-digit numbers for NG
+        final isValidPhone = normalized.length == 11 &&
+            RegExp(r'^0\d{10}$').hasMatch(normalized);
+
+        // mark input validity in state so UI can enable/disable controls
+        state = state.copyWith(isPhoneInputValid: isValidPhone);
+
+        if (!isValidPhone) {
+          // If invalid, don't try to auto-select. Keep existing product if user had chosen it manually.
+          debugPrint('Phone not valid for auto-detect: $normalized');
+          return;
+        }
+
+        // before auto-selecting:
+        // if (state.selectedProduct != null) {
+        //   debugPrint(
+        //       'User has already selected a provider; skipping auto-select from phone.');
+        //   return;
+        // }
+
+        final detected = _detectNetworkFromPhone(normalized);
+        debugPrint('Auto-detected network: $detected');
+
+        // Look for active products first (filter out deactivated ones)
+        Product? matchingProduct;
+        for (final p in state.products) {
+          // if your Product model uses `status` as '1' for active:
+          if (!_isEntityActive(p)) continue; // reuse _isEntityActive helper
+          final prodName = p.productName ?? '';
+          if (_matches(prodName, detected)) {
+            matchingProduct = p;
+            break;
+          }
+        }
+
+        // fallback: brand match by extracting brand
+        if (matchingProduct == null) {
+          for (final p in state.products) {
+            if (!_isEntityActive(p)) continue;
+            if (_extractBrand(p.productName ?? '') == _extractBrand(detected)) {
+              matchingProduct = p;
+              break;
+            }
+          }
+        }
+
+        if (matchingProduct == null) {
+          // No provider auto-found — clear any auto selection, keep manual selection if present
+          debugPrint(
+              'No auto match for $detected, leaving UI for manual selection.');
+          // state = state.copyWith(error: 'Could not auto-detect provider for this number.');
+          return;
+        }
+
+        // Found a product — select + fetch subproducts (same flow as applyBeneficiary)
+        final providerIcon = normalizeAssetName(matchingProduct.productName,
+            serviceType: _serviceType);
+        selectProduct(matchingProduct, providerIcon ?? '');
+        await fetchSubProducts(ctx, matchingProduct.id!);
+        debugPrint(
+            'Auto-selected product ${matchingProduct.productName} for phone $normalized');
+      } catch (e, st) {
+        debugPrint('Error in detectAndSelectFromPhone: $e');
+        debugPrintStack(stackTrace: st);
+        // don't throw — just keep UI stable
+      }
+    });
   }
 
   Future<void> applyBeneficiary(BuildContext ctx, Beneficiary b) async {

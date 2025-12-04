@@ -342,7 +342,7 @@ class _AllBeneficiariesScreenState
     // Guard: if user somehow opened this screen for non-airtime/data, show message
     if (!_shouldShowForService()) {
       return BundlegramScaffold(
-        appBar: BundlegramAppbar(titleText: 'Beneficiaries'),
+        appBar: const BundlegramAppbar(titleText: 'Beneficiaries'),
         body: Center(
           child: Text(
             'Beneficiaries are only available for Airtime & Mobile Data',
@@ -361,7 +361,7 @@ class _AllBeneficiariesScreenState
         ref.read(platformProductProvider(widget.serviceType).notifier);
 
     return BundlegramScaffold(
-      appBar: BundlegramAppbar(
+      appBar: const BundlegramAppbar(
         titleText: 'Beneficiaries',
       ),
       body: NotificationListener<ScrollNotification>(
@@ -383,7 +383,7 @@ class _AllBeneficiariesScreenState
             SliverToBoxAdapter(
               child: _isRefreshing
                   ? Container(
-                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      padding: EdgeInsets.symmetric(vertical: 8.h),
                       alignment: Alignment.center,
                       child: const CircularProgressIndicator(),
                     )
@@ -392,17 +392,30 @@ class _AllBeneficiariesScreenState
 
             // Search field
             SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
-                child: AppTextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration().search(),
-                  onChange: (value) {
-                    setState(() {
-                      _query = value.trim();
-                    });
-                  },
-                ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 0.h),
+                    child: AppTextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration().search(),
+                      onChange: (value) {
+                        setState(() {
+                          _query = value.trim();
+                        });
+                      },
+                    ),
+                  ),
+
+                  /// Divider below search
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Divider(
+                      color: AppColors.divider.withOpacity(.8),
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -410,8 +423,8 @@ class _AllBeneficiariesScreenState
 
             // Main content
             beneficiariesAsync.when(
-              loading: () => SliverFillRemaining(
-                child: const Center(child: CircularProgressIndicator()),
+              loading: () => const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
               ),
               error: (err, st) => SliverFillRemaining(
                 child: Center(
@@ -452,8 +465,8 @@ class _AllBeneficiariesScreenState
                         .toList();
 
                 if (filtered.isEmpty) {
-                  return SliverFillRemaining(
-                    child: const Center(child: Text('No beneficiaries found')),
+                  return const SliverFillRemaining(
+                    child: Center(child: Text('No beneficiaries found')),
                   );
                 }
 
@@ -533,6 +546,7 @@ class _AllBeneficiariesScreenState
 
                         // normalize icon
                         final brand = b.network ?? '';
+                        debugPrint('Beneficiary brand: $brand');
                         final iconName = notifier.normalizeAssetName(
                           brand,
                           serviceType: widget.serviceType,
@@ -548,6 +562,7 @@ class _AllBeneficiariesScreenState
                               isSvg ? null : iconName, // PNG/JPG in imagePath
                           title: b.phoneNumber ?? '',
                           subtitle: brand,
+                          showSubtitle: true,
                           onPressed: () async {
                             providerNotifier.setSelectedBeneficiary(b);
                             await providerNotifier.applyBeneficiary(context, b);

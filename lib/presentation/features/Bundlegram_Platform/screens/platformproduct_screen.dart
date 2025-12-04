@@ -78,7 +78,11 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
     final walletBalanceAsync =
         ref.watch(globalProvider.select((s) => s.walletBalance));
     final walletBalance = walletBalanceAsync.value?.wallet ?? 0.0;
+    final isPhoneBased = serviceType == PlatformProductType.airtime ||
+        serviceType == PlatformProductType.mobileData;
 
+    final canContinue = !isPhoneBased ||
+        (state.isPhoneInputValid && state.selectedProduct != null);
     return WillPopScope(
       onWillPop: () async {
         context.pushReplacement(RouteConstants.dashboard);
@@ -248,90 +252,95 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                       BundlegramButton(
                         text: 'Continue',
                         isLoading: state.isValidating,
-                        onPressed: () {
-                          if (serviceType == PlatformProductType.ePinVoucher) {
-                            final isAgent = ref
-                                    .read(globalProvider)
-                                    .profile
-                                    .value
-                                    ?.data
-                                    ?.userType ==
-                                "agent";
-                            if (isAgent) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const BulkEpinScreen()),
-                              );
-                            } else {
-                              notifier.showBulkEPinPrompt(context);
-                            }
-                          } else if (notifier.requiresValidation) {
-                            final input =
-                                serviceType == PlatformProductType.betting ||
-                                        serviceType ==
-                                            PlatformProductType.cableTv ||
-                                        serviceType ==
-                                            PlatformProductType.electricity
-                                    ? state.secondaryInputController.text.trim()
-                                    : state.firstInputController.text.trim();
-
-                            // if (input.isEmpty) {
-                            //   return context.showErrorSnackBar(
-                            //     'Please enter a valid ${serviceType == PlatformProductType.betting ? 'User ID' : serviceType == PlatformProductType.cableTv ? 'Smart Card Number' : 'Meter Number'}',
-                            //   );
-                            // }
-
-                            // Additional validation for electricity
-                            // if (serviceType ==
-                            //     PlatformProductType.electricity) {
-                            //   if (state.selectedSubProduct == null) {
-                            //     return context.showErrorSnackBar(
-                            //         'Please select Prepaid or Postpaid');
-                            //   }
-                            //   final amount = state.amountController.text.trim();
-                            //   if (amount.isEmpty ||
-                            //       double.tryParse(amount) == null ||
-                            //       double.parse(amount) <= 0) {
-                            //     return context.showErrorSnackBar(
-                            //         'Please enter a valid amount');
-                            //   }
-                            // }
-                            notifier
-                              ..validateForm()
-                              ..validateBill(
-                                context,
-                                input,
-                                state.selectedProduct?.id ??
-                                    state.selectedSubProduct?.id,
-                                state.selectedSubProduct?.autoSubProdId ??
-                                    state.selectedProduct?.autoProdId,
-                                onSuccess: () async {
-                                  // Check wallet balance before showing transaction summary
-                                  final walletBalanceStr = ref
-                                      .read(globalProvider)
-                                      .walletBalance
-                                      .value
-                                      ?.wallet;
-                                  final walletBalance =
-                                      double.tryParse(walletBalanceStr ?? '') ??
-                                          0.0;
-                                  final amount =
-                                      notifier.getTransactionAmount();
-                                  if (amount > walletBalance) {
-                                    context.showErrorSnackBar(
-                                      'Insufficient balance. You have ${walletBalance.toCurrency()}',
+                        onPressed: canContinue
+                            ? () {
+                                if (serviceType ==
+                                    PlatformProductType.ePinVoucher) {
+                                  final isAgent = ref
+                                          .read(globalProvider)
+                                          .profile
+                                          .value
+                                          ?.data
+                                          ?.userType ==
+                                      "agent";
+                                  if (isAgent) {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const BulkEpinScreen()),
                                     );
-                                    return;
+                                  } else {
+                                    notifier.showBulkEPinPrompt(context);
                                   }
+                                } else if (notifier.requiresValidation) {
+                                  final input = serviceType ==
+                                              PlatformProductType.betting ||
+                                          serviceType ==
+                                              PlatformProductType.cableTv ||
+                                          serviceType ==
+                                              PlatformProductType.electricity
+                                      ? state.secondaryInputController.text
+                                          .trim()
+                                      : state.firstInputController.text.trim();
 
+                                  // if (input.isEmpty) {
+                                  //   return context.showErrorSnackBar(
+                                  //     'Please enter a valid ${serviceType == PlatformProductType.betting ? 'User ID' : serviceType == PlatformProductType.cableTv ? 'Smart Card Number' : 'Meter Number'}',
+                                  //   );
+                                  // }
+
+                                  // Additional validation for electricity
+                                  // if (serviceType ==
+                                  //     PlatformProductType.electricity) {
+                                  //   if (state.selectedSubProduct == null) {
+                                  //     return context.showErrorSnackBar(
+                                  //         'Please select Prepaid or Postpaid');
+                                  //   }
+                                  //   final amount = state.amountController.text.trim();
+                                  //   if (amount.isEmpty ||
+                                  //       double.tryParse(amount) == null ||
+                                  //       double.parse(amount) <= 0) {
+                                  //     return context.showErrorSnackBar(
+                                  //         'Please enter a valid amount');
+                                  //   }
+                                  // }
+                                  notifier
+                                    ..validateForm()
+                                    ..validateBill(
+                                      context,
+                                      input,
+                                      state.selectedProduct?.id ??
+                                          state.selectedSubProduct?.id,
+                                      state.selectedSubProduct?.autoSubProdId ??
+                                          state.selectedProduct?.autoProdId,
+                                      onSuccess: () async {
+                                        // Check wallet balance before showing transaction summary
+                                        final walletBalanceStr = ref
+                                            .read(globalProvider)
+                                            .walletBalance
+                                            .value
+                                            ?.wallet;
+                                        final walletBalance = double.tryParse(
+                                                walletBalanceStr ?? '') ??
+                                            0.0;
+                                        final amount =
+                                            notifier.getTransactionAmount();
+                                        if (amount > walletBalance) {
+                                          context.showErrorSnackBar(
+                                            'Insufficient balance. You have ${walletBalance.toCurrency()}',
+                                          );
+                                          return;
+                                        }
+
+                                        notifier
+                                            .showTransactionSummary(context);
+                                      },
+                                    );
+                                } else {
                                   notifier.showTransactionSummary(context);
-                                },
-                              );
-                          } else {
-                            notifier.showTransactionSummary(context);
-                          }
-                        },
+                                }
+                              }
+                            : null,
                       ),
                       if (serviceType == PlatformProductType.ePinVoucher)
                         Padding(

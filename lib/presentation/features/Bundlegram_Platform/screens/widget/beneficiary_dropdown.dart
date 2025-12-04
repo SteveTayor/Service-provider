@@ -110,6 +110,8 @@ class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
                         serviceType: widget.serviceType,
                       );
 
+                      final isSvg = asset?.toLowerCase().endsWith('.svg');
+
                       Widget leading;
                       if (asset != null && asset.endsWith('.svg')) {
                         leading = CircleAvatar(
@@ -148,7 +150,13 @@ class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
                               vertical: 10.h, horizontal: 12.w),
                           child: Row(
                             children: [
-                              leading,
+                              AppSvgIcon(
+                                useCircleAvatar: true,
+                                path: asset!,
+                                width: 40,
+                                height: 40,
+                                fit: BoxFit.scaleDown,
+                              ),
                               12.horizontalSpace,
                               Expanded(
                                 child: Text(
@@ -162,7 +170,7 @@ class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
                       );
                     }),
 
-                    Divider(color: AppColors.grey5B.withOpacity(.5)),
+                    Divider(color: AppColors.divider.withOpacity(.8)),
 
                     // VIEW ALL
                     InkWell(
@@ -183,7 +191,7 @@ class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
                           children: [
                             Text(
                               'View all',
-                              style: context.textTheme.bodySmall!.copyWith(
+                              style: context.textTheme.bodyMedium!.copyWith(
                                 color: AppColors.primaryColor,
                               ),
                             ),

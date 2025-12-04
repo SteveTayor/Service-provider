@@ -24,6 +24,7 @@ class PlatformProductState {
   final bool billValidated;
   final double? discountedAmount;
   final Beneficiary? selectedBeneficiary;
+  final bool isPhoneInputValid;
 
   PlatformProductState({
     this.selectedProduct,
@@ -46,6 +47,7 @@ class PlatformProductState {
     this.billValidated = false,
     this.discountedAmount,
     this.selectedBeneficiary,
+    this.isPhoneInputValid = false,
   });
 
   factory PlatformProductState.initial() => PlatformProductState(
@@ -57,6 +59,7 @@ class PlatformProductState {
         billValidated: false,
         discountedAmount: null,
         selectedBeneficiary: null,
+        isPhoneInputValid: false,
       );
 
   PlatformProductState copyWith({
@@ -80,6 +83,7 @@ class PlatformProductState {
     bool? billValidated,
     double? discountedAmount,
     Beneficiary? selectedBeneficiary,
+    bool? isPhoneInputValid,
   }) {
     return PlatformProductState(
       selectedProduct: selectedProduct ?? this.selectedProduct,
@@ -103,6 +107,7 @@ class PlatformProductState {
       billValidated: billValidated ?? this.billValidated,
       discountedAmount: discountedAmount ?? this.discountedAmount,
       selectedBeneficiary: selectedBeneficiary ?? this.selectedBeneficiary,
+      isPhoneInputValid: isPhoneInputValid ?? this.isPhoneInputValid,
     );
   }
 }

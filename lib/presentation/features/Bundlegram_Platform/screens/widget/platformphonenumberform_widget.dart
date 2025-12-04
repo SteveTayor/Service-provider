@@ -40,30 +40,48 @@ class _PlatformPhoneNumberFormWidgetState
     extends ConsumerState<PlatformPhoneNumberFormWidget>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  String? _selectedBeneficiaryOption; // text shown in dropdown
-  List<Beneficiary> _beneficiaries = [];
+  late final TextEditingController _phoneController;
+  void Function()? _phoneListener;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    final selected = ref
-        .read(platformProductProvider(widget.serviceType))
-        .selectedSubProduct;
+    final providerState = ref.read(platformProductProvider(widget.serviceType));
+    final selected = providerState.selectedSubProduct;
     if (selected?.subName?.toLowerCase().contains('postpaid') ?? false) {
       _tabController.index = 1;
     }
+
+    _phoneController = providerState.firstInputController;
+    final notifier =
+        ref.read(platformProductProvider(widget.serviceType).notifier);
+    _phoneListener = () {
+      final text = _phoneController.text.trim();
+      notifier.detectAndSelectFromPhone(context, text);
+    };
+    _phoneController.addListener(_phoneListener!);
     final profile = ref.read(globalProvider).profile.value?.data;
     final isPhoneBased = widget.serviceType == PlatformProductType.airtime ||
         widget.serviceType == PlatformProductType.mobileData;
 
+    // if (isPhoneBased && profile != null) {
+    //   final phone = formatPhone(profile.phone);
+    //   ref
+    //       .read(platformProductProvider(widget.serviceType))
+    //       .firstInputController
+    //       .text = phone;
+    // }
     if (isPhoneBased && profile != null) {
       final phone = formatPhone(profile.phone);
-      ref
+      final controller = ref
           .read(platformProductProvider(widget.serviceType))
-          .firstInputController
-          .text = phone;
+          .firstInputController;
+      if (controller.text.trim().isEmpty) {
+        controller.text = phone;
+      }
     }
+
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         final type = _tabController.index == 0 ? 'prepaid' : 'postpaid';
@@ -89,6 +107,9 @@ class _PlatformPhoneNumberFormWidgetState
 
   @override
   void dispose() {
+    if (_phoneListener != null) {
+      _phoneController.removeListener(_phoneListener!);
+    }
     if (widget.serviceType == PlatformProductType.electricity) {
       _tabController.dispose();
     }
