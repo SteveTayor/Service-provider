@@ -7,6 +7,8 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/auth/auth_model.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,10 +28,42 @@ class LockScreenService {
 
   Future<void> performLogin(
       String email, String password, BuildContext context) async {
+    // read saved device info
+    final deviceInfo = await _storage.getDeviceInfo();
+    final deviceToken = deviceInfo['macAddress'] ?? 'unknown';
+    String? fcmToken;
+
+//  a fresh FCM token if Firebase is available; otherwise fallback to storage.
+    try {
+      if (Firebase.apps.isNotEmpty) {
+        final freshToken = await FirebaseMessaging.instance.getToken();
+        if (freshToken != null && freshToken.isNotEmpty) {
+          fcmToken = freshToken;
+          // persist for future reads
+          await _storage.saveFcmToken(freshToken);
+        } else {
+          fcmToken = await _storage.getFcmToken();
+        }
+      } else {
+        // F use cached token if available
+        fcmToken = await _storage.getFcmToken();
+      }
+    } catch (e, st) {
+      debugPrint('Failed to fetch FCM token in lock login: $e\n$st');
+      fcmToken = await _storage.getFcmToken();
+    }
+
+// request with device and fcm tokens
     final request = LoginRequest(
       email: email.trim(),
       password: password.trim(),
+      deviceToken: deviceToken,
+      fcmToken: fcmToken,
     );
+    //final request = LoginRequest(
+    //   email: email.trim(),
+    //   password: password.trim(),
+    // );
 
     unawaited(context.showLoadingDialog(message: 'Logging in...'));
 
