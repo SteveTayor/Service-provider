@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/failures.dart';
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/state/global_state.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
@@ -11,6 +12,7 @@ import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/presentation/app.dart';
+import 'package:bundlegram/presentation/features/setting/screens/widget/pin_sheet.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -177,8 +179,15 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       },
       (data) {
         state = state.copyWith(profile: AsyncData(data));
+        // if (data.data?.pin == null && context.mounted) {
+        //   context.go(RouteConstants.pinScreen);
+        // }
         if (data.data?.pin == null && context.mounted) {
-          context.go(RouteConstants.pinScreen);
+          context.showBottomSheet(
+            child: const PinSheet(),
+            isDismissible: false,
+            showDragHandle: false,
+          );
         }
       },
     );

@@ -97,6 +97,11 @@ class PinController extends ChangeNotifier {
         mode = PinScreenMode.confirm;
         reset();
         unawaited(context.push(RouteConstants.pinScreen));
+        if (onCompleted != null) {
+          onCompleted!.call();
+        } else {
+          unawaited(context.push(RouteConstants.pinScreen));
+        }
         break;
 
       case PinScreenMode.confirm:
