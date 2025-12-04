@@ -100,7 +100,10 @@ class VisualReceiptCard extends ConsumerWidget {
                       data.phoneNumber != null) ...[
                     14.verticalSpace,
                     _buildDetailRow(
-                        context, 'Beneficiary', data.accountNumber!),
+                      context,
+                      'Beneficiary',
+                      data.accountNumber ?? data.phoneNumber ?? 'N/A',
+                    ),
                   ],
                   14.verticalSpace,
                   _buildDetailRow(
@@ -109,7 +112,8 @@ class VisualReceiptCard extends ConsumerWidget {
                   _buildDetailRow(context, 'Date', data.date!),
                   14.verticalSpace,
                   _buildDetailRow(context, 'Time', data.time!),
-                  if (data.dataBundle != null) ...[
+                  if (data.dataBundle != null &&
+                      data.dataBundle!.isNotEmpty) ...[
                     14.verticalSpace,
                     _buildDetailRow(context, 'Data Bundle', data.dataBundle!),
                   ],
