@@ -191,6 +191,11 @@ class TransactionReceiptWidget extends StatelessWidget {
             label: 'Smartcard Number', value: data.smartCardNumber!),
       if (data.network != null)
         _TransactionDetailItem(label: 'Network', value: data.network!),
+      if (data.dataBundle != null)
+        _TransactionDetailItem(
+          label: 'Data Bundle',
+          value: data.dataBundle!,
+        ),
       if (data.meterNumber != null)
         _TransactionDetailItem(label: 'Meter Number', value: data.meterNumber!),
       if (data.accountNumber != null)

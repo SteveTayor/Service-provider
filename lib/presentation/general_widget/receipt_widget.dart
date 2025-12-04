@@ -96,20 +96,25 @@ class VisualReceiptCard extends ConsumerWidget {
                   ] else ...[
                     _buildDetailRow(context, 'Transaction type', data.type!),
                   ],
-                  if (data.accountNumber != null) ...[
-                    16.verticalSpace,
+                  if (data.accountNumber != null ||
+                      data.phoneNumber != null) ...[
+                    14.verticalSpace,
                     _buildDetailRow(
                         context, 'Beneficiary', data.accountNumber!),
                   ],
-                  16.verticalSpace,
+                  14.verticalSpace,
                   _buildDetailRow(
                       context, 'Transaction ID', data.transactionId!),
-                  16.verticalSpace,
+                  14.verticalSpace,
                   _buildDetailRow(context, 'Date', data.date!),
-                  16.verticalSpace,
+                  14.verticalSpace,
                   _buildDetailRow(context, 'Time', data.time!),
+                  if (data.dataBundle != null) ...[
+                    14.verticalSpace,
+                    _buildDetailRow(context, 'Data Bundle', data.dataBundle!),
+                  ],
                   if (data.token != null) ...[
-                    16.verticalSpace,
+                    14.verticalSpace,
                     _buildDetailRow(context, 'Token', data.token!),
                   ],
                 ],
@@ -126,7 +131,7 @@ class VisualReceiptCard extends ConsumerWidget {
               height: 39.h,
             ),
           ),
-          16.verticalSpace,
+          14.verticalSpace,
         ],
       ),
     );
@@ -163,7 +168,7 @@ class VisualReceiptCard extends ConsumerWidget {
         Text(
           label,
           style: context.textTheme.bodyMedium?.copyWith(
-            color: AppColors.grey33,
+            color: AppColors.grey2F,
             // fontSize: 14,
           ),
         ),
@@ -368,7 +373,7 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
   /// Centralized error display using SnackBar.
   void _showError(String message) {
     if (mounted) {
-      context.showErrorSnackBar(message);
+      // context.showErrorSnackBar(message);
     }
   }
 

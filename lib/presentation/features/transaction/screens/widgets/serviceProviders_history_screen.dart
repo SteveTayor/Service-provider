@@ -292,6 +292,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
             txn.subProduct?.product?.productName ??
             '',
         network: txn.subProduct?.product?.productName,
+        dataBundle: txn.subProduct?.subName,
         phoneNumber: txn.crAcc,
         userBalance: txn.balanceAfter?.toCurrency(),
         balanceBefore: txn.balanceBefore?.toCurrency(),

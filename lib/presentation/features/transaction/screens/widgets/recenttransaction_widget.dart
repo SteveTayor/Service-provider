@@ -136,6 +136,7 @@ class RecentTransactionWidget extends ConsumerWidget {
             txn.subProduct?.product?.productName ??
             '',
         network: txn.subProduct?.product?.productName,
+        dataBundle: txn.subProduct?.subName,
         phoneNumber: txn.crAcc,
         balanceBefore: txn.balanceBefore?.toCurrency(),
         userBalance: txn.balanceAfter?.toCurrency(),
