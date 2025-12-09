@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/styles.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -16,6 +17,8 @@ class ResultWidget extends StatelessWidget {
     super.key,
     this.isLinkSent = false,
     this.iconPath,
+    this.viewRecieptOnPressed,
+    this.isReceipt = false,
   });
   final String title;
   final String subText;
@@ -23,6 +26,8 @@ class ResultWidget extends StatelessWidget {
   final String? iconPath;
   final String buttonText;
   final VoidCallback onPressed;
+  final VoidCallback? viewRecieptOnPressed;
+  final bool? isReceipt;
   final Widget appIcon;
 
   @override
@@ -50,6 +55,17 @@ class ResultWidget extends StatelessWidget {
             ],
           ),
         ),
+        if (isReceipt == true)
+          BundlegramButton(
+            isOutline: true,
+            borderColor: AppColors.primaryColor,
+            buttonStyle: BundlegramButtonOutline(),
+            text: 'View receipt',
+            onPressed: viewRecieptOnPressed,
+          )
+        else
+          const SizedBox.shrink(),
+        16.verticalSpace,
         BundlegramButton(text: buttonText, onPressed: onPressed),
       ],
     );

@@ -1,8 +1,12 @@
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
+import 'package:bundlegram/presentation/general_widget/receipt_widget.dart';
 import 'package:bundlegram/presentation/general_widget/result_widget.dart';
+import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -11,10 +15,13 @@ class ElectricitySuccessResultScreen extends StatelessWidget {
   final String amount;
   final String biller;
 
+  final TransactionReceiptData? receipt;
+
   const ElectricitySuccessResultScreen({
     super.key,
     required this.amount,
     required this.biller,
+    this.receipt,
   });
 
   @override
@@ -27,6 +34,28 @@ class ElectricitySuccessResultScreen extends StatelessWidget {
       child: BundlegramScaffold(
         sidePadding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 40.h),
         body: ResultWidget(
+          isReceipt: true,
+          viewRecieptOnPressed: receipt == null
+              ? null
+              : () {
+                  context.showPopUp(
+                    color: Colors.transparent,
+                    TransactionReceiptWidget(
+                      data: receipt!,
+                      onShareReceipt: () {
+                        context
+                          ..pop()
+                          ..showPopUp(
+                            color: Colors.transparent,
+                            ReceiptShareWrapper(data: receipt!),
+                            isDismissable: true,
+                          );
+                      },
+                      onClose: () => context.pop(),
+                    ),
+                    isDismissable: true,
+                  );
+                },
           appIcon: AppSvgIcon(
             path: Assets.svgs.successfulIllustration,
           ),

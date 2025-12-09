@@ -24,10 +24,12 @@ import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/transaction/initiate_transactcion_requests.dart';
 import 'package:bundlegram/data/models/transaction/validate_bill_request.dart';
 import 'package:bundlegram/data/models/transaction/validate_bill_response.dart';
+import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/gen/fonts.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/data/platform_data.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/data/transaction_helper.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/model/platform_product_state.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/choosebiller.dart';
@@ -1186,6 +1188,74 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     );
   }
 
+  void showBulkEPinPrompt(BuildContext context) {
+    if (_serviceType != PlatformProductType.ePinVoucher) return;
+    context.showBottomSheet(
+      color: AppColors.background,
+      showIcon: false,
+      child: Padding(
+        padding: context.symmetricPadding(16, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            24.verticalSpace,
+            Text(
+              'Print bulk e-pin voucher',
+              style: context.textTheme.displaySmall,
+            ),
+            24.verticalSpace,
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                text:
+                    'Do you want to print E-PIN in bulk? You will make money selling E-PIN to people in your community.\n',
+                style: context.textTheme.bodySmall,
+                children: [
+                  TextSpan(
+                    text: 'Note:',
+                    style: const TextStyle(color: Color(0xFFAA0B27)),
+                  ),
+                  const TextSpan(text: 'This feature is available to all'),
+                  TextSpan(
+                    text: ' Bundlegram agents only.',
+                    style: context.textTheme.bodySmall!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const TextSpan(
+                      text:
+                          ' Our agents enjoy bulk E-PIN at discounted prices.'),
+                ],
+              ),
+            ),
+            40.verticalSpace,
+            BundlegramButton(
+              text: 'Continue',
+              onPressed: () {
+                context
+                  ..pop()
+                  ..push(RouteConstants.becomeagent);
+              },
+            ),
+            18.verticalSpace,
+            BundlegramButton(
+              text: 'Cancel',
+              isOutline: true,
+              color: AppColors.background,
+              textStyle: context.textTheme.bodyMedium?.copyWith(
+                color: AppColors.grey19,
+                fontFamily: FontFamily.mabryPro,
+                // fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+              onPressed: () => context.pop(),
+            ),
+            20.verticalSpace,
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<dynamic> purchase(
     BuildContext context, {
     required String originalAmount,
@@ -1315,8 +1385,29 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               body: successBody,
               payload: notifPayload,
             ));
-            final screen =
-                _buildSuccessScreen(originalAmount.toCurrency(), beneficiary);
+            final Map<String, dynamic>? respData =
+                response.data is Map<String, dynamic>
+                    ? response.data as Map<String, dynamic>
+                    : (response.data != null
+                        ? Map<String, dynamic>.from(
+                            response.data as Map<dynamic, dynamic>)
+                        : null);
+
+// build receipt using helper
+            final receipt = extractReceiptFromPurchaseResponse(
+              respData,
+              serviceType: _serviceType,
+              selectedSubProduct: state.selectedSubProduct,
+              selectedProduct: state.selectedProduct,
+              originalAmount: originalAmount,
+              beneficiary: beneficiary,
+            );
+
+            final screen = _buildSuccessScreen(
+              originalAmount.toCurrency(),
+              beneficiary,
+              receipt,
+            );
             context.dismissDialog();
             Navigator.pushReplacement(
               context,
@@ -1384,85 +1475,23 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
   }
 
-  void showBulkEPinPrompt(BuildContext context) {
-    if (_serviceType != PlatformProductType.ePinVoucher) return;
-    context.showBottomSheet(
-      color: AppColors.background,
-      showIcon: false,
-      child: Padding(
-        padding: context.symmetricPadding(16, 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            24.verticalSpace,
-            Text(
-              'Print bulk e-pin voucher',
-              style: context.textTheme.displaySmall,
-            ),
-            24.verticalSpace,
-            RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                text:
-                    'Do you want to print E-PIN in bulk? You will make money selling E-PIN to people in your community.\n',
-                style: context.textTheme.bodySmall,
-                children: [
-                  TextSpan(
-                    text: 'Note:',
-                    style: const TextStyle(color: Color(0xFFAA0B27)),
-                  ),
-                  const TextSpan(text: 'This feature is available to all'),
-                  TextSpan(
-                    text: ' Bundlegram agents only.',
-                    style: context.textTheme.bodySmall!
-                        .copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const TextSpan(
-                      text:
-                          ' Our agents enjoy bulk E-PIN at discounted prices.'),
-                ],
-              ),
-            ),
-            40.verticalSpace,
-            BundlegramButton(
-              text: 'Continue',
-              onPressed: () {
-                context
-                  ..pop()
-                  ..push(RouteConstants.becomeagent);
-              },
-            ),
-            18.verticalSpace,
-            BundlegramButton(
-              text: 'Cancel',
-              isOutline: true,
-              color: AppColors.background,
-              textStyle: context.textTheme.bodyMedium?.copyWith(
-                color: AppColors.grey19,
-                fontFamily: FontFamily.mabryPro,
-                // fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-              onPressed: () => context.pop(),
-            ),
-            20.verticalSpace,
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSuccessScreen(String amount, String beneficiary) {
+  Widget _buildSuccessScreen(
+    String amount,
+    String beneficiary,
+    TransactionReceiptData receipt,
+  ) {
     switch (_serviceType) {
       case PlatformProductType.mobileData:
         return DataSubscriptionSuccessResultScreen(
           dataValue: state.selectedSubProduct?.subName ?? '',
           beneficiary: beneficiary,
+          receipt: receipt,
         );
       case PlatformProductType.airtime:
         return AirtimeSuccessResultScreen(
           amount: amount,
           beneficiary: beneficiary,
+          receipt: receipt,
         );
       case PlatformProductType.ePinVoucher:
         return EpinSuccessResultScreen(amount: amount);
@@ -1472,9 +1501,10 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         return BettingSuccessResultScreen(
           amount: amount,
           biller: state.selectedProduct?.productName ?? '',
+          receipt: receipt,
         );
       case PlatformProductType.cableTv:
-        return CableTvSuccessResultScreen(amount: amount);
+        return CableTvSuccessResultScreen(amount: amount, receipt: receipt);
       case PlatformProductType.education:
         return EducationProviderSuccessResultScreen(
           amount: amount,
@@ -1484,6 +1514,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         return ElectricitySuccessResultScreen(
           amount: amount,
           biller: state.selectedProduct?.productName ?? '',
+          receipt: receipt,
         );
       case PlatformProductType.internetServices:
         return InternetServicesSuccessResultScreen(
