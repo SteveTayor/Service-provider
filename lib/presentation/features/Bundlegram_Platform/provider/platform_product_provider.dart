@@ -80,6 +80,19 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   final Ref _ref;
   final Map<int, List<SubProduct>> _subProductsCache = {};
 
+  // timestamp when each product's subProducts were last fetched
+  final Map<int, DateTime> _subProductsFetchedAt = {};
+
+  /// TTL for cached subproducts (5 minutes)
+  static const Duration _subProductsCacheTtl = Duration(minutes: 5);
+
+  /// whether cache for a product is still fresh
+  bool _isSubProductsCacheFresh(int productId) {
+    final ts = _subProductsFetchedAt[productId];
+    if (ts == null) return false;
+    return DateTime.now().difference(ts) < _subProductsCacheTtl;
+  }
+
   Timer? _debounce;
 
   PlatformProductNotifier(this._apiService, this._serviceType, this._ref)
@@ -105,7 +118,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         serviceType: _serviceType,
       );
       selectProduct(firstProduct, providerIcon ?? '');
-      await fetchSubProducts(context, firstProduct.id!);
+      // await fetchSubProducts(context, firstProduct.id!);
+      await fetchSubProducts(context, firstProduct.id!, force: true);
     }
 
     if (result.status != 'success') {
@@ -113,47 +127,147 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
   }
 
-  Future<bool> hasSubProducts(int productId) async {
-    if (_subProductsCache.containsKey(productId)) {
+  /// Refreshing sub-products.
+  /// Set force = true to bypass cache.
+  Future<void> refreshSubProductsForLoadedProducts(
+    BuildContext context, {
+    bool force = true,
+    int maxChecks = 3,
+  }) async {
+    final products = state.products;
+    if (products.isEmpty) return;
+    final toCheck = products.take(maxChecks);
+    for (final p in toCheck) {
+      final pid = p.id;
+      if (pid == null) continue;
+      // reducing parallel requests.
+      await fetchSubProducts(context, pid, force: force);
+    }
+  }
+
+  // Future<bool> hasSubProducts(int productId) async {
+  //   if (_subProductsCache.containsKey(productId)) {
+  //     return _subProductsCache[productId]!.isNotEmpty;
+  //   }
+  //   final result = await _ref.read(subProductsProvider(productId).future);
+  //   final subs = result.data ?? [];
+  //   _subProductsCache[productId] = subs; // Cache the result
+  //   return subs.isNotEmpty;
+  // }
+  Future<bool> hasSubProducts(int productId, {bool force = false}) async {
+    // Use cache if available and not forced and still fresh
+    if (!force &&
+        _subProductsCache.containsKey(productId) &&
+        _isSubProductsCacheFresh(productId)) {
       return _subProductsCache[productId]!.isNotEmpty;
     }
 
-    final result = await _ref.read(subProductsProvider(productId).future);
-    final subs = result.data ?? [];
-    _subProductsCache[productId] = subs; // Cache the result
-    return subs.isNotEmpty;
+    try {
+      final result = await _ref.read(subProductsProvider(productId).future);
+      final subs = result.data ?? [];
+      // Cache the result (even if empty) and timestamp it
+      _subProductsCache[productId] = subs;
+      _subProductsFetchedAt[productId] = DateTime.now();
+      return subs.isNotEmpty;
+    } catch (e) {
+      // cached fall back value if present (even if stale)
+      if (_subProductsCache.containsKey(productId)) {
+        return _subProductsCache[productId]!.isNotEmpty;
+      }
+      return false;
+    }
   }
 
-  Future<void> fetchSubProducts(BuildContext context, int productId) async {
+  // Future<void> fetchSubProducts(BuildContext context, int productId) async {
+  //   if (!_serviceType.hasSubProducts) return;
+  //   state = state.copyWith(isLoading: true, error: null);
+  //   final result = await _ref.read(subProductsProvider(productId).future);
+  //   final subs = result.data ?? [];
+  //   // Extract unique non-null data types
+  //   final options =
+  //       subs.map((e) => e.dataType).whereType<String>().toSet().toList();
+  //   // Auto-select first subproduct
+  //   SubProduct? defaultSubProduct;
+  //   if (subs.isNotEmpty) {
+  //     defaultSubProduct = subs.first;
+  //   }
+  //   state = state.copyWith(
+  //     isLoading: false,
+  //     subProducts: subs,
+  //     dropdownOptions: options,
+  //     selectedDataType: options.isNotEmpty ? options.first : null,
+  //     selectedSubProduct: defaultSubProduct,
+  //     amountController: _serviceType == PlatformProductType.electricity
+  //         ? state.amountController
+  //         : TextEditingController(),
+  //     error: result.status != 'success' ? result.message : null,
+  //   );
+  //   if (result.status != 'success') {
+  //     context.showErrorSnackBar(result.message ?? 'Failed to load subproducts');
+  //   }
+  // }
+  Future<void> fetchSubProducts(BuildContext context, int productId,
+      {bool force = false}) async {
     if (!_serviceType.hasSubProducts) return;
-    state = state.copyWith(isLoading: true, error: null);
-    final result = await _ref.read(subProductsProvider(productId).future);
-    final subs = result.data ?? [];
 
-    // Extract unique non-null data types
-    final options =
-        subs.map((e) => e.dataType).whereType<String>().toSet().toList();
-
-    // Auto-select first subproduct
-    SubProduct? defaultSubProduct;
-    if (subs.isNotEmpty) {
-      defaultSubProduct = subs.first;
+    // If we have fresh cache and not forced, return immediately with cached data
+    if (!force &&
+        _subProductsCache.containsKey(productId) &&
+        _isSubProductsCacheFresh(productId)) {
+      final subs = _subProductsCache[productId]!;
+      final options =
+          subs.map((e) => e.dataType).whereType<String>().toSet().toList();
+      final defaultSub = subs.isNotEmpty ? subs.first : null;
+      state = state.copyWith(
+        isLoading: false,
+        subProducts: subs,
+        dropdownOptions: options,
+        selectedDataType: options.isNotEmpty ? options.first : null,
+        selectedSubProduct: defaultSub,
+        amountController: _serviceType == PlatformProductType.electricity
+            ? state.amountController
+            : TextEditingController(),
+        error: null,
+      );
+      return;
     }
 
-    state = state.copyWith(
-      isLoading: false,
-      subProducts: subs,
-      dropdownOptions: options,
-      selectedDataType: options.isNotEmpty ? options.first : null,
-      selectedSubProduct: defaultSubProduct,
-      amountController: _serviceType == PlatformProductType.electricity
-          ? state.amountController
-          : TextEditingController(),
-      error: result.status != 'success' ? result.message : null,
-    );
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final result = await _ref.read(subProductsProvider(productId).future);
+      final subs = result.data ?? [];
 
-    if (result.status != 'success') {
-      context.showErrorSnackBar(result.message ?? 'Failed to load subproducts');
+      // Cache and timestamp (even empty list)
+      _subProductsCache[productId] = subs;
+      _subProductsFetchedAt[productId] = DateTime.now();
+
+      final options =
+          subs.map((e) => e.dataType).whereType<String>().toSet().toList();
+
+      SubProduct? defaultSubProduct;
+      if (subs.isNotEmpty) {
+        defaultSubProduct = subs.first;
+      }
+
+      state = state.copyWith(
+        isLoading: false,
+        subProducts: subs,
+        dropdownOptions: options,
+        selectedDataType: options.isNotEmpty ? options.first : null,
+        selectedSubProduct: defaultSubProduct,
+        amountController: _serviceType == PlatformProductType.electricity
+            ? state.amountController
+            : TextEditingController(),
+        error: result.status != 'success' ? result.message : null,
+      );
+
+      if (result.status != 'success') {
+        context.showErrorSnackBar(result.message ?? 'Failed to load services');
+      }
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      // user to pull-to-refresh
+      context.showErrorSnackBar('Could not fetch services — pull to refresh');
     }
   }
 

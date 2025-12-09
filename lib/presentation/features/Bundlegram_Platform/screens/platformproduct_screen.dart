@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
@@ -50,23 +52,31 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(platformProductProvider(widget.serviceType).notifier)
-          .fetchProducts(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final notifier =
+          ref.read(platformProductProvider(widget.serviceType).notifier);
+
+      // Fetch products (existing behavior)
+      await notifier.fetchProducts(context);
+
+      // Force-refresh sub-products for first few loaded products so we don't show stale plans.
+      // This will update cache & state if backend changed availability.
+      await notifier.refreshSubProductsForLoadedProducts(
+        context,
+        force: true,
+        maxChecks: 3,
+      );
+
       //prefetch minimal beneficiaries and full beneficiaries
-      Future.microtask(() {
-        // minimal beneficiary list
+      unawaited(Future.microtask(() {
         ref.read(minimalBeneficiariesProvider.future).catchError((e, st) {
-          // optional logging,
           debugPrint('minimalBeneficiaries prefetch error: $e');
         });
 
-        // full beneficiary list
         ref.read(beneficiariesProvider.future).catchError((e, st) {
           debugPrint('beneficiaries (all) prefetch error: $e');
         });
-      });
+      }));
     });
   }
 
@@ -109,7 +119,13 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
           ),
         ),
         body: RefreshIndicator(
-          onRefresh: () => notifier.fetchProducts(context),
+          onRefresh: () async {
+            await notifier.fetchProducts(context);
+            await notifier.refreshSubProductsForLoadedProducts(
+              context,
+              force: true,
+            );
+          },
           child: state.isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
