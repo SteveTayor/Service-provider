@@ -39,6 +39,33 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
     return null;
   }
 
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'Unknown Date';
+
+    final localDate = date.toLocal(); // <-- Always convert first
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final txnDate = DateTime(localDate.year, localDate.month, localDate.day);
+
+    if (txnDate.isAtSameMomentAs(today)) return 'Today';
+    if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
+
+    return localDate.toIso8601String();
+  }
+
+  String _formatTime(DateTime? date) {
+    if (date == null) return '--:--';
+
+    final localDate = date.toLocal(); // <-- Always convert first
+    final hour = localDate.hour;
+    final minute = localDate.minute;
+    final period = hour >= 12 ? 'pm' : 'am';
+    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+
+    return '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}$period';
+  }
+
   // Look for id/refs/numbers in many common keys
   final transRef = _get<String>(data, [
         'trans_ref',
@@ -127,8 +154,8 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   if (transType.contains('airtime')) {
     return TransactionReceiptData(
       transactionId: transRef,
-      date: createdAt?.toString(),
-      time: createdAt?.toString(),
+      date: _formatTime(createdAt),
+      time: _formatTime(createdAt),
       type: transType,
       amount: displayAmount(),
       status: status,
@@ -148,8 +175,8 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   if (transType.contains('data')) {
     return TransactionReceiptData(
       transactionId: transRef,
-      date: createdAt?.toString(),
-      time: createdAt?.toString(),
+      date: _formatTime(createdAt),
+      time: _formatTime(createdAt),
       type: transType,
       amount: displayAmount(),
       status: status,
@@ -170,8 +197,8 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   if (transType.contains('electricity')) {
     return TransactionReceiptData(
       transactionId: transRef,
-      date: createdAt?.toString(),
-      time: createdAt?.toString(),
+      date: _formatTime(createdAt),
+      time: _formatTime(createdAt),
       type: transType,
       amount: displayAmount(),
       status: status,
@@ -190,8 +217,8 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   if (transType.contains('cable')) {
     return TransactionReceiptData(
       transactionId: transRef,
-      date: createdAt?.toString(),
-      time: createdAt?.toString(),
+      date: _formatTime(createdAt),
+      time: _formatTime(createdAt),
       type: transType,
       amount: displayAmount(),
       status: status,
@@ -209,8 +236,8 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   if (transType.contains('withdrawal')) {
     return TransactionReceiptData(
       transactionId: transRef,
-      date: createdAt?.toString(),
-      time: createdAt?.toString(),
+      date: _formatTime(createdAt),
+      time: _formatTime(createdAt),
       type: transType,
       amount: displayAmount(),
       accountNumber: accountNumber,
@@ -228,8 +255,8 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   // fallback / default
   return TransactionReceiptData(
     transactionId: transRef,
-    date: createdAt?.toString(),
-    time: createdAt?.toString(),
+    date: _formatTime(createdAt),
+    time: _formatTime(createdAt),
     type: transType.isNotEmpty
         ? transType
         : (serviceType?.title ?? 'transaction'),

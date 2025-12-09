@@ -471,8 +471,9 @@ class _AllBeneficiariesScreenState
                 }
 
                 return SliverPadding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                  // padding:
+                  //     EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
+                  padding: EdgeInsets.fromLTRB(10.w, 12.h, 10.w, 80.h),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (ctx, index) {
