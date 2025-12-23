@@ -1,11 +1,10 @@
-
+import 'package:bundlegram/presentation/responsives/responsive_provider.dart';
 import 'package:flutter/material.dart';
-import 'responsive_info.dart';
 
 /// Main responsive builder widget
 class ResponsiveBuilder extends StatelessWidget {
   final Widget Function(BuildContext context, ResponsiveInfo info) builder;
-  
+
   const ResponsiveBuilder({
     required this.builder,
     Key? key,
@@ -27,7 +26,7 @@ class ResponsiveBreakpoint extends StatelessWidget {
   final Widget phone;
   final Widget? tablet;
   final Widget? desktop;
-  
+
   const ResponsiveBreakpoint({
     required this.phone,
     this.tablet,
@@ -59,7 +58,7 @@ class ResponsiveScaffold extends StatelessWidget {
   final FloatingActionButton? floatingActionButton;
   final Color? backgroundColor;
   final double? sidePanelWidth;
-  
+
   const ResponsiveScaffold({
     required this.body,
     this.appBar,
@@ -78,12 +77,13 @@ class ResponsiveScaffold extends StatelessWidget {
       builder: (context, info) {
         // Show side panel on tablets and desktops
         if ((info.isTablet || info.isDesktop) && sidePanel != null) {
-          final panelWidth = sidePanelWidth ?? info.when(
-            phone: 0.0,
-            tablet: 300.0,
-            desktop: 360.0,
-          );
-          
+          final panelWidth = sidePanelWidth ??
+              info.when(
+                phone: 0.0,
+                tablet: 300.0,
+                desktop: 360.0,
+              );
+
           return Scaffold(
             appBar: appBar,
             backgroundColor: backgroundColor,
@@ -107,7 +107,7 @@ class ResponsiveScaffold extends StatelessWidget {
             floatingActionButton: floatingActionButton,
           );
         }
-        
+
         // Standard scaffold for phones
         return Scaffold(
           appBar: appBar,
@@ -132,7 +132,7 @@ class ResponsivePadding extends StatelessWidget {
   final double? right;
   final double? top;
   final double? bottom;
-  
+
   const ResponsivePadding({
     required this.child,
     this.all,
@@ -168,7 +168,7 @@ class ResponsiveSizedBox extends StatelessWidget {
   final Widget? child;
   final double? width;
   final double? height;
-  
+
   const ResponsiveSizedBox({
     this.child,
     this.width,
@@ -191,7 +191,7 @@ class ResponsiveSizedBox extends StatelessWidget {
 class ResponsiveGap extends StatelessWidget {
   final double size;
   final Axis direction;
-  
+
   const ResponsiveGap(
     this.size, {
     this.direction = Axis.vertical,
@@ -202,7 +202,7 @@ class ResponsiveGap extends StatelessWidget {
   Widget build(BuildContext context) {
     final info = ResponsiveInfo.fromContext(context);
     final scaledSize = info.spacing(size);
-    
+
     return SizedBox(
       width: direction == Axis.horizontal ? scaledSize : null,
       height: direction == Axis.vertical ? scaledSize : null,

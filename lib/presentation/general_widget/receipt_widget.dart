@@ -273,26 +273,62 @@ class ReceiptShareWrapper extends StatefulWidget {
   State<ReceiptShareWrapper> createState() => _ReceiptShareWrapperState();
 }
 
-class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
+class _ReceiptShareWrapperState extends State<ReceiptShareWrapper>
+    with WidgetsBindingObserver {
   final GlobalKey _boundaryKey = GlobalKey();
+
+  // track whether we've already popped or are in the process of sharing
+  bool _didPop = false;
+  bool _isSharing = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(milliseconds: 500));
-      _captureAndShare();
+      if (mounted) _captureAndShare();
     });
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      //  to force a rebuild or check a condition on resume,
+      // if (_isSharing && !_didPop) Navigator.of(context).maybePop();
+    }
+  }
+
+  /// Safe pop which ensures we only pop once and only if canPop is true.
+  void _safePop() {
+    if (_didPop) return;
+    try {
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+        _didPop = true;
+      }
+    } catch (e) {
+      debugPrint("Safe pop failed: $e");
+    }
+  }
+
   Future<void> _captureAndShare() async {
+    if (_isSharing) return;
+    _isSharing = true;
+
     try {
       final boundary = _boundaryKey.currentContext?.findRenderObject()
           as RenderRepaintBoundary?;
 
       if (boundary == null) {
         _showError("Unable to capture receipt: boundary not ready.");
-        if (mounted) Navigator.pop(context);
+        _safePop();
         return;
       }
 
@@ -306,7 +342,7 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
       if (byteData == null) {
         context.dismissDialog();
         debugPrint("Failed to convert receipt to image.");
-        if (mounted) Navigator.pop(context);
+        _safePop();
         return;
       }
 
@@ -321,34 +357,57 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
       );
 
       // ─── ATTEMPT TO SHARE ─────────────────────────────────────────────────
-      final result = Share.shareXFiles(
-        [xFile],
-        text: 'TXN_bundlegram_receipt',
-        subject: 'Transaction Receipt',
-      );
+      // final result = await Share.shareXFiles(
+      //   [xFile],
+      //   text: 'TXN_bundlegram_receipt',
+      //   subject: 'Transaction Receipt',
+      // );
+      ShareResult result;
+      try {
+        result = await Share.shareXFiles(
+          [xFile],
+          text: 'TXN_bundlegram_receipt',
+          subject: 'Transaction Receipt',
+        );
+      } catch (e) {
+        // Some platforms / share targets may throw — fallback to saving.
+        debugPrint('Share threw an exception: $e');
+        result = ShareResult(
+            ShareResultStatus.unavailable.name, ShareResultStatus.dismissed);
+      }
 
       context.dismissDialog();
+      // Decide a single action; avoid double pops:
+      bool handledPopBySave = false;
+      bool shouldPopOnce = false;
       if (result.status == ShareResultStatus.success) {
         debugPrint("Share successful");
         if (mounted) {
           context.showCustomSnackBar('Transaction receipt shared successfully');
-          context.pop(); // close after success
+          // context.pop(); // close after success
         }
+        shouldPopOnce = true;
       } else if (result.status == ShareResultStatus.unavailable) {
         debugPrint("Sharing unavailable");
         await _saveToGallery(pngBytes, shouldPop: true); // fallback + close
+        handledPopBySave = true;
       } else {
         debugPrint("Share cancelled or failed: ${result.status}");
         await _saveToGallery(pngBytes, shouldPop: false); // fallback
       }
 
       // ─── NAVIGATE BACK ───────────────────────────────────────────────────
-      if (mounted) context.pop();
-    } catch (e) {
+      // Only pop once and only if no other path already popped for us.
+      if (mounted && !handledPopBySave && shouldPopOnce) {
+        _safePop();
+      }
+    } catch (e, st) {
       context.dismissDialog();
-      debugPrint("Error capturing/sharing receipt: $e");
+      debugPrint("Error capturing/sharing receipt: $e\n$st");
       _showError("An unexpected error occurred.");
-      if (mounted) Navigator.pop(context);
+      _safePop();
+    } finally {
+      _isSharing = false;
     }
   }
 
