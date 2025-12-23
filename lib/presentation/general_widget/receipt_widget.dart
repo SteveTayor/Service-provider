@@ -321,7 +321,7 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper> {
       );
 
       // ─── ATTEMPT TO SHARE ─────────────────────────────────────────────────
-      final result = await Share.shareXFiles(
+      final result = Share.shareXFiles(
         [xFile],
         text: 'TXN_bundlegram_receipt',
         subject: 'Transaction Receipt',

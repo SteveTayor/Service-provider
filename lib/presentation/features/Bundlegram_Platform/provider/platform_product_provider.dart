@@ -1419,7 +1419,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                 // response.message.toLowerCase().contains('insufficient') ||
                 //         response.message.toLowerCase().contains('incorrect pin')
                 //     ?
-                response.message;
+                response.message.length > 100 ? response.message:"Something went wrong" ;
             // : 'Please try again later.';
             final notifId = DateTime.now().millisecondsSinceEpoch % 100000;
             final notifPayload = jsonEncode({
@@ -1435,7 +1435,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               body: displayMessage,
               payload: notifPayload,
             ));
-            debugPrint(displayMessage);
+            debugPrint("[This is the error message diaplayed] $displayMessage");
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
