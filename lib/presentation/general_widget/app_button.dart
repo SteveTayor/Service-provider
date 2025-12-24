@@ -1,5 +1,6 @@
 // ignore_for_file: lines_longer_than_80_chars, use_if_null_to_convert_nulls_to_bools, avoid_bool_literals_in_conditional_expressions
 
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -26,7 +27,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 /// * [isLoading] - determines whether button should show loading state or not
 /// * [buttonStyle] - can be use to determine the style applied to button as mentioned above
 /// * [onPressed] - a simple callback that gets triggered when button is pressed
-///
 
 class BundlegramButton extends StatefulWidget {
   const BundlegramButton({
@@ -45,8 +45,10 @@ class BundlegramButton extends StatefulWidget {
     this.svgIconContainerColor,
     this.borderColor,
     this.isOutline,
+    this.useResponsive = true,
     super.key,
   });
+
   final String text;
   final double height;
   final double width;
@@ -62,6 +64,7 @@ class BundlegramButton extends StatefulWidget {
   final VoidCallback? onPressed;
   final String? leading;
   final String? trailing;
+  final bool useResponsive;
 
   @override
   State<BundlegramButton> createState() => _BundlegramButton();
@@ -85,17 +88,33 @@ class _BundlegramButton extends State<BundlegramButton> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
+
+    // Calculate responsive sizes
+    final effectiveHeight = widget.useResponsive
+        ? responsive.spacing(widget.height)
+        : widget.height;
+    final effectiveCornerRadius = widget.useResponsive
+        ? responsive.radiusSize(widget.cornerRadius)
+        : widget.cornerRadius;
+
+    // NEW: Get responsive font size from style's baseFontSize
+    final baseFontSize =
+        _buttonStyle.baseFontSize ?? BundlegramButtonStyle.defaultFontSize;
+    final responsiveFontSize =
+        widget.useResponsive ? responsive.textSize(baseFontSize) : baseFontSize;
+
     return GestureDetector(
       onTap: isActive() ? widget.onPressed : null,
       child: Container(
         alignment: Alignment.center,
-        height: widget.height,
+        height: effectiveHeight,
         width: widget.width,
         decoration: BoxDecoration(
           border: (widget.isOutline == true)
               ? BundlegramButtonStyle.outline().border
               : Border.all(color: Colors.transparent),
-          borderRadius: BorderRadius.circular(widget.cornerRadius),
+          borderRadius: BorderRadius.circular(effectiveCornerRadius),
           color: widget.isEnabled == false
               ? AppColors.greyD0.withOpacity(0.3)
               : widget.color ?? _buttonStyle.background,
@@ -112,8 +131,12 @@ class _BundlegramButton extends State<BundlegramButton> {
                         path: widget.leading!,
                         fit: BoxFit.scaleDown,
                       ).withContainer(
-                        width: 32.w,
-                        height: 32.h,
+                        width: widget.useResponsive
+                            ? responsive.iconSize(base: 32)
+                            : 32.w,
+                        height: widget.useResponsive
+                            ? responsive.iconSize(base: 32)
+                            : 32.h,
                         color: widget.svgIconContainerColor ?? AppColors.white,
                         shape: BoxShape.circle,
                         border: Border.all(
@@ -123,23 +146,37 @@ class _BundlegramButton extends State<BundlegramButton> {
                               : AppColors.primaryColor,
                         ),
                       ),
-                      5.horizontalSpace,
+                      SizedBox(
+                        width:
+                            widget.useResponsive ? responsive.spacing(5) : 5.w,
+                      ),
                     ],
                     Text(
                       widget.text,
                       style: widget.textStyle ??
-                          _buttonStyle.textStyle ??
-                          context.textTheme.bodyMedium?.copyWith(
+                          _buttonStyle.textStyle?.copyWith(
+                            fontSize:
+                                responsiveFontSize, // CHANGED: Use responsive size
+                            color: widget.isEnabled == false
+                                ? AppColors.grey8E
+                                : _buttonStyle.textColor,
+                          ) ??
+                          TextStyle(
                             color: widget.isEnabled == false
                                 ? AppColors.grey8E
                                 : _buttonStyle.textColor,
                             fontFamily: FontFamily.mabryPro,
-                            // fontSize: 18,
+                            fontSize:
+                                responsiveFontSize, // CHANGED: Use responsive size
                             fontWeight: FontWeight.w500,
                           ),
                     ),
                     if (widget.trailing != null) ...[
-                      10.horizontalSpace,
+                      SizedBox(
+                        width: widget.useResponsive
+                            ? responsive.spacing(10)
+                            : 10.w,
+                      ),
                       AppSvgIcon(
                         path: widget.trailing!,
                         fit: BoxFit.scaleDown,

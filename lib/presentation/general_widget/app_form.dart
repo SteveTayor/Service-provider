@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_asserts_with_message
 
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
@@ -17,8 +18,10 @@ class AppForm extends StatefulWidget {
     this.isExpanded = true,
     this.extraWidget,
     this.buttonColor,
+    this.useResponsive = true, // NEW
     super.key,
   });
+
   final List<AppTextField> children;
   final VoidCallback onPressed;
   final String buttonText;
@@ -26,8 +29,8 @@ class AppForm extends StatefulWidget {
   final Widget? extraWidget;
   final bool? isExpanded;
   final Color? buttonColor;
-
   final GlobalKey<FormState> formKey;
+  final bool useResponsive; // NEW
 
   @override
   State<AppForm> createState() => _AppFormState();
@@ -36,6 +39,8 @@ class AppForm extends StatefulWidget {
 class _AppFormState extends State<AppForm> {
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
+
     return Form(
       key: widget.formKey,
       child: widget.isExpanded!
@@ -44,15 +49,23 @@ class _AppFormState extends State<AppForm> {
                 children: [
                   // Form fields
                   ...List.generate(widget.children.length, (index) {
-                    return widget.children[index]
-                        .withContainer(padding: EdgeInsets.only(bottom: 14.h));
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: widget.useResponsive
+                            ? responsive.spacing(14)
+                            : 14.h,
+                      ),
+                      child: widget.children[index],
+                    );
                   }),
 
                   // Extra widget if provided
                   if (widget.extraWidget != null) widget.extraWidget!,
 
                   // Spacing before button
-                  32.verticalSpace,
+                  SizedBox(
+                      height:
+                          widget.useResponsive ? responsive.spacing(32) : 32.h),
 
                   // Button
                   Opacity(
@@ -60,6 +73,7 @@ class _AppFormState extends State<AppForm> {
                     child: BundlegramButton(
                       color: widget.buttonColor ?? AppColors.primaryColor,
                       text: widget.buttonText,
+                      useResponsive: widget.useResponsive,
                       onPressed: () {
                         widget.onPressed();
                         widget.formKey.currentState!.validate();
@@ -67,8 +81,10 @@ class _AppFormState extends State<AppForm> {
                     ),
                   ),
 
-                  // Bottom padding to ensure button is not cut off
-                  20.verticalSpace,
+                  // Bottom padding
+                  SizedBox(
+                      height:
+                          widget.useResponsive ? responsive.spacing(20) : 20.h),
                 ],
               ),
             )
@@ -76,16 +92,24 @@ class _AppFormState extends State<AppForm> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ...List.generate(widget.children.length, (index) {
-                  return widget.children[index]
-                      .withContainer(padding: EdgeInsets.only(bottom: 14.h));
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom:
+                          widget.useResponsive ? responsive.spacing(14) : 14.h,
+                    ),
+                    child: widget.children[index],
+                  );
                 }),
                 widget.extraWidget ?? const SizedBox(),
-                32.verticalSpace,
+                SizedBox(
+                    height:
+                        widget.useResponsive ? responsive.spacing(32) : 32.h),
                 Opacity(
                   opacity: widget.isActive ? 1 : 0.5,
                   child: BundlegramButton(
                     color: widget.buttonColor ?? AppColors.primaryColor,
                     text: widget.buttonText,
+                    useResponsive: widget.useResponsive,
                     onPressed: () {
                       widget.onPressed();
                       widget.formKey.currentState!.validate();

@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +21,11 @@ class BundlegramScaffold extends StatelessWidget {
     this.footerPadding,
     this.sidePadding,
     this.appBar,
+    this.useResponsive = true, // NEW: Toggle responsive system
   });
+
   final Widget body;
   final bool? resizeToAvoidBottomInset;
-
   final Widget? floatingActionButton;
   final Widget? bottomNavigationBar;
   final Widget? footerButton;
@@ -35,9 +37,18 @@ class BundlegramScaffold extends StatelessWidget {
   final ImageProvider? backgroundImage;
   final bool showBackImage;
   final BundlegramAppbar? appBar;
+  final bool useResponsive; // NEW
 
   @override
   Widget build(BuildContext context) {
+    // Get responsive info
+    final responsive = context.responsive;
+
+    // Calculate responsive padding
+    final EdgeInsetsGeometry effectiveSidePadding = useResponsive
+        ? responsive.padding(all: 16)
+        : (sidePadding ?? const EdgeInsets.all(16));
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Theme(
@@ -46,14 +57,15 @@ class BundlegramScaffold extends StatelessWidget {
         ),
         child: Scaffold(
           appBar: appBar ??
-              const BundlegramAppbar(
+              BundlegramAppbar(
                 showBackButton: false,
+                useResponsive: useResponsive,
               ),
           backgroundColor: backgroundColor,
           resizeToAvoidBottomInset: resizeToAvoidBottomInset ?? false,
           body: SafeArea(
             child: Padding(
-              padding: sidePadding ?? const EdgeInsets.all(16),
+              padding: effectiveSidePadding,
               child: Column(
                 children: [
                   Expanded(
@@ -98,15 +110,21 @@ class BundlegramScaffold extends StatelessWidget {
               ? [
                   Padding(
                     padding: footerPadding ??
-                        EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                        ),
+                        (useResponsive
+                            ? responsive.padding(horizontal: 10)
+                            : EdgeInsets.symmetric(horizontal: 10.w)),
                     child: Container(
-                      margin: context.bottomPaddingForTextField,
+                      margin: useResponsive
+                          ? responsive.padding(bottom: 20)
+                          : EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom),
                       child: Column(
                         children: [
                           footerButton!,
-                          16.verticalSpace,
+                          SizedBox(
+                              height: useResponsive
+                                  ? responsive.spacing(16)
+                                  : 16.h),
                           if (underFooterChild != null) underFooterChild!,
                         ],
                       ),
