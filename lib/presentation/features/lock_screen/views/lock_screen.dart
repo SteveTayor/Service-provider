@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:bundlegram/core/extensions/biometric_extension_helper.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
@@ -232,11 +233,15 @@ class _LockScreenState extends ConsumerState<LockScreen>
     }
   }
 
+  // UPDATED: Now uses responsive sizing
   Widget _buildPinDot(int index) {
+    final r = context.responsive;
+
     return Container(
-      width: 24.w,
-      height: 24.w,
-      margin: EdgeInsets.symmetric(horizontal: 8.w),
+      width: r.spacing(24), // CHANGED from 24.w
+      height: r.spacing(24), // CHANGED from 24.w
+      margin:
+          EdgeInsets.symmetric(horizontal: r.spacing(8)), // CHANGED from 8.w
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: _pin[index].isNotEmpty
@@ -247,17 +252,24 @@ class _LockScreenState extends ConsumerState<LockScreen>
     );
   }
 
+  // UPDATED: Now uses responsive sizing
   Widget _buildNumberButton(String number) {
+    final r = context.responsive; // ADD THIS
+
     return TextButton(
       onPressed: () {
         setState(() => _errorMessage = null);
         _updatePin(number);
       },
-      style: TextButton.styleFrom(padding: EdgeInsets.all(16.w)),
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.all(r.spacing(16)), // CHANGED from 16.w
+      ),
       child: Text(
         number,
-        style: context.textTheme.titleMedium?.copyWith(
+        style: TextStyle(
+          fontSize: r.textSize(22), // CHANGED: explicit responsive font
           fontWeight: FontWeight.w500,
+          color: AppColors.black,
         ),
       ),
     );
@@ -265,6 +277,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
 
   @override
   Widget build(BuildContext context) {
+    final r = context.responsive; // ADD THIS - single reference
     final globalUserProvider = ref.watch(globalProvider).profile;
     final profileProv = globalUserProvider.value?.data;
     final security = ref.watch(securityProvider);
@@ -289,18 +302,17 @@ class _LockScreenState extends ConsumerState<LockScreen>
       child: PopScope(
         canPop: false,
         child: BundlegramScaffold(
-          sidePadding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
+          useResponsive: true, // ADD THIS - enable responsive
+          sidePadding: r.padding(
+            left: 20,
+            top: 10,
+            right: 20,
+            bottom: 20,
+          ), // CHANGED from EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h)
           body: LayoutBuilder(
             builder: (context, constraints) {
               return Column(
                 children: [
-                  // Image(
-                  //   image: Assets.images.bBundlegram.provider(),
-                  //   fit: BoxFit.contain,
-                  // ).withContainer(
-                  //   height: 34.h,
-                  // ),
-
                   // Top section with logo and greeting
                   Flexible(
                     flex: 1,
@@ -309,14 +321,15 @@ class _LockScreenState extends ConsumerState<LockScreen>
                       children: [
                         AppSvgIcon(
                           path: Assets.svgs.lockIcon,
-                          width: 40,
-                          height: 40,
+                          width: r.iconSize(base: 40), // CHANGED from 40
+                          height: r.iconSize(base: 40),
                         ),
                         SizedBox(height: constraints.maxHeight * 0.02),
                         Text(
                           '${DateTime.now().getGreeting()}, ${profileProv?.username ?? _displayName ?? "User"}',
                           textAlign: TextAlign.center,
-                          style: context.textTheme.titleMedium?.copyWith(
+                          style: TextStyle(
+                            fontSize: r.textSize(22), // CHANGED: explicit size
                             fontWeight: FontWeight.w600,
                             color: AppColors.black,
                           ),
@@ -327,7 +340,8 @@ class _LockScreenState extends ConsumerState<LockScreen>
                               ? '${showBiometric ? "Use Face ID or" : ""} Enter account pin'
                               : '${showBiometric ? "Verify fingerprint or" : ""} Enter account pin',
                           textAlign: TextAlign.center,
-                          style: context.textTheme.bodySmall!.copyWith(
+                          style: TextStyle(
+                            fontSize: r.textSize(12), // CHANGED: explicit size
                             color: AppColors.grey33,
                           ),
                         ),
@@ -355,12 +369,13 @@ class _LockScreenState extends ConsumerState<LockScreen>
                           },
                         ),
                         if (_errorMessage != null) ...[
-                          SizedBox(height: 8.h),
+                          SizedBox(height: r.spacing(8)), // CHANGED from 8.h
                           Text(
                             _errorMessage!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.errorText,
-                              fontSize: 14,
+                              fontSize:
+                                  r.textSize(14), // CHANGED: explicit size
                             ),
                           ),
                         ],
@@ -376,7 +391,11 @@ class _LockScreenState extends ConsumerState<LockScreen>
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         crossAxisCount: 3,
-                        childAspectRatio: 1.5,
+                        childAspectRatio: r.when(
+                          phone: 1.5,
+                          tablet: 1.8, // Better ratio for tablets
+                          desktop: 2.0,
+                        ), // CHANGED: responsive aspect ratio
                         children: [
                           ...List.generate(
                             9,
@@ -387,100 +406,16 @@ class _LockScreenState extends ConsumerState<LockScreen>
                               onTap: () async {
                                 _autoAuthAttempted = false;
                                 await _tryAutoAuthenticate();
-                                // final biometricService =
-                                //     ref.read(biometricServiceProvider);
-                                // final storage =
-                                //     ref.read(secureStorageHelperProvider);
-                                // debugPrint(
-                                //     '[Biometric] Starting authentication...');
-                                // final didAuth =
-                                //     await biometricService.authenticate(
-                                //   biometricHint: '',
-                                //   type: BiometricAuthType.login,
-                                // );
-                                // debugPrint(
-                                //     '[Biometric] Authentication result: $didAuth');
-                                // if (didAuth) {
-                                //   final storage =
-                                //       ref.read(secureStorageHelperProvider);
-                                //   final email = await storage.getSafeEmail();
-                                //   final token = await storage.getAuthToken();
-                                //   final storedPin = email != null
-                                //       ? await storage.getPin(email)
-                                //       : null;
-                                //   debugPrint(
-                                //       '[Biometric] Retrieved email: $email');
-                                //   debugPrint(
-                                //       '[Biometric] Retrieved token: $token');
-                                //   debugPrint(
-                                //       '[Biometric] Retrieved storedPin: $storedPin');
-                                //   if (token != null) {
-                                //     debugPrint(
-                                //         '[Biometric] Token exists → restoring session');
-                                //     await _simulatePinEntry(
-                                //         storedPin.toString());
-                                //     //  Restore existing session, no new login
-                                //     unawaited(context.showLoadingDialog());
-                                //     await ref
-                                //         .read(globalProvider.notifier)
-                                //         .restoreSession(context);
-                                //     debugPrint(
-                                //         '[Biometric] Session restored, navigating to dashboard');
-                                //     context
-                                //       ..dismissDialog()
-                                //       ..go(RouteConstants.dashboard);
-                                //   } else {
-                                //     // fallback: use saved biometric credentials
-                                //     debugPrint(
-                                //         '[Biometric] No token found → using saved credentials');
-                                //     final email = await storage.getSafeEmail();
-                                //     final password = await storage
-                                //         .getBiometricPassword(); // still biometric only
-                                //     final storedPin = email != null
-                                //         ? await storage.getPin(email)
-                                //         : null;
-                                //     debugPrint(
-                                //         '[Biometric] Retrieved password: $password');
-                                //     debugPrint(
-                                //         '[Biometric] Retrieved storedPin (fallback): $storedPin');
-                                //     debugPrint(
-                                //         '[Biometric] Retrieved password: $password');
-                                //     debugPrint(
-                                //         '[Biometric] Retrieved storedPin (fallback): $storedPin');
-                                //     if (email != null && password != null) {
-                                //       // simulate UI filling the pin before continuing
-                                //       debugPrint(
-                                //           '[Biometric] Credentials available → performing login');
-                                //       await _simulatePinEntry(
-                                //           storedPin.toString());
-                                //       final lockService =
-                                //           ref.read(lockScreenServiceProvider);
-                                //       await lockService.performLogin(
-                                //           email, password, context);
-                                //       debugPrint(
-                                //           '[Biometric] Login completed with email/password');
-                                //     } else {
-                                //       debugPrint(
-                                //           '[Biometric] Missing biometric credentials → showing error');
-                                //       context.showErrorSnackBar(
-                                //         'Biometric credentials not found, please USE PIN',
-                                //       );
-                                //     }
-                                //   }
-                                // } else {
-                                //   debugPrint(
-                                //       '[Biometric] Authentication failed → showing error');
-                                //   context.showErrorSnackBar(
-                                //       'Biometric authentication failed');
-                                // }
                               },
                               child: Container(
-                                padding: EdgeInsets.all(20.w),
+                                padding: EdgeInsets.all(
+                                    r.spacing(20)), // CHANGED from 20.w
                                 child: AppSvgIcon(
                                   path: Assets.svgs.fingerCricle1,
                                   fit: BoxFit.scaleDown,
-                                  width: 24,
-                                  height: 24,
+                                  width:
+                                      r.iconSize(base: 24), // CHANGED from 24
+                                  height: r.iconSize(base: 24),
                                 ),
                               ),
                             ),
@@ -490,9 +425,9 @@ class _LockScreenState extends ConsumerState<LockScreen>
                           _buildNumberButton('0'),
                           IconButton(
                             onPressed: _deletePin,
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.backspace_outlined,
-                              size: 24,
+                              size: r.iconSize(base: 24), // CHANGED from 24
                               color: AppColors.grey83,
                             ),
                           ),
@@ -505,7 +440,6 @@ class _LockScreenState extends ConsumerState<LockScreen>
                   Flexible(
                     flex: 1,
                     child: Column(
-                      // spacing: 10.h,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Row(
@@ -517,7 +451,10 @@ class _LockScreenState extends ConsumerState<LockScreen>
                               },
                               child: Text(
                                 'Switch account',
-                                style: context.textTheme.bodyMedium!.copyWith(
+                                style: TextStyle(
+                                  fontSize:
+                                      r.textSize(14), // CHANGED: explicit size
+                                  fontWeight: FontWeight.w500,
                                   color: AppColors.primaryColor,
                                 ),
                               ),
@@ -528,7 +465,10 @@ class _LockScreenState extends ConsumerState<LockScreen>
                               },
                               child: Text(
                                 'Sign in with password',
-                                style: context.textTheme.bodyMedium!.copyWith(
+                                style: TextStyle(
+                                  fontSize:
+                                      r.textSize(14), // CHANGED: explicit size
+                                  fontWeight: FontWeight.w500,
                                   color: AppColors.primaryColor,
                                 ),
                               ),

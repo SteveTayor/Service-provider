@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
@@ -82,6 +83,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final r = context.responsive;
     final serviceType = widget.serviceType;
     final state = ref.watch(platformProductProvider(serviceType));
     final notifier = ref.read(platformProductProvider(serviceType).notifier);
@@ -99,6 +101,8 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
         return false;
       },
       child: BundlegramScaffold(
+        useResponsive: true,
+        resizeToAvoidBottomInset: true,
         appBar: BundlegramAppbar(
           titleText: serviceType.title,
           trailing: GestureDetector(
@@ -130,8 +134,8 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: r.spacing(16), vertical: r.spacing(16)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -175,7 +179,9 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                           },
                           readOnly: true,
                           prefixIcon: Padding(
-                            padding: EdgeInsets.only(left: 16.w),
+                            padding: EdgeInsets.only(
+                              left: r.spacing(16),
+                            ),
                             child:
                                 Text('₦', style: context.textTheme.bodyMedium),
                           ),
@@ -261,7 +267,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                       ).withContainer(
                         color: const Color(0xffEEF3FF),
                         padding: EdgeInsets.symmetric(
-                            horizontal: 8.w, vertical: 12.h),
+                            horizontal: r.spacing(8), vertical: r.spacing(12)),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       40.verticalSpace,

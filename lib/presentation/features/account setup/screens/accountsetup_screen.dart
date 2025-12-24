@@ -116,9 +116,9 @@ class _AccountsetupScreenState extends ConsumerState<AccountsetupScreen> {
                     child: Column(
                       children: [
                         Text(
-                          'All done! 🎉',
+                          'All done! ${firstName.isNotEmpty ? firstName : ''}🎉',
                           textAlign: TextAlign.center,
-                          style: context.textTheme.titleLarge?.copyWith(
+                          style: context.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
