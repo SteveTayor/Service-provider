@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
@@ -45,11 +46,14 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final r = context.responsive;
     final provider = ref.watch(withdrawalProvider);
     final globalUserProvider = ref.watch(globalProvider).profile;
     final profileProv = globalUserProvider.value?.data;
 
     return BundlegramScaffold(
+      useResponsive: true,
+      resizeToAvoidBottomInset: true,
       appBar: const BundlegramAppbar(
         titleText: 'Withdraw from wallet',
       ),
@@ -57,7 +61,8 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
           ? const Center(child: CircularProgressIndicator())
           : AnimationLimiter(
               child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                padding: EdgeInsets.symmetric(
+                    horizontal: r.spacing(16), vertical: r.spacing(16)),
                 children: AnimationConfiguration.toStaggeredList(
                   duration: const Duration(milliseconds: 600),
                   childAnimationBuilder: (widget) => SlideAnimation(
@@ -92,7 +97,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                       },
                     ),
 
-                    SizedBox(height: 24.h),
+                    SizedBox(height: r.spacing(24)),
 
                     // Bank Name Container
                     AnimationConfiguration.staggeredList(
@@ -106,15 +111,17 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                           ).withContainer(
                             width: context.width,
                             color: AppColors.greyD0.withOpacity(0.3),
-                            padding: context.symmetricPadding(16, 12),
-                            borderRadius: BorderRadius.circular(8),
+                            padding: context.symmetricPadding(
+                                r.spacing(16), r.spacing(12)),
+                            borderRadius:
+                                BorderRadius.circular(r.radiusSize(8)),
                             border: Border.all(color: AppColors.greyD0),
                           ),
                         ),
                       ),
                     ),
 
-                    SizedBox(height: 24.h),
+                    SizedBox(height: r.spacing(24)),
 
                     // Account Number Container
                     AnimationConfiguration.staggeredList(
@@ -128,15 +135,17 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                           ).withContainer(
                             width: context.width,
                             color: AppColors.greyD0.withOpacity(0.3),
-                            padding: context.symmetricPadding(16, 12),
-                            borderRadius: BorderRadius.circular(8),
+                            padding: context.symmetricPadding(
+                                r.spacing(16), r.spacing(12)),
+                            borderRadius:
+                                BorderRadius.circular(r.radiusSize(8)),
                             border: Border.all(color: AppColors.greyD0),
                           ),
                         ),
                       ),
                     ),
 
-                    SizedBox(height: 24.h),
+                    SizedBox(height: r.spacing(24)),
 
                     // Account Name Container
                     AnimationConfiguration.staggeredList(
@@ -150,15 +159,17 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                           ).withContainer(
                             width: context.width,
                             color: AppColors.greyD0.withOpacity(0.3),
-                            padding: context.symmetricPadding(16, 12),
-                            borderRadius: BorderRadius.circular(8),
+                            padding: context.symmetricPadding(
+                                r.spacing(16), r.spacing(12)),
+                            borderRadius:
+                                BorderRadius.circular(r.radiusSize(8)),
                             border: Border.all(color: AppColors.greyD0),
                           ),
                         ),
                       ),
                     ),
 
-                    SizedBox(height: 24.h),
+                    SizedBox(height: r.spacing(24)),
 
                     // Amount Input Field
                     AnimationConfiguration.staggeredList(
@@ -178,7 +189,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                       ),
                     ),
 
-                    SizedBox(height: 16.h),
+                    SizedBox(height: r.spacing(16)),
 
                     // Wallet Balance Row
                     AnimationConfiguration.staggeredList(
@@ -190,8 +201,8 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                           child: Row(
                             children: [
                               Container(
-                                width: 6,
-                                height: 6,
+                                width: r.spacing(6),
+                                height: r.spacing(6),
                                 decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: AppColors.primaryColor,
@@ -213,7 +224,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                       ),
                     ),
 
-                    SizedBox(height: 40.h),
+                    SizedBox(height: r.spacing(40)),
 
                     // Submit Button with Special Animation
                     AnimationConfiguration.staggeredList(
@@ -226,6 +237,7 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                           child: FadeInAnimation(
                             duration: const Duration(milliseconds: 800),
                             child: BundlegramButton(
+                              useResponsive: true,
                               isEnabled:
                                   profileProv?.bvn == null ? false : true,
                               text: provider.isSubmitting

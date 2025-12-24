@@ -160,6 +160,7 @@
 // }
 import 'dart:async';
 
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/features/onboarding/notifier/onboard_notifier.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
@@ -266,6 +267,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
 
   @override
   Widget build(BuildContext context) {
+    final r = context.responsive;
     final notifier = ref.read(onboardingNotifierProvider.notifier);
     final walkthroughIndex = ref.watch(
       onboardingNotifierProvider.select((v) => v.walkThroughIndex),
@@ -274,10 +276,10 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: r.padding(all: 20),
           child: Column(
             children: [
-              50.verticalSpace,
+              SizedBox(height: r.spacing(50)),
               Expanded(
                 child: PageView.builder(
                   onPageChanged: notifier.updateWalkThroughIndex,
@@ -292,7 +294,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
                   },
                 ),
               ),
-              20.verticalSpace,
+              SizedBox(height: r.spacing(20)),
               // Animated bottom content
               SlideTransition(
                 position: _bottomSlideAnimation,
@@ -306,11 +308,15 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
                           return AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeInOut,
-                            margin: EdgeInsets.symmetric(horizontal: 6.h),
-                            width: walkthroughIndex == index ? 20.w : 6.w,
-                            height: 6.h,
+                            margin:
+                                EdgeInsets.symmetric(horizontal: r.spacing(6)),
+                            width: walkthroughIndex == index
+                                ? r.spacing(20)
+                                : r.spacing(6),
+                            height: r.spacing(6),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3.r),
+                              borderRadius:
+                                  BorderRadius.circular(r.radiusSize(3)),
                               color: index == walkthroughIndex
                                   ? Colors.black
                                   : const Color(0xffB3B3B3),
@@ -318,12 +324,13 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
                           );
                         }),
                       ),
-                      30.verticalSpace,
+                      SizedBox(height: r.spacing(30)),
                       BundlegramButton(
                         text: 'Create account',
                         onPressed: () => context.go(RouteConstants.register),
+                        useResponsive: true,
                       ),
-                      25.verticalSpace,
+                      SizedBox(height: r.spacing(25)),
                       InkWell(
                         onTap: () async {
                           final storage = ref.read(secureStorageHelperProvider);
@@ -341,7 +348,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
                           style: context.textTheme.bodyMedium,
                         ),
                       ),
-                      20.verticalSpace,
+                      SizedBox(height: r.spacing(20)),
                     ],
                   ),
                 ),
@@ -462,6 +469,7 @@ class _AnimatedPageContentState extends State<_AnimatedPageContent>
 
   @override
   Widget build(BuildContext context) {
+    final r = context.responsive;
     return Column(
       children: [
         // Animated title and subtitle
@@ -476,7 +484,7 @@ class _AnimatedPageContentState extends State<_AnimatedPageContent>
                   textAlign: TextAlign.center,
                   style: context.textTheme.titleLarge,
                 ),
-                14.verticalSpace,
+                SizedBox(height: r.spacing(14)),
                 Text(
                   widget.data['subText']!,
                   textAlign: TextAlign.center,
