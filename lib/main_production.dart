@@ -4,6 +4,7 @@ import 'package:bundlegram/bootstrap.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
+import 'package:bundlegram/data/datasources/local/version_manager.dart';
 import 'package:bundlegram/firebase_options.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/general_widget/async_value/error_widget.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 // Register the background handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -66,6 +68,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+
+  // Check for app updates and handle stale data BEFORE app starts
+  await _checkAppVersionAndClearStaleData();
   // Prefer runZonedGuarded to capture uncaught async errors too.
   await runZonedGuarded(
     () async {
@@ -97,6 +102,27 @@ Future<void> main() async {
 
   // Then initialize Firebase & notifications in the background
   unawaited(_initializeFirebaseAndMessaging());
+}
+
+/// Check app version and clear stale data if app was updated
+Future<void> _checkAppVersionAndClearStaleData() async {
+  try {
+    const storage = FlutterSecureStorage();
+    final secureStorage = SecureStorageHelper(storage);
+    final versionManager = VersionManager(secureStorage);
+
+    final wasUpdated = await versionManager.checkAndHandleAppUpdate();
+
+    if (wasUpdated) {
+      debugPrint(
+          '✅ App was updated - stale data cleared, critical data preserved');
+    } else {
+      debugPrint('✅ App version check complete - no update detected');
+    }
+  } catch (e, st) {
+    debugPrint('⚠️ Error checking app version: $e\n$st');
+    // Don't block app launch if version check fails
+  }
 }
 
 Future<void> _initializeFirebaseAndMessaging() async {

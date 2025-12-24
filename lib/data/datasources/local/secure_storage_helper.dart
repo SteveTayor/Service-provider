@@ -23,8 +23,17 @@ class SecureStorageHelper {
       'biometric_transaction_enabled';
   static const _fcmTokenKey = 'fcm_token';
   static const _hasSeenPromoKey = 'has_seen_promo_modal';
+  static const _lastVersionNameKey = 'last_version_name';
 
   SecureStorageHelper(this._storage);
+
+  Future<void> setLastVersionName(String version) async {
+    await _storage.write(key: _lastVersionNameKey, value: version);
+  }
+
+  Future<String?> getLastVersionName() async {
+    return await _storage.read(key: _lastVersionNameKey);
+  }
 
   Future<String?> getAuthToken() async {
     return await _storage.read(key: _tokenKey);

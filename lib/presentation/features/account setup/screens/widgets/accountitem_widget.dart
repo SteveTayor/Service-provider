@@ -94,7 +94,7 @@ class AccountitemWidget extends ConsumerWidget {
         buildRowWidget(
           Assets.svgs.shiftKeyShiftUpArrowKeyboard,
           'Update app',
-          onPressed: () => appActions.rateApp(context),
+          onPressed: () => appActions.checkForUpdate(context),
         ),
         buildRowWidget(
           onPressed: () => context.showBottomSheet(child: const LogoutWidget()),

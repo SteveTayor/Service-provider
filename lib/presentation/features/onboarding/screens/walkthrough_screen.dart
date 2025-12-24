@@ -171,7 +171,6 @@ import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -187,6 +186,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
   late AnimationController _bottomAnimationController;
   late Animation<Offset> _bottomSlideAnimation;
   late Animation<double> _bottomFadeAnimation;
+  final PageController _pageController = PageController();
 
   @override
   void initState() {
@@ -198,15 +198,15 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
     // Initialize bottom content animation
     _bottomAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1200),
     );
 
     _bottomSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
+      begin: const Offset(0, 0.5),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _bottomAnimationController,
-      curve: Curves.easeOut,
+      curve: Curves.easeOutCubic,
     ));
 
     _bottomFadeAnimation = Tween<double>(
@@ -217,8 +217,8 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
       curve: Curves.easeIn,
     ));
 
-    // Start animation after a short delay
-    Future.delayed(const Duration(milliseconds: 100), () {
+    // Start animation after screen builds
+    Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) {
         _bottomAnimationController.forward();
       }
@@ -228,6 +228,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
   @override
   void dispose() {
     _bottomAnimationController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -282,6 +283,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
               SizedBox(height: r.spacing(50)),
               Expanded(
                 child: PageView.builder(
+                  controller: _pageController,
                   onPageChanged: notifier.updateWalkThroughIndex,
                   itemCount: OnboardingData.walkthrough.length,
                   itemBuilder: (context, index) {
@@ -306,7 +308,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(3, (index) {
                           return AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
+                            duration: const Duration(milliseconds: 400),
                             curve: Curves.easeInOut,
                             margin:
                                 EdgeInsets.symmetric(horizontal: r.spacing(6)),
@@ -396,17 +398,16 @@ class _AnimatedPageContentState extends State<_AnimatedPageContent>
   void _setupAnimations() {
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 1000),
     );
 
-    // Text animations - alternating slide direction based on index
-    final textDirection = widget.index % 2 == 0 ? -0.3 : 0.3;
+    // Text animations - slide from top
     _textSlideAnimation = Tween<Offset>(
-      begin: Offset(textDirection, 0),
+      begin: const Offset(0, -0.5),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
     ));
 
     _textFadeAnimation = Tween<double>(
@@ -417,14 +418,13 @@ class _AnimatedPageContentState extends State<_AnimatedPageContent>
       curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
     ));
 
-    // Image animations - slide from opposite direction + scale
-    final imageDirection = widget.index % 2 == 0 ? 0.3 : -0.3;
+    // Image animations - slide from bottom + scale
     _imageSlideAnimation = Tween<Offset>(
-      begin: Offset(imageDirection, 0),
+      begin: const Offset(0, 0.5),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.2, 0.8, curve: Curves.easeOut),
+      curve: const Interval(0.3, 0.9, curve: Curves.easeOutCubic),
     ));
 
     _imageFadeAnimation = Tween<double>(
@@ -432,20 +432,20 @@ class _AnimatedPageContentState extends State<_AnimatedPageContent>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.2, 0.7, curve: Curves.easeIn),
+      curve: const Interval(0.3, 0.8, curve: Curves.easeIn),
     ));
 
     _imageScaleAnimation = Tween<double>(
-      begin: 0.8,
+      begin: 0.7,
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.2, 0.8, curve: Curves.easeOut),
+      curve: const Interval(0.3, 0.9, curve: Curves.easeOutBack),
     ));
   }
 
   void _startAnimations() {
-    Future.delayed(const Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 200), () {
       if (mounted) {
         _controller.forward();
       }
@@ -455,7 +455,13 @@ class _AnimatedPageContentState extends State<_AnimatedPageContent>
   @override
   void didUpdateWidget(_AnimatedPageContent oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.index != widget.index) {
+    // Trigger animation when this page becomes active
+    if (widget.isActive && !oldWidget.isActive) {
+      _controller.reset();
+      _startAnimations();
+    }
+    // Also trigger if the page index changes (ensures animation on every swipe)
+    if (widget.index != oldWidget.index) {
       _controller.reset();
       _startAnimations();
     }

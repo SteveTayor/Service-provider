@@ -30,7 +30,7 @@ class LockScreenService {
       String email, String password, BuildContext context) async {
     // read saved device info
     final deviceInfo = await _storage.getDeviceInfo();
-    final deviceToken = deviceInfo['macAddress'] ?? 'unknown';
+    var deviceToken = deviceInfo['macAddress'] ?? 'unknown';
     String? fcmToken;
 
 //  a fresh FCM token if Firebase is available; otherwise fallback to storage.
@@ -43,6 +43,9 @@ class LockScreenService {
           await _storage.saveFcmToken(freshToken);
         } else {
           fcmToken = await _storage.getFcmToken();
+          deviceToken = await _storage
+              .getFcmToken()
+              .then((value) => value ?? deviceToken);
         }
       } else {
         // F use cached token if available

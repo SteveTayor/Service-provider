@@ -3,6 +3,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/pla
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/account_screen.dart';
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
+import 'package:bundlegram/presentation/features/dashboard/screens/widget/dashboardd_update_checker.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/transaction_screen.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/wallet_screen.dart';
 import 'package:bundlegram/presentation/general_widget/nav_bar.dart';
@@ -73,13 +74,18 @@ class _DashboardState extends ConsumerState<Dashboard> {
         }
       },
       child: Scaffold(
-        body: IndexedStack(
-          index: ref.watch(dashboardProvider.select((p) => p.currentIndex)),
-          children: const [
-            PlatformScreen(),
-            WalletScreen(),
-            TransactionScreen(),
-            AccountScreen(),
+        body: Stack(
+          children: [
+            IndexedStack(
+              index: ref.watch(dashboardProvider.select((p) => p.currentIndex)),
+              children: const [
+                PlatformScreen(),
+                WalletScreen(),
+                TransactionScreen(),
+                AccountScreen(),
+              ],
+            ),
+            const DashboardUpdateChecker(),
           ],
         ),
         bottomNavigationBar: const NavBar(),
