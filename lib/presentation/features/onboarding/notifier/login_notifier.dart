@@ -197,7 +197,7 @@ class LoginProvider extends ChangeNotifier {
     _setError(null);
     _setLoading(true);
     final deviceInfo = await _storage.getDeviceInfo();
-    var deviceToken = deviceInfo['macAddress'] ?? 'unknown';
+    String deviceToken = deviceInfo['macAddress'] ?? 'unknown';
 
     String? fcmToken;
     try {
@@ -206,6 +206,7 @@ class LoginProvider extends ChangeNotifier {
         fcmToken = freshToken;
         // persist fcm token
         await _storage.saveFcmToken(freshToken);
+        deviceToken = fcmToken;
       } else {
         fcmToken = await _storage.getFcmToken();
         deviceToken =

@@ -75,6 +75,11 @@ class Validators {
       if (!phonePattern.hasMatch(value)) {
         return 'Invalid phone number';
       }
+      // Repeated digits check (5+ in a row)
+      final repeatedDigitPattern = RegExp(r'(\d)\1{4,}');
+      if (repeatedDigitPattern.hasMatch(digitsOnly)) {
+        return 'Invalid phone number';
+      }
       return null;
     };
   }

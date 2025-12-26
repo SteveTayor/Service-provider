@@ -1,5 +1,6 @@
 // lib/presentation/features/onboarding/notifier/forgot_password_provider.dart
 import 'dart:async';
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
@@ -133,11 +134,10 @@ class ForgetPasswordProvider extends ChangeNotifier {
 
     result.fold(
       (fail) {
-        final message = fail.properties.isNotEmpty
-            ? fail.properties.join('\n')
-            : 'Invalid or expired OTP';
+        final userMsg = userFacingMessageFromFailure(fail);
+        context.showErrorSnackBar(userMsg);
         if (context.mounted) {
-          context.showErrorSnackBar(message);
+          context.showErrorSnackBar(userMsg);
         }
       },
       (data) {

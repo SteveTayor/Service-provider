@@ -14,9 +14,8 @@ class NoInternetWidget extends StatelessWidget {
             end: Alignment.bottomCenter,
             colors: [
               AppColors.primaryColor,
-              AppColors.primaryColor.withOpacity(0.6)
-              // Color(0xFFF8F9FA),
-              // Color(0xFFE9ECEF),
+              AppColors.primaryColor,
+              AppColors.primaryColor.withOpacity(0.8)
             ],
           ),
         ),
@@ -26,7 +25,7 @@ class NoInternetWidget extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Animated cloud with wifi symbol
+                // Cloud with avatar illustration
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
@@ -40,10 +39,23 @@ class NoInternetWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Icon(
-                    Icons.cloud_off_outlined,
-                    size: 80,
-                    color: Colors.grey[300],
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                        Icons.cloud_off_outlined,
+                        size: 80,
+                        color: Colors.grey[300],
+                      ),
+                      Positioned(
+                        top: 8,
+                        child: Icon(
+                          Icons.wifi_off,
+                          size: 24,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
@@ -51,11 +63,11 @@ class NoInternetWidget extends StatelessWidget {
 
                 // Main message
                 Text(
-                  "You're currently offline",
+                  "No Internet Connection",
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[200],
+                    color: Colors.grey[100],
                     letterSpacing: -0.5,
                   ),
                 ),
@@ -64,13 +76,45 @@ class NoInternetWidget extends StatelessWidget {
 
                 // Descriptive text
                 Text(
-                  "Check your connection and try again",
+                  "Verify your connection and give it another try:",
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey[300],
+                    color: Colors.grey[200],
                     height: 1.4,
                   ),
                   textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(height: 28),
+
+                // Troubleshooting checklist
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildChecklistItem(
+                        "Mobile data or WiFi is enabled",
+                      ),
+                      const SizedBox(height: 12),
+                      _buildChecklistItem(
+                        "Device has active internet access",
+                      ),
+                      const SizedBox(height: 12),
+                      _buildChecklistItem(
+                        "App permissions allow network usage",
+                      ),
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 32),
@@ -97,23 +141,39 @@ class NoInternetWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 40),
-
-                // Subtle hint text
-                // Text(
-                //   "Pull down to refresh when back online",
-                //   style: TextStyle(
-                //     fontSize: 14,
-                //     color: Colors.grey[500],
-                //     fontStyle: FontStyle.italic,
-                //   ),
-                // ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildChecklistItem(String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(top: 4),
+          width: 6,
+          height: 6,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.grey[200],
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

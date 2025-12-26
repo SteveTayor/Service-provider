@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
@@ -148,10 +149,11 @@ class RegisterProvider extends ChangeNotifier {
     context.dismissDialog();
     result.fold(
       (failure) {
-        final msg = failure.properties.isNotEmpty
-            ? failure.properties.join('\n')
-            : 'Registration failed';
-        context.showErrorSnackBar(msg);
+        // final msg = failure.properties.isNotEmpty
+        //     ? failure.properties.join('\n')
+        //     : 'Registration failed';
+        final userMsg = userFacingMessageFromFailure(failure);
+        context.showErrorSnackBar(userMsg);
 
         _setLoading(false);
       },

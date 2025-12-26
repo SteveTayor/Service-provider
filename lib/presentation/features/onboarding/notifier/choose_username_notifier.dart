@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
@@ -122,7 +123,8 @@ class ChooseUsernameProvider extends ChangeNotifier {
     result.fold(
       (failure) {
         print('Step 6: API call failed - ${failure.properties.first}');
-        context.showErrorSnackBar(failure.properties.first.toString());
+        final userMsg = userFacingMessageFromFailure(failure);
+        context.showErrorSnackBar(userMsg);
       },
       (success) {
         print('Step 7: API call succeeded');

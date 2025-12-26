@@ -159,8 +159,8 @@
 //   }
 // }
 import 'dart:async';
+import 'dart:math' as math;
 
-import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/features/onboarding/notifier/onboard_notifier.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
@@ -171,6 +171,7 @@ import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -182,11 +183,12 @@ class WalkthroughScreen extends ConsumerStatefulWidget {
 }
 
 class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _bottomAnimationController;
+  late AnimationController _backgroundController;
   late Animation<Offset> _bottomSlideAnimation;
   late Animation<double> _bottomFadeAnimation;
-  final PageController _pageController = PageController();
+  late Animation<double> _backgroundAnimation;
 
   @override
   void initState() {
@@ -195,18 +197,29 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
       ..setHasSeenPromoModal(false);
     _checkAndRequestPermissions();
 
-    // Initialize bottom content animation
+    // Background gradient animation
+    _backgroundController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..repeat(reverse: true);
+
+    _backgroundAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(_backgroundController);
+
+    // Bottom content animation - smooth and balanced timing
     _bottomAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1600),
     );
 
     _bottomSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.5),
+      begin: const Offset(0, 0.8),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _bottomAnimationController,
-      curve: Curves.easeOutCubic,
+      curve: const Interval(0.0, 0.85, curve: Curves.easeOutCubic),
     ));
 
     _bottomFadeAnimation = Tween<double>(
@@ -214,11 +227,10 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _bottomAnimationController,
-      curve: Curves.easeIn,
+      curve: const Interval(0.2, 0.9, curve: Curves.easeOut),
     ));
 
-    // Start animation after screen builds
-    Future.delayed(const Duration(milliseconds: 300), () {
+    Future.delayed(const Duration(milliseconds: 600), () {
       if (mounted) {
         _bottomAnimationController.forward();
       }
@@ -228,7 +240,7 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
   @override
   void dispose() {
     _bottomAnimationController.dispose();
-    _pageController.dispose();
+    _backgroundController.dispose();
     super.dispose();
   }
 
@@ -268,94 +280,104 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
 
   @override
   Widget build(BuildContext context) {
-    final r = context.responsive;
     final notifier = ref.read(onboardingNotifierProvider.notifier);
     final walkthroughIndex = ref.watch(
       onboardingNotifierProvider.select((v) => v.walkThroughIndex),
     );
 
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: r.padding(all: 20),
-          child: Column(
-            children: [
-              SizedBox(height: r.spacing(50)),
-              Expanded(
-                child: PageView.builder(
-                  controller: _pageController,
-                  onPageChanged: notifier.updateWalkThroughIndex,
-                  itemCount: OnboardingData.walkthrough.length,
-                  itemBuilder: (context, index) {
-                    return _AnimatedPageContent(
-                      key: ValueKey(index),
-                      index: index,
-                      data: OnboardingData.walkthrough[index],
-                      isActive: index == walkthroughIndex,
-                    );
-                  },
-                ),
+      body: AnimatedBuilder(
+        animation: _backgroundAnimation,
+        builder: (context, child) {
+          return Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white,
+                  Color.lerp(
+                    const Color(0xFFFAFAFA),
+                    const Color(0xFFF0F0F0),
+                    _backgroundAnimation.value,
+                  )!,
+                ],
               ),
-              SizedBox(height: r.spacing(20)),
-              // Animated bottom content
-              SlideTransition(
-                position: _bottomSlideAnimation,
-                child: FadeTransition(
-                  opacity: _bottomFadeAnimation,
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(3, (index) {
-                          return AnimatedContainer(
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeInOut,
-                            margin:
-                                EdgeInsets.symmetric(horizontal: r.spacing(6)),
-                            width: walkthroughIndex == index
-                                ? r.spacing(20)
-                                : r.spacing(6),
-                            height: r.spacing(6),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(r.radiusSize(3)),
-                              color: index == walkthroughIndex
-                                  ? Colors.black
-                                  : const Color(0xffB3B3B3),
-                            ),
-                          );
-                        }),
-                      ),
-                      SizedBox(height: r.spacing(30)),
-                      BundlegramButton(
-                        text: 'Create account',
-                        onPressed: () => context.go(RouteConstants.register),
-                        useResponsive: true,
-                      ),
-                      SizedBox(height: r.spacing(25)),
-                      InkWell(
-                        onTap: () async {
-                          final storage = ref.read(secureStorageHelperProvider);
-                          final rememberedEmail =
-                              await storage.getRememberedEmail();
-
-                          if (rememberedEmail != null) {
-                            unawaited(context.push(RouteConstants.lockScreen));
-                          } else {
-                            unawaited(context.push(RouteConstants.login));
-                          }
-                        },
-                        child: Text(
-                          'I already have an account',
-                          style: context.textTheme.bodyMedium,
-                        ),
-                      ),
-                      SizedBox(height: r.spacing(20)),
-                    ],
+            ),
+            child: child,
+          );
+        },
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                50.verticalSpace,
+                Expanded(
+                  child: PageView.builder(
+                    onPageChanged: (index) {
+                      notifier.updateWalkThroughIndex(index);
+                      // Restart bottom animation on page change
+                      _bottomAnimationController.reset();
+                      _bottomAnimationController.forward();
+                    },
+                    itemCount: OnboardingData.walkthrough.length,
+                    itemBuilder: (context, index) {
+                      return _PremiumPageContent(
+                        key: ValueKey(index),
+                        index: index,
+                        data: OnboardingData.walkthrough[index],
+                        isActive: index == walkthroughIndex,
+                      );
+                    },
                   ),
                 ),
-              ),
-            ],
+                20.verticalSpace,
+                SlideTransition(
+                  position: _bottomSlideAnimation,
+                  child: FadeTransition(
+                    opacity: _bottomFadeAnimation,
+                    child: Column(
+                      children: [
+                        _AnimatedPageIndicators(
+                          currentIndex: walkthroughIndex,
+                          count: 3,
+                        ),
+                        30.verticalSpace,
+                        _AnimatedButton(
+                          text: 'Create account',
+                          onPressed: () => context.go(RouteConstants.register),
+                          isPrimary: true,
+                        ),
+                        25.verticalSpace,
+                        InkWell(
+                          onTap: () async {
+                            final storage =
+                                ref.read(secureStorageHelperProvider);
+                            final rememberedEmail =
+                                await storage.getRememberedEmail();
+
+                            if (rememberedEmail != null) {
+                              unawaited(
+                                  context.push(RouteConstants.lockScreen));
+                            } else {
+                              unawaited(context.push(RouteConstants.login));
+                            }
+                          },
+                          child: Text(
+                            'I already have an account',
+                            style: context.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        20.verticalSpace,
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -363,12 +385,12 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
   }
 }
 
-class _AnimatedPageContent extends StatefulWidget {
+class _PremiumPageContent extends StatefulWidget {
   final int index;
   final Map<String, String> data;
   final bool isActive;
 
-  const _AnimatedPageContent({
+  const _PremiumPageContent({
     required super.key,
     required this.index,
     required this.data,
@@ -376,17 +398,27 @@ class _AnimatedPageContent extends StatefulWidget {
   });
 
   @override
-  State<_AnimatedPageContent> createState() => _AnimatedPageContentState();
+  State<_PremiumPageContent> createState() => _PremiumPageContentState();
 }
 
-class _AnimatedPageContentState extends State<_AnimatedPageContent>
-    with SingleTickerProviderStateMixin {
+class _PremiumPageContentState extends State<_PremiumPageContent>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<Offset> _textSlideAnimation;
-  late Animation<double> _textFadeAnimation;
+  late AnimationController _floatingController;
+  late AnimationController _rotationController;
+
+  late Animation<Offset> _titleSlideAnimation;
+  late Animation<double> _titleFadeAnimation;
+  late Animation<double> _titleScaleAnimation;
+
+  late Animation<Offset> _subtitleSlideAnimation;
+  late Animation<double> _subtitleFadeAnimation;
+
   late Animation<Offset> _imageSlideAnimation;
   late Animation<double> _imageFadeAnimation;
   late Animation<double> _imageScaleAnimation;
+  late Animation<double> _floatingAnimation;
+  late Animation<double> _rotationAnimation;
 
   @override
   void initState() {
@@ -396,31 +428,87 @@ class _AnimatedPageContentState extends State<_AnimatedPageContent>
   }
 
   void _setupAnimations() {
+    // Main animation controller
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1400),
     );
 
-    // Text animations - slide from top
-    _textSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, -0.5),
+    // Floating effect controller
+    _floatingController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3000),
+    )..repeat(reverse: true);
+
+    _floatingAnimation = Tween<double>(
+      begin: -10.0,
+      end: 10.0,
+    ).animate(CurvedAnimation(
+      parent: _floatingController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Subtle rotation controller
+    _rotationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 4000),
+    )..repeat(reverse: true);
+
+    _rotationAnimation = Tween<double>(
+      begin: -0.02,
+      end: 0.02,
+    ).animate(CurvedAnimation(
+      parent: _rotationController,
+      curve: Curves.easeInOut,
+    ));
+
+    // Title animations - dramatic entrance with scale
+    final titleDirection = widget.index % 2 == 0 ? -0.5 : 0.5;
+    _titleSlideAnimation = Tween<Offset>(
+      begin: Offset(titleDirection, 0),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
+      curve: const Interval(0.0, 0.5, curve: Curves.easeOutCubic),
     ));
 
-    _textFadeAnimation = Tween<double>(
+    _titleFadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+      curve: const Interval(0.0, 0.4, curve: Curves.easeIn),
     ));
 
-    // Image animations - slide from bottom + scale
+    _titleScaleAnimation = Tween<double>(
+      begin: 0.7,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.0, 0.5, curve: Curves.easeOutBack),
+    ));
+
+    // Subtitle animations - slightly delayed
+    _subtitleSlideAnimation = Tween<Offset>(
+      begin: Offset(titleDirection * 0.8, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.15, 0.6, curve: Curves.easeOutCubic),
+    ));
+
+    _subtitleFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.15, 0.5, curve: Curves.easeIn),
+    ));
+
+    // Image animations - opposite direction with bounce
+    final imageDirection = widget.index % 2 == 0 ? 0.6 : -0.6;
     _imageSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.5),
+      begin: Offset(imageDirection, 0.2),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,
@@ -436,16 +524,16 @@ class _AnimatedPageContentState extends State<_AnimatedPageContent>
     ));
 
     _imageScaleAnimation = Tween<double>(
-      begin: 0.7,
+      begin: 0.5,
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.3, 0.9, curve: Curves.easeOutBack),
+      curve: const Interval(0.3, 0.9, curve: Curves.elasticOut),
     ));
   }
 
   void _startAnimations() {
-    Future.delayed(const Duration(milliseconds: 200), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
       if (mounted) {
         _controller.forward();
       }
@@ -453,18 +541,184 @@ class _AnimatedPageContentState extends State<_AnimatedPageContent>
   }
 
   @override
-  void didUpdateWidget(_AnimatedPageContent oldWidget) {
+  void didUpdateWidget(_PremiumPageContent oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Trigger animation when this page becomes active
-    if (widget.isActive && !oldWidget.isActive) {
+    if (oldWidget.index != widget.index) {
       _controller.reset();
       _startAnimations();
     }
-    // Also trigger if the page index changes (ensures animation on every swipe)
-    if (widget.index != oldWidget.index) {
-      _controller.reset();
-      _startAnimations();
-    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _floatingController.dispose();
+    _rotationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Decorative circles in background
+        Positioned(
+          top: 50,
+          right: 30,
+          child: _DecorativeCircle(
+            size: 60,
+            color: Colors.white.withOpacity(0.03),
+            delay: 0,
+          ),
+        ),
+        Positioned(
+          top: 150,
+          left: 20,
+          child: _DecorativeCircle(
+            size: 80,
+            color: Colors.white.withOpacity(0.02),
+            delay: 200,
+          ),
+        ),
+
+        Column(
+          children: [
+            // Animated title
+            SlideTransition(
+              position: _titleSlideAnimation,
+              child: FadeTransition(
+                opacity: _titleFadeAnimation,
+                child: ScaleTransition(
+                  scale: _titleScaleAnimation,
+                  child: Text(
+                    widget.data['name']!.toUpperCase(),
+                    textAlign: TextAlign.center,
+                    style: context.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            14.verticalSpace,
+            // Animated subtitle
+            SlideTransition(
+              position: _subtitleSlideAnimation,
+              child: FadeTransition(
+                opacity: _subtitleFadeAnimation,
+                child: Text(
+                  widget.data['subText']!,
+                  textAlign: TextAlign.center,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ),
+            // Animated image with floating effect
+            Expanded(
+              child: Center(
+                child: SlideTransition(
+                  position: _imageSlideAnimation,
+                  child: FadeTransition(
+                    opacity: _imageFadeAnimation,
+                    child: ScaleTransition(
+                      scale: _imageScaleAnimation,
+                      child: AnimatedBuilder(
+                        animation: Listenable.merge([
+                          _floatingAnimation,
+                          _rotationAnimation,
+                        ]),
+                        builder: (context, child) {
+                          return Transform.translate(
+                            offset: Offset(0, _floatingAnimation.value),
+                            child: Transform.rotate(
+                              angle: _rotationAnimation.value,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.05),
+                                blurRadius: 30,
+                                spreadRadius: 5,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: AssetGenImage(
+                            widget.data['icon']!,
+                          ).image(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _DecorativeCircle extends StatefulWidget {
+  final double size;
+  final Color color;
+  final int delay;
+
+  const _DecorativeCircle({
+    required this.size,
+    required this.color,
+    required this.delay,
+  });
+
+  @override
+  State<_DecorativeCircle> createState() => _DecorativeCircleState();
+}
+
+class _DecorativeCircleState extends State<_DecorativeCircle>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.elasticOut,
+    ));
+
+    _opacityAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeIn,
+    ));
+
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) {
+        _controller.forward();
+      }
+    });
   }
 
   @override
@@ -475,49 +729,122 @@ class _AnimatedPageContentState extends State<_AnimatedPageContent>
 
   @override
   Widget build(BuildContext context) {
-    final r = context.responsive;
-    return Column(
-      children: [
-        // Animated title and subtitle
-        SlideTransition(
-          position: _textSlideAnimation,
-          child: FadeTransition(
-            opacity: _textFadeAnimation,
-            child: Column(
-              children: [
-                Text(
-                  widget.data['name']!.toUpperCase(),
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.titleLarge,
-                ),
-                SizedBox(height: r.spacing(14)),
-                Text(
-                  widget.data['subText']!,
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.bodySmall,
-                ),
-              ],
-            ),
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: FadeTransition(
+        opacity: _opacityAnimation,
+        child: Container(
+          width: widget.size,
+          height: widget.size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: widget.color,
           ),
         ),
-        // Animated image
-        Expanded(
-          child: Center(
-            child: SlideTransition(
-              position: _imageSlideAnimation,
-              child: FadeTransition(
-                opacity: _imageFadeAnimation,
-                child: ScaleTransition(
-                  scale: _imageScaleAnimation,
-                  child: AssetGenImage(
-                    widget.data['icon']!,
-                  ).image(),
-                ),
-              ),
-            ),
+      ),
+    );
+  }
+}
+
+class _AnimatedPageIndicators extends StatelessWidget {
+  final int currentIndex;
+  final int count;
+
+  const _AnimatedPageIndicators({
+    required this.currentIndex,
+    required this.count,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(count, (index) {
+        final isActive = index == currentIndex;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+          margin: EdgeInsets.symmetric(horizontal: 6.h),
+          width: isActive ? 24.w : 6.w,
+          height: 6.h,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(3.r),
+            color: isActive ? Colors.black : const Color(0xffFFFFFF),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
+        );
+      }),
+    );
+  }
+}
+
+class _AnimatedButton extends StatefulWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final bool isPrimary;
+
+  const _AnimatedButton({
+    required this.text,
+    required this.onPressed,
+    this.isPrimary = false,
+  });
+
+  @override
+  State<_AnimatedButton> createState() => _AnimatedButtonState();
+}
+
+class _AnimatedButtonState extends State<_AnimatedButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  bool _isPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) {
+        setState(() => _isPressed = true);
+        _controller.forward();
+      },
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        _controller.reverse();
+        widget.onPressed();
+      },
+      onTapCancel: () {
+        setState(() => _isPressed = false);
+        _controller.reverse();
+      },
+      child: AnimatedScale(
+        scale: _isPressed ? 0.96 : 1.0,
+        duration: const Duration(milliseconds: 100),
+        child: BundlegramButton(
+          text: widget.text,
+          onPressed: () {}, // Handled by GestureDetector
         ),
-      ],
+      ),
     );
   }
 }
