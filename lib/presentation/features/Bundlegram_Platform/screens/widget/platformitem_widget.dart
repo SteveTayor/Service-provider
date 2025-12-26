@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -16,6 +17,7 @@ class PlatformItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final r = context.responsive;
     return GestureDetector(
       onTap: onPressed,
       child: Column(
@@ -23,15 +25,15 @@ class PlatformItemWidget extends StatelessWidget {
         children: [
           Container(
             alignment: Alignment.center,
-            width: 52,
-            height: 52,
+            width: r.spacing(52),
+            height: r.spacing(52),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: const Color(0xffDDB9B4).withOpacity(0.48),
             ),
             child: AppSvgIcon(path: icon),
           ),
-          8.verticalSpace,
+          SizedBox(height: r.spacing(8)),
           Text(
             title,
             style: context.textTheme.bodyMedium!.copyWith(

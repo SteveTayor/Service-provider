@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/currency_extension.dart';
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -15,12 +16,15 @@ class ServiceListItem extends ConsumerWidget {
   const ServiceListItem({
     super.key,
     required this.transaction,
+    this.useResponsive = true,
   });
 
   final UserTransactions transaction;
+  final bool useResponsive;
 
   @override
   Widget build(BuildContext context, WidgetRef _ref) {
+    final r = context.responsive;
     final title = transaction.transType == "fund_wallet"
         ? "Top-up"
         : transaction.transType == "withdrawal"
@@ -42,35 +46,42 @@ class ServiceListItem extends ConsumerWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Service icon circle
         Container(
-          width: 30.w,
-          height: 30.w,
+          width: useResponsive ? r.spacing(30) : 30.w,
+          height: useResponsive ? r.spacing(30) : 30.w,
           decoration: BoxDecoration(
             color: _getServiceColor(type!).withOpacity(0.15),
             shape: BoxShape.circle,
           ),
           child: _getServiceIcon(type),
         ),
-        12.horizontalSpace,
+        SizedBox(
+          width: useResponsive ? r.spacing(12) : 12.w,
+        ),
+
+        // Transaction details
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 4,
             children: [
-              SizedBox(height: 2),
+              SizedBox(height: useResponsive ? r.spacing(2) : 2),
               Text(
                 title!.capitalizeFirst,
-                style: context.textTheme.bodySmall?.copyWith(
-                  fontSize: 14,
+                style: TextStyle(
+                  fontSize: useResponsive ? r.textSize(14) : 14,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.grey33,
                 ),
               ),
+              SizedBox(height: useResponsive ? r.spacing(4) : 4),
               Row(
                 children: [
                   Flexible(
                     child: Text(
                       status,
-                      style: context.textTheme.labelMedium!.copyWith(
-                        fontSize: 12,
+                      style: TextStyle(
+                        fontSize: useResponsive ? r.textSize(12) : 12,
                         color: _getStatusColor(status),
                       ),
                     ),
@@ -78,7 +89,7 @@ class ServiceListItem extends ConsumerWidget {
                   Text(
                     ' - $date',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: useResponsive ? r.textSize(12) : 12,
                       color: AppColors.dateColor,
                     ),
                   ),
@@ -87,10 +98,12 @@ class ServiceListItem extends ConsumerWidget {
             ],
           ),
         ),
+
+        // Amount
         Text(
           amount,
-          style: context.textTheme.labelMedium?.copyWith(
-            fontSize: 12.sp,
+          style: TextStyle(
+            fontSize: useResponsive ? r.textSize(14) : 14.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -100,7 +113,7 @@ class ServiceListItem extends ConsumerWidget {
 
   String _formatDate(DateTime? date) {
     if (date == null) {
-      print('Invalid date: null'); // Debug
+      print('Invalid date: null');
       return '--';
     }
     final now = DateTime.now();
@@ -109,7 +122,7 @@ class ServiceListItem extends ConsumerWidget {
     final txnDate = DateTime(date.year, date.month, date.day);
     if (txnDate == today) return 'Today';
     if (txnDate == yesterday) return 'Yesterday';
-    return DateFormat('MMM d, yyyy').format(date); // e.g. Jul 26, 2025
+    return DateFormat('MMM d, yyyy').format(date);
   }
 
   Widget _getServiceIcon(String type) {
@@ -166,7 +179,6 @@ class ServiceListItem extends ConsumerWidget {
       'e-pin voucher': const Color(0xFF38A169),
     };
 
-    // Partial match check
     for (final entry in serviceColorMap.entries) {
       if (key.contains(entry.key)) {
         return entry.value;

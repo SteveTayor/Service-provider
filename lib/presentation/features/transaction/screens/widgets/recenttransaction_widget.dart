@@ -13,6 +13,7 @@ import 'package:bundlegram/presentation/general_widget/receipt_widget.dart';
 import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
 import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
@@ -95,8 +96,12 @@ class RecentTransactionWidget extends ConsumerWidget {
       itemBuilder: (context, index) {
         final transaction = transactions[index];
         return InkWell(
-          onTap: () => _showTransactionDetails(context, transaction),
-          child: ServiceListItem(transaction: transaction),
+          highlightColor: Colors.transparent,
+          onTap: () {
+            HapticFeedback.selectionClick();
+            _showTransactionDetails(context, transaction);
+          },
+          child: ServiceListItem(useResponsive: true, transaction: transaction),
         );
       },
     );
