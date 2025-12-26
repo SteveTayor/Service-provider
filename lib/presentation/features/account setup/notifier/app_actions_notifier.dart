@@ -6,6 +6,7 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/styles.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -145,13 +146,24 @@ class AppActionsNotifier {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
+// Debug logging to understand Play Core result
+      if (kDebugMode) {
+        debugPrint(
+            'InAppUpdate updateAvailability: ${updateInfo.updateAvailability}');
+        debugPrint('Immediate allowed: ${updateInfo.immediateUpdateAllowed}');
+        debugPrint('Flexible allowed: ${updateInfo.flexibleUpdateAllowed}');
+        debugPrint(
+            'Available version code: ${updateInfo.availableVersionCode}');
+      }
+
       if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
         // Show dialog asking user if they want to update
         _showInAppUpdateDialog(context, updateInfo);
       } else {
-        context.showSuccessSnackBar('You have the latest version!');
+        context.showSuccessSnackBar('No updates available');
       }
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('Error checking for in-app update: $e\n$st');
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         context.showErrorSnackBar('Unable to check for updates');
@@ -252,7 +264,7 @@ class AppActionsNotifier {
       if (_isUpdateAvailable(currentVersion, latestVersion)) {
         _showUpdateDialog(context, currentVersion, latestVersion);
       } else {
-        context.showSuccessSnackBar('You have the latest version!');
+        context.showSuccessSnackBar('No updates available');
       }
     } catch (_) {
       if (context.mounted) {
