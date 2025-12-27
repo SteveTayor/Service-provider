@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
@@ -9,10 +10,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NavBar extends ConsumerWidget {
-  const NavBar({super.key});
+  const NavBar({
+    super.key,
+    this.useResponsive = true,
+  });
+
+  final bool useResponsive;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final r = context.responsive;
+
     final items = [
       {
         'icon': Assets.svgs.homeinactive,
@@ -35,15 +43,16 @@ class NavBar extends ConsumerWidget {
         'name': 'Account',
       },
     ];
+
     final currentIndex =
         ref.watch(dashboardProvider.select((p) => p.currentIndex));
 
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.w,
-        14.h,
-        20.w,
-        22.h,
+        useResponsive ? r.spacing(20) : 20.w,
+        useResponsive ? r.spacing(14) : 14.h,
+        useResponsive ? r.spacing(20) : 20.w,
+        useResponsive ? r.spacing(22) : 22.h,
       ),
       color: AppColors.background,
       width: double.infinity,

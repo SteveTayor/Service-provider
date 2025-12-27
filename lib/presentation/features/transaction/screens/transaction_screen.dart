@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
@@ -38,6 +39,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
   final Set<String> _typeSet = {};
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
+  final bool useResponsive = true;
 
   @override
   void initState() {
@@ -80,8 +82,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final r = context.responsive;
     final state = ref.watch(transactionHistoryProvider);
-    final allTxns = state.filteredServices;
 
     return BundlegramScaffold(
       useResponsive: true,
@@ -94,6 +96,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
             HapticFeedback.lightImpact();
             context.showBottomSheet(
               child: TransactionFilterWidget(
+                useResponsive: true,
                 onApply: ({
                   required String sortBy,
                   required String amountBy,
@@ -139,7 +142,9 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              padding: EdgeInsets.symmetric(
+                horizontal: useResponsive ? r.spacing(10) : 10.w, // CHANGED
+              ),
               child: AppTextField(
                 decoration: const InputDecoration().search(),
                 onChange: (value) {
@@ -147,7 +152,9 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
                 },
               ),
             ),
-            20.verticalSpace,
+            SizedBox(
+              height: useResponsive ? r.spacing(20) : 20.h, // CHANGED
+            ),
             Expanded(
               child: AppAsyncBuilder(
                 state: ref
@@ -171,20 +178,27 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
 
                   return ListView.separated(
                     controller: _scrollController,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 25),
+                    padding: EdgeInsets.symmetric(
+                      horizontal:
+                          useResponsive ? r.spacing(10) : 10.w, // CHANGED
+                      vertical: useResponsive ? r.spacing(25) : 25, // CHANGED
+                    ),
                     itemCount: allTxns.length + 1,
                     separatorBuilder: (_, __) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8, top: 10),
-                      child: Divider(color: AppColors.divider),
+                      padding: EdgeInsets.only(
+                        bottom: useResponsive ? r.spacing(8) : 8,
+                        top: useResponsive ? r.spacing(10) : 10,
+                      ),
                     ),
                     itemBuilder: (ctx, index) {
                       if (index == allTxns.length) {
                         final state = ref.watch(transactionHistoryProvider);
                         if (!state.hasMore) return const SizedBox.shrink();
                         if (state.isLoadingMore) {
-                          return const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12),
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: useResponsive ? r.spacing(12) : 12,
+                            ),
                             child: Center(
                                 child:
                                     CircularProgressIndicator(strokeWidth: 2)),
@@ -196,7 +210,10 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
                       final txn = allTxns[index];
                       return InkWell(
                         onTap: () => _showTransactionDetails(txn),
-                        child: ServiceListItem(transaction: txn),
+                        child: ServiceListItem(
+                          transaction: txn,
+                          useResponsive: true,
+                        ),
                       );
                     },
                   );
