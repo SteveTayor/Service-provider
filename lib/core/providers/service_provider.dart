@@ -44,7 +44,7 @@ final airtimeHistoryProvider =
 
 final ePinHistoryProvider =
     StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => AllServiceHistoryNotifier(ref, 'e-pin'),
+  (ref) => AllServiceHistoryNotifier(ref, 'epin'),
 );
 
 // ✅ Wallet history now using the .family provider properly

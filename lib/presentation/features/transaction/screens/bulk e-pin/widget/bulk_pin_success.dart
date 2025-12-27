@@ -8,8 +8,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 class BulkPinSuccessResultScreen extends StatelessWidget {
-  const BulkPinSuccessResultScreen({
+  String? subtitle =
+      'Your bulk e-pin purchase was successful. You can now access your e-pins in the e-pin section of your account.';
+  BulkPinSuccessResultScreen({
     super.key,
+    this.subtitle,
   });
 
   @override
@@ -21,8 +24,7 @@ class BulkPinSuccessResultScreen extends StatelessWidget {
           path: Assets.svgs.successfulIllustration,
         ),
         title: 'Details submitted!',
-        subText:
-            'Your request has been received. We will contact you soon for more information.',
+        subText: subtitle!,
         buttonText: 'Go to home',
         onPressed: () {
           context.push(RouteConstants.dashboard);

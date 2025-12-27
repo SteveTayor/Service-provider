@@ -93,9 +93,17 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
     final walletBalance = walletBalanceAsync.value?.wallet ?? 0.0;
     final isPhoneBased = serviceType == PlatformProductType.airtime ||
         serviceType == PlatformProductType.mobileData;
+    // Require explicit subproduct selection for ePin/bulkEPin
+    final bool requiresNetworkSelectedForEpin =
+        serviceType == PlatformProductType.ePinVoucher ||
+            serviceType == PlatformProductType.bulkEPin;
 
-    final canContinue = !isPhoneBased ||
-        (state.isPhoneInputValid && state.selectedProduct != null);
+    final canContinue = requiresNetworkSelectedForEpin
+        ? (state.selectedSubProduct != null &&
+            (state.selectedSubProduct?.subName?.trim().isNotEmpty ?? false))
+        : (!isPhoneBased ||
+            (state.isPhoneInputValid && state.selectedProduct != null));
+
     return WillPopScope(
       onWillPop: () async {
         context.pushReplacement(RouteConstants.dashboard);
@@ -289,10 +297,30 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                                           ?.userType ==
                                       "agent";
                                   if (isAgent) {
+                                    // Prefer subName, otherwise productName (but we should prefer subName)
+                                    final preselectedNetwork = state
+                                            .selectedSubProduct?.subName
+                                            ?.trim() ??
+                                        state.selectedProduct?.productName
+                                            ?.trim();
+
+                                    debugPrint(
+                                        '[ePin] preselectedNetwork before navigation: $preselectedNetwork');
+
+                                    if (preselectedNetwork == null ||
+                                        preselectedNetwork.isEmpty) {
+                                      // Defensive: this should not happen with the updated canContinue,
+                                      // but keep user-friendly safeguard.
+                                      context.showErrorSnackBar(
+                                          'Please select a network/biller first.');
+                                      return;
+                                    }
+
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              const BulkEpinScreen()),
+                                        builder: (_) => BulkEpinScreen(
+                                            initialNetwork: preselectedNetwork),
+                                      ),
                                     );
                                   } else {
                                     notifier.showBulkEPinPrompt(context);
@@ -379,24 +407,30 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                               // fontSize: 18,
                               fontWeight: FontWeight.w500,
                             ),
-                            onPressed: () {
-                              final isAgent = ref
-                                      .read(globalProvider)
-                                      .profile
-                                      .value
-                                      ?.data
-                                      ?.userType ==
-                                  "agent";
-                              if (isAgent) {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const BulkEpinScreen()),
-                                );
-                              } else {
-                                notifier.showBulkEPinPrompt(context);
-                              }
-                            },
+                            onPressed: canContinue
+                                ? () {
+                                    final isAgent = ref
+                                            .read(globalProvider)
+                                            .profile
+                                            .value
+                                            ?.data
+                                            ?.userType ==
+                                        "agent";
+                                    if (isAgent) {
+                                      final preselectedNetwork = state
+                                              .selectedSubProduct?.subName ??
+                                          state.selectedProduct?.productName;
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (_) => BulkEpinScreen(
+                                                initialNetwork:
+                                                    preselectedNetwork)),
+                                      );
+                                    } else {
+                                      notifier.showBulkEPinPrompt(context);
+                                    }
+                                  }
+                                : null,
                             color: AppColors.white,
                           ),
                         ),

@@ -44,7 +44,7 @@ class ServiceListItem extends ConsumerWidget {
         : transaction.deductAmount.toCurrency();
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Service icon circle
         Container(

@@ -1495,7 +1495,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       case PlatformProductType.ePinVoucher:
         return EpinSuccessResultScreen(amount: amount);
       case PlatformProductType.bulkEPin:
-        return const BulkPinSuccessResultScreen();
+        return BulkPinSuccessResultScreen();
       case PlatformProductType.betting:
         return BettingSuccessResultScreen(
           amount: amount,

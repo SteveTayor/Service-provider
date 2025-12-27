@@ -30,6 +30,7 @@ import 'package:bundlegram/data/models/notification/mark_notifications_asread_re
 import 'package:bundlegram/data/models/notification/notification_response.dart';
 import 'package:bundlegram/data/models/products/epin/epin_request_response.dart';
 import 'package:bundlegram/data/models/products/epin/epin_response.dart';
+import 'package:bundlegram/data/models/products/epin/epin_trannsactions.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/profile/profile_response.dart';
@@ -362,5 +363,11 @@ abstract class ApiDefinition {
     @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
     @Body() EpinRequest body,
+  );
+
+  @GET(Endpoints.epinTransactionRequests)
+  Future<EpinTransactionRequestsResponse> getEpinTransactionRequests(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
   );
 }

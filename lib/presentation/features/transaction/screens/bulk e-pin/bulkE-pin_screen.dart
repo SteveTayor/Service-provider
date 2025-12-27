@@ -23,27 +23,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class BulkEpinScreen extends ConsumerWidget {
-  const BulkEpinScreen({super.key});
+class BulkEpinScreen extends ConsumerStatefulWidget {
+  final String? initialNetwork;
+  const BulkEpinScreen({super.key, this.initialNetwork});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BulkEpinScreen> createState() => _BulkEpinScreenState();
+}
+
+class _BulkEpinScreenState extends ConsumerState<BulkEpinScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // fetch networks and try to preselect initialNetwork
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(bulkEpinProvider.notifier)
+          .fetchNetworks(context, initialNetwork: widget.initialNetwork);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(bulkEpinProvider);
     final notifier = ref.read(bulkEpinProvider.notifier);
     final walletBalanceAsync =
         ref.watch(globalProvider.select((s) => s.walletBalance));
     final walletBalance = walletBalanceAsync.value?.wallet ?? 0.0;
 
-    // Fetch networks on screen load
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      notifier.fetchNetworks(context);
-    });
-
     // Quantity options (1 to 100)
-    // generate it in batch of 5, 10, 15,...100
-
     final quantityOptions =
-        List.generate(100, (index) => (index + 1).toString());
+        List<String>.generate(20, (index) => '${(index + 1) * 5}');
 
     return BundlegramScaffold(
       resizeToAvoidBottomInset: true,
@@ -65,16 +75,19 @@ class BulkEpinScreen extends ConsumerWidget {
                     AppTextField(
                       hintText: 'Agent name',
                       controller: state.agentNameController,
+                      readOnly: true,
                       validateFunction: Validators.name(),
                     ),
                     AppTextField(
                       hintText: 'Agent email',
                       controller: state.agentEmailController,
+                      readOnly: true,
                       validateFunction: Validators.email(),
                     ),
                     AppTextField(
                       hintText: 'Agent phone number',
                       controller: state.agentPhoneController,
+                      readOnly: true,
                       validateFunction:
                           Validators.validateNigerianPhoneNumber(),
                       keyboardType: TextInputType.phone,
@@ -89,14 +102,17 @@ class BulkEpinScreen extends ConsumerWidget {
                     AppTextField(
                       hintText: 'Business name',
                       controller: state.businessNameController,
+                      readOnly: true,
                       validateFunction: Validators.name(),
                     ),
                     AppDropdown(
-                      title: 'Network',
-                      options: state.products
-                          .where((p) => p.productName != null)
-                          .map((p) => p.productName!)
-                          .toList(),
+                      title: widget.initialNetwork ?? 'Select network',
+                      options: state.networkOptions.isNotEmpty
+                          ? state.networkOptions
+                          : state.products
+                              .where((p) => p.productName != null)
+                              .map((p) => p.productName!)
+                              .toList(), // fallback
                       selected: state.selectedNetwork,
                       onChanged: (value) => notifier.selectNetwork(value!),
                     ),
@@ -113,10 +129,12 @@ class BulkEpinScreen extends ConsumerWidget {
                       ),
                     ),
                     AppDropdown(
-                      title: 'Quantity',
+                      title: state.selectedQuantity.toString() ?? 'Quantity',
                       options: quantityOptions,
                       selected: state.selectedQuantity,
-                      onChanged: (value) => notifier.selectQuantity(value!),
+                      onChanged: (value) => ref
+                          .read(bulkEpinProvider.notifier)
+                          .selectQuantity(value!),
                     ),
                     Row(
                       children: [
@@ -150,7 +168,9 @@ class BulkEpinScreen extends ConsumerWidget {
                     BundlegramButton(
                       text: 'Continue',
                       isLoading: state.isLoading,
-                      onPressed: () => notifier.submitForm(context),
+                      onPressed: () => ref
+                          .read(bulkEpinProvider.notifier)
+                          .submitForm(context),
                     ),
                   ],
                 ),
