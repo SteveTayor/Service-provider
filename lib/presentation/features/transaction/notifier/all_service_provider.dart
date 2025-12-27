@@ -13,8 +13,12 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
       (prev, next) {
         next.when(
           data: (wrapper) {
-            _allTransactions = wrapper?.data ?? [];
-            _loadServices();
+            _originalTransactions = (wrapper?.data ?? [])
+                .where((txn) =>
+                    (txn.transType ?? '').toLowerCase().trim() ==
+                    serviceType.toLowerCase())
+                .toList();
+            _applyFiltersAndReset();
           },
           loading: () {
             state = state.copyWith(isLoading: true, error: null);
@@ -29,91 +33,62 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
       },
     );
     // Initial load
-    _loadServices();
+    _loadInitialFromProvider();
   }
 
   final Ref ref;
   final String serviceType;
   static const int _batchSize = 20; // Same batch size as TransactionHistory
-  List<UserTransactions> _allTransactions = [];
+// list from global provider filtered by serviceType need not overwritten
+  List<UserTransactions> _originalTransactions = [];
 
-  void _loadServices() {
+  // Full filtered list derived from master (used for pagination)
+  List<UserTransactions> _currentFilteredFull = [];
+
+  void _loadInitialFromProvider() {
     final all = ref.read(globalProvider).usersTransactions.value?.data ?? [];
-    final filtered = all.where((txn) {
-      final type = txn.transType?.toLowerCase().trim();
-      // txn.subProduct?.product?.productName?.toLowerCase().trim() ?? '';
-      return type == serviceType.toLowerCase();
-    }).toList();
-
-    _allTransactions = filtered;
-    final initialBatch = _allTransactions.take(_batchSize).toList();
-    state = state.copyWith(
-      allTransactions: _allTransactions,
-      filteredTransactions: initialBatch,
-      isLoading: false,
-      error: null,
-    );
+    _originalTransactions = all
+        .where((txn) =>
+            (txn.transType ?? '').toLowerCase().trim() ==
+            serviceType.toLowerCase())
+        .toList();
+    _applyFiltersAndReset();
   }
 
-  void loadMoreTransactions() {
-    final current = state.filteredTransactions.length;
-    if (current >= _allTransactions.length) return; // All loaded
+  void _applyFiltersAndReset({
+    Set<String>? typeSet,
+    Set<String>? statusSet,
+    String? sortBy,
+    String? amountBy,
+    String? searchQuery,
+  }) {
+    // Start from the immutable master list
+    var temp = [..._originalTransactions];
 
-    final nextBatch = _allTransactions.skip(current).take(_batchSize).toList();
-    final updated = [...state.filteredTransactions, ...nextBatch];
-
-    state = state.copyWith(filteredTransactions: updated);
-  }
-
-  void search(String query) {
-    if (query.isEmpty) {
-      final initialBatch = _allTransactions.take(_batchSize).toList();
-      state = state.copyWith(
-        filteredTransactions: initialBatch,
-        searchQuery: '',
-      );
-      return;
+    // Search
+    if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+      final q = searchQuery.toLowerCase();
+      temp = temp.where((txn) {
+        final status = txn.status?.toLowerCase() ?? '';
+        final product =
+            txn.subProduct?.product?.productName?.toLowerCase() ?? '';
+        final description = txn.subProduct?.subName?.toLowerCase() ?? '';
+        return product.contains(q) ||
+            status.contains(q) ||
+            description.contains(q);
+      }).toList();
     }
 
-    final q = query.toLowerCase();
-    final filtered = _allTransactions.where((txn) {
-      final status = txn.status?.toLowerCase() ?? '';
-      final product = txn.subProduct?.product?.productName?.toLowerCase() ?? '';
-      final description = txn.subProduct?.subName?.toLowerCase() ?? '';
-      return product.contains(q) ||
-          status.contains(q) ||
-          description.contains(q);
-    }).toList();
-
-    state = state.copyWith(
-      filteredTransactions: filtered,
-      searchQuery: query,
-    );
-  }
-
-  Future<void> refresh() async {
-    state = state.copyWith(isLoading: true);
-    _loadServices();
-  }
-
-  void applyFilters({
-    required Set<String> typeSet,
-    required Set<String> statusSet,
-    required String sortBy,
-    required String amountBy,
-  }) {
-    var temp = List<UserTransactions>.from(_allTransactions);
-
-    // Filter by status if provided
-    if (statusSet.isNotEmpty) {
+    // Status filter
+    if (statusSet != null && statusSet.isNotEmpty) {
       temp = temp
           .where((txn) =>
               statusSet.contains(txn.status?.toLowerCase() ?? 'unknown'))
           .toList();
     }
 
-    // Filter by type (optional, as serviceType already filters by productName)
-    if (typeSet.isNotEmpty) {
+    // Type filter (optional; master already filtered by serviceType)
+    if (typeSet != null && typeSet.isNotEmpty) {
       temp = temp.where((txn) {
         final type = txn.subProduct?.product?.productName?.toLowerCase() ?? '';
         return typeSet.contains(type);
@@ -121,7 +96,7 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
     }
 
     // Sort by date
-    if (sortBy.isNotEmpty) {
+    if (sortBy != null && sortBy.isNotEmpty) {
       temp.sort((a, b) {
         final aDate = a.createdAt ?? DateTime(1970);
         final bDate = b.createdAt ?? DateTime(1970);
@@ -132,7 +107,7 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
     }
 
     // Sort by amount
-    if (amountBy.isNotEmpty) {
+    if (amountBy != null && amountBy.isNotEmpty) {
       temp.sort((a, b) {
         final aAmt = double.tryParse(a.amount ?? '0') ?? 0;
         final bAmt = double.tryParse(b.amount ?? '0') ?? 0;
@@ -142,8 +117,62 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
       });
     }
 
-    _allTransactions = temp;
-    final initialBatch = _allTransactions.take(_batchSize).toList();
-    state = state.copyWith(filteredTransactions: initialBatch);
+    // Set the filtered full list and reset visible page
+    _currentFilteredFull = temp;
+    _resetVisibleTransactionsFromCurrentFiltered();
+  }
+
+  void _resetVisibleTransactionsFromCurrentFiltered() {
+    final initialBatch = _currentFilteredFull.take(_batchSize).toList();
+    state = state.copyWith(
+      allTransactions: _originalTransactions,
+      filteredTransactions: initialBatch,
+      isLoading: false,
+      error: null,
+    );
+  }
+
+  void _loadServices() {
+    // keep backwards compatibility: load initial view from provider
+    _loadInitialFromProvider();
+  }
+
+  void loadMoreTransactions() {
+    final current = state.filteredTransactions.length;
+    if (current >= _currentFilteredFull.length) return; // All loaded
+
+    final nextBatch =
+        _currentFilteredFull.skip(current).take(_batchSize).toList();
+    final updated = [...state.filteredTransactions, ...nextBatch];
+
+    state = state.copyWith(filteredTransactions: updated);
+  }
+
+  void search(String query) {
+    if (query.isEmpty) {
+      // reset to master for this service type
+      _applyFiltersAndReset();
+      return;
+    }
+    _applyFiltersAndReset(searchQuery: query);
+  }
+
+  Future<void> refresh() async {
+    state = state.copyWith(isLoading: true);
+    _loadInitialFromProvider();
+  }
+
+  void applyFilters({
+    required Set<String> typeSet,
+    required Set<String> statusSet,
+    required String sortBy,
+    required String amountBy,
+  }) {
+    _applyFiltersAndReset(
+      typeSet: typeSet,
+      statusSet: statusSet,
+      sortBy: sortBy,
+      amountBy: amountBy,
+    );
   }
 }
