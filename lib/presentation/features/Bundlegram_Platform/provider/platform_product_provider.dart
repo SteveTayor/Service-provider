@@ -744,7 +744,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
   String _extractBrand(String name) {
     final lower = name.toLowerCase();
-    print('Extracting brand from: $name');
+    // print('Extracting brand from: $name');
     if (lower.contains("mtn")) {
       print('Brand: mtn');
       return "mtn";
@@ -753,7 +753,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     if (lower.contains("airtel")) return "airtel";
     if (lower.contains("9mobile") || lower.contains("etisalat"))
       return "9mobile";
-    print('Brand: ${name.split(" ").first.toLowerCase()}');
+    // print('Brand: ${name.split(" ").first.toLowerCase()}');
     return name.split(" ").first.toLowerCase();
   }
 

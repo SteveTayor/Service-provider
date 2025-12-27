@@ -239,12 +239,12 @@ class ChoosebillerWidget extends ConsumerWidget {
                     }
 
                     return SizedBox(
-                      height: 450.h,
+                      height: 350.h,
                       child: ListView.separated(
                         shrinkWrap: true,
                         physics: AlwaysScrollableScrollPhysics(),
                         itemCount: items.length,
-                        separatorBuilder: (_, __) => 40.verticalSpace,
+                        separatorBuilder: (_, __) => 36.verticalSpace,
                         itemBuilder: (_, index) {
                           final item = items[index];
                           final name = item.subName ?? '';
@@ -265,7 +265,10 @@ class ChoosebillerWidget extends ConsumerWidget {
                             imagePath: isSvg
                                 ? null
                                 : imagePath, // Use imagePath for non-SVGs
-                            subtitle: item.subName,
+                            subtitle: item.planId != null
+                                ? item.planId.toString()
+                                : item.subName,
+                            showSubtitle: true,
                             onPressed: () {
                               debugPrint(
                                   '[BETTING] onPressed -> tapped "$name"');

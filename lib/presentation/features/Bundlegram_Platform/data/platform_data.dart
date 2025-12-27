@@ -77,17 +77,17 @@ class PlatFormData {
           assetPath: Assets.svgs.ePin,
           title: 'E-pin voucher',
           onPressed: () {
-            context
-              ..pop()
-              ..showCustomSnackBar("coming soon");
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const PlatformproductScreen(
-            //       serviceType: PlatformProductType.ePinVoucher,
-            //     ),
-            //   ),
-            // );
+            // context
+            //   ..pop()
+            //   ..showCustomSnackBar("coming soon");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PlatformproductScreen(
+                  serviceType: PlatformProductType.ePinVoucher,
+                ),
+              ),
+            );
           },
         );
       },

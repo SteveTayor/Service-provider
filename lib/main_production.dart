@@ -69,6 +69,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  // Init Firebase first (only once).
+  await Firebase.initializeApp(
+    name: 'bundlegram',
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Register background handler (must be a top-level or static function).
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // set preferred orientations
   await SystemChrome.setPreferredOrientations([
@@ -84,6 +92,8 @@ Future<void> main() async {
     systemNavigationBarIconBrightness: Brightness.light,
   ));
 
+  // Then initialize Firebase & notifications in the background
+  unawaited(_initializeFirebaseAndMessaging());
   // Check for app updates and handle stale data BEFORE app starts
   await _checkAppVersionAndClearStaleData();
   // Prefer runZonedGuarded to capture uncaught async errors too.
@@ -114,9 +124,6 @@ Future<void> main() async {
     },
     _handleGlobalError,
   );
-
-  // Then initialize Firebase & notifications in the background
-  unawaited(_initializeFirebaseAndMessaging());
 }
 
 /// Check app version and clear stale data if app was updated
