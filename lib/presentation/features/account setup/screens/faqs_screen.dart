@@ -3,6 +3,7 @@ import 'package:bundlegram/presentation/features/account%20setup/notifier/accoun
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -358,6 +359,7 @@ class _AnimatedFAQExpansionTileState extends State<AnimatedFAQExpansionTile>
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12.r),
                       onTap: () {
+                        HapticFeedback.lightImpact();
                         setState(() {
                           isExpanded = !isExpanded;
                         });

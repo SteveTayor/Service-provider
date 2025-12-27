@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -8,6 +9,7 @@ import 'package:bundlegram/presentation/features/setting/provider/create_pin_pro
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -46,13 +48,14 @@ class _PinScreenState extends ConsumerState<PinScreen>
   }
 
   Widget _buildPinDot(int index) {
+    final r = context.responsive;
     final controller = ref.watch(pinControllerProvider);
     final isFilled = controller.pin[index].isNotEmpty;
 
     return Container(
-      width: 24.w,
-      height: 24.w,
-      margin: EdgeInsets.symmetric(horizontal: 8.w),
+      width: r.spacing(24),
+      height: r.spacing(24),
+      margin: EdgeInsets.symmetric(horizontal: r.spacing(8)),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isFilled ? AppColors.primaryColor : Colors.transparent,
@@ -65,12 +68,13 @@ class _PinScreenState extends ConsumerState<PinScreen>
   }
 
   Widget _buildNumberButton(String number) {
+    final r = context.responsive;
     return TextButton(
       onPressed: () {
         ref.read(pinControllerProvider.notifier).updatePin(number, context);
       },
       style: TextButton.styleFrom(
-        padding: EdgeInsets.all(20.w),
+        padding: EdgeInsets.all(r.spacing(20)),
         shape: const CircleBorder(),
       ),
       child: Text(
@@ -85,15 +89,19 @@ class _PinScreenState extends ConsumerState<PinScreen>
 
   @override
   Widget build(BuildContext context) {
+    final r = context.responsive;
     final controller = ref.watch(pinControllerProvider);
 
     return BundlegramScaffold(
+      useResponsive: true,
       appBar: BundlegramAppbar(
+        useResponsive: true,
         titleText: controller.mode == PinScreenMode.create
             ? 'Create new pin'
             : 'Confirm pin',
         showBackButton: false,
         onTap: () {
+          HapticFeedback.lightImpact();
           if (controller.mode == PinScreenMode.create) {
             context.pop();
           } else {
@@ -105,14 +113,18 @@ class _PinScreenState extends ConsumerState<PinScreen>
           }
         },
       ),
-      sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
+      sidePadding: r.padding(
+        left: 20,
+        right: 20,
+        bottom: 40,
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
             child: Column(
               children: [
-                10.verticalSpace,
+                SizedBox(height: r.spacing(10)),
                 Text(
                   'The PIN will be used to authorize transactions.',
                   textAlign: TextAlign.center,
@@ -122,7 +134,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
                     height: 1.4,
                   ),
                 ),
-                40.verticalSpace,
+                SizedBox(height: r.spacing(40)),
                 AnimatedBuilder(
                   animation: _shakeController,
                   builder: (context, child) {
@@ -137,13 +149,13 @@ class _PinScreenState extends ConsumerState<PinScreen>
                   },
                 ),
                 if (controller.errorMessage != null) ...[
-                  20.verticalSpace,
+                  SizedBox(height: r.spacing(20)),
                   Text(
                     controller.errorMessage!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.errorText,
-                      fontSize: 14,
+                      fontSize: r.textSize(14),
                     ),
                   ),
                 ],
@@ -156,21 +168,28 @@ class _PinScreenState extends ConsumerState<PinScreen>
               alignment: Alignment.bottomCenter,
               child: GridView.count(
                 crossAxisCount: 3,
-                childAspectRatio: 1.2,
-                mainAxisSpacing: 10.h,
-                crossAxisSpacing: 10.w,
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                childAspectRatio: r.when(
+                  phone: 1.2,
+                  tablet: 1.5, // Better ratio for tablets
+                  desktop: 1.8,
+                ),
+                mainAxisSpacing: r.spacing(10),
+                crossAxisSpacing: r.spacing(10),
+                padding: EdgeInsets.symmetric(horizontal: r.spacing(20)),
                 children: [
                   ...List.generate(
                       9, (index) => _buildNumberButton('${index + 1}')),
-                  const SizedBox(width: 24, height: 24),
+                  SizedBox(
+                    width: r.spacing(24),
+                    height: r.spacing(24),
+                  ),
                   _buildNumberButton('0'),
                   IconButton(
                     onPressed: () =>
                         ref.read(pinControllerProvider.notifier).deletePin(),
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.backspace_outlined,
-                      size: 24,
+                      size: r.iconSize(base: 24),
                       color: AppColors.grey83,
                     ),
                   ),
@@ -383,6 +402,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
 //         titleText: _title,
 //         showBackButton: true,
 //         onTap: () {
+// HapticFeedback.lightImpact() ;
 //           if (widget.mode == PinScreenMode.create) {
 //             context.pop();
 //           } else {

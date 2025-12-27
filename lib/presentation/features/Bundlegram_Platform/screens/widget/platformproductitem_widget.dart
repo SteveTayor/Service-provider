@@ -288,6 +288,7 @@ class ProductItemGrid extends ConsumerWidget {
 
 //     return GestureDetector(
 //       onTap: () {
+                      // HapticFeedback.lightImpact() ;
 //         setState(() => _selectedIndex = index);
 //         widget.onBundleSelected(bundle);
 //       },

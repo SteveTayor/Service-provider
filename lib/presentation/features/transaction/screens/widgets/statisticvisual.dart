@@ -6,6 +6,7 @@ import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/statistic_visual_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -143,6 +144,7 @@ class _StatisticsDashboardState extends ConsumerState<StatisticsDashboard>
               ),
               InkWell(
                 onTap: () {
+                  HapticFeedback.lightImpact();
                   context.pop();
                 },
                 child: AppSvgIcon(path: Assets.svgs.close),
@@ -813,6 +815,7 @@ class _StatisticsDashboardState extends ConsumerState<StatisticsDashboard>
 //                 ),
 //                 InkWell(
 //                   onTap: () {
+// HapticFeedback.lightImpact() ;
 //                     context.pop();
 //                   },
 //                   child: AppSvgIcon(path: Assets.svgs.close),

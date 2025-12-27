@@ -14,7 +14,10 @@ class PinSheet extends StatelessWidget {
       child: const Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          PinContent(compact: true),
+          PinContent(
+            compact: true,
+            useResponsive: true,
+          ),
         ],
       ),
     );

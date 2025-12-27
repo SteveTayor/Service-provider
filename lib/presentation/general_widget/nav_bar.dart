@@ -4,6 +4,7 @@ import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -53,6 +54,7 @@ class NavBar extends ConsumerWidget {
             items.length,
             (index) => InkWell(
               onTap: () {
+                HapticFeedback.lightImpact();
                 ref
                     .read(dashboardProvider.notifier)
                     .onDestinationSelected(index, context);

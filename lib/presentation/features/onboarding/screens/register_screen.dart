@@ -42,6 +42,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         appBar: BundlegramAppbar(
             showBackButton: true,
             onTap: () {
+              HapticFeedback.lightImpact();
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 context.go(RouteConstants.walkThrough);
               });
@@ -66,6 +67,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     InkWell(
                       onTap: () {
+                        HapticFeedback.lightImpact();
                         context.go('/login');
                         // context.push('/login');
                       },

@@ -40,7 +40,7 @@ class GradientPromoCard extends StatelessWidget {
     this.gradientColors = const [Color(0xFFE24934), Color(0xFF3A0700)],
     this.height,
     this.width,
-    this.useResponsive = true, // ADD
+    this.useResponsive = true, 
     super.key,
   });
 

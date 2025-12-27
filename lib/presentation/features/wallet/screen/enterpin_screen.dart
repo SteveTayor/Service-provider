@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -76,10 +77,12 @@ class _EnterPinScreenState extends State<EnterPinScreen>
   }
 
   Widget _buildPinDot(int index) {
+    final r = context.responsive;
+
     return Container(
-      width: 24.w,
-      height: 24.w,
-      margin: EdgeInsets.symmetric(horizontal: 8.w),
+      width: r.spacing(24),
+      height: r.spacing(24),
+      margin: EdgeInsets.symmetric(horizontal: r.spacing(8)),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: _pin[index].isNotEmpty
@@ -91,17 +94,22 @@ class _EnterPinScreenState extends State<EnterPinScreen>
   }
 
   Widget _buildNumberButton(String number) {
+    final r = context.responsive;
+
     return TextButton(
       onPressed: () {
         setState(() => _errorMessage = null);
         _updatePin(number);
       },
-      style: TextButton.styleFrom(padding: EdgeInsets.all(20.w)),
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.all(r.spacing(20)),
+      ),
       child: Text(
         number,
-        style: context.textTheme.titleMedium?.copyWith(
-          // fontSize: 24,
+        style: TextStyle(
+          fontSize: r.textSize(22),
           fontWeight: FontWeight.w500,
+          color: AppColors.black,
         ),
       ),
     );
@@ -109,11 +117,18 @@ class _EnterPinScreenState extends State<EnterPinScreen>
 
   @override
   Widget build(BuildContext context) {
+    final r = context.responsive;
     return BundlegramScaffold(
+      useResponsive: true,
       appBar: const BundlegramAppbar(
         titleText: 'Enter current pin',
+        useResponsive: true,
       ),
-      sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
+      sidePadding: r.padding(
+        left: 20,
+        right: 20,
+        bottom: 40,
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -132,7 +147,7 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                     ),
                   ],
                 ),
-                40.verticalSpace,
+                SizedBox(height: r.spacing(40)),
                 AnimatedBuilder(
                   animation: _shakeController,
                   builder: (context, child) {
@@ -147,15 +162,15 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                   },
                 ),
                 if (_errorMessage != null) ...[
-                  16.verticalSpace,
+                  SizedBox(height: r.spacing(16)),
                   Text(
                     _errorMessage!,
                     style: TextStyle(
                       color: AppColors.errorText,
-                      fontSize: 14,
+                      fontSize: r.textSize(14),
                     ),
                   ),
-                  24.verticalSpace,
+                  SizedBox(height: r.spacing(24)),
                 ],
               ],
             ),
@@ -165,7 +180,11 @@ class _EnterPinScreenState extends State<EnterPinScreen>
               alignment: Alignment.bottomCenter,
               child: GridView.count(
                 crossAxisCount: 3,
-                childAspectRatio: 1.5,
+                childAspectRatio: r.when(
+                  phone: 1.5,
+                  tablet: 1.8, // Better ratio for tablets
+                  desktop: 2.0,
+                ),
                 children: [
                   ...List.generate(
                     9,
@@ -173,24 +192,25 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                   ),
                   if (!widget.isChangedAccountPin) ...[
                     SizedBox(
-                      width: 24,
-                      height: 24,
+                      width: r.spacing(24),
+                      height: r.spacing(24),
                       child: AppSvgIcon(
                         path: Assets.svgs.fingerCricle1,
                         fit: BoxFit.scaleDown,
-                        width: 24,
-                        height: 24,
+                        width: r.iconSize(base: 24),
+                        height: r.iconSize(base: 24),
                       ),
                     ),
                   ] else ...[
-                    24.verticalSpace
+                    SizedBox()
+                    // SizedBox(height: r.spacing(24))
                   ],
                   _buildNumberButton('0'),
                   IconButton(
                     onPressed: _deletePin,
                     icon: Icon(
                       Icons.backspace_outlined,
-                      size: 24,
+                      size: r.iconSize(base: 24),
                       color: AppColors.grey83,
                     ),
                   ),

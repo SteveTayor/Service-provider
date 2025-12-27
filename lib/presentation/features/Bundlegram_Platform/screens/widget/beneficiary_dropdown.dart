@@ -6,6 +6,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/pr
 import 'package:bundlegram/presentation/features/transaction/screens/beneficiary/beneficiary_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -175,6 +176,7 @@ class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
                     // VIEW ALL
                     InkWell(
                       onTap: () {
+                        HapticFeedback.lightImpact();
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) => AllBeneficiariesScreen(

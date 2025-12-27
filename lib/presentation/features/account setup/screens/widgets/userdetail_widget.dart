@@ -8,6 +8,7 @@ import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -92,6 +93,7 @@ class UserdetailWidget extends ConsumerWidget {
                 profileProv?.dob == null)
               InkWell(
                 onTap: () {
+                  HapticFeedback.lightImpact();
                   context.push(RouteConstants.accountSetup);
                 },
                 child: Text(
@@ -106,6 +108,7 @@ class UserdetailWidget extends ConsumerWidget {
         ),
         AppSvgIcon(
           onTap: () {
+            HapticFeedback.lightImpact();
             context.push(RouteConstants.setting);
           },
           path: Assets.svgs.cogStreamlineCore,

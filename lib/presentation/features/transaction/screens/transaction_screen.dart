@@ -19,6 +19,7 @@ import 'package:bundlegram/presentation/general_widget/receipt_widget.dart';
 import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
 import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -83,11 +84,14 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
     final allTxns = state.filteredServices;
 
     return BundlegramScaffold(
+      useResponsive: true,
       appBar: BundlegramAppbar(
+        useResponsive: true,
         showBackButton: false,
         titleText: 'Transactions',
         trailing: GestureDetector(
           onTap: () {
+            HapticFeedback.lightImpact();
             context.showBottomSheet(
               child: TransactionFilterWidget(
                 onApply: ({

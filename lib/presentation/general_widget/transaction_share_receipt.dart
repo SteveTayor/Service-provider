@@ -332,6 +332,7 @@ class _TransactionDetailItem extends StatelessWidget {
                 8.horizontalSpace,
                 GestureDetector(
                   onTap: () {
+                    HapticFeedback.lightImpact();
                     Clipboard.setData(ClipboardData(text: value));
                     navigatorKey.currentState!.context
                         .showCustomSnackBar("Copied to clipboard");

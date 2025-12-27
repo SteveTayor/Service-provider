@@ -8,6 +8,7 @@ import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
@@ -119,6 +120,7 @@ class AppDropdown extends StatelessWidget {
                             title: Text(o, style: context.textTheme.bodyMedium),
                             selected: o == selected,
                             onTap: () {
+                              HapticFeedback.lightImpact();
                               Navigator.pop(context);
                               onChanged?.call(o);
                             },

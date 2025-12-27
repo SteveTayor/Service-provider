@@ -23,6 +23,7 @@ import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
 import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -101,6 +102,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         titleText: ' History',
         trailing: GestureDetector(
           onTap: () {
+            HapticFeedback.lightImpact();
             context.showBottomSheet(
               child: TransactionFilterWidget(
                 onApply: ({

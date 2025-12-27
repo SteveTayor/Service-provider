@@ -98,6 +98,7 @@ class RecentTransactionWidget extends ConsumerWidget {
         return InkWell(
           highlightColor: Colors.transparent,
           onTap: () {
+            HapticFeedback.lightImpact();
             HapticFeedback.selectionClick();
             _showTransactionDetails(context, transaction);
           },

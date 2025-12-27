@@ -62,6 +62,7 @@ import 'package:go_router/go_router.dart';
 //         ),
 //         AppSvgIcon(
 //           onTap: () {
+// HapticFeedback.lightImpact() ;
 //             Clipboard.setData(ClipboardData(text: title));
 
 //             navigatorKey.currentState!.context
@@ -167,6 +168,7 @@ import 'package:go_router/go_router.dart';
 //           28.verticalSpace,
 //           InkWell(
 //             onTap: () {
+// HapticFeedback.lightImpact() ;
 //               context.pop();
 //               // navigatorKey.currentState!.context
 //               //     .showCustomSnackBar("Coming soom");
@@ -227,6 +229,7 @@ class _AddfundWidgetState extends ConsumerState<AddfundWidget> {
         ),
         AppSvgIcon(
           onTap: () {
+            HapticFeedback.lightImpact();
             Clipboard.setData(ClipboardData(text: title));
             navigatorKey.currentState!.context
                 .showCustomSnackBar("Account number copied");
@@ -366,6 +369,7 @@ class _AddfundWidgetState extends ConsumerState<AddfundWidget> {
           28.verticalSpace,
           InkWell(
             onTap: () {
+              HapticFeedback.lightImpact();
               context.pop();
               WalletNotifier().showAddMoneyViaDebitCard(context);
             },
