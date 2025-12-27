@@ -1,16 +1,15 @@
 // To parse this JSON data, do
 //
-//     final epinRequestResponse = epinRequestResponseFromJson(jsonString);
+//     final EpinRequest = EpinRequestFromJson(jsonString);
 
 import 'dart:convert';
 
-EpinRequestResponse epinRequestResponseFromJson(String str) =>
-    EpinRequestResponse.fromJson(json.decode(str) as Map<String, dynamic>);
+EpinRequest epinRequestFromJson(String str) =>
+    EpinRequest.fromJson(json.decode(str) as Map<String, dynamic>);
 
-String epinRequestResponseToJson(EpinRequestResponse data) =>
-    json.encode(data.toJson());
+String epinRequestToJson(EpinRequest data) => json.encode(data.toJson());
 
-class EpinRequestResponse {
+class EpinRequest {
   final String? name;
   final String? agentEmail;
   final String? agentName;
@@ -21,7 +20,7 @@ class EpinRequestResponse {
   final String? quantity;
   final String? email;
 
-  EpinRequestResponse({
+  EpinRequest({
     this.name,
     this.agentEmail,
     this.agentName,
@@ -33,8 +32,7 @@ class EpinRequestResponse {
     this.email,
   });
 
-  factory EpinRequestResponse.fromJson(Map<String, dynamic> json) =>
-      EpinRequestResponse(
+  factory EpinRequest.fromJson(Map<String, dynamic> json) => EpinRequest(
         name: json["name"] as String?,
         agentEmail: json["agent_email"] as String?,
         agentName: json["agent_name"] as String?,

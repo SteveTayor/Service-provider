@@ -32,6 +32,8 @@ import 'package:bundlegram/data/models/dashboard/dashboard_data_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
 import 'package:bundlegram/data/models/notification/mark_notifications_asread_response.dart';
 import 'package:bundlegram/data/models/notification/notification_response.dart';
+import 'package:bundlegram/data/models/products/epin/epin_request_response.dart';
+import 'package:bundlegram/data/models/products/epin/epin_response.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/profile/profile_response.dart';
@@ -352,5 +354,15 @@ class ApiService {
         () => _api.getMinimalBeneficiaries('Bearer $token', _sterilizer));
   }
 
+  Future<Either<Failure, EpinResponse>> purchaseEpin(
+      String token, EpinRequest req) {
+    return handleApi(
+      () => _api.initiateEpinPurchase(
+        'Bearer $token',
+        _sterilizer,
+        req,
+      ),
+    );
+  }
   // other endpoint …
 }

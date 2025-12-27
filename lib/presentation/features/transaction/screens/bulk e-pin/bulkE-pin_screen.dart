@@ -40,12 +40,17 @@ class BulkEpinScreen extends ConsumerWidget {
     });
 
     // Quantity options (1 to 100)
+    // generate it in batch of 5, 10, 15,...100
+
     final quantityOptions =
         List.generate(100, (index) => (index + 1).toString());
 
     return BundlegramScaffold(
+      resizeToAvoidBottomInset: true,
+      useResponsive: true,
       sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
       appBar: BundlegramAppbar(
+        useResponsive: true,
         titleText: 'Bulk E-PIN',
       ),
       body: state.isLoading
