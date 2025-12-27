@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
@@ -125,11 +127,9 @@ class PinController extends ChangeNotifier {
 
     final res = await _api.createPin(token, pin, pin);
     res.fold((failure) {
-      context.showErrorSnackBar(
-        failure.properties.isNotEmpty
-            ? failure.properties.join('\n')
-            : "Failed to create PIN",
-      );
+      final userMsg = userFacingMessageFromFailure(failure);
+      final displayMsg = sanitizeErrorMessage(userMsg);
+      context.showErrorSnackBar(displayMsg);
     }, (data) async {
       if (data.status == "success") {
         final userEmail = await _storage.getRememberedEmail();
@@ -162,11 +162,9 @@ class PinController extends ChangeNotifier {
     final res = await _api.resetPin(token, password);
     return res.fold(
       (failure) {
-        context.showErrorSnackBar(
-          failure.properties.isNotEmpty
-              ? failure.properties.join('\n')
-              : "Failed to reset PIN",
-        );
+        final userMsg = userFacingMessageFromFailure(failure);
+        final displayMsg = sanitizeErrorMessage(userMsg);
+        context.showErrorSnackBar(displayMsg);
         return false;
       },
       (_) async {

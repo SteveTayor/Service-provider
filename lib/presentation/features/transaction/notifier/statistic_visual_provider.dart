@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_data_response.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bundlegram/core/error/failures.dart';
@@ -122,8 +124,11 @@ class StatisticsDashboardNotifier extends StateNotifier<StatisticsState> {
       result.fold(
         (fail) {
           log('[STATISTICS FAILURE] ${fail.runtimeType} => ${fail.properties}');
+          final userMsg = userFacingMessageFromFailure(fail);
+          final displayMsg = sanitizeErrorMessage(userMsg);
+
           state = StatisticsState(
-            data: AsyncError(fail, StackTrace.current),
+            data: AsyncError(displayMsg, StackTrace.current),
             isEmpty: false,
             currentRequest: request,
           );

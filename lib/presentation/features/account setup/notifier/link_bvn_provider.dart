@@ -252,7 +252,8 @@ class LinkBvnProvider extends ChangeNotifier {
             // final userMsg = sanitizeErrorMessage(resp.message);
             // context.showErrorSnackBar(userMsg);
             context.dismissDialog();
-            context.showErrorSnackBar(resp.message ?? 'Failed to link BVN');
+            final userMsg = sanitizeErrorMessage(resp.message);
+            context.showErrorSnackBar(userMsg);
             _setLoading(false);
             return false;
           }

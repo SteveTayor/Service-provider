@@ -1,37 +1,65 @@
 String sanitizeErrorMessage(dynamic rawMessage) {
-  if (rawMessage == null) return 'Something went wrong. Please try again.';
+  const fallback = 'Something went wrong. Please try again.';
 
-  String message = rawMessage.toString();
+  if (rawMessage == null) return fallback;
 
-  // Remove stack-like lines and file paths
-  message = message.replaceAll(RegExp(r'[#\s]*\b(?:at|package:)[^\n]+'), ' ');
+  String message = rawMessage.toString().trim();
+  if (message.isEmpty) return fallback;
 
-  // Replace Dart runtime type messages like "type 'String' is not a subtype of type 'int'"
-  message = message.replaceAll(
-      RegExp(r"type '([^']+)' is not a subtype of type '([^']+)'"),
-      'A type mismatch occurred while processing the request.');
+  final lower = message.toLowerCase();
 
-  // Remove 'Instance of 'ClassName''
-  message = message.replaceAll(RegExp(r"Instance of '([^']+)'"), ' ');
-
-  // Remove tracebacks or exceptions that look like HTML or stack
-  if (message.toLowerCase().contains('traceback') ||
-      message.toLowerCase().contains('exception:') && message.length > 200) {
-    return 'Something went wrong. Please try again.';
+  // Hard reject obvious stack traces / backend dumps
+  if ((lower.contains('traceback') ||
+          lower.contains('exception') ||
+          lower.contains('stack')) &&
+      message.length > 120) {
+    return fallback;
   }
 
-  // Strip HTML tags
+  // Remove stack lines & file paths
+  message = message.replaceAll(
+    RegExp(r'[#\s]*\b(?:at|package:)[^\n]+'),
+    ' ',
+  );
+
+  // Replace Dart runtime type errors
+  message = message.replaceAll(
+    RegExp(r"type '([^']+)' is not a subtype of type '([^']+)'"),
+    'A technical error occurred while processing your request.',
+  );
+
+  // Remove "Instance of 'Class'"
+  message = message.replaceAll(
+    RegExp(r"Instance of '([^']+)'"),
+    ' ',
+  );
+
+  // Strip HTML
   message = message.replaceAll(RegExp(r'<[^>]*>'), ' ');
 
-  // Collapse whitespace
+  // Normalize whitespace
   message = message.replaceAll(RegExp(r'\s+'), ' ').trim();
 
-  // Truncate lengthy messages
-  if (message.length > 200) message = message.substring(0, 200) + '...';
+  // Reject useless short messages
+  const useless = [
+    'error',
+    'bad state',
+    'invalid argument',
+    'exception',
+    'unknown error',
+  ];
+  if (useless.any((u) => message.toLowerCase() == u)) {
+    return fallback;
+  }
 
-  // Fallback
+  // Enforce length cap
+  if (message.length > 160) {
+    message = '${message.substring(0, 160)}...';
+  }
+
+  // Final sanity check
   if (message.isEmpty || RegExp(r'^[\W_]+$').hasMatch(message)) {
-    return 'Something went wrong. Please try again.';
+    return fallback;
   }
 
   return message;

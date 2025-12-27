@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
@@ -94,10 +95,8 @@ class VerifyEmailProvider extends ChangeNotifier {
           return true;
         } else {
           context.pop();
-          final displayMessage =
-              resp.message.length > 100 ? resp.message : "Something went wrong";
-
-          context.showErrorSnackBar(displayMessage ?? 'Failed to send OTP');
+          final userMsg = sanitizeErrorMessage(resp.message);
+          context.showErrorSnackBar(userMsg);
           _sending = false;
           notifyListeners();
           return false;
@@ -126,7 +125,9 @@ class VerifyEmailProvider extends ChangeNotifier {
 
     return result.fold(
       (Failure fail) {
-        context.showErrorSnackBar(fail.properties.join('\n'));
+        final userMsg = userFacingMessageFromFailure(fail);
+        final displayMsg = sanitizeErrorMessage(userMsg);
+        context.showErrorSnackBar(displayMsg);
         _verifying = false;
         context.dismissDialog();
         context.pushReplacement(RouteConstants.dashboard);
@@ -155,7 +156,9 @@ class VerifyEmailProvider extends ChangeNotifier {
           notifyListeners();
           return true;
         } else {
-          context.showErrorSnackBar(resp.message ?? 'Verification failed');
+          final userMsg = sanitizeErrorMessage(resp.message);
+          context.showErrorSnackBar(userMsg);
+
           _verifying = false;
           context.pop();
           context.dismissDialog();

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -108,11 +110,9 @@ class ChangePasswordController extends ChangeNotifier {
 
     res.fold(
       (failure) {
-        context.showErrorSnackBar(
-          failure.properties.isNotEmpty
-              ? failure.properties.join('\n')
-              : 'Failed to update password',
-        );
+        final userMsg = userFacingMessageFromFailure(failure);
+        final displayMsg = sanitizeErrorMessage(userMsg);
+        context.showErrorSnackBar(displayMsg);
       },
       (data) async {
         isLoading = false;

@@ -186,7 +186,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
                     itemCount: allTxns.length + 1,
                     separatorBuilder: (_, __) => Padding(
                       padding: EdgeInsets.only(
-                        bottom: useResponsive ? r.spacing(8) : 8,
+                        bottom: useResponsive ? r.spacing(12) : 12,
                         top: useResponsive ? r.spacing(10) : 10,
                       ),
                     ),

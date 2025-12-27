@@ -1,3 +1,5 @@
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/auth/auth_model.dart';
@@ -38,11 +40,9 @@ class CloseAccountController extends ChangeNotifier {
 
     res.fold(
       (failure) {
-        context.showErrorSnackBar(
-          failure.properties.isNotEmpty
-              ? failure.properties.join('\n')
-              : "Failed to close account",
-        );
+        final userMsg = userFacingMessageFromFailure(failure);
+        final displayMsg = sanitizeErrorMessage(userMsg);
+        context.showErrorSnackBar(displayMsg);
       },
       (data) {
         if (data.success) {

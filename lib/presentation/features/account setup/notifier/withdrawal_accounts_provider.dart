@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
@@ -114,7 +115,8 @@ class WithdrawalAccountProvider extends ChangeNotifier {
           _setDeleting(false);
           return true;
         } else {
-          context.showErrorSnackBar(resp.message ?? 'Failed to delete bank');
+          final userMsg = sanitizeErrorMessage(resp.message);
+          context.showErrorSnackBar(userMsg);
           _setDeleting(false);
           return false;
         }

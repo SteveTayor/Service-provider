@@ -1019,8 +1019,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                   ?.call(); // Call onSuccess to proceed to transaction summary
             } else {
               debugPrint('Validation failed: message=${response.message}');
-              context
-                  .showErrorSnackBar(response.message ?? 'Validation failed');
+              final userMsg = sanitizeErrorMessage(response.message);
+              context.showErrorSnackBar(userMsg);
             }
           },
         );
@@ -1416,35 +1416,31 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             );
           } else {
             context.dismissDialog();
-            final displayMessage =
-                // response.message.toLowerCase().contains('insufficient') ||
-                //         response.message.toLowerCase().contains('incorrect pin')
-                //     ?
-                response.message.length > 100
-                    ? response.message
-                    : "Something went wrong";
+            final userMsg = sanitizeErrorMessage(response.message);
+            context.showErrorSnackBar(userMsg);
+
             // : 'Please try again later.';
             final notifId = DateTime.now().millisecondsSinceEpoch % 100000;
             final notifPayload = jsonEncode({
               'route': RouteConstants.dashboard,
               'type': 'transaction_failed',
               'service': _serviceType.title,
-              'message': displayMessage,
+              'message': userMsg,
             });
 
             unawaited(NotificationService().showNotification(
               id: notifId,
               title: 'Payment Failed',
-              body: displayMessage,
+              body: userMsg,
               payload: notifPayload,
             ));
-            debugPrint("[This is the error message diaplayed] $displayMessage");
+            debugPrint("[This is the error message diaplayed] $userMsg");
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (ctx) => FailedResultScreen(
                   serviceContent: _serviceType.title.toLowerCase(),
-                  errorMessage: displayMessage,
+                  errorMessage: userMsg,
                   onRetry: () {
                     context.pushReplacement(RouteConstants.dashboard);
                   },

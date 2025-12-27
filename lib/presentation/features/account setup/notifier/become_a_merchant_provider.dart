@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
@@ -189,7 +191,9 @@ class BecomeAgentProvider extends ChangeNotifier {
       result.fold(
         (Failure fail) {
           context.dismissDialog();
-          context.showErrorSnackBar(fail.properties.join('\n'));
+          final userMsg = userFacingMessageFromFailure(fail);
+          final displayMsg = sanitizeErrorMessage(userMsg);
+          context.showErrorSnackBar(displayMsg);
         },
         (BaseResponse resp) {
           if (resp.success) {
@@ -208,13 +212,16 @@ class BecomeAgentProvider extends ChangeNotifier {
             );
           } else {
             context.dismissDialog();
-            context.showErrorSnackBar(resp.message ?? 'Upgrade failed');
+            final userMsg = sanitizeErrorMessage(resp.message);
+            context.showErrorSnackBar(userMsg);
           }
         },
       );
     } catch (e) {
+      debugPrint('Error in merchant registration: $e');
       context.dismissDialog();
-      context.showErrorSnackBar('An error occurred: $e');
+
+      context.showErrorSnackBar('An error occurred:');
       _setLoading(false);
     }
   }

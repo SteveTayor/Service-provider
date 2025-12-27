@@ -2,6 +2,8 @@
 
 import 'dart:async';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
@@ -90,9 +92,8 @@ class AddBankProvider extends ChangeNotifier {
       unawaited(
         res.fold(
           (fail) async {
-            final message = fail.properties.isNotEmpty
-                ? fail.properties.join('\n')
-                : 'Failed to fetch account name';
+            final userMsg = userFacingMessageFromFailure(fail);
+            // context.showErrorSnackBar(userMsg);
             _setLoading(false);
           },
           (bankData) {
@@ -123,11 +124,8 @@ class AddBankProvider extends ChangeNotifier {
       final result = await _api.addBank(token!, req);
       result.fold(
         (fail) {
-          context.showErrorSnackBar(
-            fail.properties.isNotEmpty
-                ? fail.properties.join('\n')
-                : 'Failed to add bank',
-          );
+          final userMsg = userFacingMessageFromFailure(fail);
+          context.showErrorSnackBar(userMsg);
           _setLoading(false);
           return false;
         },
@@ -143,7 +141,8 @@ class AddBankProvider extends ChangeNotifier {
             _setLoading(false);
             return true;
           } else {
-            context.showErrorSnackBar(resp.message ?? 'Failed to add bank');
+            final userMsg = sanitizeErrorMessage(resp.message);
+            context.showErrorSnackBar(userMsg);
             _setLoading(false);
             context.dismissDialog();
             return false;

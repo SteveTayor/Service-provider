@@ -60,6 +60,14 @@ class ProductItemGrid extends ConsumerWidget {
     }
 
     if (!isAmountPresetGrid && validList.isEmpty) {
+      // For mobileData, encourage user to select/enter a number (operator may be needed)
+      if (serviceType == PlatformProductType.mobileData) {
+        return const Padding(
+          padding: EdgeInsets.all(16.0),
+          child:
+              Text('Enter or select a beneficiary to see available bundles.'),
+        );
+      }
       return const Padding(
         padding: EdgeInsets.all(16.0),
         child: Text('No available bundles at the moment.'),

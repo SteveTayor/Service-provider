@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/utils/enums.dart';
@@ -131,7 +132,8 @@ class BasicInfoProvider extends ChangeNotifier {
       result.fold(
         (fail) {
           final userMsg = userFacingMessageFromFailure(fail);
-          context.showErrorSnackBar(userMsg);
+          final displayMsg = sanitizeErrorMessage(userMsg);
+          context.showErrorSnackBar(displayMsg);
         },
         (resp) async {
           if (resp.status == 'success') {
@@ -158,8 +160,8 @@ class BasicInfoProvider extends ChangeNotifier {
                 ..pop(); // safe pop after dialog closed
             }
           } else {
-            context
-                .showErrorSnackBar(resp.message ?? 'Failed to update profile');
+            final userMsg = sanitizeErrorMessage(resp.message);
+            context.showErrorSnackBar(userMsg ?? "Failed to update profile");
           }
         },
       );

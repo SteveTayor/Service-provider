@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -81,11 +83,9 @@ class LockScreenService {
         FocusScope.of(context).unfocus();
 
         await Future.delayed(const Duration(milliseconds: 100));
-        final message = fail.properties.isNotEmpty
-            ? fail.properties.join('\n')
-            : 'Login failed';
-
-        context.showErrorSnackBar(message);
+        final userMsg = userFacingMessageFromFailure(fail);
+        final displayMsg = sanitizeErrorMessage(userMsg);
+        context.showErrorSnackBar(displayMsg);
       },
       (loginData) async {
         final token = loginData.data?.token;

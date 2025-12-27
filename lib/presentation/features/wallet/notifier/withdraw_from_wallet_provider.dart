@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
@@ -216,12 +217,15 @@ class WithdrawalProvider extends ChangeNotifier {
       (fail) {
         context.dismissDialog();
 
-        final message = fail.properties.join('\n');
-        final displayMessage = message.toLowerCase().contains('insufficient') ||
-                message.toLowerCase().contains('incorrect') ||
-                message.toLowerCase().contains('pending payout')
-            ? message
-            : 'Failed to request withdrawal';
+        // final message = fail.properties.join('\n');
+        // final displayMessage = message.toLowerCase().contains('insufficient') ||
+        //         message.toLowerCase().contains('incorrect') ||
+        //         message.toLowerCase().contains('pending payout')
+        //     ? message
+        //     : 'Failed to request withdrawal';
+        final userMsg = userFacingMessageFromFailure(fail);
+        final displayMsg = sanitizeErrorMessage(userMsg);
+        context.showErrorSnackBar(displayMsg);
         // context.showErrorSnackBar(
         //     message.isNotEmpty ? message : 'Transaction failed');
         // Navigator.pushReplacement(
@@ -242,7 +246,7 @@ class WithdrawalProvider extends ChangeNotifier {
             builder: (ctx) => FailedResultScreen(
               serviceContent: 'Withdrawal',
               title: 'Withdrawal Failed',
-              errorMessage: displayMessage,
+              errorMessage: displayMsg,
               onRetry: () => context.go(RouteConstants.dashboard),
             ),
           ),

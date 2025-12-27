@@ -79,6 +79,9 @@ class _PlatformPhoneNumberFormWidgetState
           .firstInputController;
       if (controller.text.trim().isEmpty) {
         controller.text = phone;
+        Future.microtask(() {
+          notifier.detectAndSelectFromPhone(context, controller.text.trim());
+        });
       }
     }
 
