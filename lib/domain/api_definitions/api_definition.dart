@@ -369,5 +369,6 @@ abstract class ApiDefinition {
   Future<EpinTransactionRequestsResponse> getEpinTransactionRequests(
     @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
+    @Query("page") int page,
   );
 }

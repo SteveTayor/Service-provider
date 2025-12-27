@@ -1,4 +1,5 @@
 import 'package:bundlegram/data/models/banks/get_all_users_banks_response.dart';
+import 'package:bundlegram/data/models/products/epin/epin_trannsactions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bundlegram/data/models/auth/wallet/get_wallet_response.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_data_response.dart';
@@ -15,6 +16,7 @@ class GlobalState {
   final AsyncValue<GetVirtualAccountsResponse?> virtualAccounts;
   final AsyncValue<GetAllUserTransactionResponse?> usersTransactions;
   final AsyncValue<GetAllUserBanksResponse?> userBanks;
+  final AsyncValue<EpinTransactionRequestsResponse?> epinTransactions;
   final DateTime? lastTransactionFetch;
 
   GlobalState({
@@ -25,6 +27,7 @@ class GlobalState {
     this.virtualAccounts = const AsyncData(null),
     this.usersTransactions = const AsyncData(null),
     this.userBanks = const AsyncData(null),
+    this.epinTransactions = const AsyncData(null),
     this.lastTransactionFetch,
   });
 
@@ -36,6 +39,7 @@ class GlobalState {
     AsyncValue<GetVirtualAccountsResponse?>? virtualAccounts,
     AsyncValue<GetAllUserTransactionResponse?>? usersTransactions,
     AsyncValue<GetAllUserBanksResponse?>? userBanks,
+    AsyncValue<EpinTransactionRequestsResponse?>? epinTransactions,
     DateTime? lastTransactionFetch,
   }) {
     return GlobalState(
@@ -46,6 +50,7 @@ class GlobalState {
       virtualAccounts: virtualAccounts ?? this.virtualAccounts,
       usersTransactions: usersTransactions ?? this.usersTransactions,
       userBanks: userBanks ?? this.userBanks,
+      epinTransactions: epinTransactions ?? this.epinTransactions,
       lastTransactionFetch: lastTransactionFetch ?? this.lastTransactionFetch,
     );
   }
@@ -62,6 +67,7 @@ class GlobalState {
           virtualAccounts == other.virtualAccounts &&
           usersTransactions == other.usersTransactions &&
           userBanks == other.userBanks &&
+          epinTransactions == other.epinTransactions &&
           lastTransactionFetch == other.lastTransactionFetch;
 
   @override
@@ -73,5 +79,6 @@ class GlobalState {
       virtualAccounts.hashCode ^
       usersTransactions.hashCode ^
       userBanks.hashCode ^
+      epinTransactions.hashCode ^
       lastTransactionFetch.hashCode;
 }

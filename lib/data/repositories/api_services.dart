@@ -34,7 +34,8 @@ import 'package:bundlegram/data/models/notification/mark_notifications_asread_re
 import 'package:bundlegram/data/models/notification/notification_response.dart';
 import 'package:bundlegram/data/models/products/epin/epin_request_response.dart';
 import 'package:bundlegram/data/models/products/epin/epin_response.dart';
-import 'package:bundlegram/data/models/products/epin/epin_trannsactions.dart';
+import 'package:bundlegram/data/models/products/epin/epin_trannsactions.dart'
+    as epin_models;
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/profile/profile_response.dart';
@@ -366,14 +367,74 @@ class ApiService {
     );
   }
 
-  Future<Either<Failure, EpinTransactionRequestsResponse>>
+  // inside ApiService (replace existing getEpinTransactionRequests implementation)
+  Future<Either<Failure, epin_models.EpinTransactionRequestsResponse>>
       getEpinTransactionRequests(String token) {
-    return handleApi(
-      () => _api.getEpinTransactionRequests(
-        'Bearer $token',
-        _sterilizer,
-      ),
-    );
+    // We use handleApi to keep existing error handling behavior.
+    return handleApi(() async {
+      int page = 1;
+      epin_models.EpinTransactionRequestsResponse? lastResp;
+      final List<epin_models.Datum> allData = [];
+
+      while (true) {
+        // IMPORTANT: pass page explicitly
+        final pageResp = await _api.getEpinTransactionRequests(
+          'Bearer $token', // AccessToken header
+          _sterilizer, // _authHeader header (your existing value)
+          page, // <-- page query param
+        );
+
+        // keep a reference to last page response for pagination metadata
+        lastResp = pageResp;
+
+        // Append page items
+        final pageItems = pageResp.data?.data ?? [];
+        allData.addAll(pageItems);
+
+        // decide whether to fetch next page
+        final currentPage = pageResp.data?.currentPage;
+        final lastPage = pageResp.data?.lastPage;
+        final nextPageUrl = pageResp.data?.nextPageUrl;
+
+        // if the API gives lastPage, use that. Otherwise fall back to nextPageUrl.
+        if (lastPage != null) {
+          if (currentPage == null || currentPage >= lastPage) {
+            break;
+          } else {
+            page++;
+            continue;
+          }
+        } else {
+          // if next_page_url is null => we're done
+          if (nextPageUrl == null) break;
+          // if nextPageUrl exists but we don't know last_page, increment page (server uses page param)
+          page++;
+        }
+      }
+
+      // Build merged Data object preserving useful metadata from lastResp (you can choose another page's metadata if you prefer)
+      final mergedData = epin_models.Data(
+        currentPage: 1,
+        data: allData,
+        firstPageUrl: lastResp.data?.firstPageUrl,
+        from: lastResp.data?.from,
+        lastPage: lastResp.data?.lastPage,
+        lastPageUrl: lastResp.data?.lastPageUrl,
+        links: lastResp.data?.links,
+        nextPageUrl: lastResp.data?.nextPageUrl,
+        path: lastResp.data?.path,
+        perPage: lastResp.data?.perPage,
+        prevPageUrl: lastResp.data?.prevPageUrl,
+        to: lastResp.data?.to,
+        total: lastResp.data?.total,
+      );
+
+      return epin_models.EpinTransactionRequestsResponse(
+        status: lastResp.status,
+        data: mergedData,
+      );
+    });
   }
+
   // other endpoint …
 }

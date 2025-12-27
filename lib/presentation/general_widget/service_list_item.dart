@@ -154,14 +154,14 @@ class ServiceListItem extends ConsumerWidget {
     if (key.contains('electricity') || key.contains('power')) {
       return AppSvgIcon(path: Assets.svgs.electricity);
     }
-    if (key.contains('voucher') || key.contains('e-pin')) {
+    if (key.contains('voucher') || key.contains('e_pin')) {
       return AppSvgIcon(path: Assets.svgs.ePin);
     }
     if (key.contains('withdraw') || key.contains('transfer')) {
       return AppSvgIcon(path: Assets.svgs.topup);
     }
 
-    return AppSvgIcon(path: Assets.svgs.wallet);
+    return AppSvgIcon(path: Assets.svgs.ePin);
   }
 
   Color _getServiceColor(String type) {

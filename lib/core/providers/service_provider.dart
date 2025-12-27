@@ -1,3 +1,4 @@
+import 'package:bundlegram/presentation/features/transaction/notifier/e-pin_history_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/all_service_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_notifier.dart';
@@ -42,9 +43,13 @@ final airtimeHistoryProvider =
   (ref) => AllServiceHistoryNotifier(ref, 'airtime'),
 );
 
+// final ePinHistoryProvider =
+//     StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
+//   (ref) => AllServiceHistoryNotifier(ref, 'epin'),
+// );
 final ePinHistoryProvider =
-    StateNotifierProvider<AllServiceHistoryNotifier, ServiceHistoryState>(
-  (ref) => AllServiceHistoryNotifier(ref, 'epin'),
+    StateNotifierProvider<EpinHistoryNotifier, ServiceHistoryState>(
+  (ref) => EpinHistoryNotifier(ref),
 );
 
 // ✅ Wallet history now using the .family provider properly

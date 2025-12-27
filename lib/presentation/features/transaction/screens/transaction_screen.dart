@@ -189,6 +189,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
                         bottom: useResponsive ? r.spacing(12) : 12,
                         top: useResponsive ? r.spacing(10) : 10,
                       ),
+                    ).withContainer(
+                      height: useResponsive ? r.spacing(25) : 25,
                     ),
                     itemBuilder: (ctx, index) {
                       if (index == allTxns.length) {

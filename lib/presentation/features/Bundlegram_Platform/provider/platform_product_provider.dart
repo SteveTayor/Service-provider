@@ -427,7 +427,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         final providerIcon = normalizeAssetName(matchingProduct.productName,
             serviceType: _serviceType);
         selectProduct(matchingProduct, providerIcon ?? '');
-        await fetchSubProducts(ctx, matchingProduct.id!);
+        await fetchSubProducts(ctx, matchingProduct.id!, force: true);
         debugPrint(
             'Auto-selected product ${matchingProduct.productName} for phone $normalized');
       } catch (e, st) {
@@ -493,7 +493,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       serviceType: _serviceType,
     );
     selectProduct(matchingProduct, providerIcon ?? '');
-    await fetchSubProducts(ctx, matchingProduct.id!);
+    await fetchSubProducts(ctx, matchingProduct.id!, force: true);
     debugPrint(
         'applyBeneficiary: selected product ${matchingProduct.productName} (${matchingProduct.id})');
   }

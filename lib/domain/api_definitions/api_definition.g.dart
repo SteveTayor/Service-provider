@@ -1616,6 +1616,41 @@ class _ApiDefinition implements ApiDefinition {
     return _value;
   }
 
+  @override
+  Future<EpinTransactionRequestsResponse> getEpinTransactionRequests(
+    String accessToken,
+    String bearer,
+    int page,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': page};
+    final _headers = <String, dynamic>{
+      r'AccessToken': accessToken,
+      r'Authorization': bearer,
+    };
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<EpinTransactionRequestsResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/epin/requests/3',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late EpinTransactionRequestsResponse _value;
+    try {
+      _value = EpinTransactionRequestsResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

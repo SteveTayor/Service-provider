@@ -60,17 +60,15 @@ class ProductItemGrid extends ConsumerWidget {
     }
 
     if (!isAmountPresetGrid && validList.isEmpty) {
-      // For mobileData, encourage user to select/enter a number (operator may be needed)
-      if (serviceType == PlatformProductType.mobileData) {
-        return const Padding(
-          padding: EdgeInsets.all(16.0),
-          child:
-              Text('Enter or select a beneficiary to see available bundles.'),
-        );
-      }
-      return const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Text('No available bundles at the moment.'),
+      // For mobileData we attempted to fetch subProducts — show a friendly message.
+      // Avoid telling users to select beneficiary if we already tried to auto-detect.
+      final message = serviceType == PlatformProductType.mobileData
+          ? 'No bundles available for the selected provider.'
+          : 'No available bundles at the moment.';
+
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(message, style: context.textTheme.bodySmall),
       );
     }
 

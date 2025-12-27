@@ -9,10 +9,12 @@ import 'package:bundlegram/core/providers/state/global_state.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
+import 'package:bundlegram/data/models/products/epin/epin_trannsactions.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/features/setting/screens/widget/pin_sheet.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/bulk%20e-pin/model/epin_mapper.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -110,6 +112,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     unawaited(fetchBanks(context));
     unawaited(fetchUserBanks(context));
     unawaited(fetchVirtualAccount(context));
+    unawaited(fetchEpinTransactionRequests(context, force: true));
     unawaited(fetchUsersTransactions(context, force: true));
 
     return true;
@@ -123,6 +126,8 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
     unawaited(fetchUserBanks(context));
     unawaited(fetchVirtualAccount(context));
+    unawaited(fetchEpinTransactionRequests(context, force: true));
+
     // Defer transactions
     Future.delayed(const Duration(milliseconds: 500), () {
       fetchUsersTransactions(context);
@@ -137,6 +142,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       banks: const AsyncLoading(),
     );
     await fetchBanks(context);
+    unawaited(fetchEpinTransactionRequests(context, force: true));
     await fetchUsersTransactions(context);
   }
 
@@ -293,39 +299,188 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     );
   }
 
+  // Future<void> fetchUsersTransactions(BuildContext context,
+  //     {bool force = false}) async {
+  //   final token = await _storage.getAuthToken();
+  //   if (token == null) {
+  //     return _handleError('Authentication token missing', context);
+  //   }
+
+  //   final now = DateTime.now();
+  //   if (!force && state.lastTransactionFetch != null) {
+  //     final diff = now.difference(state.lastTransactionFetch!);
+  //     if (diff.inMinutes < 10) {
+  //       // Cache still valid
+  //       return;
+  //     }
+  //   }
+
+  //   state = state.copyWith(usersTransactions: const AsyncLoading());
+
+  //   final result = await _api.getAllTransactions(token);
+  //   result.fold(
+  //     (fail) {
+  //       _handleFailure(fail, context);
+  //       state = state.copyWith(
+  //         usersTransactions: AsyncError(fail, StackTrace.current),
+  //       );
+  //     },
+  //     (dataWrapper) {
+  //       final allTx = dataWrapper.data ?? [];
+
+  //       state = state.copyWith(
+  //         usersTransactions: AsyncData(dataWrapper),
+  //         lastTransactionFetch: now,
+  //       );
+  //     },
+  //   );
+  // }
   Future<void> fetchUsersTransactions(BuildContext context,
+      {bool force = false}) async {
+    final token = await _storage.getAuthToken();
+    if (token == null) return;
+
+    final now = DateTime.now();
+
+    // --- caching: only short-circuit if last fetch is recent AND we already have epin cached
+    if (!force && state.lastTransactionFetch != null) {
+      final diff = now.difference(state.lastTransactionFetch!);
+      if (diff.inMinutes < 10) {
+        // If we already have epinTransactions cached, it's safe to skip fetching again.
+        // But if epinTransactions is missing, we must continue so EPIN history is available.
+        if (state.epinTransactions is AsyncData) {
+          // Debug log
+          log('[fetchUsersTransactions] Skipping fetch (cache recent, ${diff.inMinutes}m ago)');
+          return;
+        } else {
+          log('[fetchUsersTransactions] Cache recent (${diff.inMinutes}m) but epin not present -> proceeding to fetch.');
+        }
+      }
+    }
+
+    state = state.copyWith(usersTransactions: const AsyncLoading());
+
+    // --- 1) EPIN: use cached epinTransactions if available to avoid extra network calls
+    EpinTransactionRequestsResponse? epinWrapper;
+    if (!force && state.epinTransactions is AsyncData) {
+      epinWrapper =
+          (state.epinTransactions as AsyncData<EpinTransactionRequestsResponse>)
+              .value;
+      log('[fetchUsersTransactions] Using cached epinTransactions with ${epinWrapper?.data?.data?.length ?? 0} items');
+    } else {
+      final epinResult = await _api.getEpinTransactionRequests(token);
+      epinResult.fold(
+        (fail) {
+          _handleFailure(fail, context);
+          // keep going: we still want main transactions even if epin failed
+          log('[fetchUsersTransactions] epin fetch failed: ${fail.properties}');
+        },
+        (data) {
+          epinWrapper = data;
+          log('[fetchUsersTransactions] Fetched epin pages -> items: ${data.data?.data?.length ?? 0}');
+        },
+      );
+    }
+
+    // --- 2) main transactions
+    GetAllUserTransactionResponse? mainWrapper;
+    Failure? mainFailure;
+    final result = await _api.getAllTransactions(token);
+    result.fold(
+      (fail) => mainFailure = fail,
+      (data) => mainWrapper = data,
+    );
+
+    if (mainWrapper == null && epinWrapper == null) {
+      final fail = mainFailure!;
+      _handleFailure(fail, context);
+      state = state.copyWith(
+        usersTransactions: AsyncError(fail, StackTrace.current),
+      );
+      return;
+    }
+
+    // --- 3) Merge & debug-print samples
+    final mainList = mainWrapper?.data ?? [];
+    final epinAsTx = (epinWrapper?.data?.data ?? [])
+        .map((d) => d.toUserTransactions())
+        .toList();
+
+    log('[fetchUsersTransactions] mainList: ${mainList.length}, epinAsTx: ${epinAsTx.length}');
+
+    // Log sample entries and their createdAt to help debugging
+    void _logSamples(List<UserTransactions> list, String tag,
+        [int sample = 3]) {
+      for (var i = 0; i < list.length && i < sample; i++) {
+        final t = list[i];
+        log('[$tag sample $i] ref=${t.transRef}, status=${t.status}, createdAt=${t.createdAt}');
+      }
+    }
+
+    _logSamples(mainList, 'MAIN');
+    _logSamples(epinAsTx, 'EPIN');
+
+    final merged = [...mainList, ...epinAsTx];
+    merged.sort((a, b) {
+      final aDate = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+      final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+      return bDate.compareTo(aDate);
+    });
+
+    log('[fetchUsersTransactions] merged length: ${merged.length}');
+    if (merged.isNotEmpty) {
+      log('[fetchUsersTransactions] newest merged createdAt: ${merged.first.createdAt}');
+    }
+
+    // --- 4) Update state (also persist epinWrapper into state.epinTransactions if we fetched it)
+    state = state.copyWith(
+      usersTransactions: AsyncData(
+        GetAllUserTransactionResponse(
+          status: 'success',
+          data: merged,
+          message: 'ok',
+        ),
+      ),
+      epinTransactions:
+          epinWrapper != null ? AsyncData(epinWrapper) : state.epinTransactions,
+      lastTransactionFetch: now,
+    );
+
+    // If main failed but epin succeeded, still surface main error non-blocking
+    if (mainFailure != null && epinWrapper != null) {
+      _handleFailure(mainFailure!, context);
+    }
+  }
+
+  /// Fetch EPIN transaction requests and store in state.epinTransactions
+  Future<void> fetchEpinTransactionRequests(BuildContext context,
       {bool force = false}) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
       return _handleError('Authentication token missing', context);
     }
 
-    final now = DateTime.now();
-    if (!force && state.lastTransactionFetch != null) {
-      final diff = now.difference(state.lastTransactionFetch!);
-      if (diff.inMinutes < 10) {
-        // Cache still valid
+    // Caching: if not forced and we already have data, skip
+    if (!force && state.epinTransactions is AsyncData) {
+      final existing = (state.epinTransactions as AsyncData).value;
+      if (existing != null) {
         return;
       }
     }
 
-    state = state.copyWith(usersTransactions: const AsyncLoading());
+    state = state.copyWith(epinTransactions: const AsyncLoading());
 
-    final result = await _api.getAllTransactions(token);
+    final result = await _api.getEpinTransactionRequests(token);
+
     result.fold(
       (fail) {
         _handleFailure(fail, context);
         state = state.copyWith(
-          usersTransactions: AsyncError(fail, StackTrace.current),
+          epinTransactions: AsyncError(fail, StackTrace.current),
         );
       },
-      (dataWrapper) {
-        final allTx = dataWrapper.data ?? [];
-
-        state = state.copyWith(
-          usersTransactions: AsyncData(dataWrapper),
-          lastTransactionFetch: now,
-        );
+      (data) {
+        state = state.copyWith(epinTransactions: AsyncData(data));
       },
     );
   }

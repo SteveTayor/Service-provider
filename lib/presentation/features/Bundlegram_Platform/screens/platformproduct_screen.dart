@@ -217,13 +217,16 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
                         ),
                       if (serviceType == PlatformProductType.mobileData &&
                           state.selectedProduct != null &&
-                          state.selectedDataType != null)
+                          state.subProducts.isNotEmpty)
                         ProductItemGrid(
                           serviceType: serviceType,
-                          products: state.subProducts
-                              .where(
-                                  (e) => e.dataType == state.selectedDataType)
-                              .toList(),
+                          products: state.selectedDataType != null
+                              ? state.subProducts
+                                  .where((e) =>
+                                      e.dataType == state.selectedDataType)
+                                  .toList()
+                              : state
+                                  .subProducts, // show all subProducts when dataType not selected yet
                         ),
                       if (serviceType == PlatformProductType.ePinVoucher ||
                           serviceType == PlatformProductType.bulkEPin)

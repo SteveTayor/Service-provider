@@ -43,8 +43,9 @@ class ServiceHistoryScreen extends ConsumerStatefulWidget {
 }
 
 class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
-  late final StateNotifierProvider<AllServiceHistoryNotifier,
-      ServiceHistoryState> provider;
+  // late final StateNotifierProvider<AllServiceHistoryNotifier,
+  //     ServiceHistoryState> provider;
+  late final StateNotifierProvider<dynamic, ServiceHistoryState> provider;
   String _sortBy = 'newest';
   String _amountBy = 'largest';
   final Set<String> _statusSet = {};
@@ -55,6 +56,9 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
   @override
   void initState() {
     super.initState();
+    Future.microtask(() {
+      ref.read(globalProvider.notifier).fetchEpinTransactionRequests(context);
+    });
     provider = {
       PlatformProductType.mobileData: mobileDataHistoryProvider,
       PlatformProductType.airtime: airtimeHistoryProvider,
@@ -68,9 +72,13 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
     }[widget.serviceType]!;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(provider.notifier).refresh();
+      // cast to dynamic so calls succeed for either notifier type
+      try {
+        (ref.read(provider.notifier) as dynamic).refresh();
+      } catch (_) {
+        // ignore runtime error if notifier doesn't implement refresh (shouldn't happen)
+      }
     });
-
     _scrollController.addListener(_onScroll);
   }
 
@@ -222,11 +230,9 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
             //               txn.transType?.toLowerCase() ==
             //               widget.serviceType.name.toLowerCase())
             //           .toList();
-
             //       if (filtered.isEmpty) {
             //         return const Center(child: EmptytransactionWidget());
             //       }
-
             //       return ListView.separated(
             //         controller: _scrollController,
             //         padding:

@@ -128,6 +128,9 @@ class LockScreenService {
         await _ref
             .read(globalProvider.notifier)
             .fetchUsersTransactions(context);
+        await _ref
+            .read(globalProvider.notifier)
+            .fetchEpinTransactionRequests(context);
 
         context
           ..dismissDialog()
