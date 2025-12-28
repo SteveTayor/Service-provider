@@ -58,7 +58,8 @@ class CloseAccountController extends ChangeNotifier {
             ),
           );
         } else {
-          context.showErrorSnackBar(data.message);
+          final displayMsg = sanitizeErrorMessage(data.message);
+          context.showErrorSnackBar(displayMsg);
         }
       },
     );

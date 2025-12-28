@@ -152,8 +152,10 @@ class StatisticsDashboardNotifier extends StateNotifier<StatisticsState> {
       );
     } catch (e, st) {
       log('[STATISTICS EXCEPTION] ${e.runtimeType}: $e', stackTrace: st);
+      final displayMsg = sanitizeErrorMessage(e);
+      // context.showErrorSnackBar(displayMsg);
       state = StatisticsState(
-        data: AsyncError(e, st),
+        data: AsyncError(displayMsg, st),
         isEmpty: false,
         currentRequest: request,
       );
