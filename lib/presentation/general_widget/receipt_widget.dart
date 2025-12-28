@@ -105,6 +105,14 @@ class VisualReceiptCard extends ConsumerWidget {
                       data.accountNumber ?? data.phoneNumber ?? 'N/A',
                     ),
                   ],
+                  if (data.quantity != null) ...[
+                    14.verticalSpace,
+                    _buildDetailRow(
+                      context,
+                      'Quantity',
+                      data.quantity ?? 'N/A',
+                    ),
+                  ],
                   14.verticalSpace,
                   _buildDetailRow(
                       context, 'Transaction ID', data.transactionId!),

@@ -366,6 +366,11 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         userBalance: txn.balanceAfter?.toCurrency(),
       );
     } else {
+      final qtyStr = txn.unit == null
+          ? null
+          : (txn.unit! % 1 == 0
+              ? txn.unit!.toInt().toString()
+              : txn.unit!.toString());
       // Default case for other transaction types
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
@@ -375,8 +380,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         amount: txn.transType != 'fund_wallet' && txn.transType != 'withdrawal'
             ? txn.deductAmount.toCurrency()
             : txn.amount.toCurrency(),
-        accountNumber:
-            txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        phoneNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        quantity: qtyStr,
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??

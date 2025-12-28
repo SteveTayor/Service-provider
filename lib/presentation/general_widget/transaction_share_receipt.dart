@@ -198,6 +198,12 @@ class TransactionReceiptWidget extends StatelessWidget {
         ),
       if (data.meterNumber != null)
         _TransactionDetailItem(label: 'Meter Number', value: data.meterNumber!),
+      if (data.quantity != null && data.quantity!.isNotEmpty) ...[
+        _TransactionDetailItem(
+          label: 'Quantity',
+          value: data.quantity!,
+        ),
+      ],
       if (data.accountNumber != null)
         _TransactionDetailItem(
             label: data.type?.toLowerCase() == 'betting'

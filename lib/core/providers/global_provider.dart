@@ -103,7 +103,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     );
 
     if (!profileOk) {
-      log('[restoreSession] Token invalid → fallback to email/password');
+      debugPrint('[restoreSession] Token invalid → fallback to email/password');
       return false;
     }
 
@@ -148,7 +148,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
   void _handleError(String message, BuildContext context) {
     context.showErrorSnackBar(message);
-    log('GlobalProvider Error: $message');
+    debugPrint('GlobalProvider Error: $message');
   }
 
   void _handleFailure(Failure failure, BuildContext context) async {
@@ -276,7 +276,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       },
       (data) {
         state = state.copyWith(userBanks: AsyncData(data));
-        log('Fetched user banks: ${data.data?.length}');
+        debugPrint('Fetched user banks: ${data.data?.length}');
       },
     );
   }
@@ -350,10 +350,12 @@ class GlobalProvider extends StateNotifier<GlobalState> {
         // But if epinTransactions is missing, we must continue so EPIN history is available.
         if (state.epinTransactions is AsyncData) {
           // Debug log
-          log('[fetchUsersTransactions] Skipping fetch (cache recent, ${diff.inMinutes}m ago)');
+          debugPrint(
+              '[fetchUsersTransactions] Skipping fetch (cache recent, ${diff.inMinutes}m ago)');
           return;
         } else {
-          log('[fetchUsersTransactions] Cache recent (${diff.inMinutes}m) but epin not present -> proceeding to fetch.');
+          debugPrint(
+              '[fetchUsersTransactions] Cache recent (${diff.inMinutes}m) but epin not present -> proceeding to fetch.');
         }
       }
     }
@@ -366,18 +368,21 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       epinWrapper = (state.epinTransactions
               as AsyncData<EpinTransactionRequestsResponse?>)
           .value;
-      log('[fetchUsersTransactions] Using cached epinTransactions with ${epinWrapper?.data?.data?.length ?? 0} items');
+      debugPrint(
+          '[fetchUsersTransactions] Using cached epinTransactions with ${epinWrapper?.data?.data?.length ?? 0} items');
     } else {
       final epinResult = await _api.getEpinTransactionRequests(token);
       epinResult.fold(
         (fail) {
           _handleFailure(fail, context);
           // keep going: we still want main transactions even if epin failed
-          log('[fetchUsersTransactions] epin fetch failed: ${fail.properties}');
+          debugPrint(
+              '[fetchUsersTransactions] epin fetch failed: ${fail.properties}');
         },
         (data) {
           epinWrapper = data;
-          log('[fetchUsersTransactions] Fetched epin pages -> items: ${data.data?.data?.length ?? 0}');
+          debugPrint(
+              '[fetchUsersTransactions] Fetched epin pages -> items: ${data.data?.data?.length ?? 0}');
         },
       );
     }
@@ -405,23 +410,27 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     final epinAsTx = (epinWrapper?.data?.data ?? [])
         .map((d) => d.toUserTransactions())
         .toList();
-    log('MERGE_DBG: epinWrapper?.data?.data length=${epinWrapper?.data?.data?.length ?? 0}');
+    debugPrint(
+        'MERGE_DBG: epinWrapper?.data?.data length=${epinWrapper?.data?.data?.length ?? 0}');
     if (epinWrapper?.data?.data != null &&
         epinWrapper!.data!.data!.isNotEmpty) {
       for (var i = 0; i < epinWrapper!.data!.data!.length && i < 5; i++) {
         final d = epinWrapper!.data!.data![i];
-        log('MERGE_DBG datum[$i] -> id=${d.id}, ref=${d.reference}, createdAt=${d.createdAt}, agentPhone=${d.agentPhone}');
+        debugPrint(
+            'MERGE_DBG datum[$i] -> id=${d.id}, ref=${d.reference}, createdAt=${d.createdAt}, agentPhone=${d.agentPhone}');
       }
     }
 
-    log('[fetchUsersTransactions] mainList: ${mainList.length}, epinAsTx: ${epinAsTx.length}');
+    debugPrint(
+        '[fetchUsersTransactions] mainList: ${mainList.length}, epinAsTx: ${epinAsTx.length}');
 
     // Log sample entries and their createdAt to help debugging
     void _logSamples(List<UserTransactions> list, String tag,
         [int sample = 3]) {
       for (var i = 0; i < list.length && i < sample; i++) {
         final t = list[i];
-        log('[$tag sample $i] ref=${t.transRef}, status=${t.status}, createdAt=${t.createdAt}');
+        debugPrint(
+            '[$tag sample $i] ref=${t.transRef}, status=${t.status}, createdAt=${t.createdAt}');
       }
     }
 
@@ -439,13 +448,15 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     if (epinAsTx.isNotEmpty) {
       for (var i = 0; i < epinAsTx.length && i < 5; i++) {
         final t = epinAsTx[i];
-        log('MERGE_DBG epinTx[$i] -> transRef=${t.transRef}, createdAt=${t.createdAt}, amount=${t.amount}');
+        debugPrint(
+            'MERGE_DBG epinTx[$i] -> transRef=${t.transRef}, createdAt=${t.createdAt}, amount=${t.amount}');
       }
     }
 
-    log('[fetchUsersTransactions] merged length: ${merged.length}');
+    debugPrint('[fetchUsersTransactions] merged length: ${merged.length}');
     if (merged.isNotEmpty) {
-      log('[fetchUsersTransactions] newest merged createdAt: ${merged.first.createdAt}');
+      debugPrint(
+          '[fetchUsersTransactions] newest merged createdAt: ${merged.first.createdAt}');
     }
 
     // --- 4) Update state (also persist epinWrapper into state.epinTransactions if we fetched it)

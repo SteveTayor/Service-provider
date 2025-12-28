@@ -21,7 +21,7 @@ extension DatumToUserTransactions on Datum {
       id: id,
       userId: userId,
       subProdId: null,
-      transType: 'e_pin',
+      transType: 'epin',
       amount: amount?.toString(),
       crAcc: agentPhone, // show agent phone in the receipt if useful
       trxFrom: null,
@@ -30,7 +30,11 @@ extension DatumToUserTransactions on Datum {
       transRef: reference?.toString() ?? 'EPIN-${id ?? ''}',
       autoRef: null,
       token: null,
-      unit: null,
+      unit: (quantity == null)
+          ? null
+          : (quantity is int
+              ? (quantity as int).toDouble()
+              : double.tryParse(quantity.toString())),
       cardPin: null,
       cardSerialNo: null,
       status: status,

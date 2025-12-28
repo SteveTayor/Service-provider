@@ -382,6 +382,11 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         balanceBefore: txn.balanceBefore?.toCurrency(),
       );
     } else {
+      final qtyStr = txn.unit == null
+          ? null
+          : (txn.unit! % 1 == 0
+              ? txn.unit!.toInt().toString()
+              : txn.unit!.toString());
       // Default case for other transaction types
       receiptData = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
@@ -394,6 +399,7 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
+        quantity: qtyStr,
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
