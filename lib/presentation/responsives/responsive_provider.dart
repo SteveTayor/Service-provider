@@ -30,7 +30,7 @@ class ResponsiveInfo {
     final mq = MediaQuery.of(context);
     final width = mq.size.width;
     final height = mq.size.height;
-    
+
     // Determine device type
     DeviceType deviceType;
     if (width <= config.phoneMaxWidth) {
@@ -74,7 +74,7 @@ class ResponsiveInfo {
   bool get isPhone => deviceType == DeviceType.phone;
   bool get isTablet => deviceType == DeviceType.tablet;
   bool get isDesktop => deviceType == DeviceType.desktop;
-  
+
   // Orientation checks
   bool get isLandscape => orientation == Orientation.landscape;
   bool get isPortrait => orientation == Orientation.portrait;
@@ -89,7 +89,7 @@ class ResponsiveInfo {
   double textSize(double base) => base * scaleFactor;
   double iconSize({double base = 24}) => base * scaleFactor;
   double radiusSize(double base) => base * scaleFactor;
-  
+
   EdgeInsets padding({
     double? all,
     double? horizontal,

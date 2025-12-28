@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -35,6 +36,7 @@ class RecentTransactionWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // final recentState = ref.watch(recentTransactionsProvider);
     final recentState = ref.watch(transactionProvider);
+    final r = context.responsive;
     // Wait until loading is done before rendering anything
     if (recentState.isLoading) {
       return _buildLoadingState();
@@ -53,7 +55,8 @@ class RecentTransactionWidget extends ConsumerWidget {
       children: [
         Text(
           title!,
-          style: context.textTheme.titleSmall!.copyWith(fontSize: 18.sp),
+          style:
+              context.textTheme.titleSmall!.copyWith(fontSize: r.textSize(18)),
         ),
         spacing ?? 20.verticalSpace,
         _buildRecentTransactionsList(

@@ -129,7 +129,9 @@ class _BulkEpinScreenState extends ConsumerState<BulkEpinScreen> {
                       ),
                     ),
                     AppDropdown(
-                      title: state.selectedQuantity.toString() ?? 'Quantity',
+                      title: state.selectedQuantity == null
+                          ? 'Quantity'
+                          : state.selectedQuantity!,
                       options: quantityOptions,
                       selected: state.selectedQuantity,
                       onChanged: (value) => ref

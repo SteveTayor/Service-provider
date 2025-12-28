@@ -82,12 +82,12 @@ class BundlegramButtonOutline extends BundlegramButtonStyle {
   BundlegramButtonOutline({double? baseFontSize})
       : super(
           background: Colors.transparent,
-          textColor: AppColors.greyD0,
-          borderColor: AppColors.greyD0,
+          textColor: AppColors.grey2F,
+          borderColor: AppColors.grey8E,
           border: Border.all(width: 1, color: AppColors.greyD0),
           baseFontSize: baseFontSize ?? 18, // Default to 18
           textStyle: TextStyle(
-            color: AppColors.grey19,
+            color: AppColors.grey2F,
             fontSize: baseFontSize ?? 18, // Use parameter or default
             fontWeight: FontWeight.w500,
             fontFamily: FontFamily.mabryPro,
