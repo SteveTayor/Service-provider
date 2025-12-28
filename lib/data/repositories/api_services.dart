@@ -367,56 +367,86 @@ class ApiService {
     );
   }
 
-  // inside ApiService (replace existing getEpinTransactionRequests implementation)
   Future<Either<Failure, epin_models.EpinTransactionRequestsResponse>>
       getEpinTransactionRequests(String token) {
     // We use handleApi to keep existing error handling behavior.
     return handleApi(() async {
+      // inside handleApi block where you loop pages
       int page = 1;
       epin_models.EpinTransactionRequestsResponse? lastResp;
       final List<epin_models.Datum> allData = [];
 
-      while (true) {
-        // IMPORTANT: pass page explicitly
-        final pageResp = await _api.getEpinTransactionRequests(
-          'Bearer $token', // AccessToken header
-          _sterilizer, // _authHeader header (your existing value)
-          page, // <-- page query param
-        );
+      try {
+        while (true) {
+          // IMPORTANT: pass page explicitly
+          final pageResp = await _api.getEpinTransactionRequests(
+            'Bearer $token', // AccessToken header
+            _sterilizer, // keep your existing header
+            page, // page param
+          );
 
-        // keep a reference to last page response for pagination metadata
-        lastResp = pageResp;
+          // Debug: page-level metadata
+          log('EPIN_DBG: fetched page=$page, status=${pageResp.status}, '
+              'currentPage=${pageResp.data?.currentPage}, lastPage=${pageResp.data?.lastPage}, '
+              'nextPageUrl=${pageResp.data?.nextPageUrl}');
 
-        // Append page items
-        final pageItems = pageResp.data?.data ?? [];
-        allData.addAll(pageItems);
+          final pageItems = pageResp.data?.data ?? [];
+          log('EPIN_DBG: page=$page -> items=${pageItems.length}');
 
-        // decide whether to fetch next page
-        final currentPage = pageResp.data?.currentPage;
-        final lastPage = pageResp.data?.lastPage;
-        final nextPageUrl = pageResp.data?.nextPageUrl;
-
-        // if the API gives lastPage, use that. Otherwise fall back to nextPageUrl.
-        if (lastPage != null) {
-          if (currentPage == null || currentPage >= lastPage) {
-            break;
-          } else {
-            page++;
-            continue;
+          if (pageItems.isNotEmpty) {
+            // print up to 3 sample items for inspection
+            for (var i = 0; i < pageItems.length && i < 3; i++) {
+              final it = pageItems[i];
+              log('EPIN_DBG sample page=$page item$i -> id=${it.id}, ref=${it.reference}, '
+                  'agentPhone=${it.agentPhone}, createdAt=${it.createdAt}');
+            }
           }
-        } else {
-          // if next_page_url is null => we're done
-          if (nextPageUrl == null) break;
-          // if nextPageUrl exists but we don't know last_page, increment page (server uses page param)
-          page++;
+
+          lastResp = pageResp;
+          allData.addAll(pageItems);
+
+          // decide whether to fetch next page
+          final currentPage = pageResp.data?.currentPage;
+          final lastPage = pageResp.data?.lastPage;
+          final nextPageUrl = pageResp.data?.nextPageUrl;
+
+          if (lastPage != null) {
+            if (currentPage == null || currentPage >= lastPage) {
+              log('EPIN_DBG: reached lastPage=$lastPage at page=$currentPage');
+              break;
+            } else {
+              page++;
+              continue;
+            }
+          } else {
+            if (nextPageUrl == null) {
+              log('EPIN_DBG: nextPageUrl null -> stopping at page=$page');
+              break;
+            }
+            // try to extract page param from nextPageUrl (best effort)
+            final uri = Uri.tryParse(nextPageUrl);
+            final nextPageStr = uri?.queryParameters['page'];
+            final nextPage =
+                nextPageStr != null ? int.tryParse(nextPageStr) : null;
+            if (nextPage != null && nextPage > page) {
+              page = nextPage;
+              continue;
+            } else {
+              // fallback: increment page (server might use simple page param)
+              page++;
+              continue;
+            }
+          }
         }
+      } catch (e, st) {
+        log('EPIN_DBG: exception while paging epin: $e\n$st');
       }
 
       // Build merged Data object preserving useful metadata from lastResp (you can choose another page's metadata if you prefer)
       final mergedData = epin_models.Data(
         currentPage: 1,
         data: allData,
-        firstPageUrl: lastResp.data?.firstPageUrl,
+        firstPageUrl: lastResp!.data?.firstPageUrl,
         from: lastResp.data?.from,
         lastPage: lastResp.data?.lastPage,
         lastPageUrl: lastResp.data?.lastPageUrl,
@@ -428,6 +458,11 @@ class ApiService {
         to: lastResp.data?.to,
         total: lastResp.data?.total,
       );
+      log('EPIN_DBG: total collected epin items = ${allData.length}');
+      if (allData.isNotEmpty) {
+        log('EPIN_DBG: first collected sample -> id=${allData.first.id}, ref=${allData.first.reference}, createdAt=${allData.first.createdAt}');
+        log('EPIN_DBG: last collected sample -> id=${allData.last.id}, ref=${allData.last.reference}, createdAt=${allData.last.createdAt}');
+      }
 
       return epin_models.EpinTransactionRequestsResponse(
         status: lastResp.status,

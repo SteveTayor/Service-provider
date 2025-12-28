@@ -363,9 +363,9 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     // --- 1) EPIN: use cached epinTransactions if available to avoid extra network calls
     EpinTransactionRequestsResponse? epinWrapper;
     if (!force && state.epinTransactions is AsyncData) {
-      epinWrapper =
-          (state.epinTransactions as AsyncData<EpinTransactionRequestsResponse>)
-              .value;
+      epinWrapper = (state.epinTransactions
+              as AsyncData<EpinTransactionRequestsResponse?>)
+          .value;
       log('[fetchUsersTransactions] Using cached epinTransactions with ${epinWrapper?.data?.data?.length ?? 0} items');
     } else {
       final epinResult = await _api.getEpinTransactionRequests(token);
@@ -405,6 +405,14 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     final epinAsTx = (epinWrapper?.data?.data ?? [])
         .map((d) => d.toUserTransactions())
         .toList();
+    log('MERGE_DBG: epinWrapper?.data?.data length=${epinWrapper?.data?.data?.length ?? 0}');
+    if (epinWrapper?.data?.data != null &&
+        epinWrapper!.data!.data!.isNotEmpty) {
+      for (var i = 0; i < epinWrapper!.data!.data!.length && i < 5; i++) {
+        final d = epinWrapper!.data!.data![i];
+        log('MERGE_DBG datum[$i] -> id=${d.id}, ref=${d.reference}, createdAt=${d.createdAt}, agentPhone=${d.agentPhone}');
+      }
+    }
 
     log('[fetchUsersTransactions] mainList: ${mainList.length}, epinAsTx: ${epinAsTx.length}');
 
@@ -426,6 +434,14 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
       return bDate.compareTo(aDate);
     });
+
+    // After mapping to UserTransactions, print sample createdAt/parsing
+    if (epinAsTx.isNotEmpty) {
+      for (var i = 0; i < epinAsTx.length && i < 5; i++) {
+        final t = epinAsTx[i];
+        log('MERGE_DBG epinTx[$i] -> transRef=${t.transRef}, createdAt=${t.createdAt}, amount=${t.amount}');
+      }
+    }
 
     log('[fetchUsersTransactions] merged length: ${merged.length}');
     if (merged.isNotEmpty) {

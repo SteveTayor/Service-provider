@@ -105,7 +105,7 @@ class Endpoints {
   // ====================
   static const String becomeAMerchant = '/become-a-merchant';
   static const String initiateEpinPurchase = "/epin/purchase";
-  static const String epinTransactionRequests = "/epin/requests/3";
+  static const String epinTransactionRequests = "/epin/requests";
 
   // ====================
   // Misc

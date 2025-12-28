@@ -1634,7 +1634,7 @@ class _ApiDefinition implements ApiDefinition {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/epin/requests/3',
+            '/epin/requests',
             queryParameters: queryParameters,
             data: _data,
           )
