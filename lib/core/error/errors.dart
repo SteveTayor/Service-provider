@@ -7,6 +7,15 @@ String sanitizeErrorMessage(dynamic rawMessage) {
   if (message.isEmpty) return fallback;
 
   final lower = message.toLowerCase();
+  // Reject messages that start with numbers or look like dumps
+  final lines = message.split(RegExp(r'[\r\n]+'));
+  if (lines.isNotEmpty) {
+    final firstLine = lines.first.trim();
+    if (firstLine.isNotEmpty && RegExp(r'^\d+$').hasMatch(firstLine)) {
+      return fallback;
+    }
+  }
+
   const blockedPatterns = [
     'too many requests',
     'too much request',
