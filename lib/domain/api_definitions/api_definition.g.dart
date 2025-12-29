@@ -912,7 +912,7 @@ class _ApiDefinition implements ApiDefinition {
   }
 
   @override
-  Future<void> userWithdraw(
+  Future<BaseResponse<dynamic>> userWithdraw(
     String accessToken,
     String bearer,
     WithdrawRequest body,
@@ -926,7 +926,7 @@ class _ApiDefinition implements ApiDefinition {
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(body.toJson());
-    final _options = _setStreamType<void>(
+    final _options = _setStreamType<BaseResponse<dynamic>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -936,7 +936,18 @@ class _ApiDefinition implements ApiDefinition {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    await _dio.fetch<void>(_options);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<dynamic> _value;
+    try {
+      _value = BaseResponse<dynamic>.fromJson(
+        _result.data!,
+        (json) => json as dynamic,
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override

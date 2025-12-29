@@ -81,20 +81,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return WillPopScope(
       onWillPop: () async {
         debugPrint('onWillPop pressed -> navigate to walkthrough');
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.go(
-            RouteConstants.walkThrough,
-          );
-        });
+        if (mounted) {
+          context.go(RouteConstants.walkThrough);
+        }
+
+        // return false so we control the navigation
         return false;
       },
       child: BundlegramScaffold(
         sidePadding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
-        appBar: BundlegramAppbar(onTap: () {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.go(RouteConstants.walkThrough);
-          });
-        }),
+        appBar: BundlegramAppbar(
+          onTap: () {
+            if (mounted) {
+              context.go(RouteConstants.walkThrough);
+            }
+          },
+        ),
         body: Column(
           children: [
             Column(
@@ -116,7 +118,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     InkWell(
                       onTap: () {
                         HapticFeedback.lightImpact();
-                        context.go('/register');
+                        context.push('/register');
 
                         // context.push('/register');
                       },

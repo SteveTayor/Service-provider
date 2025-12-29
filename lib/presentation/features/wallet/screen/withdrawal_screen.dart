@@ -184,6 +184,20 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                             inputFormatters: [CurrencyTextInputFormatter()],
                             keyboardType: TextInputType.number,
                             readOnly: profileProv?.bvn == null ? true : false,
+                            validateFunction: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Amount is required';
+                              }
+                              final amount =
+                                  double.tryParse(value.replaceAll(',', ''));
+                              if (amount == null || amount <= 0) {
+                                return 'Enter a valid amount';
+                              }
+                              if (amount < 500) {
+                                return 'Minimum withdrawal amount is 500';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                       ),
@@ -221,6 +235,14 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                             ],
                           ),
                         ),
+                      ),
+                    ),
+
+                    SizedBox(height: r.spacing(8)),
+                    Text(
+                      '(Note: A service charge of 100 naira applies to each withdrawal.)',
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: AppColors.primaryColor,
                       ),
                     ),
 
@@ -285,18 +307,18 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                                             return;
                                           }
 
-                                          final success =
+                                          final message =
                                               await provider.requestWithdrawal(
                                                   context, storedPin);
-                                          if (!success) return;
+                                          if (message == null) return;
 
                                           context.go(
                                             RouteConstants.transactionSuccess,
                                             extra: TransactionSuccessArgs(
                                               title:
                                                   'Withdrawal request received!',
-                                              subTitle:
-                                                  'Your withdrawal request of ${provider.amountController.text.toCurrency()} from your Bundlegram wallet has been successfully received.',
+                                              subTitle: message,
+                                              // 'Your withdrawal request of ${provider.amountController.text.toCurrency()} from your Bundlegram wallet has been successfully received.',
                                             ),
                                           );
                                           return;
@@ -313,10 +335,10 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                                           MaterialPageRoute(
                                             builder: (ctx) => EnterPinScreen(
                                               onVerified: (pin) async {
-                                                final success = await provider
+                                                final message = await provider
                                                     .requestWithdrawal(
                                                         ctx, pin);
-                                                if (!success) return;
+                                                if (message == null) return;
 
                                                 unawaited(
                                                   Navigator.pushReplacement(
@@ -326,8 +348,8 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
                                                           TransactionSuccessful(
                                                         title:
                                                             'Withdrawal request received!',
-                                                        subTitle:
-                                                            'Your withdrawal request of ${provider.amountController.text.toCurrency()} from your Bundlegram wallet has been successfully received.',
+                                                        subTitle: message,
+                                                        // 'Your withdrawal request of ${provider.amountController.text.toCurrency()} from your Bundlegram wallet has been successfully received.',
                                                       ),
                                                     ),
                                                   ),

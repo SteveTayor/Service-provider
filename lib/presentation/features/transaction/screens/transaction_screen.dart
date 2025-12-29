@@ -346,6 +346,12 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
       );
     } else if (transTypeLower.contains('electricity')) {
       // Handle data transaction
+      final unitsStr = txn.unit == null
+          ? null
+          : (txn.unit! % 1 == 0
+              ? txn.unit!.toInt().toString()
+              : txn.unit!.toString());
+
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
@@ -362,6 +368,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
 
         meterNumber: txn.crAcc,
         token: txn.token,
+        units: unitsStr,
         balanceBefore: txn.balanceBefore?.toCurrency(),
         userBalance: txn.balanceAfter?.toCurrency(),
       );

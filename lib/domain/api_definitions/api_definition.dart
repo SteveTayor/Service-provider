@@ -230,7 +230,7 @@ abstract class ApiDefinition {
   );
 
   @POST(Endpoints.userWithdraw)
-  Future<void> userWithdraw(
+  Future<BaseResponse> userWithdraw(
     @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
     @Body() WithdrawRequest body,

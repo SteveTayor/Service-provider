@@ -154,7 +154,7 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   if (transType.contains('airtime')) {
     return TransactionReceiptData(
       transactionId: transRef,
-      date: _formatTime(createdAt),
+      date: _formatDate(createdAt),
       time: _formatTime(createdAt),
       type: transType,
       amount: displayAmount(),
@@ -175,7 +175,7 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   if (transType.contains('data')) {
     return TransactionReceiptData(
       transactionId: transRef,
-      date: _formatTime(createdAt),
+      date: _formatDate(createdAt),
       time: _formatTime(createdAt),
       type: transType,
       amount: displayAmount(),
@@ -197,7 +197,7 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   if (transType.contains('electricity')) {
     return TransactionReceiptData(
       transactionId: transRef,
-      date: _formatTime(createdAt),
+      date: _formatDate(createdAt),
       time: _formatTime(createdAt),
       type: transType,
       amount: displayAmount(),
@@ -217,7 +217,7 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   if (transType.contains('cable')) {
     return TransactionReceiptData(
       transactionId: transRef,
-      date: _formatTime(createdAt),
+      date: _formatDate(createdAt),
       time: _formatTime(createdAt),
       type: transType,
       amount: displayAmount(),
@@ -236,7 +236,7 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   if (transType.contains('withdrawal')) {
     return TransactionReceiptData(
       transactionId: transRef,
-      date: _formatTime(createdAt),
+      date: _formatDate(createdAt),
       time: _formatTime(createdAt),
       type: transType,
       amount: displayAmount(),
@@ -255,7 +255,7 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   // fallback / default
   return TransactionReceiptData(
     transactionId: transRef,
-    date: _formatTime(createdAt),
+    date: _formatDate(createdAt),
     time: _formatTime(createdAt),
     type: transType.isNotEmpty
         ? transType

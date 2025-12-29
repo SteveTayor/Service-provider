@@ -1,6 +1,7 @@
 // lib/presentation/general_widget/app_dropdown.dart
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
@@ -51,7 +52,13 @@ class AppDropdown extends StatelessWidget {
 
   void _showMenu(BuildContext context) {
     String filter = '';
+    final r = context.responsive;
     final filtered = ValueNotifier<List<String>>(options);
+    final dialogHeight = r.when(
+      phone: MediaQuery.of(context).size.height * 0.3, // 63% on phone
+      tablet: MediaQuery.of(context).size.height * 0.65, // 65% on tablet
+      desktop: 550.0, // Fixed on desktop
+    );
     context.showBottomSheet(
       child: Padding(
         padding: EdgeInsets.only(
@@ -59,54 +66,55 @@ class AppDropdown extends StatelessWidget {
         ),
         child: StatefulBuilder(builder: (context, setState) {
           return SizedBox(
-            height: 400.h,
+            height: dialogHeight,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: AppTextField(
-                    decoration: InputDecoration(
-                      fillColor: AppColors.searchbarColor,
-                      filled: true,
-                      prefixIcon: const Padding(
-                        padding: EdgeInsets.only(left: 16),
-                        child: Icon(
-                          Icons.search,
-                          color: AppColors.grey8E,
-                        ),
-                      ),
-                      hintText: 'Search ...',
-                      hintStyle: TextStyle(
-                        fontSize: 14.sp,
-                        color: AppColors.searchHintColor,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(80.r),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(80.r),
-                      ),
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(80.r),
-                      ),
-                      focusedErrorBorder: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(80.r),
-                      ),
-                    ),
-                    onChange: (val) {
-                      filter = val.toLowerCase();
-                      setState(() {
-                        filtered.value = options
-                            .where((o) => o.toLowerCase().contains(filter))
-                            .toList();
-                      });
-                    },
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(16),
+                //   child: AppTextField(
+                //     decoration: InputDecoration(
+                //       fillColor: AppColors.searchbarColor,
+                //       filled: true,
+                //       prefixIcon: const Padding(
+                //         padding: EdgeInsets.only(left: 16),
+                //         child: Icon(
+                //           Icons.search,
+                //           color: AppColors.grey8E,
+                //         ),
+                //       ),
+                //       hintText: 'Search ...',
+                //       hintStyle: TextStyle(
+                //         fontSize: 14.sp,
+                //         color: AppColors.searchHintColor,
+                //       ),
+                //       focusedBorder: OutlineInputBorder(
+                //         borderSide: BorderSide.none,
+                //         borderRadius: BorderRadius.circular(80.r),
+                //       ),
+                //       enabledBorder: OutlineInputBorder(
+                //         borderSide: BorderSide.none,
+                //         borderRadius: BorderRadius.circular(80.r),
+                //       ),
+                //       errorBorder: OutlineInputBorder(
+                //         borderSide: BorderSide.none,
+                //         borderRadius: BorderRadius.circular(80.r),
+                //       ),
+                //       focusedErrorBorder: OutlineInputBorder(
+                //         borderSide: BorderSide.none,
+                //         borderRadius: BorderRadius.circular(80.r),
+                //       ),
+                //     ),
+                //     onChange: (val) {
+                //       filter = val.toLowerCase();
+                //       setState(() {
+                //         filtered.value = options
+                //             .where((o) => o.toLowerCase().contains(filter))
+                //             .toList();
+                //       });
+                //     },
+                //   ),
+                // ),
+                SizedBox(height: r.spacing(16)),
                 Expanded(
                   child: ValueListenableBuilder<List<String>>(
                     valueListenable: filtered,

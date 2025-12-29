@@ -431,7 +431,7 @@ class LoginProvider extends ChangeNotifier {
       (response) async {
         if (response.success) {
 // Clear all secure storage, including device info
-          // await _storage.clearAll();
+          await _storage.clearAll();
           _ref.read(dashboardProvider).resetIndex();
           // Navigate to login
           context.go(RouteConstants.login);

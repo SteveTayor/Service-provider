@@ -9,7 +9,10 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
+import 'package:bundlegram/data/repositories/api_services.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/model/platform_product_state.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_product_provider.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/statisticvisual.dart';
@@ -20,8 +23,11 @@ import 'package:bundlegram/data/models/banks/get_virtual_account_response.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:go_router/go_router.dart';
 
-final platformProvider =
-    ChangeNotifierProvider.autoDispose<PlatformProvider>((ref) {
+// final platformProvider =
+//     ChangeNotifierProvider.autoDispose<PlatformProvider>((ref) {
+//   return PlatformProvider(ref);
+// });
+final platformProvider = ChangeNotifierProvider<PlatformProvider>((ref) {
   return PlatformProvider(ref);
 });
 
@@ -109,14 +115,114 @@ class PlatformProvider extends ChangeNotifier {
     }
   }
 
-  void goToProduct(BuildContext context, PlatformProductType type) {
-    Navigator.push(
-      context,
+  Future<bool> checkServiceAvailability(
+      BuildContext ctx, PlatformProductType type) async {
+    // show a small loader while we check
+    ctx.showLoadingDialog(message: 'Checking service availability...');
+
+    try {
+      final container = ProviderScope.containerOf(ctx, listen: false);
+
+      // get the notifier (this will create a new instance if needed)
+      final notifier = container.read(platformProductProvider(type).notifier);
+
+      // if notifier has no products, fetch them now (await)
+      if (notifier.state.products.isEmpty) {
+        try {
+          await notifier.fetchProducts(ctx);
+        } catch (e) {
+          debugPrint('fetchProducts failed on demand: $e');
+          // fallback: try reading productsProvider directly (minimal)
+          try {
+            await container.read(productsProvider(type).future);
+          } catch (_) {}
+        }
+      }
+
+      // re-read state from container after fetch
+      final state = container.read(platformProductProvider(type));
+
+      // active check (reuse your helper)
+      bool isEntityActive(dynamic entity) {
+        try {
+          if (entity == null) return true;
+          final dyn = entity as dynamic;
+          final cand = (() {
+            try {
+              return dyn.isActive;
+            } catch (_) {}
+            try {
+              return dyn.active;
+            } catch (_) {}
+            try {
+              return dyn.is_active;
+            } catch (_) {}
+            try {
+              return dyn.status;
+            } catch (_) {}
+            try {
+              return dyn.state;
+            } catch (_) {}
+            try {
+              return dyn.statuscode;
+            } catch (_) {}
+            return null;
+          })();
+          if (cand == null) return true;
+          if (cand is bool) return cand;
+          if (cand is int) return cand == 1;
+          if (cand is String) {
+            final s = cand.toLowerCase();
+            return s == 'true' || s == '1' || s == 'active' || s == 'enabled';
+          }
+          return true;
+        } catch (_) {
+          return true;
+        }
+      }
+
+      final products = state.products;
+      final hasActive =
+          products.isNotEmpty && products.any((p) => isEntityActive(p));
+      ctx.dismissDialog();
+
+      if (!hasActive) {
+        ctx.showErrorSnackBar('Service not available at the moment');
+        return false;
+      }
+
+      return true;
+    } catch (e, st) {
+      debugPrint('checkServiceAvailability error: $e\n$st');
+      ctx.dismissDialog();
+      ctx.showErrorSnackBar(
+          'Could not check service availability. Please try again.');
+      return false;
+    }
+  }
+
+  /// Then, modify goToProduct to call checkServiceAvailability first:
+  Future<void> goToProduct(BuildContext ctx, PlatformProductType type) async {
+    final ok = await checkServiceAvailability(ctx, type);
+    if (!ok) return;
+
+    // existing navigation logic (unchanged)
+    unawaited(Navigator.push(
+      ctx,
       MaterialPageRoute(
         builder: (_) => PlatformproductScreen(serviceType: type),
       ),
-    );
+    ));
   }
+
+  // void goToProduct(BuildContext context, PlatformProductType type) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (_) => PlatformproductScreen(serviceType: type),
+  //     ),
+  //   );
+  // }
 
   String _unavailableMessageFor(PlatformProductType type,
       [String? serverMessage]) {

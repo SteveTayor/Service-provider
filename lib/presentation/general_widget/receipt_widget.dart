@@ -129,6 +129,10 @@ class VisualReceiptCard extends ConsumerWidget {
                     14.verticalSpace,
                     _buildDetailRow(context, 'Token', data.token!),
                   ],
+                  if (data.units != null) ...[
+                    14.verticalSpace,
+                    _buildDetailRow(context, 'Units', data.units!),
+                  ],
                 ],
               ),
             ),

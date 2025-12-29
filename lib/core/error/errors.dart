@@ -7,7 +7,28 @@ String sanitizeErrorMessage(dynamic rawMessage) {
   if (message.isEmpty) return fallback;
 
   final lower = message.toLowerCase();
-
+  const blockedPatterns = [
+    'too many requests',
+    'too much request',
+    'too many request',
+    'too many requests.',
+    'too many requests error',
+    'rate limit',
+    'rate-limited',
+    'rate limit exceeded',
+    'throttle',
+    'throttled',
+    '429',
+    'quota exceeded',
+    'request throttled',
+    'too many attempts',
+  ];
+  for (final p in blockedPatterns) {
+    if (lower.contains(p)) {
+      // Silently map to generic fallback (so UI never sees the raw phrase)
+      return fallback;
+    }
+  }
   // Hard reject obvious stack traces / backend dumps
   if ((lower.contains('traceback') ||
           lower.contains('exception') ||

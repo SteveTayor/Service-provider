@@ -4,6 +4,8 @@ import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -57,7 +59,6 @@ class DashboardProvider extends ChangeNotifier {
     _setError(null);
 
     final storage = _ref.read(secureStorageHelperProvider);
-    final api = _ref.read(apiServiceProvider);
     final token = await storage.getAuthToken();
     // context.showLoadingDialog();
 
@@ -65,8 +66,8 @@ class DashboardProvider extends ChangeNotifier {
       // context.dismissDialog();
 
       context
-        ..showErrorSnackBar(
-            'No authentication token found. Please log in again.')
+        // ..showErrorSnackBar(
+        //     'No authentication token found. Please log in again.')
         ..go(RouteConstants.login);
       _setLoading(false);
       return;
@@ -74,6 +75,7 @@ class DashboardProvider extends ChangeNotifier {
 
     final global = _ref.read(globalProvider.notifier);
     unawaited(global.initializeWalletandAccounts(context));
+    await global.initializePlatformDependencies(context);
 
     // context.dismissDialog();
     _setLoading(false);

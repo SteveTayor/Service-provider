@@ -4,6 +4,7 @@ import 'package:bundlegram/core/providers/connectivity_provider.dart';
 import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/utils/themes.dart';
 import 'package:bundlegram/presentation/no_internet.dart';
+import 'package:bundlegram/services/route_memory_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 // import 'package:bundlegram/presentation/routes/app_router.dart';
 // import 'package:bundlegram/presentation/features/onboarding/screens/splash_screen.dart';
@@ -15,11 +16,33 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-class App extends ConsumerWidget {
+// class App extends ConsumerWidget {
+//   const App({super.key});
+class App extends ConsumerStatefulWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<App> createState() => _AppState();
+}
+
+class _AppState extends ConsumerState<App> {
+  late final RouteMemoryService _routeMemoryService;
+
+  @override
+  void initState() {
+    super.initState();
+    _routeMemoryService = RouteMemoryService(AppRouter.router);
+    WidgetsBinding.instance.addObserver(_routeMemoryService);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_routeMemoryService);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final connectivityProv = ref.watch(connectivityStatusProvider);
 
     return ScreenUtilInit(
@@ -35,6 +58,8 @@ class App extends ConsumerWidget {
           child: MaterialApp.router(
             routerConfig: AppRouter.router,
             themeMode: ThemeMode.system,
+
+            restorationScopeId: 'app',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             debugShowCheckedModeBanner: false,

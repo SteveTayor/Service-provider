@@ -333,49 +333,48 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
                   ),
                 ),
                 20.verticalSpace,
-                SlideTransition(
-                  position: _bottomSlideAnimation,
-                  child: FadeTransition(
-                    opacity: _bottomFadeAnimation,
-                    child: Column(
-                      children: [
-                        _AnimatedPageIndicators(
-                          currentIndex: walkthroughIndex,
-                          count: 3,
-                        ),
-                        30.verticalSpace,
-                        _AnimatedButton(
-                          text: 'Create account',
-                          onPressed: () => context.go(RouteConstants.register),
-                          isPrimary: true,
-                        ),
-                        25.verticalSpace,
-                        InkWell(
-                          onTap: () async {
-                            final storage =
-                                ref.read(secureStorageHelperProvider);
-                            final rememberedEmail =
-                                await storage.getRememberedEmail();
-
-                            if (rememberedEmail != null) {
-                              unawaited(
-                                  context.push(RouteConstants.lockScreen));
-                            } else {
-                              unawaited(context.push(RouteConstants.login));
-                            }
-                          },
-                          child: Text(
-                            'I already have an account',
-                            style: context.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        20.verticalSpace,
-                      ],
+                // SlideTransition(
+                //   position: _bottomSlideAnimation,
+                //   child: FadeTransition(
+                //     opacity: _bottomFadeAnimation,
+                //     child:
+                Column(
+                  children: [
+                    _AnimatedPageIndicators(
+                      currentIndex: walkthroughIndex,
+                      count: 3,
                     ),
-                  ),
+                    30.verticalSpace,
+                    _AnimatedButton(
+                      text: 'Create account',
+                      onPressed: () => context.push(RouteConstants.register),
+                      isPrimary: true,
+                    ),
+                    25.verticalSpace,
+                    InkWell(
+                      onTap: () async {
+                        final storage = ref.read(secureStorageHelperProvider);
+                        final rememberedEmail =
+                            await storage.getRememberedEmail();
+
+                        if (rememberedEmail != null) {
+                          unawaited(context.push(RouteConstants.lockScreen));
+                        } else {
+                          unawaited(context.push(RouteConstants.login));
+                        }
+                      },
+                      child: Text(
+                        'I already have an account',
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    20.verticalSpace,
+                  ],
                 ),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -769,7 +768,7 @@ class _AnimatedPageIndicators extends StatelessWidget {
           height: 6.h,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(3.r),
-            color: isActive ? Colors.black : const Color(0xffFFFFFF),
+            color: isActive ? Colors.black : const Color(0xffB3B3B3),
             boxShadow: isActive
                 ? [
                     BoxShadow(
@@ -842,7 +841,7 @@ class _AnimatedButtonState extends State<_AnimatedButton>
         duration: const Duration(milliseconds: 100),
         child: BundlegramButton(
           text: widget.text,
-          onPressed: () {}, // Handled by GestureDetector
+          onPressed: widget.onPressed, // Handled by GestureDetector
         ),
       ),
     );

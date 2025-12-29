@@ -8,6 +8,7 @@ import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
@@ -17,6 +18,8 @@ import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+export 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 
 class BillWidgetItem {
   final String title;
@@ -369,18 +372,19 @@ class PlatFormData {
       builder: (context) {
         return AppListTile(
           onPressed: () {
+            // 1️⃣ Close drawer
             context.pop();
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const PlatformproductScreen(
-            //       serviceType: PlatformProductType.mobileData,
-            //     ),
-            //   ),
-            // );
-            final container = ProviderScope.containerOf(context, listen: false);
-            final platform = container.read(platformProvider)
-              ..goToProduct(context, PlatformProductType.mobileData);
+
+            // 2️⃣ Use ROOT context, not drawer context
+            final rootContext = navigatorKey.currentContext;
+            if (rootContext == null) return;
+
+            final container =
+                ProviderScope.containerOf(rootContext, listen: false);
+
+            container
+                .read(platformProvider)
+                .goToProduct(rootContext, PlatformProductType.mobileData);
           },
           color: AppColors.black,
           assetPath: Assets.svgs.mobile,
@@ -401,9 +405,20 @@ class PlatFormData {
             //     ),
             //   ),
             // );
-            final container = ProviderScope.containerOf(context, listen: false);
-            final platform = container.read(platformProvider)
-              ..goToProduct(context, PlatformProductType.airtime);
+            // final container = ProviderScope.containerOf(context, listen: false);
+            // final platform = container.read(platformProvider)
+            //   ..goToProduct(context, PlatformProductType.airtime);
+
+            // 2️⃣ Use ROOT context, not drawer context
+            final rootContext = navigatorKey.currentContext;
+            if (rootContext == null) return;
+
+            final container =
+                ProviderScope.containerOf(rootContext, listen: false);
+
+            container
+                .read(platformProvider)
+                .goToProduct(rootContext, PlatformProductType.airtime);
           },
           assetPath: Assets.svgs.simcard21,
           title: 'Buy airtime',
@@ -413,15 +428,16 @@ class PlatFormData {
     Builder(
       builder: (context) {
         return AppListTile(
-            onPressed: () {
-              context
-                ..pop()
-                ..showBottomSheet(
-                  child: const PlatformbillsWidget(),
-                );
-            },
-            assetPath: Assets.svgs.paybills,
-            title: 'Pay bills');
+          onPressed: () {
+            context
+              ..pop()
+              ..showBottomSheet(
+                child: const PlatformbillsWidget(),
+              );
+          },
+          assetPath: Assets.svgs.paybills,
+          title: 'Pay bills',
+        );
       },
     ),
     Builder(

@@ -7,12 +7,14 @@ import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/state/global_state.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
 import 'package:bundlegram/data/models/products/epin/epin_trannsactions.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/presentation/app.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
 import 'package:bundlegram/presentation/features/setting/screens/widget/pin_sheet.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/bulk%20e-pin/model/epin_mapper.dart';
 import 'package:collection/collection.dart';
@@ -84,6 +86,29 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   //   unawaited(fetchVirtualAccount(context));
   //   unawaited(fetchUsersTransactions(context, force: true));
   // }
+
+  Future<void> initializePlatformDependencies(BuildContext context) async {
+    try {
+      // debug the fetched products
+      debugPrint('Fetching products...');
+
+      // Prefetch core products
+      await Future.wait([
+        _ref.read(productsProvider(PlatformProductType.airtime).future),
+        _ref.read(productsProvider(PlatformProductType.mobileData).future),
+        _ref.read(productsProvider(PlatformProductType.betting).future),
+        _ref.read(productsProvider(PlatformProductType.cableTv).future),
+        _ref.read(productsProvider(PlatformProductType.electricity).future),
+      ]);
+
+      // Prefetch minimal beneficiaries
+      await _ref.read(minimalBeneficiariesProvider.future);
+    } catch (e) {
+      context.showErrorSnackBar(
+        'Unable to fetch services. Please try again.',
+      );
+    }
+  }
 
   Future<bool> restoreSession(BuildContext context) async {
     final token = await _storage.getAuthToken();

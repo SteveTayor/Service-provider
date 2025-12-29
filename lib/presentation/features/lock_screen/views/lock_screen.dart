@@ -14,6 +14,7 @@ import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
+import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/features/lock_screen/provider/lock_screen_provider.dart';
 import 'package:bundlegram/presentation/features/onboarding/notifier/login_notifier.dart';
 import 'package:bundlegram/presentation/features/setting/provider/security_provider.dart';
@@ -109,13 +110,13 @@ class _LockScreenState extends ConsumerState<LockScreen>
         }
 
         unawaited(context.showLoadingDialog());
-        final didRestore =
-            await ref.read(globalProvider.notifier).restoreSession(context);
-        if (didRestore) {
-          context.dismissDialog();
-          if (mounted) context.go(RouteConstants.dashboard);
-          return;
-        }
+        // final didRestore =
+        //     await ref.read(globalProvider.notifier).restoreSession(context);
+        // if (didRestore) {
+        //   context.dismissDialog();
+        //   if (mounted) context.go(RouteConstants.dashboard);
+        //   return;
+        // }
 
         if (email != null && password != null) {
           final lockService = ref.read(lockScreenServiceProvider);
@@ -446,7 +447,11 @@ class _LockScreenState extends ConsumerState<LockScreen>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             TextButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                final _storage =
+                                    ref.read(secureStorageHelperProvider);
+                                await _storage.clearAll();
+                                ref.read(dashboardProvider).resetIndex();
                                 context.go(RouteConstants.walkThrough);
                               },
                               child: Text(
@@ -461,7 +466,10 @@ class _LockScreenState extends ConsumerState<LockScreen>
                             ),
                             TextButton(
                               onPressed: () {
-                                context.go(RouteConstants.login);
+                                ref
+                                    .read(loginProvider.notifier)
+                                    .logoutUser(context);
+                                // context.go(RouteConstants.login);
                               },
                               child: Text(
                                 'Sign in with password',

@@ -31,9 +31,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return WillPopScope(
       onWillPop: () async {
         debugPrint('onWillPop pressed -> navigate to walkthrough');
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.go(RouteConstants.walkThrough);
-        });
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        //   context.go(RouteConstants.walkThrough);
+        // });
+        if (mounted) {
+          context.pop();
+        }
         return false;
       },
       child: BundlegramScaffold(
@@ -43,9 +46,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             showBackButton: true,
             onTap: () {
               HapticFeedback.lightImpact();
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                context.go(RouteConstants.walkThrough);
-              });
+              if (mounted) {
+                context.pop();
+              }
+              // WidgetsBinding.instance.addPostFrameCallback((_) {
+              //   context.go(RouteConstants.walkThrough);
+              // });
             }),
         body: Column(
           children: [

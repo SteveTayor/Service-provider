@@ -315,7 +315,7 @@ class ApiService {
         () => _api.becomeMerchant('Bearer $token', _sterilizer, req));
   }
 
-  Future<Either<Failure, void>> requestWithdraw(
+  Future<Either<Failure, BaseResponse>> requestWithdraw(
       String token, WithdrawRequest req) {
     return handleApi(
         () => _api.userWithdraw('Bearer $token', _sterilizer, req));

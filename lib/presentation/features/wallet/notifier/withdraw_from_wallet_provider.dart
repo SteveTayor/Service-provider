@@ -163,25 +163,26 @@ class WithdrawalProvider extends ChangeNotifier {
       context.showErrorSnackBar('Amount exceeds wallet balance');
       return false;
     }
+
     return true;
   }
 
-  Future<bool> requestWithdrawal(BuildContext context, String pin) async {
+  Future<String?> requestWithdrawal(BuildContext context, String pin) async {
     if (_selectedBank == null || _amountController.text.isEmpty) {
       context.showErrorSnackBar('Invalid withdrawal data');
-      return false;
+      return null;
     }
     final amount = double.tryParse(_amountController.text.replaceAll(',', ''));
     if (amount == null || amount <= 0) {
       context.showErrorSnackBar('Invalid amount');
-      return false;
+      return null;
     }
     final walletBalance =
         _ref.read(globalProvider).walletBalance.value?.wallet ?? 0.0;
     final wBalance = double.tryParse(walletBalance.toString());
     if (amount > wBalance!) {
       context.showErrorSnackBar('Amount exceeds wallet balance');
-      return false;
+      return null;
     }
 
     setSubmitting(true);
@@ -190,7 +191,7 @@ class WithdrawalProvider extends ChangeNotifier {
     if (token == null) {
       context.showErrorSnackBar('Authentication token missing');
       setSubmitting(false);
-      return false;
+      return null;
     }
     // Fetch device details
     final ip = await getIpAddress();
@@ -252,15 +253,16 @@ class WithdrawalProvider extends ChangeNotifier {
           ),
         );
 
-        return false;
+        return null;
       },
-      (_) {
+      (res) {
         context.dismissDialog();
         // ..showSuccessSnackBar('Withdrawal request submitted successfully');
         _amountController.clear();
         setSubmitting(false);
         notifyListeners();
-        return true;
+        // Return the success message to be used in the subTitle
+        return res.message ?? 'Withdrawal request successfully received';
       },
     );
   }
