@@ -2,6 +2,23 @@
 
 import 'package:intl/intl.dart';
 
+extension StringFormatting on String {
+  String formatAsToken() {
+    // Remove any existing spaces or non-digits
+    String digitsOnly = replaceAll(RegExp(r'\D'), '');
+
+    // Insert space every 4 digits
+    StringBuffer buffer = StringBuffer();
+    for (int i = 0; i < digitsOnly.length; i++) {
+      if (i > 0 && i % 4 == 0) {
+        buffer.write(' ');
+      }
+      buffer.write(digitsOnly[i]);
+    }
+    return buffer.toString();
+  }
+}
+
 extension CharacterValidation on String {
   bool containsUpper() {
     for (var i = 0; i < length; i++) {

@@ -248,7 +248,7 @@ class TransactionReceiptWidget extends StatelessWidget {
       if (data.type?.toLowerCase() == 'electricity' && data.token != null)
         _TransactionDetailItem(
           label: 'Token',
-          value: data.token!,
+          value: data.token!.formatAsToken(),
           showCopyIcon: true,
           useResponsive: useResponsive,
         ),
