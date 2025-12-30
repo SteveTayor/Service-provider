@@ -79,16 +79,19 @@ class PromoModal extends StatelessWidget {
                     text: 'Buy Data',
                     // height: 48.h,
                     onPressed: () {
-                      Navigator.of(context).pop();
-                      // Navigate to Buy Data screen
-                      // context.push(RouteConstants.buyData);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const PlatformproductScreen(
-                              serviceType: PlatformProductType.mobileData),
-                        ),
-                      );
+                      context
+                        ..pop()
+                        // Navigate to Buy Data screen
+                        // context.push(RouteConstants.buyData);
+                        ..push(RouteConstants.platformProduct,
+                            extra: PlatformProductType.mobileData);
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (_) => const PlatformproductScreen(
+                      //         serviceType: PlatformProductType.mobileData),
+                      //   ),
+                      // );
                     },
                     cornerRadius: 8.r,
                     buttonStyle: BundlegramButtonStyle.primary(),
@@ -98,15 +101,18 @@ class PromoModal extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
-                      // Navigate to Buy Airtime screen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const PlatformproductScreen(
-                              serviceType: PlatformProductType.airtime),
-                        ),
-                      );
+                      context
+                        ..pop()
+                        // Navigate to Buy Airtime screen
+                        ..push(RouteConstants.platformProduct,
+                            extra: PlatformProductType.airtime);
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (_) => const PlatformproductScreen(
+                      //         serviceType: PlatformProductType.airtime),
+                      //   ),
+                      // );
                     },
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: AppColors.primaryColor),

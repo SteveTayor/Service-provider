@@ -1,5 +1,7 @@
 // ignore_for_file: inference_failure_on_instance_creation, inference_failure_on_function_invocation
 
+import 'dart:async';
+
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
@@ -44,13 +46,17 @@ class PlatFormData {
           return AppListTile(
             assetPath: Assets.svgs.betting,
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PlatformproductScreen(
-                      serviceType: PlatformProductType.betting),
-                ),
+              context.push(
+                RouteConstants.platformProduct,
+                extra: PlatformProductType.betting,
               );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const PlatformproductScreen(
+              //         serviceType: PlatformProductType.betting),
+              //   ),
+              // );
             },
             title: 'Betting',
           );
@@ -61,13 +67,17 @@ class PlatFormData {
         return AppListTile(
           assetPath: Assets.svgs.electricity,
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PlatformproductScreen(
-                    serviceType: PlatformProductType.electricity),
-              ),
+            context.push(
+              RouteConstants.platformProduct,
+              extra: PlatformProductType.electricity,
             );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const PlatformproductScreen(
+            //         serviceType: PlatformProductType.electricity),
+            //   ),
+            // );
           },
           title: 'Electricity',
         );
@@ -83,14 +93,17 @@ class PlatFormData {
             // context
             //   ..pop()
             //   ..showCustomSnackBar("coming soon");
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PlatformproductScreen(
-                  serviceType: PlatformProductType.ePinVoucher,
-                ),
-              ),
-            );
+
+            context.push(RouteConstants.platformProduct,
+                extra: PlatformProductType.ePinVoucher);
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const PlatformproductScreen(
+            //       serviceType: PlatformProductType.ePinVoucher,
+            //     ),
+            //   ),
+            // );
           },
         );
       },
@@ -105,13 +118,16 @@ class PlatFormData {
               // context
               //   ..pop()
               //   ..showCustomSnackBar("coming soon");
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PlatformproductScreen(
-                      serviceType: PlatformProductType.education),
-                ),
-              );
+
+              context.push(RouteConstants.platformProduct,
+                  extra: PlatformProductType.education);
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const PlatformproductScreen(
+              //         serviceType: PlatformProductType.education),
+              //   ),
+              // );
             },
           );
         }),
@@ -120,13 +136,15 @@ class PlatFormData {
         builder: (context) {
           return AppListTile(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PlatformproductScreen(
-                      serviceType: PlatformProductType.cableTv),
-                ),
-              );
+              context.push(RouteConstants.platformProduct,
+                  extra: PlatformProductType.cableTv);
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const PlatformproductScreen(
+              //         serviceType: PlatformProductType.cableTv),
+              //   ),
+              // );
             },
             assetPath: Assets.svgs.cableTv,
             title: 'Cable Tv',

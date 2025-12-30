@@ -34,7 +34,25 @@ class WithdrawalScreen extends ConsumerStatefulWidget {
   ConsumerState<WithdrawalScreen> createState() => _WithdrawalScreenState();
 }
 
-class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
+class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
+    with RestorationMixin {
+  @override
+  String? get restorationId => 'withdrawal_screen';
+
+  // Restorable controller for amount field
+  final RestorableTextEditingController _restorableAmount =
+      RestorableTextEditingController();
+
+  // Sync guards
+  bool _syncingFromProviderToRestorable = false;
+  bool _syncingFromRestorableToProvider = false;
+  bool _hasInitializedSync = false;
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_restorableAmount, 'amount');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -42,6 +60,73 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
     ref.read(withdrawalProvider).fetchData(context);
     ref.read(withdrawalProvider).amountController.clear();
     ref.read(withdrawalProvider).setSubmitting(false);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Initialize sync only once, after restoration has completed
+    if (!_hasInitializedSync) {
+      _hasInitializedSync = true;
+      _initializeSync();
+    }
+  }
+
+  void _initializeSync() {
+    final provider = ref.read(withdrawalProvider);
+
+    // Wire up amount controller
+    _wireTextSync(provider.amountController, _restorableAmount);
+
+    // Seed restorable controller if empty
+    _seedRestorableIfEmpty(provider.amountController.text, _restorableAmount);
+  }
+
+  void _wireTextSync(
+    TextEditingController providerCtrl,
+    RestorableTextEditingController restorable,
+  ) {
+    // When framework restores restorable, copy to provider
+    restorable.value.addListener(() {
+      if (_syncingFromProviderToRestorable) return;
+      final restored = restorable.value.text;
+      final providerText = providerCtrl.text;
+      if (providerText != restored) {
+        _syncingFromRestorableToProvider = true;
+        providerCtrl.text = restored;
+        _syncingFromRestorableToProvider = false;
+      }
+    });
+
+    // When provider updates (user typing), copy to restorable
+    providerCtrl.addListener(() {
+      if (_syncingFromRestorableToProvider) return;
+      final providerText = providerCtrl.text;
+      final restorableText = restorable.value.text;
+      if (restorableText != providerText) {
+        _syncingFromProviderToRestorable = true;
+        restorable.value.text = providerText;
+        _syncingFromProviderToRestorable = false;
+      }
+    });
+  }
+
+  void _seedRestorableIfEmpty(
+    String providerValue,
+    RestorableTextEditingController restorable,
+  ) {
+    try {
+      if (restorable.value.text.isEmpty && providerValue.isNotEmpty) {
+        restorable.value.text = providerValue;
+      }
+    } catch (_) {}
+  }
+
+  @override
+  void dispose() {
+    _restorableAmount.dispose();
+    super.dispose();
   }
 
   @override

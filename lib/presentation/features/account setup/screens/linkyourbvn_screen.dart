@@ -23,66 +23,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-// class LinkyourbvnScreen extends StatelessWidget {
-//   const LinkyourbvnScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return BundlegramScaffold(
-//       appBar: const BundlegramAppbar(
-//         titleText: 'Link your BVN',
-//       ),
-//       body: SingleChildScrollView(
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             const AppTextField(
-//               hintText: 'Bank Verification Number (BVN)',
-//             ),
-//             20.verticalSpace,
-//             const AppTextField(
-//               hintText: 'Phone Number linked to BVN',
-//             ),
-//             20.verticalSpace,
-//             const AppTextField(
-//               hintText: 'Date of birth (DD/MM/YY)',
-//             ),
-//             20.verticalSpace,
-//             const Text('Add bank details of a linked account'),
-//             18.verticalSpace,
-//             const AppDropdown(title: 'Bank name'),
-//             20.verticalSpace,
-//             const AppTextField(
-//               hintText: 'Account number',
-//             ),
-//             20.verticalSpace,
-//             const AppTextField(
-//               hintText: 'Account name',
-//             ),
-//             40.verticalSpace,
-//             BundlegramButton(
-//               text: 'Submit detail',
-//               onPressed: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (ctx) => const TransactionSuccessful(
-//                       isBasicInfo: true,
-//                       title: 'BVN Linked!',
-//                       subTitle:
-//                           'Your BVN has been successfully linked to your Bundlegram account. We will notify you once verified.',
-//                     ),
-//                   ),
-//                 );
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 class LinkYourBvnScreen extends ConsumerStatefulWidget {
   const LinkYourBvnScreen({Key? key}) : super(key: key);
 

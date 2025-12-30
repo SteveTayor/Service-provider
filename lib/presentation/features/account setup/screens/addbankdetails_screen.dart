@@ -14,11 +14,102 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AddBankDetailsScreen extends ConsumerWidget {
+class AddBankDetailsScreen extends ConsumerStatefulWidget {
   const AddBankDetailsScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AddBankDetailsScreen> createState() =>
+      _AddBankDetailsScreenState();
+}
+
+class _AddBankDetailsScreenState extends ConsumerState<AddBankDetailsScreen>
+    with RestorationMixin {
+  @override
+  String? get restorationId => 'add_bank_details_screen';
+
+  // Restorable controller for account number
+  final RestorableTextEditingController _restorableAccount =
+      RestorableTextEditingController();
+
+  // Sync guards
+  bool _syncingFromProviderToRestorable = false;
+  bool _syncingFromRestorableToProvider = false;
+  bool _hasInitializedSync = false;
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_restorableAccount, 'account_number');
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Initialize sync only once, after restoration has completed
+    if (!_hasInitializedSync) {
+      _hasInitializedSync = true;
+      _initializeSync();
+    }
+  }
+
+  void _initializeSync() {
+    final provider = ref.read(addBankProvider);
+
+    // Wire up account number controller
+    _wireTextSync(provider.acct, _restorableAccount);
+
+    // Seed restorable controller if empty
+    _seedRestorableIfEmpty(provider.acct.text, _restorableAccount);
+  }
+
+  void _wireTextSync(
+    TextEditingController providerCtrl,
+    RestorableTextEditingController restorable,
+  ) {
+    // When framework restores restorable, copy to provider
+    restorable.value.addListener(() {
+      if (_syncingFromProviderToRestorable) return;
+      final restored = restorable.value.text;
+      final providerText = providerCtrl.text;
+      if (providerText != restored) {
+        _syncingFromRestorableToProvider = true;
+        providerCtrl.text = restored;
+        _syncingFromRestorableToProvider = false;
+      }
+    });
+
+    // When provider updates (user typing), copy to restorable
+    providerCtrl.addListener(() {
+      if (_syncingFromRestorableToProvider) return;
+      final providerText = providerCtrl.text;
+      final restorableText = restorable.value.text;
+      if (restorableText != providerText) {
+        _syncingFromProviderToRestorable = true;
+        restorable.value.text = providerText;
+        _syncingFromProviderToRestorable = false;
+      }
+    });
+  }
+
+  void _seedRestorableIfEmpty(
+    String providerValue,
+    RestorableTextEditingController restorable,
+  ) {
+    try {
+      if (restorable.value.text.isEmpty && providerValue.isNotEmpty) {
+        restorable.value.text = providerValue;
+      }
+    } catch (_) {}
+  }
+
+  @override
+  void dispose() {
+    _restorableAccount.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final provider = ref.watch(addBankProvider);
     final notifier = ref.read(addBankProvider.notifier);
     // WidgetsBinding.instance.addPostFrameCallback((_) {

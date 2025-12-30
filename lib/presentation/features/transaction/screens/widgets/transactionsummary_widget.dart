@@ -65,40 +65,43 @@ class TransactionSummary extends ConsumerWidget {
             flex: 3,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              // crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
               children: [
-                if (label == 'Transaction type' && assetPath != null) ...[
-                  assetPath!.contains('.svg')
-                      ? AppSvgIcon(
-                          path: assetPath!,
-                          fit: BoxFit.scaleDown,
-                          width: 20.w,
-                          height: 20.h,
-                          useCircleAvatar: true,
-                        )
-                      : Image.asset(
-                          assetPath!,
-                          width: 20.w,
-                          height: 20.h,
-                          fit: BoxFit.scaleDown,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (label == 'Transaction type' && assetPath != null) ...[
+                      assetPath!.contains('.svg')
+                          ? AppSvgIcon(
+                              path: assetPath!,
+                              fit: BoxFit.scaleDown,
+                              width: 20.w,
+                              height: 20.h,
+                              useCircleAvatar: true,
+                            )
+                          : Image.asset(
+                              assetPath!,
+                              width: 20.w,
+                              height: 20.h,
+                              fit: BoxFit.scaleDown,
+                            ),
+                      4.horizontalSpace,
+                    ],
+                    Flexible(
+                      child: Text(
+                        value.contains('Buy')
+                            ? value.replaceFirst('Buy', '').trim()
+                            : value,
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        softWrap: true,
+                        style: TextStyle(
+                          color: AppColors.grey33,
+                          fontWeight: FontWeight.w500,
                         ),
-                  4.horizontalSpace,
-                ],
-                Flexible(
-                  child: Text(
-                    value.contains('Buy')
-                        ? value.replaceFirst('Buy', '').trim()
-                        : value,
-                    textAlign: TextAlign.right,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    softWrap: true,
-                    style: TextStyle(
-                      color: AppColors.grey33,
-                      fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),

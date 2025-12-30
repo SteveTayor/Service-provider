@@ -207,12 +207,14 @@ class PlatformProvider extends ChangeNotifier {
     if (!ok) return;
 
     // existing navigation logic (unchanged)
-    unawaited(Navigator.push(
-      ctx,
-      MaterialPageRoute(
-        builder: (_) => PlatformproductScreen(serviceType: type),
-      ),
-    ));
+    // unawaited(Navigator.push(
+    //   ctx,
+    //   MaterialPageRoute(
+    //     builder: (_) => PlatformproductScreen(serviceType: type),
+    //   ),
+    // ));
+
+    unawaited(ctx.push(RouteConstants.platformProduct, extra: type));
   }
 
   // void goToProduct(BuildContext context, PlatformProductType type) {

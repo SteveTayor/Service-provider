@@ -137,12 +137,12 @@ Future<void> _checkAppVersionAndClearStaleData() async {
 
     if (wasUpdated) {
       debugPrint(
-          '✅ App was updated - stale data cleared, critical data preserved');
+          ' App was updated - stale data cleared, critical data preserved');
     } else {
-      debugPrint('✅ App version check complete - no update detected');
+      debugPrint(' App version check complete - no update detected');
     }
   } catch (e, st) {
-    debugPrint('⚠️ Error checking app version: $e\n$st');
+    debugPrint(' Error checking app version: $e\n$st');
     // Don't block app launch if version check fails
   }
 }

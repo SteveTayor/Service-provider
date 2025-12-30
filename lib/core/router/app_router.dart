@@ -54,6 +54,7 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     navigatorKey: navigatorKey,
     initialLocation: RouteConstants.splash,
+    restorationScopeId: 'app_router',
     debugLogDiagnostics: true,
     routes: [
       GoRoute(

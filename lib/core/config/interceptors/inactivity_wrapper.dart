@@ -65,19 +65,79 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
     // final secureStorage = ref.read(secureStorageHelperProvider);
     // await secureStorage.deleteAuthToken();
 
-    final ctx = navigatorKey.currentContext;
-    if (ctx != null) {
-      // use navigatorKey context for accurate route detection
+    // final ctx = navigatorKey.currentContext;
+    // if (ctx != null) {
+    //   // use navigatorKey context for accurate route detection
+    //   final currentRoute = ModalRoute.of(ctx)?.settings.name ?? '';
+
+    //   if (!currentRoute.contains(RouteConstants.lockScreen)) {
+    //     ctx
+    //       ..go(RouteConstants.lockScreen)
+    //       ..showCustomSnackBar('Locked out due to inactivity.');
+    //   }
+    // }
+
+    // _isLoggingOut = false;
+    try {
+      final ctx = navigatorKey.currentContext;
+      if (ctx == null) {
+        _isLoggingOut = false;
+        return;
+      }
+
+      // Read secure storage to decide whether the app had saved auth/credentials.
+      final secureStorage = ref.read(secureStorageHelperProvider);
+
+      // Best-effort read (non-blocking for UI). We await to ensure we know the truth.
+      String? token;
+      String? rememberedEmail;
+      bool hasBiometric = false;
+      try {
+        token = await secureStorage.getAuthToken();
+        rememberedEmail = await secureStorage.getRememberedEmail();
+        hasBiometric = await secureStorage.hasBiometricCredentials();
+      } catch (e) {
+        // If secure storage fails for any reason, fall back to forcing login (safer).
+        token = null;
+        rememberedEmail = null;
+        hasBiometric = false;
+      }
+
+      final bool hasSavedState = (token != null && token.isNotEmpty) ||
+          (rememberedEmail != null && rememberedEmail.isNotEmpty) ||
+          hasBiometric;
+
+      // Find current route safely
       final currentRoute = ModalRoute.of(ctx)?.settings.name ?? '';
 
-      if (!currentRoute.contains(RouteConstants.lockScreen)) {
-        ctx
-          ..go(RouteConstants.lockScreen)
-          ..showCustomSnackBar('Locked out due to inactivity.');
+      if (hasSavedState) {
+        // If we already on lock screen, do nothing
+        if (!currentRoute.contains(RouteConstants.lockScreen)) {
+          // Navigate to lock screen so user can unlock (PIN/biometric)
+          ctx
+            ..go(RouteConstants.lockScreen)
+            ..showCustomSnackBar('Locked out due to inactivity.');
+        }
+      } else {
+        // Nothing to restore — route user to login instead of lock screen
+        if (!currentRoute.contains(RouteConstants.login)) {
+          // Clear any sensitive in-memory state if needed here (optional)
+          ctx.go(RouteConstants.login);
+        }
       }
+    } catch (e) {
+      // Last-resort: log and attempt to navigate to login
+      final ctx = navigatorKey.currentContext;
+      if (ctx != null &&
+          !(ModalRoute.of(ctx)?.settings.name ?? '')
+              .contains(RouteConstants.login)) {
+        ctx
+          ..go(RouteConstants.login)
+          ..showCustomSnackBar('Session expired.');
+      }
+    } finally {
+      _isLoggingOut = false;
     }
-
-    _isLoggingOut = false;
   }
 
   @override

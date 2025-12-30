@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/styles.dart';
+import 'package:bundlegram/gen/fonts.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -352,15 +354,20 @@ class AppActionsNotifier {
               'Later',
               style: TextStyle(
                 color: AppColors.primaryColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                fontFamily: FontFamily.mabryPro,
               ),
             ),
           ),
           BundlegramButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.pop();
               _redirectToStore(context);
             },
             text: 'Update',
+            cornerRadius: 8,
+            buttonStyle: BundlegramButtonStyle.primary(),
           ),
         ],
       ),

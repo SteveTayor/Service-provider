@@ -50,7 +50,31 @@ class PlatformproductScreen extends ConsumerStatefulWidget {
       _PlatformproductScreenState();
 }
 
-class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
+class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
+    with RestorationMixin {
+  @override
+  String? get restorationId => 'platform_product_${widget.serviceType.name}';
+
+  // Restorable controllers
+  final RestorableTextEditingController _restorableFirstInput =
+      RestorableTextEditingController();
+  final RestorableTextEditingController _restorableSecondaryInput =
+      RestorableTextEditingController();
+  final RestorableTextEditingController _restorableAmount =
+      RestorableTextEditingController();
+
+  // Sync guards
+  bool _syncingFromProviderToRestorable = false;
+  bool _syncingFromRestorableToProvider = false;
+  bool _hasInitializedSync = false;
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_restorableFirstInput, 'first_input');
+    registerForRestoration(_restorableSecondaryInput, 'secondary_input');
+    registerForRestoration(_restorableAmount, 'amount');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -80,6 +104,81 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen> {
         });
       }));
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Initialize sync only once, after restoration has completed
+    if (!_hasInitializedSync) {
+      _hasInitializedSync = true;
+      _initializeSync();
+    }
+  }
+
+  void _initializeSync() {
+    final state = ref.read(platformProductProvider(widget.serviceType));
+
+    // Wire up text controllers
+    _wireTextSync(state.firstInputController, _restorableFirstInput);
+    _wireTextSync(state.secondaryInputController, _restorableSecondaryInput);
+    _wireTextSync(state.amountController, _restorableAmount);
+
+    // Seed restorable controllers if empty
+    _seedRestorableIfEmpty(
+        state.firstInputController.text, _restorableFirstInput);
+    _seedRestorableIfEmpty(
+        state.secondaryInputController.text, _restorableSecondaryInput);
+    _seedRestorableIfEmpty(state.amountController.text, _restorableAmount);
+  }
+
+  void _wireTextSync(
+    TextEditingController providerCtrl,
+    RestorableTextEditingController restorable,
+  ) {
+    // When framework restores restorable, copy to provider
+    restorable.value.addListener(() {
+      if (_syncingFromProviderToRestorable) return;
+      final restored = restorable.value.text;
+      final providerText = providerCtrl.text;
+      if (providerText != restored) {
+        _syncingFromRestorableToProvider = true;
+        providerCtrl.text = restored;
+        _syncingFromRestorableToProvider = false;
+      }
+    });
+
+    // When provider updates (user typing), copy to restorable
+    providerCtrl.addListener(() {
+      if (_syncingFromRestorableToProvider) return;
+      final providerText = providerCtrl.text;
+      final restorableText = restorable.value.text;
+      if (restorableText != providerText) {
+        _syncingFromProviderToRestorable = true;
+        restorable.value.text = providerText;
+        _syncingFromProviderToRestorable = false;
+      }
+    });
+  }
+
+  void _seedRestorableIfEmpty(
+    String providerValue,
+    RestorableTextEditingController restorable,
+  ) {
+    try {
+      if (restorable.value.text.isEmpty && providerValue.isNotEmpty) {
+        restorable.value.text = providerValue;
+      }
+    } catch (_) {}
+  }
+
+  @override
+  void dispose() {
+    _restorableFirstInput.dispose();
+    _restorableSecondaryInput.dispose();
+    _restorableAmount.dispose();
+    super.dispose();
   }
 
   @override

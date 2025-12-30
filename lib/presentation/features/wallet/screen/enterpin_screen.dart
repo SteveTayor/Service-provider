@@ -5,14 +5,16 @@ import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/setting/provider/security_provider.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-class EnterPinScreen extends StatefulWidget {
+class EnterPinScreen extends ConsumerStatefulWidget {
   const EnterPinScreen({
     super.key,
     this.onVerified,
@@ -23,10 +25,10 @@ class EnterPinScreen extends StatefulWidget {
   final bool isChangedAccountPin;
 
   @override
-  State<EnterPinScreen> createState() => _EnterPinScreenState();
+  ConsumerState<EnterPinScreen> createState() => _EnterPinScreenState();
 }
 
-class _EnterPinScreenState extends State<EnterPinScreen>
+class _EnterPinScreenState extends ConsumerState<EnterPinScreen>
     with SingleTickerProviderStateMixin {
   final List<String> _pin = ['', '', '', ''];
   int _currentIndex = 0;
@@ -118,6 +120,9 @@ class _EnterPinScreenState extends State<EnterPinScreen>
   @override
   Widget build(BuildContext context) {
     final r = context.responsive;
+    final security = ref.watch(securityProvider);
+    final showBiometric = security.useFingerprint || security.useFaceId;
+
     return BundlegramScaffold(
       useResponsive: true,
       appBar: const BundlegramAppbar(
@@ -190,7 +195,7 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                     9,
                     (index) => _buildNumberButton('${index + 1}'),
                   ),
-                  if (!widget.isChangedAccountPin) ...[
+                  if (!widget.isChangedAccountPin && showBiometric) ...[
                     SizedBox(
                       width: r.spacing(24),
                       height: r.spacing(24),
@@ -202,7 +207,7 @@ class _EnterPinScreenState extends State<EnterPinScreen>
                       ),
                     ),
                   ] else ...[
-                    SizedBox()
+                    const SizedBox.shrink()
                     // SizedBox(height: r.spacing(24))
                   ],
                   _buildNumberButton('0'),
