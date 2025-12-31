@@ -375,6 +375,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/becomeagent.svg
   String get becomeagent => 'assets/svgs/becomeagent.svg';
 
+  /// File path: assets/svgs/benin_electricity_icon.svg
+  String get beninElectricityIcon => 'assets/svgs/benin_electricity_icon.svg';
+
   /// File path: assets/svgs/betting.svg
   String get betting => 'assets/svgs/betting.svg';
 
@@ -434,6 +437,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/education.svg
   String get educationSvg => 'assets/svgs/education.svg';
 
+  /// File path: assets/svgs/eko_electricity.svg
+  String get ekoElectricity => 'assets/svgs/eko_electricity.svg';
+
   /// File path: assets/svgs/electricity.svg
   String get electricity => 'assets/svgs/electricity.svg';
 
@@ -477,6 +483,15 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/internetservice.svg
   String get internetservice => 'assets/svgs/internetservice.svg';
+
+  /// File path: assets/svgs/jos_electricity_icon.svg
+  String get josElectricityIcon => 'assets/svgs/jos_electricity_icon.svg';
+
+  /// File path: assets/svgs/kaduna_electricity.svg
+  String get kadunaElectricity => 'assets/svgs/kaduna_electricity.svg';
+
+  /// File path: assets/svgs/kano_electricity.svg
+  String get kanoElectricity => 'assets/svgs/kano_electricity.svg';
 
   /// File path: assets/svgs/linkedin-app-icon.svg
   String get linkedinAppIcon => 'assets/svgs/linkedin-app-icon.svg';
@@ -619,6 +634,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/x-social-media-logo-icon.svg
   String get xSocialMediaLogoIcon => 'assets/svgs/x-social-media-logo-icon.svg';
 
+  /// File path: assets/svgs/yola_electricity_icon.svg
+  String get yolaElectricityIcon => 'assets/svgs/yola_electricity_icon.svg';
+
   /// List of all assets
   List<dynamic> get values => [
     browserDeleteStreamlineCore,
@@ -672,6 +690,7 @@ class $AssetsSvgsGen {
     banknotes,
     bars3,
     becomeagent,
+    beninElectricityIcon,
     betting,
     box,
     bundlegramWhiteLogo,
@@ -691,6 +710,7 @@ class $AssetsSvgsGen {
     ePin,
     educationPng,
     educationSvg,
+    ekoElectricity,
     electricity,
     eye,
     facebookRoundColorIcon,
@@ -705,6 +725,9 @@ class $AssetsSvgsGen {
     infoCircle1,
     infoCircle,
     internetservice,
+    josElectricityIcon,
+    kadunaElectricity,
+    kanoElectricity,
     linkedinAppIcon,
     linkyourbvn,
     lockIcon,
@@ -750,6 +773,7 @@ class $AssetsSvgsGen {
     walletactive,
     whatsappColorIcon,
     xSocialMediaLogoIcon,
+    yolaElectricityIcon,
   ];
 }
 

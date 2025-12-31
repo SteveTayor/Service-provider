@@ -163,6 +163,9 @@ class WithdrawalProvider extends ChangeNotifier {
       context.showErrorSnackBar('Amount exceeds wallet balance');
       return false;
     }
+    if (amount < 500) {
+      return false;
+    }
 
     return true;
   }

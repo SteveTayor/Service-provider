@@ -1313,34 +1313,40 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       return result.fold(
         (failure) {
           context.dismissDialog();
-          final sanitizedParts = failure.properties
-              .map((p) => sanitizeErrorMessage(p))
-              .where((s) => s.isNotEmpty)
-              .toList();
+          // final sanitizedParts = failure.properties
+          //     .map((p) => sanitizeErrorMessage(p))
+          //     .where((s) => s.isNotEmpty)
+          //     .toList();
 
-          final sanitizedJoined = sanitizedParts.join('\n');
+          // final sanitizedJoined = sanitizedParts.join('\n');
 
-          // Decide what to show on the failed result screen:
-          // final lower = sanitizedJoined.toLowerCase();
-          // final shouldShowSpecific =
-          //     lower.contains('insufficient') || lower.contains('incorrect pin');
+          // // Decide what to show on the failed result screen:
+          // // final lower = sanitizedJoined.toLowerCase();
+          // // final shouldShowSpecific =
+          // //     lower.contains('insufficient') || lower.contains('incorrect pin');
 
-          // If specific sensitive/meaningful text exists, use it; otherwise, fallback.
-          final displayMessage =
-              // shouldShowSpecific &&
-              sanitizedJoined.isNotEmpty
-                  ? sanitizedJoined
-                  : 'Transaction failed. Please try again later.';
+          // // If specific sensitive/meaningful text exists, use it; otherwise, fallback.
+          // final displayMessage =
+          //     // shouldShowSpecific &&
+          //     sanitizedJoined.isNotEmpty
+          //         ? sanitizedJoined
+          //         : 'Transaction failed. Please try again later.';
 
-          // For snackbars use the centralized mapper (respects kDebugMode)
+          // // For snackbars use the centralized mapper (respects kDebugMode)
+          // final userMsg = userFacingMessageFromFailure(failure);
+          // debugPrint(userMsg.toString());
+
+          // // Debug print sanitized content only
+          // debugPrint(sanitizedJoined.isNotEmpty
+          //     ? sanitizedJoined
+          //     : 'Transaction failed');
           final userMsg = userFacingMessageFromFailure(failure);
-          debugPrint(userMsg.toString());
-
-          // Debug print sanitized content only
-          debugPrint(sanitizedJoined.isNotEmpty
-              ? sanitizedJoined
-              : 'Transaction failed');
-
+          final displayMessage = sanitizeErrorMessage(userMsg);
+          context.showErrorSnackBar(displayMessage);
+          if (kDebugMode) {
+            debugPrint('Transaction failed: $userMsg');
+            debugPrint('Display message: $displayMessage');
+          }
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(

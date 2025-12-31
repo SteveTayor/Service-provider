@@ -260,6 +260,62 @@ class PlatFormData {
       title: 'Ikeja',
       subtitle: 'Ikeja Electricity',
     ),
+    AppListTile(
+      showSubtitle: true,
+      assetPath: Assets.svgs.kadunaElectricity,
+      // imagePath: Assets.images.kadunaPhcn.path,
+
+      title: 'Kaduna Electricity',
+      subtitle: 'KEDC',
+    ),
+    AppListTile(
+      showSubtitle: true,
+      assetPath: Assets.svgs.beninElectricityIcon,
+      // imagePath: Assets.images.phcnElectricity.path,
+
+      title: 'Benin Electricity',
+      subtitle: 'BEDC',
+    ),
+    AppListTile(
+      showSubtitle: true,
+      assetPath: Assets.svgs.josElectricityIcon,
+      // imagePath: Assets.images.ekedc.path,
+
+      title: 'Jos',
+      subtitle: 'Jos Electricity',
+    ),
+    AppListTile(
+      showSubtitle: true,
+      assetPath: Assets.svgs.yolaElectricityIcon,
+      // imagePath: Assets.images.ekedc.path,
+
+      title: 'Yola',
+      subtitle: 'YEDC',
+    ),
+    AppListTile(
+      showSubtitle: true,
+      assetPath: Assets.svgs.josElectricityIcon,
+      // imagePath: Assets.images.ekedc.path,
+
+      title: 'Portharcourt',
+      subtitle: 'PHED',
+    ),
+    AppListTile(
+      showSubtitle: true,
+      assetPath: Assets.svgs.josElectricityIcon,
+      // imagePath: Assets.images.ekedc.path,
+
+      title: 'Abuja',
+      subtitle: 'AEDC',
+    ),
+    AppListTile(
+      showSubtitle: true,
+      assetPath: Assets.svgs.kanoElectricity,
+      // imagePath: Assets.images.ekedc.path,
+
+      title: 'Kano',
+      subtitle: 'KEDCO',
+    ),
   ];
 
   static final List<Widget> internetServiceProviderWidget = [

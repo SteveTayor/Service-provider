@@ -47,10 +47,17 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
   bool _syncingFromProviderToRestorable = false;
   bool _syncingFromRestorableToProvider = false;
   bool _hasInitializedSync = false;
+  bool _listeningToProvider = false;
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     registerForRestoration(_restorableAmount, 'amount');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_hasInitializedSync) {
+        _hasInitializedSync = true;
+        _initializeSync();
+      }
+    });
   }
 
   @override
@@ -66,10 +73,17 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Initialize sync only once, after restoration has completed
-    if (!_hasInitializedSync) {
-      _hasInitializedSync = true;
-      _initializeSync();
+    if (!_listeningToProvider) {
+      _listeningToProvider = true;
+      ref.listen<WithdrawalProvider>(
+        withdrawalProvider,
+        (previous, next) {
+          // On provider change, re-run wiring on the next frame to avoid race.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _initializeSync();
+          });
+        },
+      );
     }
   }
 
