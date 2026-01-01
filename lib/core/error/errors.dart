@@ -31,6 +31,9 @@ String sanitizeErrorMessage(dynamic rawMessage) {
     'quota exceeded',
     'request throttled',
     'too many attempts',
+    'null check',
+    'null',
+    'null check used on a null value',
   ];
   for (final p in blockedPatterns) {
     if (lower.contains(p)) {

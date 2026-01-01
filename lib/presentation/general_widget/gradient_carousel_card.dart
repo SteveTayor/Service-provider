@@ -90,22 +90,22 @@ class GradientPromoCard extends StatelessWidget {
                         title,
                         style: TextStyle(
                           fontSize:
-                              useResponsive ? r.textSize(15) : 15.sp, // CHANGED
+                              useResponsive ? r.textSize(15) : 15, // CHANGED
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                           fontFamily: FontFamily.mabryPro,
                         ),
                       ),
                       SizedBox(
-                          height:
-                              useResponsive ? r.spacing(6) : 6.h), // CHANGED
+                        height: useResponsive ? r.spacing(6) : 6,
+                      ), // CHANGED
 
                       // Subtitle
                       Text(
                         subtitle,
                         style: TextStyle(
                           fontSize:
-                              useResponsive ? r.textSize(14) : 14.sp, // CHANGED
+                              useResponsive ? r.textSize(14) : 14, // CHANGED
                           fontWeight: FontWeight.w400,
                           color: Colors.white,
                           fontFamily: FontFamily.mabryPro,
@@ -115,7 +115,7 @@ class GradientPromoCard extends StatelessWidget {
                       ),
                       SizedBox(
                           height:
-                              useResponsive ? r.spacing(16) : 16.h), // CHANGED
+                              useResponsive ? r.spacing(16) : 16), // CHANGED
 
                       // Button
                       GestureDetector(
@@ -123,9 +123,9 @@ class GradientPromoCard extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.symmetric(
                             horizontal:
-                                useResponsive ? r.spacing(18) : 18.w, // CHANGED
+                                useResponsive ? r.spacing(18) : 18, // CHANGED
                             vertical:
-                                useResponsive ? r.spacing(6) : 6.h, // CHANGED
+                                useResponsive ? r.spacing(6) : 6, // CHANGED
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(
@@ -140,7 +140,7 @@ class GradientPromoCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: useResponsive
                                   ? r.textSize(14)
-                                  : 14.sp, // CHANGED
+                                  : 14, // CHANGED
                               fontWeight: FontWeight.w700,
                               fontFamily: FontFamily.mabryPro,
                               color: Colors.white,

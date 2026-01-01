@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
@@ -129,7 +130,7 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
 
   // common additional fields
   final token = _get<String>(data, ['token', 'token_no', 'purchase_token']);
-  final unit = _get<dynamic>(data, ['unit']);
+  final unit = _get<String>(data, ['unit']);
   final cardPin = _get<String>(data, ['cardPin', 'card_pin', 'pin']);
   final status =
       _get<String>(data, ['status', 'transaction_status', 'state']) ??
@@ -204,7 +205,8 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
       status: status,
       description: description,
       meterNumber: accountNumber,
-      token: token,
+      token: token!.formatAsToken(),
+      units: unit,
       userBalance: balanceAfter != null
           ? CurrencyFormatter.format(_parseDouble(balanceAfter))
           : null,
