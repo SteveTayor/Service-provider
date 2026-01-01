@@ -70,7 +70,7 @@ const List<PlatformProductType> kValidationRequiredServices = [
   PlatformProductType.internetServices,
 ];
 
-final platformProductProvider = StateNotifierProvider.family<
+final platformProductProvider = StateNotifierProvider.family.autoDispose<
     PlatformProductNotifier, PlatformProductState, PlatformProductType>(
   (ref, serviceType) =>
       PlatformProductNotifier(ref.read(apiServiceProvider), serviceType, ref),

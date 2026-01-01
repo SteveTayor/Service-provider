@@ -280,6 +280,9 @@ class _PlatformPhoneNumberFormWidgetState
         .normalizeAssetName(rawPath);
 
     if (assetName != null) {
+      debugPrint(
+                                    '[NORMALIZING ASSETS] asset name for icon is $assetName,');
+                               
       if (assetName.endsWith('.svg')) {
         return CircleAvatar(
           radius: 15,

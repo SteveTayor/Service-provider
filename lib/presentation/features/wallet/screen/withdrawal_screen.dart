@@ -72,19 +72,6 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    if (!_listeningToProvider) {
-      _listeningToProvider = true;
-      ref.listen<WithdrawalProvider>(
-        withdrawalProvider,
-        (previous, next) {
-          // On provider change, re-run wiring on the next frame to avoid race.
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _initializeSync();
-          });
-        },
-      );
-    }
   }
 
   void _initializeSync() {
@@ -101,27 +88,68 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
     TextEditingController providerCtrl,
     RestorableTextEditingController restorable,
   ) {
-    // When framework restores restorable, copy to provider
-    restorable.value.addListener(() {
+    // // When framework restores restorable, copy to provider
+    // restorable.value.addListener(() {
+    //   if (_syncingFromProviderToRestorable) return;
+    //   final restored = restorable.value.text;
+    //   final providerText = providerCtrl.text;
+    //   if (providerText != restored) {
+    //     _syncingFromRestorableToProvider = true;
+    //     providerCtrl.text = restored;
+    //     _syncingFromRestorableToProvider = false;
+    //   }
+    // });
+
+    // // When provider updates (user typing), copy to restorable
+    // providerCtrl.addListener(() {
+    //   if (_syncingFromRestorableToProvider) return;
+    //   final providerText = providerCtrl.text;
+    //   final restorableText = restorable.value.text;
+    //   if (restorableText != providerText) {
+    //     _syncingFromProviderToRestorable = true;
+    //     restorable.value.text = providerText;
+    //     _syncingFromProviderToRestorable = false;
+    //   }
+    // });
+    // guard restorable.value
+    final restCtrl = restorable.value;
+    if (restCtrl == null) return;
+
+    // remove any previous listeners (defensive)
+    try {
+      restCtrl.removeListener(() {}); // no-op safe call (optional)
+    } catch (_) {}
+
+    // Restorable -> Provider
+    restCtrl.addListener(() {
       if (_syncingFromProviderToRestorable) return;
-      final restored = restorable.value.text;
-      final providerText = providerCtrl.text;
-      if (providerText != restored) {
-        _syncingFromRestorableToProvider = true;
-        providerCtrl.text = restored;
-        _syncingFromRestorableToProvider = false;
+      try {
+        final restored = restCtrl.text;
+        final providerText = providerCtrl.text;
+        if (providerText != restored) {
+          _syncingFromRestorableToProvider = true;
+          providerCtrl.text = restored;
+          _syncingFromRestorableToProvider = false;
+        }
+      } catch (e, st) {
+        // swallow/log to avoid bubbling to UI
+        debugPrint('restorable->provider sync error: $e\n$st');
       }
     });
 
-    // When provider updates (user typing), copy to restorable
+    // Provider -> Restorable
     providerCtrl.addListener(() {
       if (_syncingFromRestorableToProvider) return;
-      final providerText = providerCtrl.text;
-      final restorableText = restorable.value.text;
-      if (restorableText != providerText) {
-        _syncingFromProviderToRestorable = true;
-        restorable.value.text = providerText;
-        _syncingFromProviderToRestorable = false;
+      try {
+        final providerText = providerCtrl.text;
+        final restorableText = restCtrl.text;
+        if (restorableText != providerText) {
+          _syncingFromProviderToRestorable = true;
+          restCtrl.text = providerText;
+          _syncingFromProviderToRestorable = false;
+        }
+      } catch (e, st) {
+        debugPrint('provider->restorable sync error: $e\n$st');
       }
     });
   }
@@ -131,7 +159,8 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
     RestorableTextEditingController restorable,
   ) {
     try {
-      if (restorable.value.text.isEmpty && providerValue.isNotEmpty) {
+      final rtext = restorable.value.text ?? '';
+      if (rtext.isEmpty && providerValue.isNotEmpty) {
         restorable.value.text = providerValue;
       }
     } catch (_) {}
@@ -149,7 +178,18 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
     final provider = ref.watch(withdrawalProvider);
     final globalUserProvider = ref.watch(globalProvider).profile;
     final profileProv = globalUserProvider.value?.data;
-
+    if (!_listeningToProvider) {
+      _listeningToProvider = true;
+      ref.listen<WithdrawalProvider>(
+        withdrawalProvider,
+        (previous, next) {
+          // On provider change, re-run wiring on the next frame to avoid race.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _initializeSync();
+          });
+        },
+      );
+    }
     return BundlegramScaffold(
       useResponsive: true,
       resizeToAvoidBottomInset: true,

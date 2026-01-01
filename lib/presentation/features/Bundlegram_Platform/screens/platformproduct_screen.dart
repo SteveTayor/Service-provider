@@ -17,6 +17,7 @@ import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/gen/fonts.gen.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/model/platform_product_state.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_product_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformphonenumberform_widget.dart';
@@ -55,126 +56,169 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
   @override
   String? get restorationId => 'platform_product_${widget.serviceType.name}';
 
-  // Restorable controllers
-  final RestorableTextEditingController _restorableFirstInput =
-      RestorableTextEditingController();
-  final RestorableTextEditingController _restorableSecondaryInput =
-      RestorableTextEditingController();
-  final RestorableTextEditingController _restorableAmount =
-      RestorableTextEditingController();
+  // Use RestorableString for state restoration
+  final RestorableString _restorableFirstInput = RestorableString('');
+  final RestorableString _restorableSecondaryInput = RestorableString('');
+  final RestorableString _restorableAmount = RestorableString('');
 
-  // Sync guards
-  bool _syncingFromProviderToRestorable = false;
-  bool _syncingFromRestorableToProvider = false;
-  bool _hasInitializedSync = false;
+  // Bound controllers
+  TextEditingController? _boundFirstCtrl;
+  TextEditingController? _boundSecondaryCtrl;
+  TextEditingController? _boundAmountCtrl;
+
+  VoidCallback? _providerFirstListener;
+  VoidCallback? _providerSecondaryListener;
+  VoidCallback? _providerAmountListener;
+
+  bool _hasInitialized = false;
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     registerForRestoration(_restorableFirstInput, 'first_input');
     registerForRestoration(_restorableSecondaryInput, 'secondary_input');
     registerForRestoration(_restorableAmount, 'amount');
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_hasInitialized) {
+        _hasInitialized = true;
+        _initializeRestorationAndSync();
+      }
+    });
   }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // ✅ Add mounted check
+      if (!mounted) return;
+
       final notifier =
           ref.read(platformProductProvider(widget.serviceType).notifier);
 
-      // Fetch products (existing behavior)
-      await notifier.fetchProducts(context);
+      try {
+        await notifier.fetchProducts(context);
 
-      // Force-refresh sub-products for first few loaded products so we don't show stale plans.
-      // This will update cache & state if backend changed availability.
-      await notifier.refreshSubProductsForLoadedProducts(
-        context,
-        force: true,
-        maxChecks: 3,
-      );
+        // ✅ Add mounted check before next async operation
+        if (!mounted) return;
 
-      //prefetch minimal beneficiaries and full beneficiaries
-      unawaited(Future.microtask(() {
-        ref.read(minimalBeneficiariesProvider.future).catchError((e, st) {
-          debugPrint('minimalBeneficiaries prefetch error: $e');
-        });
+        await notifier.refreshSubProductsForLoadedProducts(
+          context,
+          force: true,
+          maxChecks: 3,
+        );
+      } catch (e, st) {
+        debugPrint('Error fetching products: $e\n$st');
+      }
 
-        ref.read(beneficiariesProvider.future).catchError((e, st) {
-          debugPrint('beneficiaries (all) prefetch error: $e');
-        });
-      }));
+      // Prefetch beneficiaries
+      if (mounted) {
+        unawaited(Future.microtask(() {
+          ref.read(minimalBeneficiariesProvider.future).catchError((e, st) {
+            debugPrint('minimalBeneficiaries prefetch error: $e');
+          });
+
+          ref.read(beneficiariesProvider.future).catchError((e, st) {
+            debugPrint('beneficiaries (all) prefetch error: $e');
+          });
+        }));
+      }
     });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    // Initialize sync only once, after restoration has completed
-    if (!_hasInitializedSync) {
-      _hasInitializedSync = true;
-      _initializeSync();
+    if (!_hasInitialized) {
+      _hasInitialized = true;
+      _initializeRestorationAndSync();
     }
   }
 
-  void _initializeSync() {
-    final state = ref.read(platformProductProvider(widget.serviceType));
-
-    // Wire up text controllers
-    _wireTextSync(state.firstInputController, _restorableFirstInput);
-    _wireTextSync(state.secondaryInputController, _restorableSecondaryInput);
-    _wireTextSync(state.amountController, _restorableAmount);
-
-    // Seed restorable controllers if empty
-    _seedRestorableIfEmpty(
-        state.firstInputController.text, _restorableFirstInput);
-    _seedRestorableIfEmpty(
-        state.secondaryInputController.text, _restorableSecondaryInput);
-    _seedRestorableIfEmpty(state.amountController.text, _restorableAmount);
-  }
-
-  void _wireTextSync(
-    TextEditingController providerCtrl,
-    RestorableTextEditingController restorable,
-  ) {
-    // When framework restores restorable, copy to provider
-    restorable.value.addListener(() {
-      if (_syncingFromProviderToRestorable) return;
-      final restored = restorable.value.text;
-      final providerText = providerCtrl.text;
-      if (providerText != restored) {
-        _syncingFromRestorableToProvider = true;
-        providerCtrl.text = restored;
-        _syncingFromRestorableToProvider = false;
-      }
-    });
-
-    // When provider updates (user typing), copy to restorable
-    providerCtrl.addListener(() {
-      if (_syncingFromRestorableToProvider) return;
-      final providerText = providerCtrl.text;
-      final restorableText = restorable.value.text;
-      if (restorableText != providerText) {
-        _syncingFromProviderToRestorable = true;
-        restorable.value.text = providerText;
-        _syncingFromProviderToRestorable = false;
-      }
-    });
-  }
-
-  void _seedRestorableIfEmpty(
-    String providerValue,
-    RestorableTextEditingController restorable,
-  ) {
+  void _initializeRestorationAndSync() {
     try {
-      if (restorable.value.text.isEmpty && providerValue.isNotEmpty) {
-        restorable.value.text = providerValue;
+      final state = ref.read(platformProductProvider(widget.serviceType));
+
+      // Apply restored text to provider controllers
+      if (_restorableFirstInput.value.isNotEmpty) {
+        state.firstInputController.text = _restorableFirstInput.value;
       }
-    } catch (_) {}
+      if (_restorableSecondaryInput.value.isNotEmpty) {
+        state.secondaryInputController.text = _restorableSecondaryInput.value;
+      }
+      if (_restorableAmount.value.isNotEmpty) {
+        state.amountController.text = _restorableAmount.value;
+      }
+
+      // Bind listeners
+      _bindControllersFromState(state);
+    } catch (e, st) {
+      debugPrint('Error initializing restoration: $e\n$st');
+    }
+  }
+
+  void _bindControllersFromState(PlatformProductState state) {
+    // Unbind previous
+    _unbindControllers();
+
+    // Bind new
+    _boundFirstCtrl = state.firstInputController;
+    _boundSecondaryCtrl = state.secondaryInputController;
+    _boundAmountCtrl = state.amountController;
+
+    // Provider -> Restorable (save text when user types)
+    _providerFirstListener = () {
+      final text = _boundFirstCtrl?.text ?? '';
+      if (_restorableFirstInput.value != text) {
+        _restorableFirstInput.value = text;
+      }
+    };
+    _boundFirstCtrl?.addListener(_providerFirstListener!);
+
+    _providerSecondaryListener = () {
+      final text = _boundSecondaryCtrl?.text ?? '';
+      if (_restorableSecondaryInput.value != text) {
+        _restorableSecondaryInput.value = text;
+      }
+    };
+    _boundSecondaryCtrl?.addListener(_providerSecondaryListener!);
+
+    _providerAmountListener = () {
+      final text = _boundAmountCtrl?.text ?? '';
+      if (_restorableAmount.value != text) {
+        _restorableAmount.value = text;
+      }
+    };
+    _boundAmountCtrl?.addListener(_providerAmountListener!);
+
+    // Initial sync
+    _restorableFirstInput.value = _boundFirstCtrl?.text ?? '';
+    _restorableSecondaryInput.value = _boundSecondaryCtrl?.text ?? '';
+    _restorableAmount.value = _boundAmountCtrl?.text ?? '';
+  }
+
+  void _unbindControllers() {
+    if (_providerFirstListener != null) {
+      _boundFirstCtrl?.removeListener(_providerFirstListener!);
+    }
+    if (_providerSecondaryListener != null) {
+      _boundSecondaryCtrl?.removeListener(_providerSecondaryListener!);
+    }
+    if (_providerAmountListener != null) {
+      _boundAmountCtrl?.removeListener(_providerAmountListener!);
+    }
+
+    _providerFirstListener = null;
+    _providerSecondaryListener = null;
+    _providerAmountListener = null;
+    _boundFirstCtrl = null;
+    _boundSecondaryCtrl = null;
+    _boundAmountCtrl = null;
   }
 
   @override
   void dispose() {
+    _unbindControllers();
     _restorableFirstInput.dispose();
     _restorableSecondaryInput.dispose();
     _restorableAmount.dispose();
@@ -187,6 +231,24 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
     final serviceType = widget.serviceType;
     final state = ref.watch(platformProductProvider(serviceType));
     final notifier = ref.read(platformProductProvider(serviceType).notifier);
+
+    // --- Move ref.listen here (allowed because we're in build)
+    ref.listen<PlatformProductState>(
+      platformProductProvider(serviceType),
+      (previous, next) {
+        if (previous?.firstInputController != next.firstInputController ||
+            previous?.secondaryInputController !=
+                next.secondaryInputController ||
+            previous?.amountController != next.amountController) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              _bindControllersFromState(next);
+            }
+          });
+        }
+      },
+    );
+
     final walletBalanceAsync =
         ref.watch(globalProvider.select((s) => s.walletBalance));
     final walletBalance = walletBalanceAsync.value?.wallet ?? 0.0;
@@ -239,306 +301,369 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
               force: true,
             );
           },
-          child: state.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
-                      horizontal: r.spacing(16), vertical: r.spacing(16)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      PlatformPhoneNumberFormWidget(
-                        serviceType: serviceType,
-                        inputHint: serviceType == PlatformProductType.betting
-                            ? 'Select Betting Provider'
-                            : null,
-                        secondaryInputHint:
-                            serviceType == PlatformProductType.betting
-                                ? 'Enter user ID'
-                                : null,
-                      ),
-                      // Read-only amount field for cable TV
-                      if (serviceType == PlatformProductType.cableTv &&
-                          state.selectedSubProduct != null) ...[
-                        24.verticalSpace,
-                        AppTextField(
-                          hintText: 'Amount',
-                          controller: state.amountController,
-                          inputFormatters: [CurrencyTextInputFormatter()],
-                          keyboardType: TextInputType.number,
-                          validateFunction: (val) {
-                            final enteredAmount =
-                                double.tryParse(val?.replaceAll(',', '') ?? '');
-                            final wallet = double.tryParse(
-                                walletBalance.toCurrency()); // Already a double
-
-                            if (enteredAmount == null || enteredAmount <= 0) {
-                              return 'Enter a valid amount';
-                            }
-
-                            if (enteredAmount > wallet!) {
-                              context.showErrorSnackBar(
-                                'Insufficient wallet balance ${walletBalance.toCurrency()} available',
-                              );
-                              return '';
-                            }
-
-                            return null;
-                          },
-                          readOnly: true,
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.only(
-                              left: r.spacing(16),
-                            ),
-                            child:
-                                Text('₦', style: context.textTheme.bodyMedium),
+          child:
+              //  state.isLoading
+              //     ? const Center(child: CircularProgressIndicator())
+              //     :
+              state.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : state.products.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('No products found'),
+                              Text('isLoading: ${state.isLoading}'),
+                              Text('hasError: ${state.error != null}'),
+                              if (state.error != null)
+                                Text('Error: ${state.error}'),
+                              ElevatedButton(
+                                onPressed: () =>
+                                    notifier.fetchProducts(context),
+                                child: Text('Retry'),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                      if (serviceType == PlatformProductType.betting ||
-                          serviceType == PlatformProductType.airtime)
-                        ProductItemGrid(
-                          serviceType: serviceType,
-                          amounts: const [200, 500, 1000, 2000, 5000, 10000],
-                        ),
-                      if (serviceType == PlatformProductType.electricity)
-                        ProductItemGrid(
-                          serviceType: serviceType,
-                          amounts: const [
-                            1000,
-                            2000,
-                            3000,
-                            4000,
-                            5000,
-                            10000,
-                          ],
-                        ),
-                      if (serviceType == PlatformProductType.mobileData &&
-                          state.selectedProduct != null &&
-                          state.subProducts.isNotEmpty)
-                        ProductItemGrid(
-                          serviceType: serviceType,
-                          products: state.selectedDataType != null
-                              ? state.subProducts
-                                  .where((e) =>
-                                      e.dataType == state.selectedDataType)
-                                  .toList()
-                              : state
-                                  .subProducts, // show all subProducts when dataType not selected yet
-                        ),
-                      if (serviceType == PlatformProductType.ePinVoucher ||
-                          serviceType == PlatformProductType.bulkEPin)
-                        ProductuserpriceWidget(serviceType: serviceType),
+                        )
+                      : SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: r.spacing(16),
+                              vertical: r.spacing(16)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              PlatformPhoneNumberFormWidget(
+                                serviceType: serviceType,
+                                inputHint:
+                                    serviceType == PlatformProductType.betting
+                                        ? 'Select Betting Provider'
+                                        : null,
+                                secondaryInputHint:
+                                    serviceType == PlatformProductType.betting
+                                        ? 'Enter user ID'
+                                        : null,
+                              ),
+                              // Read-only amount field for cable TV
+                              if (serviceType == PlatformProductType.cableTv &&
+                                  state.selectedSubProduct != null) ...[
+                                24.verticalSpace,
+                                AppTextField(
+                                  hintText: 'Amount',
+                                  controller: state.amountController,
+                                  inputFormatters: [
+                                    CurrencyTextInputFormatter()
+                                  ],
+                                  keyboardType: TextInputType.number,
+                                  validateFunction: (val) {
+                                    final enteredAmount = double.tryParse(
+                                        val?.replaceAll(',', '') ?? '');
+                                    final wallet = double.tryParse(walletBalance
+                                        .toCurrency()); // Already a double
 
-                      if (serviceType == PlatformProductType.education) ...[
-                        24.verticalSpace,
-                        AppTextField(
-                          hintText: 'Enter amount',
-                          controller: state.amountController,
-                          keyboardType: TextInputType.number,
-                          readOnly:
-                              true, // Price is set from dropdown selection
-                          inputFormatters: [CurrencyTextInputFormatter()],
+                                    if (enteredAmount == null ||
+                                        enteredAmount <= 0) {
+                                      return 'Enter a valid amount';
+                                    }
 
-                          prefixIcon: Padding(
-                            padding: context.symmetricPadding(24, 0),
-                            child:
-                                Text('₦', style: context.textTheme.bodyMedium),
-                          ),
-                          onChange: (_) {
-                            notifier
-                                .clearSelectedPresetAmount(); // Optional: deselect preset if user types
-                          },
-                        ),
-                      ],
-                      24.verticalSpace,
-                      Row(
-                        children: [
-                          AppSvgIcon(path: Assets.svgs.balance),
-                          3.horizontalSpace,
-                          Text(
-                            'Balance (${walletBalance.toCurrency()})',
-                            style: context.textTheme.labelMedium,
-                          ),
-                          const Spacer(),
-                          InkWell(
-                            onTap: () {
-                              HapticFeedback.lightImpact();
-                              ref
-                                  .read(dashboardProvider.notifier)
-                                  .onDestinationSelected(1, context);
-                              context.pop();
-                            },
-                            child: Text(
-                              'Top-up >',
-                              style: context.textTheme.labelMedium!
-                                  .copyWith(color: AppColors.primaryColor),
-                            ),
-                          ),
-                        ],
-                      ).withContainer(
-                        color: const Color(0xffEEF3FF),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: r.spacing(8), vertical: r.spacing(12)),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      40.verticalSpace,
-                      BundlegramButton(
-                        text: 'Continue',
-                        isLoading: state.isValidating,
-                        onPressed: canContinue
-                            ? () {
-                                if (serviceType ==
-                                    PlatformProductType.ePinVoucher) {
-                                  final isAgent = ref
-                                          .read(globalProvider)
-                                          .profile
-                                          .value
-                                          ?.data
-                                          ?.userType ==
-                                      "agent";
-                                  if (isAgent) {
-                                    // Prefer subName, otherwise productName (but we should prefer subName)
-                                    final preselectedNetwork = state
-                                            .selectedSubProduct?.subName
-                                            ?.trim() ??
-                                        state.selectedProduct?.productName
-                                            ?.trim();
-
-                                    debugPrint(
-                                        '[ePin] preselectedNetwork before navigation: $preselectedNetwork');
-
-                                    if (preselectedNetwork == null ||
-                                        preselectedNetwork.isEmpty) {
-                                      // Defensive: this should not happen with the updated canContinue,
-                                      // but keep user-friendly safeguard.
+                                    if (enteredAmount > wallet!) {
                                       context.showErrorSnackBar(
-                                          'Please select a network/biller first.');
-                                      return;
-                                    }
-
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => BulkEpinScreen(
-                                            initialNetwork: preselectedNetwork),
-                                      ),
-                                    );
-                                  } else {
-                                    notifier.showBulkEPinPrompt(context);
-                                  }
-                                } else if (notifier.requiresValidation) {
-                                  final input = serviceType ==
-                                              PlatformProductType.betting ||
-                                          serviceType ==
-                                              PlatformProductType.cableTv ||
-                                          serviceType ==
-                                              PlatformProductType.electricity
-                                      ? state.secondaryInputController.text
-                                          .trim()
-                                      : state.firstInputController.text.trim();
-
-                                  // if (input.isEmpty) {
-                                  //   return context.showErrorSnackBar(
-                                  //     'Please enter a valid ${serviceType == PlatformProductType.betting ? 'User ID' : serviceType == PlatformProductType.cableTv ? 'Smart Card Number' : 'Meter Number'}',
-                                  //   );
-                                  // }
-
-                                  // Additional validation for electricity
-                                  // if (serviceType ==
-                                  //     PlatformProductType.electricity) {
-                                  //   if (state.selectedSubProduct == null) {
-                                  //     return context.showErrorSnackBar(
-                                  //         'Please select Prepaid or Postpaid');
-                                  //   }
-                                  //   final amount = state.amountController.text.trim();
-                                  //   if (amount.isEmpty ||
-                                  //       double.tryParse(amount) == null ||
-                                  //       double.parse(amount) <= 0) {
-                                  //     return context.showErrorSnackBar(
-                                  //         'Please enter a valid amount');
-                                  //   }
-                                  // }
-                                  notifier
-                                    ..validateForm()
-                                    ..validateBill(
-                                      context,
-                                      input,
-                                      state.selectedProduct?.id ??
-                                          state.selectedSubProduct?.id,
-                                      state.selectedSubProduct?.autoSubProdId ??
-                                          state.selectedProduct?.autoProdId,
-                                      onSuccess: () async {
-                                        // Check wallet balance before showing transaction summary
-                                        final walletBalanceStr = ref
-                                            .read(globalProvider)
-                                            .walletBalance
-                                            .value
-                                            ?.wallet;
-                                        final walletBalance = double.tryParse(
-                                                walletBalanceStr ?? '') ??
-                                            0.0;
-                                        final amount =
-                                            notifier.getTransactionAmount();
-                                        if (amount > walletBalance) {
-                                          context.showErrorSnackBar(
-                                            'Insufficient balance. You have ${walletBalance.toCurrency()}',
-                                          );
-                                          return;
-                                        }
-
-                                        notifier
-                                            .showTransactionSummary(context);
-                                      },
-                                    );
-                                } else {
-                                  notifier.showTransactionSummary(context);
-                                }
-                              }
-                            : null,
-                      ),
-                      if (serviceType == PlatformProductType.ePinVoucher)
-                        Padding(
-                          padding: EdgeInsets.only(top: 24.h),
-                          child: BundlegramButton(
-                            text: 'Print bulk e-pin voucher',
-                            isOutline: true,
-                            textStyle: context.textTheme.bodyMedium!.copyWith(
-                              color: AppColors.grey19,
-                              fontFamily: FontFamily.mabryPro,
-                              // fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            onPressed: canContinue
-                                ? () {
-                                    final isAgent = ref
-                                            .read(globalProvider)
-                                            .profile
-                                            .value
-                                            ?.data
-                                            ?.userType ==
-                                        "agent";
-                                    if (isAgent) {
-                                      final preselectedNetwork = state
-                                              .selectedSubProduct?.subName ??
-                                          state.selectedProduct?.productName;
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (_) => BulkEpinScreen(
-                                                initialNetwork:
-                                                    preselectedNetwork)),
+                                        'Insufficient wallet balance ${walletBalance.toCurrency()} available',
                                       );
-                                    } else {
-                                      notifier.showBulkEPinPrompt(context);
+                                      return '';
                                     }
-                                  }
-                                : null,
-                            color: AppColors.white,
+
+                                    return null;
+                                  },
+                                  readOnly: true,
+                                  prefixIcon: Padding(
+                                    padding: EdgeInsets.only(
+                                      left: r.spacing(16),
+                                    ),
+                                    child: Text('₦',
+                                        style: context.textTheme.bodyMedium),
+                                  ),
+                                ),
+                              ],
+                              if (serviceType == PlatformProductType.betting ||
+                                  serviceType == PlatformProductType.airtime)
+                                ProductItemGrid(
+                                  serviceType: serviceType,
+                                  amounts: const [
+                                    200,
+                                    500,
+                                    1000,
+                                    2000,
+                                    5000,
+                                    10000
+                                  ],
+                                ),
+                              if (serviceType ==
+                                  PlatformProductType.electricity)
+                                ProductItemGrid(
+                                  serviceType: serviceType,
+                                  amounts: const [
+                                    1000,
+                                    2000,
+                                    3000,
+                                    4000,
+                                    5000,
+                                    10000,
+                                  ],
+                                ),
+                              if (serviceType ==
+                                      PlatformProductType.mobileData &&
+                                  state.selectedProduct != null &&
+                                  state.subProducts.isNotEmpty)
+                                ProductItemGrid(
+                                  serviceType: serviceType,
+                                  products: state.selectedDataType != null
+                                      ? state.subProducts
+                                          .where((e) =>
+                                              e.dataType ==
+                                              state.selectedDataType)
+                                          .toList()
+                                      : state
+                                          .subProducts, // show all subProducts when dataType not selected yet
+                                ),
+                              if (serviceType ==
+                                      PlatformProductType.ePinVoucher ||
+                                  serviceType == PlatformProductType.bulkEPin)
+                                ProductuserpriceWidget(
+                                    serviceType: serviceType),
+
+                              if (serviceType ==
+                                  PlatformProductType.education) ...[
+                                24.verticalSpace,
+                                AppTextField(
+                                  hintText: 'Enter amount',
+                                  controller: state.amountController,
+                                  keyboardType: TextInputType.number,
+                                  readOnly:
+                                      true, // Price is set from dropdown selection
+                                  inputFormatters: [
+                                    CurrencyTextInputFormatter()
+                                  ],
+
+                                  prefixIcon: Padding(
+                                    padding: context.symmetricPadding(24, 0),
+                                    child: Text('₦',
+                                        style: context.textTheme.bodyMedium),
+                                  ),
+                                  onChange: (_) {
+                                    notifier
+                                        .clearSelectedPresetAmount(); // Optional: deselect preset if user types
+                                  },
+                                ),
+                              ],
+                              24.verticalSpace,
+                              Row(
+                                children: [
+                                  AppSvgIcon(path: Assets.svgs.balance),
+                                  3.horizontalSpace,
+                                  Text(
+                                    'Balance (${walletBalance.toCurrency()})',
+                                    style: context.textTheme.labelMedium,
+                                  ),
+                                  const Spacer(),
+                                  InkWell(
+                                    onTap: () {
+                                      HapticFeedback.lightImpact();
+                                      ref
+                                          .read(dashboardProvider.notifier)
+                                          .onDestinationSelected(1, context);
+                                      context.pop();
+                                    },
+                                    child: Text(
+                                      'Top-up >',
+                                      style: context.textTheme.labelMedium!
+                                          .copyWith(
+                                              color: AppColors.primaryColor),
+                                    ),
+                                  ),
+                                ],
+                              ).withContainer(
+                                color: const Color(0xffEEF3FF),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: r.spacing(8),
+                                    vertical: r.spacing(12)),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              40.verticalSpace,
+                              BundlegramButton(
+                                text: 'Continue',
+                                isLoading: state.isValidating,
+                                onPressed: canContinue
+                                    ? () {
+                                        if (serviceType ==
+                                            PlatformProductType.ePinVoucher) {
+                                          final isAgent = ref
+                                                  .read(globalProvider)
+                                                  .profile
+                                                  .value
+                                                  ?.data
+                                                  ?.userType ==
+                                              "agent";
+                                          if (isAgent) {
+                                            // Prefer subName, otherwise productName (but we should prefer subName)
+                                            final preselectedNetwork = state
+                                                    .selectedSubProduct?.subName
+                                                    ?.trim() ??
+                                                state.selectedProduct
+                                                    ?.productName
+                                                    ?.trim();
+
+                                            debugPrint(
+                                                '[ePin] preselectedNetwork before navigation: $preselectedNetwork');
+
+                                            if (preselectedNetwork == null ||
+                                                preselectedNetwork.isEmpty) {
+                                              // Defensive: this should not happen with the updated canContinue,
+                                              // but keep user-friendly safeguard.
+                                              context.showErrorSnackBar(
+                                                  'Please select a network/biller first.');
+                                              return;
+                                            }
+
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) => BulkEpinScreen(
+                                                    initialNetwork:
+                                                        preselectedNetwork),
+                                              ),
+                                            );
+                                          } else {
+                                            notifier
+                                                .showBulkEPinPrompt(context);
+                                          }
+                                        } else if (notifier
+                                            .requiresValidation) {
+                                          final input = serviceType ==
+                                                      PlatformProductType
+                                                          .betting ||
+                                                  serviceType ==
+                                                      PlatformProductType
+                                                          .cableTv ||
+                                                  serviceType ==
+                                                      PlatformProductType
+                                                          .electricity
+                                              ? state
+                                                  .secondaryInputController.text
+                                                  .trim()
+                                              : state.firstInputController.text
+                                                  .trim();
+
+                                          // if (input.isEmpty) {
+                                          //   return context.showErrorSnackBar(
+                                          //     'Please enter a valid ${serviceType == PlatformProductType.betting ? 'User ID' : serviceType == PlatformProductType.cableTv ? 'Smart Card Number' : 'Meter Number'}',
+                                          //   );
+                                          // }
+
+                                          // Additional validation for electricity
+                                          // if (serviceType ==
+                                          //     PlatformProductType.electricity) {
+                                          //   if (state.selectedSubProduct == null) {
+                                          //     return context.showErrorSnackBar(
+                                          //         'Please select Prepaid or Postpaid');
+                                          //   }
+                                          //   final amount = state.amountController.text.trim();
+                                          //   if (amount.isEmpty ||
+                                          //       double.tryParse(amount) == null ||
+                                          //       double.parse(amount) <= 0) {
+                                          //     return context.showErrorSnackBar(
+                                          //         'Please enter a valid amount');
+                                          //   }
+                                          // }
+                                          notifier
+                                            ..validateForm()
+                                            ..validateBill(
+                                              context,
+                                              input,
+                                              state.selectedProduct?.id ??
+                                                  state.selectedSubProduct?.id,
+                                              state.selectedSubProduct
+                                                      ?.autoSubProdId ??
+                                                  state.selectedProduct
+                                                      ?.autoProdId,
+                                              onSuccess: () async {
+                                                // Check wallet balance before showing transaction summary
+                                                final walletBalanceStr = ref
+                                                    .read(globalProvider)
+                                                    .walletBalance
+                                                    .value
+                                                    ?.wallet;
+                                                final walletBalance =
+                                                    double.tryParse(
+                                                            walletBalanceStr ??
+                                                                '') ??
+                                                        0.0;
+                                                final amount = notifier
+                                                    .getTransactionAmount();
+                                                if (amount > walletBalance) {
+                                                  context.showErrorSnackBar(
+                                                    'Insufficient balance. You have ${walletBalance.toCurrency()}',
+                                                  );
+                                                  return;
+                                                }
+
+                                                notifier.showTransactionSummary(
+                                                    context);
+                                              },
+                                            );
+                                        } else {
+                                          notifier
+                                              .showTransactionSummary(context);
+                                        }
+                                      }
+                                    : null,
+                              ),
+                              if (serviceType ==
+                                  PlatformProductType.ePinVoucher)
+                                Padding(
+                                  padding: EdgeInsets.only(top: 24.h),
+                                  child: BundlegramButton(
+                                    text: 'Print bulk e-pin voucher',
+                                    isOutline: true,
+                                    textStyle:
+                                        context.textTheme.bodyMedium!.copyWith(
+                                      color: AppColors.grey19,
+                                      fontFamily: FontFamily.mabryPro,
+                                      // fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    onPressed: canContinue
+                                        ? () {
+                                            final isAgent = ref
+                                                    .read(globalProvider)
+                                                    .profile
+                                                    .value
+                                                    ?.data
+                                                    ?.userType ==
+                                                "agent";
+                                            if (isAgent) {
+                                              final preselectedNetwork = state
+                                                      .selectedSubProduct
+                                                      ?.subName ??
+                                                  state.selectedProduct
+                                                      ?.productName;
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (_) => BulkEpinScreen(
+                                                        initialNetwork:
+                                                            preselectedNetwork)),
+                                              );
+                                            } else {
+                                              notifier
+                                                  .showBulkEPinPrompt(context);
+                                            }
+                                          }
+                                        : null,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                    ],
-                  ),
-                ),
         ),
       ),
     );

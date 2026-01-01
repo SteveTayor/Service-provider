@@ -333,8 +333,14 @@ class $AssetsSvgsGen {
   String get warrantyBadgeHighlightStreamlineFlex =>
       'assets/svgs/Warranty-Badge-Highlight--Streamline-Flex.svg';
 
+  /// File path: assets/svgs/a1xbet.svg
+  String get a1xbet => 'assets/svgs/a1xbet.svg';
+
   /// File path: assets/svgs/a9mobile.svg
   String get a9mobile => 'assets/svgs/a9mobile.svg';
+
+  /// File path: assets/svgs/abuja_electricity.svg
+  String get abujaElectricity => 'assets/svgs/abuja_electricity.svg';
 
   /// File path: assets/svgs/account.svg
   String get account => 'assets/svgs/account.svg';
@@ -366,6 +372,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/balance.svg
   String get balance => 'assets/svgs/balance.svg';
 
+  /// File path: assets/svgs/bangbet.svg
+  String get bangbet => 'assets/svgs/bangbet.svg';
+
   /// File path: assets/svgs/banknotes.svg
   String get banknotes => 'assets/svgs/banknotes.svg';
 
@@ -378,8 +387,20 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/benin_electricity_icon.svg
   String get beninElectricityIcon => 'assets/svgs/benin_electricity_icon.svg';
 
+  /// File path: assets/svgs/bet9ja.svg
+  String get bet9ja => 'assets/svgs/bet9ja.svg';
+
+  /// File path: assets/svgs/betking.svg
+  String get betking => 'assets/svgs/betking.svg';
+
+  /// File path: assets/svgs/betland.svg
+  String get betland => 'assets/svgs/betland.svg';
+
   /// File path: assets/svgs/betting.svg
   String get betting => 'assets/svgs/betting.svg';
+
+  /// File path: assets/svgs/betway.svg
+  String get betway => 'assets/svgs/betway.svg';
 
   /// File path: assets/svgs/box.svg
   String get box => 'assets/svgs/box.svg';
@@ -427,6 +448,9 @@ class $AssetsSvgsGen {
   String get crownRewardSocialRatingMediaQueenVipKingCrown =>
       'assets/svgs/crown--reward-social-rating-media-queen-vip-king-crown.svg';
 
+  /// File path: assets/svgs/dstv.svg
+  String get dstv => 'assets/svgs/dstv.svg';
+
   /// File path: assets/svgs/e-pin.svg
   String get ePin => 'assets/svgs/e-pin.svg';
 
@@ -442,6 +466,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/electricity.svg
   String get electricity => 'assets/svgs/electricity.svg';
+
+  /// File path: assets/svgs/enugu_electricity.svg
+  String get enuguElectricity => 'assets/svgs/enugu_electricity.svg';
 
   /// File path: assets/svgs/eye.svg
   String get eye => 'assets/svgs/eye.svg';
@@ -462,6 +489,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/glo.svg
   String get glo => 'assets/svgs/glo.svg';
 
+  /// File path: assets/svgs/gotv.svg
+  String get gotv => 'assets/svgs/gotv.svg';
+
   /// File path: assets/svgs/heart--reward-social-rating-media-heart-it-like-favorite-love.svg
   String get heartRewardSocialRatingMediaHeartItLikeFavoriteLove =>
       'assets/svgs/heart--reward-social-rating-media-heart-it-like-favorite-love.svg';
@@ -472,8 +502,14 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/homeinactive.svg
   String get homeinactive => 'assets/svgs/homeinactive.svg';
 
+  /// File path: assets/svgs/ibadan_electricity.svg
+  String get ibadanElectricity => 'assets/svgs/ibadan_electricity.svg';
+
   /// File path: assets/svgs/ig-instagram-icon.svg
   String get igInstagramIcon => 'assets/svgs/ig-instagram-icon.svg';
+
+  /// File path: assets/svgs/ikeja_electricity.svg
+  String get ikejaElectricity => 'assets/svgs/ikeja_electricity.svg';
 
   /// File path: assets/svgs/info-circle (1).svg
   String get infoCircle1 => 'assets/svgs/info-circle (1).svg';
@@ -483,6 +519,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/internetservice.svg
   String get internetservice => 'assets/svgs/internetservice.svg';
+
+  /// File path: assets/svgs/jamb.svg
+  String get jamb => 'assets/svgs/jamb.svg';
 
   /// File path: assets/svgs/jos_electricity_icon.svg
   String get josElectricityIcon => 'assets/svgs/jos_electricity_icon.svg';
@@ -499,6 +538,9 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/linkyourbvn.svg
   String get linkyourbvn => 'assets/svgs/linkyourbvn.svg';
 
+  /// File path: assets/svgs/livescorebet.svg
+  String get livescorebet => 'assets/svgs/livescorebet.svg';
+
   /// File path: assets/svgs/lock_icon.svg
   String get lockIcon => 'assets/svgs/lock_icon.svg';
 
@@ -512,6 +554,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/mailresent.svg
   String get mailresent => 'assets/svgs/mailresent.svg';
+
+  /// File path: assets/svgs/merrybet.svg
+  String get merrybet => 'assets/svgs/merrybet.svg';
 
   /// File path: assets/svgs/mobile.svg
   String get mobile => 'assets/svgs/mobile.svg';
@@ -527,6 +572,12 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/mtnnw.svg
   String get mtnnw => 'assets/svgs/mtnnw.svg';
+
+  /// File path: assets/svgs/naijabet.svg
+  String get naijabet => 'assets/svgs/naijabet.svg';
+
+  /// File path: assets/svgs/nairabet.svg
+  String get nairabet => 'assets/svgs/nairabet.svg';
 
   /// File path: assets/svgs/no-transactions-e-commerce 1.svg
   String get noTransactionsECommerce1 =>
@@ -555,6 +606,10 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/ph_copy-simple.svg
   String get phCopySimple => 'assets/svgs/ph_copy-simple.svg';
+
+  /// File path: assets/svgs/portharcourt_electricity.svg
+  String get portharcourtElectricity =>
+      'assets/svgs/portharcourt_electricity.svg';
 
   /// File path: assets/svgs/promo_gift_image.svg
   String get promoGiftImage => 'assets/svgs/promo_gift_image.svg';
@@ -585,6 +640,12 @@ class $AssetsSvgsGen {
   /// File path: assets/svgs/simcard-2.svg
   String get simcard2 => 'assets/svgs/simcard-2.svg';
 
+  /// File path: assets/svgs/startimes.svg
+  String get startimes => 'assets/svgs/startimes.svg';
+
+  /// File path: assets/svgs/supabet.svg
+  String get supabet => 'assets/svgs/supabet.svg';
+
   /// File path: assets/svgs/telegram-icon.svg
   String get telegramIcon => 'assets/svgs/telegram-icon.svg';
 
@@ -608,6 +669,9 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/viewstat.svg
   String get viewstat => 'assets/svgs/viewstat.svg';
+
+  /// File path: assets/svgs/waec.svg
+  String get waec => 'assets/svgs/waec.svg';
 
   /// File path: assets/svgs/wallet--money-payment-finance-wallet.svg
   String get walletMoneyPaymentFinanceWallet =>
@@ -676,7 +740,9 @@ class $AssetsSvgsGen {
     userActive,
     vpnConnectionStreamlineCore,
     warrantyBadgeHighlightStreamlineFlex,
+    a1xbet,
     a9mobile,
+    abujaElectricity,
     account,
     accountsetup,
     addbankdetail,
@@ -687,11 +753,16 @@ class $AssetsSvgsGen {
     arrowLeft,
     availablePromo,
     balance,
+    bangbet,
     banknotes,
     bars3,
     becomeagent,
     beninElectricityIcon,
+    bet9ja,
+    betking,
+    betland,
     betting,
+    betway,
     box,
     bundlegramWhiteLogo,
     bundlegramagent,
@@ -707,38 +778,48 @@ class $AssetsSvgsGen {
     copy,
     createaccount,
     crownRewardSocialRatingMediaQueenVipKingCrown,
+    dstv,
     ePin,
     educationPng,
     educationSvg,
     ekoElectricity,
     electricity,
+    enuguElectricity,
     eye,
     facebookRoundColorIcon,
     failedIllustration,
     fingerCricle1,
     fingerCricle,
     glo,
+    gotv,
     heartRewardSocialRatingMediaHeartItLikeFavoriteLove,
     home,
     homeinactive,
+    ibadanElectricity,
     igInstagramIcon,
+    ikejaElectricity,
     infoCircle1,
     infoCircle,
     internetservice,
+    jamb,
     josElectricityIcon,
     kadunaElectricity,
     kanoElectricity,
     linkedinAppIcon,
     linkyourbvn,
+    livescorebet,
     lockIcon,
     logout1ArrowExitFrameLeaveLogoutRectangleRight1,
     logout1ArrowExitFrameLeaveLogoutRectangleRight,
     mailresent,
+    merrybet,
     mobile,
     mobileData,
     mtn,
     mtnNeww,
     mtnnw,
+    naijabet,
+    nairabet,
     noTransactionsECommerce1,
     noPromo,
     noapineeded,
@@ -748,6 +829,7 @@ class $AssetsSvgsGen {
     paybills,
     pending,
     phCopySimple,
+    portharcourtElectricity,
     promoGiftImage,
     promoRewards,
     receipt,
@@ -757,6 +839,8 @@ class $AssetsSvgsGen {
     shiftKeyShiftUpArrowKeyboard,
     simcard21,
     simcard2,
+    startimes,
+    supabet,
     telegramIcon,
     tickCircle,
     tiktokColorIcon,
@@ -765,6 +849,7 @@ class $AssetsSvgsGen {
     unveirifycheck,
     verifyemail,
     viewstat,
+    waec,
     walletMoneyPaymentFinanceWallet,
     walletAdd1,
     walletAdd,

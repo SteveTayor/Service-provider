@@ -213,15 +213,15 @@ class PlatFormData {
 
   static final List<Widget> educationProviderWidget = [
     AppListTile(
-      // assetPath: Assets.svgs.waec,
-      imagePath: Assets.images.waec.path,
+      assetPath: Assets.svgs.waec,
+      // imagePath: Assets.images.waec.path,
       title: 'WAEC',
       showSubtitle: true,
       subtitle: 'WAEC',
     ),
     AppListTile(
-      // assetPath: Assets.svgs.jamb,
-      imagePath: Assets.images.jamb.path,
+      assetPath: Assets.svgs.jamb,
+      // imagePath: Assets.images.jamb.path,
       showSubtitle: true,
       title: 'JAMB',
       subtitle: 'JAMB',
@@ -231,31 +231,31 @@ class PlatFormData {
   static final List<Widget> electricityProviderWidget = [
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.ekoElectricity,
-      imagePath: Assets.images.ekoPhcn.path,
+      assetPath: Assets.svgs.ekoElectricity,
+      // imagePath: Assets.images.ekoPhcn.path,
       title: 'Eko ',
       subtitle: 'EDEDC',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.ibedc,
-      imagePath: Assets.images.ibedc.path,
+      assetPath: Assets.svgs.ibadanElectricity,
+      // imagePath: Assets.images.ibedc.path,
 
-      title: 'Ibadan',
+      title: 'Ibadan ',
       subtitle: 'IBEDC',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.eedc,
-      imagePath: Assets.images.enuguPhcn.path,
+      assetPath: Assets.svgs.enuguElectricity,
+      // imagePath: Assets.images.enuguPhcn.path,
 
       title: 'Enugu ',
       subtitle: 'EEDC',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.ikejaElectricity,
-      imagePath: Assets.images.ikejaPhcn.path,
+      assetPath: Assets.svgs.ikejaElectricity,
+      // imagePath: Assets.images.ikejaPhcn.path,
 
       title: 'Ikeja',
       subtitle: 'Ikeja Electricity',
@@ -265,7 +265,7 @@ class PlatFormData {
       assetPath: Assets.svgs.kadunaElectricity,
       // imagePath: Assets.images.kadunaPhcn.path,
 
-      title: 'Kaduna Electricity',
+      title: 'Kaduna',
       subtitle: 'KEDC',
     ),
     AppListTile(
@@ -273,7 +273,7 @@ class PlatFormData {
       assetPath: Assets.svgs.beninElectricityIcon,
       // imagePath: Assets.images.phcnElectricity.path,
 
-      title: 'Benin Electricity',
+      title: 'Benin ',
       subtitle: 'BEDC',
     ),
     AppListTile(
@@ -294,7 +294,7 @@ class PlatFormData {
     ),
     AppListTile(
       showSubtitle: true,
-      assetPath: Assets.svgs.josElectricityIcon,
+      assetPath: Assets.svgs.portharcourtElectricity,
       // imagePath: Assets.images.ekedc.path,
 
       title: 'Portharcourt',
@@ -302,7 +302,7 @@ class PlatFormData {
     ),
     AppListTile(
       showSubtitle: true,
-      assetPath: Assets.svgs.josElectricityIcon,
+      assetPath: Assets.svgs.abujaElectricity,
       // imagePath: Assets.images.ekedc.path,
 
       title: 'Abuja',
@@ -340,24 +340,24 @@ class PlatFormData {
   static final List<Widget> cableTvProviderWidget = [
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.dstv,
-      imagePath: Assets.images.dstv.path,
+      assetPath: Assets.svgs.dstv,
+      // imagePath: Assets.images.dstv.path,
 
       title: 'DSTV',
       subtitle: 'DSTV',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.startimes,
-      imagePath: Assets.images.startimes.path,
+      assetPath: Assets.svgs.startimes,
+      // imagePath: Assets.images.startimes.path,
 
       title: 'Startimes',
       subtitle: 'Startimes',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.gotv,
-      imagePath: Assets.images.gotv.path,
+      assetPath: Assets.svgs.gotv,
+      // imagePath: Assets.images.gotv.path,
 
       title: 'GOTV',
       subtitle: 'GoTV',
@@ -367,69 +367,94 @@ class PlatFormData {
   static final List<Widget> bettingProviders = [
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.betnaija,
-      imagePath: Assets.images.bet9ja.path,
+      assetPath: Assets.svgs.bet9ja,
+      // imagePath: Assets.images.bet9ja.path,
 
       title: 'Bet9ja',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.a1xbet,
-      imagePath: Assets.images.a1xbet.path,
+      assetPath: Assets.svgs.naijabet,
+      // imagePath: Assets.images.bet9ja.path,
+
+      title: 'NaijaBet',
+      subtitle: 'Fund wallet',
+    ),
+    AppListTile(
+      showSubtitle: true,
+      assetPath: Assets.svgs.livescorebet,
+      // imagePath: Assets.images.bet9ja.path,
+
+      title: 'LivescoreBet',
+      subtitle: 'Fund wallet',
+    ),
+    AppListTile(
+      showSubtitle: true,
+      assetPath: Assets.svgs.betking,
+      // imagePath: Assets.images.bet9ja.path,
+
+      title: 'Betking',
+      subtitle: 'Fund wallet',
+    ),
+    AppListTile(
+      showSubtitle: true,
+      assetPath: Assets.svgs.a1xbet,
+      // imagePath: Assets.images.a1xbet.path,
 
       title: '1xbet',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.bangbet,
-      imagePath: Assets.images.bangbet.path,
+      assetPath: Assets.svgs.bangbet,
+      // imagePath: Assets.images.bangbet.path,
 
       title: 'Bangbet',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.nairabetLogo,
-      imagePath: Assets.images.nairabetLogo.path,
+      assetPath: Assets.svgs.nairabet,
+      // imagePath: Assets.images.nairabetLogo.path,
 
       title: 'NairaBet',
       subtitle: 'Make Deposit',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.betway,
-      imagePath: Assets.images.betway.path,
+      assetPath: Assets.svgs.betway,
+      // imagePath: Assets.images.betway.path,
 
       title: 'Betway',
       subtitle: 'Fund your player account',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.superbet,
-      imagePath: Assets.images.superbet.path,
+      assetPath: Assets.svgs.supabet,
+      // imagePath: Assets.images.superbet.path,
 
-      title: 'SuperBet',
+      title: 'SupaBet',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.merrybet,
-      imagePath: Assets.images.merrybet.path,
+      assetPath: Assets.svgs.merrybet,
+      // imagePath: Assets.images.merrybet.path,
 
       title: 'MerryBet',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
-      // assetPath: Assets.svgs.betlandLogo,
-      imagePath: Assets.images.betlandLogo.path,
+      assetPath: Assets.svgs.betland,
+      // imagePath: Assets.images.betlandLogo.path,
 
       title: 'BetLand',
       subtitle: 'Fund Wallet',
     ),
   ];
+
   static final List<Widget> platformDrawerItem = [
     Builder(
       builder: (context) {

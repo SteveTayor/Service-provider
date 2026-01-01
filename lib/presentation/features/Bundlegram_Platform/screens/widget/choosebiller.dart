@@ -355,7 +355,7 @@ class ChoosebillerWidget extends ConsumerWidget {
                     );
                   },
                   loading: () => const AppLoader(),
-                  error: (_, __) => Text('Failed to load subproducts',
+                  error: (_, __) => Text('Failed to load providers',
                       style: context.textTheme.bodySmall!
                           .copyWith(color: AppColors.error)),
                 );
@@ -440,9 +440,14 @@ class ChoosebillerWidget extends ConsumerWidget {
                   itemBuilder: (_, index) {
                     final item = items[index];
                     final name = item.productName ?? '';
+                    debugPrint(
+                      '[ELECTRICITY] product name is $name,',
+                    );
+
                     final imagePath = ref
                         .read(platformProductProvider(serviceType).notifier)
                         .normalizeAssetName(name, serviceType: serviceType);
+                    debugPrint('[ELECTRICITY] image selected is $imagePath, ');
 
                     // Check if imagePath contains '.svg'
                     final isSvg =
@@ -456,7 +461,7 @@ class ChoosebillerWidget extends ConsumerWidget {
                           ? null
                           : imagePath, // Use imagePath for non-SVGs
 
-                      subtitle: item.productName,
+                      subtitle: item.productName ?? item.productDescription,
                       onPressed: () {
                         onProviderSelected(imagePath, name, item.id!);
                         Navigator.of(context).pop();
