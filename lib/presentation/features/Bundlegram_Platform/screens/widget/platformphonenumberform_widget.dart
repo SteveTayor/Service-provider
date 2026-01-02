@@ -2,6 +2,7 @@ import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/data/models/beneficiaries/get_all_beneficiaries.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/features/Bundlegram_Platform/model/platform_product_state.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/beneficiary_dropdown.dart';
 import 'package:flutter/material.dart';
@@ -43,68 +44,151 @@ class _PlatformPhoneNumberFormWidgetState
   late final TextEditingController _phoneController;
   void Function()? _phoneListener;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _tabController = TabController(length: 2, vsync: this);
+  //   final providerState = ref.read(platformProductProvider(widget.serviceType));
+  //   final selected = providerState.selectedSubProduct;
+  //   if (selected?.subName?.toLowerCase().contains('postpaid') ?? false) {
+  //     _tabController.index = 1;
+  //   }
+
+  //   _phoneController = providerState.firstInputController;
+  //   final notifier =
+  //       ref.read(platformProductProvider(widget.serviceType).notifier);
+  //   _phoneListener = () {
+  //     final text = _phoneController.text.trim();
+  //     notifier.detectAndSelectFromPhone(context, text);
+  //   };
+  //   _phoneController.addListener(_phoneListener!);
+  //   final profile = ref.read(globalProvider).profile.value?.data;
+  //   final isPhoneBased = widget.serviceType == PlatformProductType.airtime ||
+  //       widget.serviceType == PlatformProductType.mobileData;
+
+  //   // if (isPhoneBased && profile != null) {
+  //   //   final phone = formatPhone(profile.phone);
+  //   //   ref
+  //   //       .read(platformProductProvider(widget.serviceType))
+  //   //       .firstInputController
+  //   //       .text = phone;
+  //   // }
+  //   if (isPhoneBased && profile != null) {
+  //     final phone = formatPhone(profile.phone);
+  //     final controller = ref
+  //         .read(platformProductProvider(widget.serviceType))
+  //         .firstInputController;
+  //     if (controller.text.trim().isEmpty) {
+  //       controller.text = phone;
+  //       Future.microtask(() {
+  //         notifier.detectAndSelectFromPhone(context, controller.text.trim());
+  //       });
+  //     }
+  //   }
+
+  //   _tabController.addListener(() {
+  //     if (!_tabController.indexIsChanging) {
+  //       final type = _tabController.index == 0 ? 'prepaid' : 'postpaid';
+  //       final subProduct = ref
+  //           .read(platformProductProvider(widget.serviceType))
+  //           .subProducts
+  //           .firstWhere(
+  //             (e) => e.subName?.toLowerCase().contains(type) ?? false,
+  //           );
+
+  //       if (subProduct != null) {
+  //         ref
+  //             .read(platformProductProvider(widget.serviceType).notifier)
+  //             .selectSubProduct(subProduct);
+  //       }
+
+  //       ref
+  //           .read(platformProductProvider(widget.serviceType).notifier)
+  //           .selectPaymentType(type);
+  //     }
+  //   });
+  // }
+
   @override
   void initState() {
     super.initState();
+
     _tabController = TabController(length: 2, vsync: this);
-    final providerState = ref.read(platformProductProvider(widget.serviceType));
+
+    final provider = platformProductProvider(widget.serviceType);
+    final providerState = ref.read(provider);
+    final notifier = ref.read(provider.notifier);
+
+    /// -------------------------------
+    /// 1. Set initial tab safely
+    /// -------------------------------
     final selected = providerState.selectedSubProduct;
     if (selected?.subName?.toLowerCase().contains('postpaid') ?? false) {
       _tabController.index = 1;
     }
 
-    _phoneController = providerState.firstInputController;
-    final notifier =
-        ref.read(platformProductProvider(widget.serviceType).notifier);
+    /// -------------------------------
+    /// 2. SAFELY bind phone controller
+    /// -------------------------------
+    _phoneController =
+        providerState.firstInputController ?? TextEditingController();
+
     _phoneListener = () {
       final text = _phoneController.text.trim();
-      notifier.detectAndSelectFromPhone(context, text);
+      if (text.isNotEmpty) {
+        notifier.detectAndSelectFromPhone(context, text);
+      }
     };
+
     _phoneController.addListener(_phoneListener!);
+
+    /// -------------------------------
+    /// 3. Prefill phone (once, safely)
+    /// -------------------------------
     final profile = ref.read(globalProvider).profile.value?.data;
     final isPhoneBased = widget.serviceType == PlatformProductType.airtime ||
         widget.serviceType == PlatformProductType.mobileData;
 
-    // if (isPhoneBased && profile != null) {
-    //   final phone = formatPhone(profile.phone);
-    //   ref
-    //       .read(platformProductProvider(widget.serviceType))
-    //       .firstInputController
-    //       .text = phone;
-    // }
     if (isPhoneBased && profile != null) {
       final phone = formatPhone(profile.phone);
-      final controller = ref
-          .read(platformProductProvider(widget.serviceType))
-          .firstInputController;
-      if (controller.text.trim().isEmpty) {
+      final controller = providerState.firstInputController;
+
+      if (controller != null && controller.text.trim().isEmpty) {
         controller.text = phone;
+
+        // Avoid re-entrant update crash
         Future.microtask(() {
-          notifier.detectAndSelectFromPhone(context, controller.text.trim());
+          notifier.detectAndSelectFromPhone(
+            context,
+            controller.text.trim(),
+          );
         });
       }
     }
 
+    /// -------------------------------
+    /// 4. SAFE tab change handling
+    /// -------------------------------
     _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        final type = _tabController.index == 0 ? 'prepaid' : 'postpaid';
-        final subProduct = ref
-            .read(platformProductProvider(widget.serviceType))
-            .subProducts
-            .firstWhere(
-              (e) => e.subName?.toLowerCase().contains(type) ?? false,
-            );
+      if (_tabController.indexIsChanging) return;
 
-        if (subProduct != null) {
-          ref
-              .read(platformProductProvider(widget.serviceType).notifier)
-              .selectSubProduct(subProduct);
-        }
+      final type = _tabController.index == 0 ? 'prepaid' : 'postpaid';
 
-        ref
-            .read(platformProductProvider(widget.serviceType).notifier)
-            .selectPaymentType(type);
+      final subProducts = ref.read(provider).subProducts;
+
+      final matches = subProducts
+          .where(
+            (e) => e.subName?.toLowerCase().contains(type) ?? false,
+          )
+          .toList();
+
+      final subProduct = matches.isNotEmpty ? matches.first : null;
+
+      if (subProduct != null) {
+        notifier.selectSubProduct(subProduct);
       }
+
+      notifier.selectPaymentType(type);
     });
   }
 
@@ -132,6 +216,29 @@ class _PlatformPhoneNumberFormWidgetState
     final showBeneficiaries =
         widget.serviceType == PlatformProductType.airtime ||
             widget.serviceType == PlatformProductType.mobileData;
+    ref.listen<PlatformProductState>(
+      platformProductProvider(widget.serviceType),
+      (prev, next) {
+        final prevCtrl = prev?.firstInputController;
+        final nextCtrl = next.firstInputController;
+        if (prevCtrl != nextCtrl) {
+          // unbind old
+          if (_phoneListener != null && prevCtrl != null) {
+            prevCtrl.removeListener(_phoneListener!);
+          }
+          // bind new (only if non-null)
+          if (nextCtrl != null) {
+            // remove listener from our fallback controller if it was used
+            if (_phoneController != nextCtrl) {
+              if (_phoneListener != null)
+                _phoneController.removeListener(_phoneListener!);
+              _phoneController = nextCtrl;
+              _phoneController.addListener(_phoneListener!);
+            }
+          }
+        }
+      },
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,9 +387,8 @@ class _PlatformPhoneNumberFormWidgetState
         .normalizeAssetName(rawPath);
 
     if (assetName != null) {
-      debugPrint(
-                                    '[NORMALIZING ASSETS] asset name for icon is $assetName,');
-                               
+      debugPrint('[NORMALIZING ASSETS] asset name for icon is $assetName,');
+
       if (assetName.endsWith('.svg')) {
         return CircleAvatar(
           radius: 15,

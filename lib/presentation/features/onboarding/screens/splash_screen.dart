@@ -37,7 +37,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   void initState() {
     super.initState();
-    _storage = ref.read(secureStorageHelperProvider);
+    // _storage = ref.read(secureStorageHelperProvider);
     _setupAnimations();
     _initializeApp();
   }
@@ -114,7 +114,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   Future<void> _initializeApp() async {
-    await clearIfAppUpdated(); // Step 1: version check
+    // await clearIfAppUpdated(); // Step 1: version check
 
     // Start the unwrapping animation sequence
     await _startUnwrappingAnimation();
@@ -139,18 +139,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     await Future.delayed(const Duration(milliseconds: 600));
   }
 
-  Future<bool> clearIfAppUpdated() async {
-    final currentVersionCode = int.tryParse(AppConstants.appBuildNumber) ?? 0;
-    final storedVersion = await _storage.getAppVersionCode();
+  // Future<bool> clearIfAppUpdated() async {
+  //   final currentVersionCode = int.tryParse(AppConstants.appBuildNumber) ?? 0;
+  //   final storedVersion = await _storage.getAppVersionCode();
 
-    if (storedVersion == null || storedVersion < currentVersionCode) {
-      await _storage.clearAll();
-      await _storage.setAppVersionCode(currentVersionCode);
-      return true; // Was updated
-    }
+  //   if (storedVersion == null || storedVersion < currentVersionCode) {
+  //     await _storage.clearAll();
+  //     await _storage.setAppVersionCode(currentVersionCode);
+  //     return true; // Was updated
+  //   }
 
-    return false; // No update
-  }
+  //   return false; // No update
+  // }
 
   Future<void> _goToWalkThrough() async {
     final storage = ref.read(secureStorageHelperProvider);

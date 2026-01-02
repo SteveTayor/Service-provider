@@ -157,9 +157,9 @@ class WithdrawalProvider extends ChangeNotifier {
       return false;
     }
     final walletBalance =
-        _ref.read(globalProvider).walletBalance.value?.wallet ?? 0.0;
-    final wBalance = double.tryParse(walletBalance.toString());
-    if (amount > wBalance!) {
+        _ref.read(globalProvider).walletBalance.value?.wallet ?? '0.0';
+    final wBalance = double.tryParse(walletBalance.toString()) ?? 0.0;
+    if (amount > wBalance) {
       context.showErrorSnackBar('Amount exceeds wallet balance');
       return false;
     }
@@ -181,9 +181,9 @@ class WithdrawalProvider extends ChangeNotifier {
       return null;
     }
     final walletBalance =
-        _ref.read(globalProvider).walletBalance.value?.wallet ?? 0.0;
-    final wBalance = double.tryParse(walletBalance.toString());
-    if (amount > wBalance!) {
+        _ref.read(globalProvider).walletBalance.value?.wallet ?? '0.0';
+    final wBalance = double.tryParse(walletBalance.toString()) ?? 0.0;
+    if (amount > wBalance) {
       context.showErrorSnackBar('Amount exceeds wallet balance');
       return null;
     }

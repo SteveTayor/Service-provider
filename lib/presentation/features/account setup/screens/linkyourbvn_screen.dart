@@ -109,194 +109,208 @@ class _LinkYourBvnScreenState extends ConsumerState<LinkYourBvnScreen> {
     // assume banks list comes from globalProvider via notifier.bankOptions
     // final banks = notifier.bankOptions;
     final banksAsync = ref.watch(globalProvider).banks;
+    final profileAsync = ref.watch(globalProvider).profile;
+
+    final bool isGlobalLoading = banksAsync.isLoading || profileAsync.isLoading;
+
     _maybeShowOrHideFetchingDialog(provider.fetchingName, notifier.acct);
     return BundlegramScaffold(
       resizeToAvoidBottomInset: true,
       appBar: const BundlegramAppbar(titleText: 'Link your BVN'),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Form(
-          key: provider.formKey,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return RefreshIndicator(
-                onRefresh: () async {
-                  try {
-                    // Prefer calling the notifier's method directly so there is no race with ref.refresh(...)
-                    await ref.read(globalProvider.notifier).fetchBanks(context);
-                    // Optionally, if you want to force provider re-evaluation:
-                    // ref.invalidate(globalProvider); // Riverpod v2 style
-                  } catch (err, st) {
-                    // log error but don't crash the UI
-                    log('refresh banks failed: $err', stackTrace: st);
-                  }
-                },
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            'Ensure the phone number and date of birth provided are the same as those registered with your BVN.',
-                            textAlign: TextAlign.left,
-                            style: context.textTheme.bodyMedium?.copyWith(
-                              color: AppColors.primaryColor,
-                            ),
+      body: isGlobalLoading
+          ? const Center(
+              child: PulsingDotsLoader(
+                loadingMessage: "Preparing BVN verification...",
+              ),
+            )
+          : GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Form(
+                key: provider.formKey,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        try {
+                          // Prefer calling the notifier's method directly so there is no race with ref.refresh(...)
+                          await ref
+                              .read(globalProvider.notifier)
+                              .fetchBanks(context);
+                          // Optionally, if you want to force provider re-evaluation:
+                          // ref.invalidate(globalProvider); // Riverpod v2 style
+                        } catch (err, st) {
+                          // log error but don't crash the UI
+                          log('refresh banks failed: $err', stackTrace: st);
+                        }
+                      },
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 20.h),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight,
                           ),
-                          const SizedBox(
-                            height: 25,
-                          ),
-                          AppTextField(
-                            label: 'Bank Verification Number (BVN)',
-                            controller: notifier.bvn,
-                            hintText: 'Bank Verification Number (BVN)',
-                            validateFunction: notifier.validateBVN,
-                          ),
-                          SizedBox(height: 20.h),
-                          AppTextField(
-                            label: 'Phone Number',
-                            controller: notifier.phone,
-                            hintText: 'Phone Number linked to BVN',
-                            validateFunction: notifier.validatePhone,
-                            keyboardType: TextInputType.phone,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(
-                                  11), // stop at 11 digits
-                            ],
-                          ),
-                          SizedBox(height: 20.h),
-                          AppDatetextfield(
-                            controller: notifier.dob,
-                            title: '',
-                            hintText: 'Date of birth(DD/MM/YYYY)',
-                            validator: notifier.validateDate,
-                            onTap: () => notifier.pickDob(context),
-                          ),
-                          SizedBox(height: 20.h),
-                          Text(
-                            'Add bank details of a linked account',
-                            textAlign: TextAlign.left,
-                            style: context.textTheme.bodyMedium,
-                          ),
-                          SizedBox(height: 16.h),
-                          // AppDropdown(
-                          //   title: provider.selectedBankName == ""
-                          //       ? "Bank Name"
-                          //       : provider.selectedBankName,
-                          //   options: banks,
-                          //   selected: provider.selectedBankName,
-                          //   onChanged: notifier.setBank,
-                          // ),
-                          // Banks Async UI
-                          banksAsync.when(
-                            data: (banksData) {
-                              final banks = notifier.bankOptions;
-                              return AppDropdown(
-                                title: provider.selectedBankName == ""
-                                    ? "Bank Name"
-                                    : provider.selectedBankName,
-                                options: banks,
-                                selected: provider.selectedBankName,
-                                onChanged: notifier.setBank,
-                              );
-                            },
-                            loading: () => const Align(
-                              alignment: Alignment.centerLeft,
-                              child: PulsingDotsLoader(
-                                loadingMessage: "Loading banks...",
-                              ),
-                            ),
-                            error: (err, st) => Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                PulsingDotsLoader(
-                                  loadingMessage: "Refreshing banks...",
-                                ),
-                                SizedBox(height: 8),
+                          child: IntrinsicHeight(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
                                 Text(
-                                  "Pull down to retry",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
+                                  'Ensure the phone number and date of birth provided are the same as those registered with your BVN.',
+                                  textAlign: TextAlign.left,
+                                  style: context.textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.primaryColor,
                                   ),
                                 ),
+                                const SizedBox(
+                                  height: 25,
+                                ),
+                                AppTextField(
+                                  label: 'Bank Verification Number (BVN)',
+                                  controller: notifier.bvn,
+                                  hintText: 'Bank Verification Number (BVN)',
+                                  validateFunction: notifier.validateBVN,
+                                ),
+                                SizedBox(height: 20.h),
+                                AppTextField(
+                                  label: 'Phone Number',
+                                  controller: notifier.phone,
+                                  hintText: 'Phone Number linked to BVN',
+                                  validateFunction: notifier.validatePhone,
+                                  keyboardType: TextInputType.phone,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(
+                                        11), // stop at 11 digits
+                                  ],
+                                ),
+                                SizedBox(height: 20.h),
+                                AppDatetextfield(
+                                  controller: notifier.dob,
+                                  title: '',
+                                  hintText: 'Date of birth(DD/MM/YYYY)',
+                                  validator: notifier.validateDate,
+                                  onTap: () => notifier.pickDob(context),
+                                ),
+                                SizedBox(height: 20.h),
+                                Text(
+                                  'Add bank details of a linked account',
+                                  textAlign: TextAlign.left,
+                                  style: context.textTheme.bodyMedium,
+                                ),
+                                SizedBox(height: 16.h),
+                                // AppDropdown(
+                                //   title: provider.selectedBankName == ""
+                                //       ? "Bank Name"
+                                //       : provider.selectedBankName,
+                                //   options: banks,
+                                //   selected: provider.selectedBankName,
+                                //   onChanged: notifier.setBank,
+                                // ),
+                                // Banks Async UI
+                                banksAsync.when(
+                                  data: (banksData) {
+                                    final banks = notifier.bankOptions;
+                                    return AppDropdown(
+                                      title: provider.selectedBankName == ""
+                                          ? "Bank Name"
+                                          : provider.selectedBankName,
+                                      options: banks,
+                                      selected: provider.selectedBankName,
+                                      onChanged: notifier.setBank,
+                                    );
+                                  },
+                                  loading: () => const Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: PulsingDotsLoader(
+                                      loadingMessage: "Loading banks...",
+                                    ),
+                                  ),
+                                  error: (err, st) => Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: const [
+                                      PulsingDotsLoader(
+                                        loadingMessage: "Refreshing banks...",
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        "Pull down to retry",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 20.h),
+                                AppTextField(
+                                  label: 'Account Number',
+                                  controller: notifier.acct,
+                                  hintText: 'Account number',
+                                  validateFunction: notifier.validateAccount,
+                                  onChange: notifier.onAccountNumberChanged,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(
+                                        10), // stop at 10 digits
+                                  ],
+                                ),
+                                if (provider.fetchingName) ...[
+                                  SizedBox(height: 16.h),
+                                  const Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: PulsingDotsLoader(
+                                        loadingMessage:
+                                            "Fetching account name..."),
+                                  ),
+                                ],
+                                SizedBox(height: 16.h),
+                                AppTextField(
+                                  label: 'Account Name',
+                                  controller: TextEditingController(
+                                      text: provider.acctName),
+                                  hintText: 'Account name',
+                                  readOnly: true,
+                                ),
+                                SizedBox(height: 32.h),
+                                BundlegramButton(
+                                  text: 'Verify BVN',
+                                  onPressed: provider.loading
+                                      ? null
+                                      : () => notifier.submit(context),
+                                  // : () {
+                                  //     // Optional: check a persisted flag so you don't show it if user opted out
+                                  //     context.showBottomSheet(
+                                  //       child: BvnDisclaimerBottomSheet(
+                                  //         onConfirm: () {
+                                  //           // note: sheet will already be popped when this runs
+                                  //           notifier.submit(context);
+                                  //         },
+                                  //         onViewPrivacyPolicy: () {
+                                  //           // navigate to privacy page or open a webview
+                                  //           context.push(
+                                  //               RouteConstants.privacyPolicy);
+                                  //         },
+                                  //       ),
+                                  //       isDismissible: true,
+                                  //       // showDragHandle: true,
+                                  //     );
+                                  //   },
+                                ),
+                                const SizedBox(height: 30),
                               ],
                             ),
                           ),
-                          SizedBox(height: 20.h),
-                          AppTextField(
-                            label: 'Account Number',
-                            controller: notifier.acct,
-                            hintText: 'Account number',
-                            validateFunction: notifier.validateAccount,
-                            onChange: notifier.onAccountNumberChanged,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(
-                                  10), // stop at 10 digits
-                            ],
-                          ),
-                          if (provider.fetchingName) ...[
-                            SizedBox(height: 16.h),
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: PulsingDotsLoader(
-                                  loadingMessage: "Fetching account name..."),
-                            ),
-                          ],
-                          SizedBox(height: 16.h),
-                          AppTextField(
-                            label: 'Account Name',
-                            controller:
-                                TextEditingController(text: provider.acctName),
-                            hintText: 'Account name',
-                            readOnly: true,
-                          ),
-                          SizedBox(height: 32.h),
-                          BundlegramButton(
-                            text: 'Verify BVN',
-                            onPressed: provider.loading
-                                ? null
-                                : () => notifier.submit(context),
-                            // : () {
-                            //     // Optional: check a persisted flag so you don't show it if user opted out
-                            //     context.showBottomSheet(
-                            //       child: BvnDisclaimerBottomSheet(
-                            //         onConfirm: () {
-                            //           // note: sheet will already be popped when this runs
-                            //           notifier.submit(context);
-                            //         },
-                            //         onViewPrivacyPolicy: () {
-                            //           // navigate to privacy page or open a webview
-                            //           context.push(
-                            //               RouteConstants.privacyPolicy);
-                            //         },
-                            //       ),
-                            //       isDismissible: true,
-                            //       // showDragHandle: true,
-                            //     );
-                            //   },
-                          ),
-                          const SizedBox(height: 30),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-        ),
-      ),
+              ),
+            ),
     );
   }
 }

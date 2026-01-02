@@ -109,42 +109,39 @@ class AddBasicInformationScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = ref.watch(basicInfoProvider(userAction));
-    final notifier = ref.read(basicInfoProvider(userAction));
-    final globalUserProvider = ref.watch(globalProvider).profile;
-    final profileProv = globalUserProvider.value?.data;
+    final notifier = provider;
 
-    // Configure title based on action
+    final profileAsync = ref.watch(globalProvider).profile;
+
+    // 🔒 Handle loading / error states FIRST (very important)
+    if (profileAsync.isLoading) {
+      return const BundlegramScaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final profile = profileAsync.value?.data;
+    if (profile == null) {
+      return const BundlegramScaffold(body: SizedBox());
+    }
+
+    // /// 🔑 Hydrate controllers ONCE, outside build logic
+    // ref.listen(globalProvider, (_, next) {
+    //   final data = next.profile.value?.data;
+    //   if (data != null) {
+    //     notifier.hydrateFromProfile(data);
+    //   }
+    // });
+
     final titleText = userAction.isCreate
         ? 'Add Basic Information'
         : 'Update Account Details';
 
-    String phoneNumber = notifier.phone.text;
-    String localPhoneNumber =
-        phoneNumber.startsWith('+234') ? phoneNumber.substring(4) : phoneNumber;
+    final bvnLinked = profile.bvn?.toString().isNotEmpty ?? false;
 
-    // If it's 11 digits and starts with "0", drop the leading "0"
-    if (localPhoneNumber.length == 11 && localPhoneNumber.startsWith('0')) {
-      localPhoneNumber = localPhoneNumber.substring(1);
-    }
-
-    // Put back into controller
-    notifier.phone.text = localPhoneNumber;
-
-    String fullName = profileProv!.name!;
-    final bvnLinked = profileProv.bvn?.toString().isNotEmpty ?? false;
-
-    List<String> parts = fullName.trim().split(' ');
-    String firstName = parts.isNotEmpty ? parts.first : '';
-    String lastName = parts.length > 1 ? parts.last : '';
-
-    // Set values into the controllers
-    notifier.firstName.text = profileProv.firstName!;
-
-    // Helpers
-    bool hasGender = (profileProv.gender?.toString().isNotEmpty ?? false);
-    bool hasAddress = (profileProv.address?.toString().isNotEmpty ?? false);
-    bool hasDob = (profileProv.dob != null);
-
+    final hasGender = (profile.gender?.isNotEmpty ?? false) as bool;
+    final hasAddress = (profile.address?.isNotEmpty ?? false) as bool;
+    final hasDob = (profile.dob != null) as bool;
     // Form fields data for cleaner animation mapping
     final formFields = [
       {
@@ -207,8 +204,9 @@ class AddBasicInformationScreen extends ConsumerWidget {
           options: const ['Male', 'Female'],
           selected: provider.gender,
           onChanged: notifier.setGender,
-          isFilled:
-              userAction.isCreate ? false : (bvnLinked ? hasGender : false),
+          isFilled: userAction.isCreate
+              ? false
+              : (bvnLinked ? hasGender : false) as bool,
         ),
         'delay': 400,
       },
@@ -217,8 +215,9 @@ class AddBasicInformationScreen extends ConsumerWidget {
           label: 'Address',
           controller: notifier.address,
           hintText: 'Enter Address',
-          isFilled:
-              userAction.isCreate ? false : (bvnLinked ? hasAddress : false),
+          isFilled: userAction.isCreate
+              ? false
+              : (bvnLinked ? hasAddress : false) as bool,
           readOnly: bvnLinked,
           backgroundColor: AppColors.greyD0.withOpacity(0.3),
           validateFunction: notifier.validateNotEmpty,

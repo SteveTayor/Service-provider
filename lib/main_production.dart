@@ -75,9 +75,8 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Register background handler (must be a top-level or static function).
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
+  await NotificationService().initialize();
   // set preferred orientations
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -93,7 +92,7 @@ Future<void> main() async {
   ));
 
   // Then initialize Firebase & notifications in the background
-  unawaited(_initializeFirebaseAndMessaging());
+  // unawaited(_initializeFirebaseAndMessaging());
   // Check for app updates and handle stale data BEFORE app starts
   await _checkAppVersionAndClearStaleData();
   // Prefer runZonedGuarded to capture uncaught async errors too.
@@ -102,14 +101,44 @@ Future<void> main() async {
       // Framework errors
       FlutterError.onError = (FlutterErrorDetails details) {
         // keep default logging
-        FlutterError.presentError(details);
-        _handleGlobalError(details.exception, details.stack);
+        //   FlutterError.dumpErrorToConsole(details);
+        //   FlutterError.presentError(details);
+        //   _handleGlobalError(details.exception, details.stack);
+        // };
+
+        // // Uncaught errors on the platform dispatcher (async)
+        // PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+        //   _handleGlobalError(error, stack);
+        //   return true; // prevent default red screen
+        // };
+        // Always print
+        navigatorKey.currentState?.pushReplacement(MaterialPageRoute<void>(
+          builder: (context) => MiniErrorScreen(
+            content: details,
+          ),
+        ));
+        FlutterError.dumpErrorToConsole(details);
+
+        if (kDebugMode) {
+          // In debug: let the error crash to show the red screen (and break in the IDE)
+          // Rethrow in the current zone to allow DevTools/IDE to catch it.
+          Zone.current.handleUncaughtError(
+              details.exception, details.stack ?? StackTrace.current);
+        } else {
+          // In release, keep your global handler
+          _handleGlobalError(details.exception, details.stack);
+        }
       };
 
-      // Uncaught errors on the platform dispatcher (async)
+// For platform (async) errors:
       PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+        debugPrint('PlatformDispatcher.onError: $error');
+        if (kDebugMode) {
+          // Return false so Flutter shows the red error screen and the stack trace in debug
+          return false;
+        }
         _handleGlobalError(error, stack);
-        return true; // prevent default red screen
+        return true;
       };
 
       // start the app
@@ -190,5 +219,56 @@ void _handleGlobalError(Object error, StackTrace? stack) {
     // UI not ready — swallow gracefully, log or persist if needed
     debugPrint(
         'UI not available to show error snack. Error: $sanitizedMessage');
+  }
+}
+
+class MiniErrorScreen extends StatelessWidget {
+  final FlutterErrorDetails content;
+
+  const MiniErrorScreen({
+    Key? key,
+    required this.content,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.primaryColor,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFF2a2a2a),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: const Color(0xFFff6b6b),
+                width: 2,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: AppColors.errorText,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  content.toString(),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

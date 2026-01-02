@@ -52,45 +52,19 @@ class PlatformproductScreen extends ConsumerStatefulWidget {
 }
 
 class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
-    with RestorationMixin {
-  @override
-  String? get restorationId => 'platform_product_${widget.serviceType.name}';
-
-  // Use RestorableString for state restoration
-  final RestorableString _restorableFirstInput = RestorableString('');
-  final RestorableString _restorableSecondaryInput = RestorableString('');
-  final RestorableString _restorableAmount = RestorableString('');
-
-  // Bound controllers
-  TextEditingController? _boundFirstCtrl;
-  TextEditingController? _boundSecondaryCtrl;
-  TextEditingController? _boundAmountCtrl;
-
-  VoidCallback? _providerFirstListener;
-  VoidCallback? _providerSecondaryListener;
-  VoidCallback? _providerAmountListener;
-
-  bool _hasInitialized = false;
-
-  @override
-  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    registerForRestoration(_restorableFirstInput, 'first_input');
-    registerForRestoration(_restorableSecondaryInput, 'secondary_input');
-    registerForRestoration(_restorableAmount, 'amount');
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_hasInitialized) {
-        _hasInitialized = true;
-        _initializeRestorationAndSync();
-      }
-    });
+    with WidgetsBindingObserver {
+  void logP(String msg) {
+    debugPrint('[PlatformProductScreen] $msg');
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // ✅ Add mounted check
+    logP('initState() start');
+
+    WidgetsBinding.instance.addObserver(this);
+
+    Future.microtask(() async {
       if (!mounted) return;
 
       final notifier =
@@ -99,7 +73,6 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
       try {
         await notifier.fetchProducts(context);
 
-        // ✅ Add mounted check before next async operation
         if (!mounted) return;
 
         await notifier.refreshSubProductsForLoadedProducts(
@@ -108,162 +81,96 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
           maxChecks: 3,
         );
       } catch (e, st) {
-        debugPrint('Error fetching products: $e\n$st');
-      }
-
-      // Prefetch beneficiaries
-      if (mounted) {
-        unawaited(Future.microtask(() {
-          ref.read(minimalBeneficiariesProvider.future).catchError((e, st) {
-            debugPrint('minimalBeneficiaries prefetch error: $e');
-          });
-
-          ref.read(beneficiariesProvider.future).catchError((e, st) {
-            debugPrint('beneficiaries (all) prefetch error: $e');
-          });
-        }));
+        logP('initState error: $e\n$st');
       }
     });
+
+    logP('initState() end');
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_hasInitialized) {
-      _hasInitialized = true;
-      _initializeRestorationAndSync();
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    logP('didChangeAppLifecycleState: $state');
+
+    if (state == AppLifecycleState.resumed) {
+      final notifier =
+          ref.read(platformProductProvider(widget.serviceType).notifier);
+
+      Future.microtask(() async {
+        if (!mounted) return;
+
+        try {
+          await notifier.fetchProducts(context);
+        } catch (e, st) {
+          logP('resume fetch error: $e\n$st');
+        }
+      });
     }
-  }
-
-  void _initializeRestorationAndSync() {
-    try {
-      final state = ref.read(platformProductProvider(widget.serviceType));
-
-      // Apply restored text to provider controllers
-      if (_restorableFirstInput.value.isNotEmpty) {
-        state.firstInputController.text = _restorableFirstInput.value;
-      }
-      if (_restorableSecondaryInput.value.isNotEmpty) {
-        state.secondaryInputController.text = _restorableSecondaryInput.value;
-      }
-      if (_restorableAmount.value.isNotEmpty) {
-        state.amountController.text = _restorableAmount.value;
-      }
-
-      // Bind listeners
-      _bindControllersFromState(state);
-    } catch (e, st) {
-      debugPrint('Error initializing restoration: $e\n$st');
-    }
-  }
-
-  void _bindControllersFromState(PlatformProductState state) {
-    // Unbind previous
-    _unbindControllers();
-
-    // Bind new
-    _boundFirstCtrl = state.firstInputController;
-    _boundSecondaryCtrl = state.secondaryInputController;
-    _boundAmountCtrl = state.amountController;
-
-    // Provider -> Restorable (save text when user types)
-    _providerFirstListener = () {
-      final text = _boundFirstCtrl?.text ?? '';
-      if (_restorableFirstInput.value != text) {
-        _restorableFirstInput.value = text;
-      }
-    };
-    _boundFirstCtrl?.addListener(_providerFirstListener!);
-
-    _providerSecondaryListener = () {
-      final text = _boundSecondaryCtrl?.text ?? '';
-      if (_restorableSecondaryInput.value != text) {
-        _restorableSecondaryInput.value = text;
-      }
-    };
-    _boundSecondaryCtrl?.addListener(_providerSecondaryListener!);
-
-    _providerAmountListener = () {
-      final text = _boundAmountCtrl?.text ?? '';
-      if (_restorableAmount.value != text) {
-        _restorableAmount.value = text;
-      }
-    };
-    _boundAmountCtrl?.addListener(_providerAmountListener!);
-
-    // Initial sync
-    _restorableFirstInput.value = _boundFirstCtrl?.text ?? '';
-    _restorableSecondaryInput.value = _boundSecondaryCtrl?.text ?? '';
-    _restorableAmount.value = _boundAmountCtrl?.text ?? '';
-  }
-
-  void _unbindControllers() {
-    if (_providerFirstListener != null) {
-      _boundFirstCtrl?.removeListener(_providerFirstListener!);
-    }
-    if (_providerSecondaryListener != null) {
-      _boundSecondaryCtrl?.removeListener(_providerSecondaryListener!);
-    }
-    if (_providerAmountListener != null) {
-      _boundAmountCtrl?.removeListener(_providerAmountListener!);
-    }
-
-    _providerFirstListener = null;
-    _providerSecondaryListener = null;
-    _providerAmountListener = null;
-    _boundFirstCtrl = null;
-    _boundSecondaryCtrl = null;
-    _boundAmountCtrl = null;
   }
 
   @override
   void dispose() {
-    _unbindControllers();
-    _restorableFirstInput.dispose();
-    _restorableSecondaryInput.dispose();
-    _restorableAmount.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final r = context.responsive;
+    // final r = context.responsive;
+    // final serviceType = widget.serviceType;
+    // final state = ref.watch(platformProductProvider(serviceType));
+    // final notifier = ref.read(platformProductProvider(serviceType).notifier);
+
+    // final walletBalanceAsync =
+    //     ref.watch(globalProvider.select((s) => s.walletBalance));
+    // // ✅ FIX: wallet might be String, use tryParse instead of forced cast
+    // final double walletBalance = walletBalanceAsync.value?.wallet != null
+    //     ? double.tryParse(walletBalanceAsync.value!.wallet.toString()) ?? 0.0
+    //     : 0.0;
+    // final isPhoneBased = serviceType == PlatformProductType.airtime ||
+    //     serviceType == PlatformProductType.mobileData;
+    // // Require explicit subproduct selection for ePin/bulkEPin
+    // final bool requiresNetworkSelectedForEpin =
+    //     serviceType == PlatformProductType.ePinVoucher ||
+    //         serviceType == PlatformProductType.bulkEPin;
+
+    // final canContinue = requiresNetworkSelectedForEpin
+    //     ? (state.selectedSubProduct != null &&
+    //         (state.selectedSubProduct?.subName?.trim().isNotEmpty ?? false))
+    //     : (!isPhoneBased ||
+    //         (state.isPhoneInputValid && state.selectedProduct != null));
+
+    final r = MediaQuery.maybeOf(context) != null ? context.responsive : null;
+
     final serviceType = widget.serviceType;
+
     final state = ref.watch(platformProductProvider(serviceType));
     final notifier = ref.read(platformProductProvider(serviceType).notifier);
 
-    // --- Move ref.listen here (allowed because we're in build)
-    ref.listen<PlatformProductState>(
-      platformProductProvider(serviceType),
-      (previous, next) {
-        if (previous?.firstInputController != next.firstInputController ||
-            previous?.secondaryInputController !=
-                next.secondaryInputController ||
-            previous?.amountController != next.amountController) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              _bindControllersFromState(next);
-            }
-          });
-        }
-      },
-    );
-
     final walletBalanceAsync =
         ref.watch(globalProvider.select((s) => s.walletBalance));
-    final walletBalance = walletBalanceAsync.value?.wallet ?? 0.0;
-    final isPhoneBased = serviceType == PlatformProductType.airtime ||
+
+    final double walletBalance = double.tryParse(
+          walletBalanceAsync.value?.wallet?.toString() ?? '',
+        ) ??
+        0.0;
+
+    final bool isPhoneBased = serviceType == PlatformProductType.airtime ||
         serviceType == PlatformProductType.mobileData;
-    // Require explicit subproduct selection for ePin/bulkEPin
+
     final bool requiresNetworkSelectedForEpin =
         serviceType == PlatformProductType.ePinVoucher ||
             serviceType == PlatformProductType.bulkEPin;
 
-    final canContinue = requiresNetworkSelectedForEpin
-        ? (state.selectedSubProduct != null &&
-            (state.selectedSubProduct?.subName?.trim().isNotEmpty ?? false))
-        : (!isPhoneBased ||
-            (state.isPhoneInputValid && state.selectedProduct != null));
+    final bool hasValidSubProduct =
+        state.selectedSubProduct?.subName?.trim().isNotEmpty == true;
+
+    final bool hasValidPhoneInput =
+        state.isPhoneInputValid == true && state.selectedProduct != null;
+
+    final bool canContinue = requiresNetworkSelectedForEpin
+        ? hasValidSubProduct
+        : (!isPhoneBased || hasValidPhoneInput);
 
     return WillPopScope(
       onWillPop: () async {
@@ -288,8 +195,8 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
             },
             child: Text(
               'History',
-              style: context.textTheme.labelSmall!
-                  .copyWith(fontWeight: FontWeight.w500),
+              style: context.textTheme.labelSmall
+                  ?.copyWith(fontWeight: FontWeight.w500),
             ),
           ),
         ),
@@ -328,7 +235,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
                       : SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: EdgeInsets.symmetric(
-                              horizontal: r.spacing(16),
+                              horizontal: r!.spacing(16),
                               vertical: r.spacing(16)),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -355,22 +262,45 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
                                     CurrencyTextInputFormatter()
                                   ],
                                   keyboardType: TextInputType.number,
+                                  // validateFunction: (val) {
+                                  //   final enteredAmount = double.tryParse(
+                                  //       val?.replaceAll(',', '') ?? '');
+                                  //   final wallet = double.tryParse(walletBalance
+                                  //       .toCurrency()); // Already a double
+
+                                  //   if (enteredAmount == null ||
+                                  //       enteredAmount <= 0) {
+                                  //     return 'Enter a valid amount';
+                                  //   }
+
+                                  //   if (enteredAmount > wallet!) {
+                                  //     context.showErrorSnackBar(
+                                  //       'Insufficient wallet balance ${walletBalance.toCurrency()} available',
+                                  //     );
+                                  //     return '';
+                                  //   }
+
+                                  //   return null;
+                                  // },
                                   validateFunction: (val) {
+                                    // 1. Parse user input (remove commas)
                                     final enteredAmount = double.tryParse(
                                         val?.replaceAll(',', '') ?? '');
-                                    final wallet = double.tryParse(walletBalance
-                                        .toCurrency()); // Already a double
+
+                                    // 2. Use the walletBalance double directly (defined at top of build)
+                                    // No need to parse .toCurrency()
 
                                     if (enteredAmount == null ||
                                         enteredAmount <= 0) {
                                       return 'Enter a valid amount';
                                     }
 
-                                    if (enteredAmount > wallet!) {
+                                    // 3. Safe comparison without the bang (!) operator
+                                    if (enteredAmount > walletBalance) {
                                       context.showErrorSnackBar(
                                         'Insufficient wallet balance ${walletBalance.toCurrency()} available',
                                       );
-                                      return '';
+                                      return ''; // Or return error string
                                     }
 
                                     return null;
@@ -460,23 +390,21 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
                               Row(
                                 children: [
                                   AppSvgIcon(path: Assets.svgs.balance),
-                                  3.horizontalSpace,
-                                  Text(
-                                    'Balance (${walletBalance.toCurrency()})',
-                                    style: context.textTheme.labelMedium,
+                                  8.horizontalSpace,
+                                  Expanded(
+                                    child: Text(
+                                      'Balance (${walletBalance.toCurrency()})',
+                                      style: context.textTheme.bodySmall,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                  const Spacer(),
+                                  4.horizontalSpace,
                                   InkWell(
-                                    onTap: () {
-                                      HapticFeedback.lightImpact();
-                                      ref
-                                          .read(dashboardProvider.notifier)
-                                          .onDestinationSelected(1, context);
-                                      context.pop();
-                                    },
+                                    onTap: () =>
+                                        context.go(RouteConstants.dashboard),
                                     child: Text(
                                       'Top-up >',
-                                      style: context.textTheme.labelMedium!
+                                      style: context.textTheme.bodySmall!
                                           .copyWith(
                                               color: AppColors.primaryColor),
                                     ),
@@ -484,9 +412,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
                                 ],
                               ).withContainer(
                                 color: const Color(0xffEEF3FF),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: r.spacing(8),
-                                    vertical: r.spacing(12)),
+                                padding: context.symmetricPadding(10, 8),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               40.verticalSpace,

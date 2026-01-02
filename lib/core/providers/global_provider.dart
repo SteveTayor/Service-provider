@@ -177,9 +177,9 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   }
 
   void _handleFailure(Failure failure, BuildContext context) async {
-    final message = failure.properties.isNotEmpty
-        ? failure.properties.join('\n')
-        : 'Something went wrong';
+    // final message = failure.properties.isNotEmpty
+    //     ? failure.properties.join('\n')
+    //     : 'Something went wrong';
 
     if (failure is AuthenticationFailure &&
         failure.properties.contains(

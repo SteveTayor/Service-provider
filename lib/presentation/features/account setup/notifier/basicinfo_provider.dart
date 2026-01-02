@@ -21,9 +21,188 @@ import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:go_router/go_router.dart';
 
+// final basicInfoProvider =
+//     ChangeNotifierProvider.family<BasicInfoProvider, UserAction>((ref, action) {
+//   return BasicInfoProvider(ref, ref.read(apiServiceProvider), action);
+// });
+
+// class BasicInfoProvider extends ChangeNotifier {
+//   final Ref _ref;
+//   final ApiService _api;
+//   final UserAction userAction;
+
+//   BasicInfoProvider(this._ref, this._api, this.userAction) {
+//     final profile = (_ref.read(globalProvider).profile).value!.data!;
+
+//     _lastName.text = profile.lastName ?? '';
+//     _firstName.text = profile.firstName ?? '';
+//     _email.text = profile.email ?? '';
+//     _phone.text = profile.phone ?? '';
+//     if (profile.gender != null) {
+//       _gender = profile.gender.toString();
+//     }
+//     if (profile.address != null) {
+//       _address.text = profile.address.toString();
+//     }
+//     if (profile.dob != null) {
+//       final dt = DateTime.tryParse(profile.dob as String) ?? DateTime.now();
+//       _dob.text = DateFormat('dd/MM/yyyy').format(dt);
+//     }
+//   }
+
+//   final formKey = GlobalKey<FormState>();
+//   bool _loading = false;
+//   bool get loading => _loading;
+//   DateTime _selectedDate = DateTime.now();
+
+//   // Controllers
+//   final TextEditingController _firstName = TextEditingController();
+//   final TextEditingController _lastName = TextEditingController();
+//   final TextEditingController _email = TextEditingController();
+//   final TextEditingController _phone = TextEditingController();
+//   String _gender = '';
+//   final TextEditingController _address = TextEditingController();
+//   final TextEditingController _dob = TextEditingController();
+
+//   // Public getters
+//   TextEditingController get firstName => _firstName;
+//   TextEditingController get lastName => _lastName;
+//   TextEditingController get email => _email;
+//   TextEditingController get phone => _phone;
+//   String get gender => _gender;
+//   TextEditingController get address => _address;
+//   TextEditingController get dob => _dob;
+
+//   void setGender(String? v) {
+//     _gender = v!;
+//     notifyListeners();
+//   }
+
+//   /// Launches date picker and writes formatted date into _dob
+//   Future<void> pickDob(BuildContext context) async {
+//     final now = DateTime.now();
+
+//     unawaited(context.showBottomSheet(
+//       child: SizedBox(
+//         width: double.infinity,
+//         height: 350,
+//         child: CupertinoTheme(
+//           data: const CupertinoThemeData(
+//             brightness: Brightness.light, // forces light theme
+//             primaryColor: CupertinoColors.black, // forces black text
+//           ),
+//           child: CupertinoDatePicker(
+//             backgroundColor: CupertinoColors.white,
+//             mode: CupertinoDatePickerMode.date,
+//             initialDateTime: _selectedDate,
+//             minimumDate: DateTime(1900),
+//             maximumDate: now,
+//             onDateTimeChanged: (DateTime newDate) {
+//               _selectedDate = newDate;
+//               _dob.text = DateFormat('dd/MM/yyyy').format(newDate);
+//               notifyListeners();
+//             },
+//           ),
+//         ),
+//       ),
+//     ));
+//   }
+
+//   Future<void> submit(BuildContext context) async {
+//     if (!formKey.currentState!.validate()) return;
+//     _setLoading(true);
+//     unawaited(context.showLoadingDialog(message: 'Adding Basic info...'));
+
+//     try {
+//       final parsed = DateFormat('dd/MM/yyyy').parse(_dob.text);
+//       final iso = DateFormat('yyyy-MM-dd').format(parsed);
+//       final token = await _ref.read(secureStorageHelperProvider).getAuthToken();
+
+//       final req = ProfileSetupRequest(
+//         firstName: _firstName.text.trim(),
+//         lastName: _lastName.text.trim(),
+//         address: _address.text.trim(),
+//         dateOfBirth: iso,
+//         gender: _gender,
+//         email: _email.text.trim(),
+//       );
+
+//       final result = await _api.updateProfileInformation(token!, req);
+
+//       result.fold(
+//         (fail) {
+//           final userMsg = userFacingMessageFromFailure(fail);
+//           final displayMsg = sanitizeErrorMessage(userMsg);
+//           context.showErrorSnackBar(displayMsg);
+//         },
+//         (resp) async {
+//           if (resp.status == 'success') {
+//             _ref.read(globalProvider.notifier).fetchProfile(context);
+
+//             if (userAction.isCreate) {
+//               // dismiss dialog before navigation
+//               context.dismissDialog();
+//               await Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (_) => const TransactionSuccessful(
+//                     isBasicInfo: true,
+//                     title: 'Basic information added!',
+//                     subTitle:
+//                         'The basic information you provided has been successfully added to your Bundlegram account.',
+//                   ),
+//                 ),
+//               );
+//             } else {
+//               context
+//                 ..dismissDialog()
+//                 ..showSuccessSnackBar('Basic information updated')
+//                 ..pop(); // safe pop after dialog closed
+//             }
+//           } else {
+//             final userMsg = sanitizeErrorMessage(resp.message);
+//             context.showErrorSnackBar(userMsg ?? "Failed to update profile");
+//           }
+//         },
+//       );
+//     } catch (e) {
+// // Friendly UI for users
+//       context.dismissDialog();
+//       context.showErrorSnackBar('An error occurred. Please try again.');
+//     } finally {
+//       _setLoading(false);
+//       // dismiss dialog ONCE at the end if still mounted
+//       if (Navigator.of(context).canPop()) {
+//         context.dismissDialog();
+//       }
+//     }
+//   }
+
+//   // Validators
+//   String? validateName(String? v) => Validators.name()(v);
+//   String? validatePhone(String? v) =>
+//       Validators.validateNigerianPhoneNumber()(v);
+//   String? validateNotEmpty(String? v) => Validators.notEmpty()(v);
+//   String? validateDate(String? v) => Validators.date()(v);
+
+//   void _setLoading(bool v) {
+//     _loading = v;
+//     notifyListeners();
+//   }
+// }
 final basicInfoProvider =
     ChangeNotifierProvider.family<BasicInfoProvider, UserAction>((ref, action) {
-  return BasicInfoProvider(ref, ref.read(apiServiceProvider), action);
+  final provider = BasicInfoProvider(ref, ref.read(apiServiceProvider), action);
+
+  /// 🔑 Listen to profile changes SAFELY
+  ref.listen(globalProvider, (_, next) {
+    final profile = next.profile.value?.data;
+    if (profile != null) {
+      provider.hydrateFromProfile(profile);
+    }
+  });
+
+  return provider;
 });
 
 class BasicInfoProvider extends ChangeNotifier {
@@ -31,85 +210,117 @@ class BasicInfoProvider extends ChangeNotifier {
   final ApiService _api;
   final UserAction userAction;
 
-  BasicInfoProvider(this._ref, this._api, this.userAction) {
-    final profile = (_ref.read(globalProvider).profile).value!.data!;
+  BasicInfoProvider(this._ref, this._api, this.userAction);
 
-    _lastName.text = profile.lastName ?? '';
-    _firstName.text = profile.firstName ?? '';
-    _email.text = profile.email ?? '';
-    _phone.text = profile.phone ?? '';
-    if (profile.gender != null) {
-      _gender = profile.gender.toString();
-    }
-    if (profile.address != null) {
-      _address.text = profile.address.toString();
-    }
-    if (profile.dob != null) {
-      final dt = DateTime.tryParse(profile.dob as String) ?? DateTime.now();
-      _dob.text = DateFormat('dd/MM/yyyy').format(dt);
-    }
-  }
-
+  // -----------------------------
+  // FORM STATE
+  // -----------------------------
   final formKey = GlobalKey<FormState>();
   bool _loading = false;
   bool get loading => _loading;
-  DateTime _selectedDate = DateTime.now();
 
-  // Controllers
+  DateTime _selectedDate = DateTime.now();
+  bool _hydrated = false;
+
+  // -----------------------------
+  // CONTROLLERS
+  // -----------------------------
   final TextEditingController _firstName = TextEditingController();
   final TextEditingController _lastName = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _phone = TextEditingController();
-  String _gender = '';
   final TextEditingController _address = TextEditingController();
   final TextEditingController _dob = TextEditingController();
 
-  // Public getters
+  String _gender = '';
+
+  // -----------------------------
+  // GETTERS
+  // -----------------------------
   TextEditingController get firstName => _firstName;
   TextEditingController get lastName => _lastName;
   TextEditingController get email => _email;
   TextEditingController get phone => _phone;
-  String get gender => _gender;
   TextEditingController get address => _address;
   TextEditingController get dob => _dob;
+  String get gender => _gender;
 
-  void setGender(String? v) {
-    _gender = v!;
+  // -----------------------------
+  // SAFE PROFILE HYDRATION
+  // -----------------------------
+  void hydrateFromProfile(Data profile) {
+    if (_firstName.text.isNotEmpty) return;
+
+    _firstName.text = profile.firstName ?? '';
+    _lastName.text = profile.lastName ?? '';
+    _email.text = profile.email ?? '';
+    _address.text = profile.address.toString() ?? '';
+
+    if (profile.phone != null) {
+      _phone.text = _normalizePhone(profile.phone!);
+    }
+
+    if (profile.gender != null) {
+      _gender = profile.gender.toString();
+    }
+
+    if (profile.dob != null) {
+      final dt = DateTime.tryParse(profile.dob.toString()) ?? DateTime.now();
+      _dob.text = DateFormat('dd/MM/yyyy').format(dt);
+      _selectedDate = dt;
+    }
+
+    _hydrated = true;
     notifyListeners();
   }
 
-  /// Launches date picker and writes formatted date into _dob
+  String _normalizePhone(String phone) {
+    if (phone.startsWith('+234')) {
+      phone = phone.substring(4);
+    }
+    if (phone.length == 11 && phone.startsWith('0')) {
+      phone = phone.substring(1);
+    }
+    return phone;
+  }
+
+  // -----------------------------
+  // UI ACTIONS
+  // -----------------------------
+  void setGender(String? v) {
+    if (v == null) return;
+    _gender = v;
+    notifyListeners();
+  }
+
   Future<void> pickDob(BuildContext context) async {
     final now = DateTime.now();
 
     unawaited(context.showBottomSheet(
       child: SizedBox(
-        width: double.infinity,
         height: 350,
-        child: CupertinoTheme(
-          data: const CupertinoThemeData(
-            brightness: Brightness.light, // forces light theme
-            primaryColor: CupertinoColors.black, // forces black text
-          ),
-          child: CupertinoDatePicker(
-            backgroundColor: CupertinoColors.white,
-            mode: CupertinoDatePickerMode.date,
-            initialDateTime: _selectedDate,
-            minimumDate: DateTime(1900),
-            maximumDate: now,
-            onDateTimeChanged: (DateTime newDate) {
-              _selectedDate = newDate;
-              _dob.text = DateFormat('dd/MM/yyyy').format(newDate);
-              notifyListeners();
-            },
-          ),
+        child: CupertinoDatePicker(
+          backgroundColor: CupertinoColors.white,
+          mode: CupertinoDatePickerMode.date,
+          initialDateTime: _selectedDate,
+          minimumDate: DateTime(1900),
+          maximumDate: now,
+          onDateTimeChanged: (newDate) {
+            _selectedDate = newDate;
+            _dob.text = DateFormat('dd/MM/yyyy').format(newDate);
+            notifyListeners();
+          },
         ),
       ),
     ));
   }
 
+  // -----------------------------
+  // SUBMIT
+  // -----------------------------
   Future<void> submit(BuildContext context) async {
     if (!formKey.currentState!.validate()) return;
+
     _setLoading(true);
     unawaited(context.showLoadingDialog(message: 'Adding Basic info...'));
 
@@ -131,17 +342,17 @@ class BasicInfoProvider extends ChangeNotifier {
 
       result.fold(
         (fail) {
-          final userMsg = userFacingMessageFromFailure(fail);
-          final displayMsg = sanitizeErrorMessage(userMsg);
-          context.showErrorSnackBar(displayMsg);
+          context.showErrorSnackBar(
+            sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
+          );
         },
         (resp) async {
           if (resp.status == 'success') {
             _ref.read(globalProvider.notifier).fetchProfile(context);
 
+            context.dismissDialog();
+
             if (userAction.isCreate) {
-              // dismiss dialog before navigation
-              context.dismissDialog();
               await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -149,36 +360,34 @@ class BasicInfoProvider extends ChangeNotifier {
                     isBasicInfo: true,
                     title: 'Basic information added!',
                     subTitle:
-                        'The basic information you provided has been successfully added to your Bundlegram account.',
+                        'The basic information you provided has been successfully added.',
                   ),
                 ),
               );
             } else {
               context
-                ..dismissDialog()
                 ..showSuccessSnackBar('Basic information updated')
-                ..pop(); // safe pop after dialog closed
+                ..pop();
             }
           } else {
-            final userMsg = sanitizeErrorMessage(resp.message);
-            context.showErrorSnackBar(userMsg ?? "Failed to update profile");
+            context.showErrorSnackBar(
+              sanitizeErrorMessage(resp.message),
+            );
           }
         },
       );
-    } catch (e) {
-// Friendly UI for users
-      context.dismissDialog();
-      context.showErrorSnackBar('An error occurred. Please try again.');
+    } catch (_) {
+      context
+        ..dismissDialog()
+        ..showErrorSnackBar('An error occurred. Please try again.');
     } finally {
       _setLoading(false);
-      // dismiss dialog ONCE at the end if still mounted
-      if (Navigator.of(context).canPop()) {
-        context.dismissDialog();
-      }
     }
   }
 
-  // Validators
+  // -----------------------------
+  // VALIDATORS
+  // -----------------------------
   String? validateName(String? v) => Validators.name()(v);
   String? validatePhone(String? v) =>
       Validators.validateNigerianPhoneNumber()(v);
@@ -188,5 +397,16 @@ class BasicInfoProvider extends ChangeNotifier {
   void _setLoading(bool v) {
     _loading = v;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _firstName.dispose();
+    _lastName.dispose();
+    _email.dispose();
+    _phone.dispose();
+    _address.dispose();
+    _dob.dispose();
+    super.dispose();
   }
 }

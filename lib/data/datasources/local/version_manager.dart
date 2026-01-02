@@ -57,18 +57,18 @@ class VersionManager {
     try {
       // Get current critical data before clearing
       final authToken = await _storage.getAuthToken();
-      final username = await _storage.getUsername();
-      final rememberedEmail = await _storage.getRememberedEmail();
-      final password = await _storage.getPassword();
-      final fcmToken = await _storage.getFcmToken();
+      // final username = await _storage.getUsername();
+      // final rememberedEmail = await _storage.getRememberedEmail();
+      // final password = await _storage.getPassword();
+      // final fcmToken = await _storage.getFcmToken();
 
-      // Biometric data
-      final biometricEmail = await _storage.getBiometricEmail();
-      final biometricPassword = await _storage.getBiometricPassword();
-      final biometricDisplayName = await _storage.getBiometricDisplayName();
-      final biometricLoginEnabled = await _storage.isBiometricLoginEnabled();
-      final biometricTransactionEnabled =
-          await _storage.isBiometricTransactionEnabled();
+      // // Biometric data
+      // final biometricEmail = await _storage.getBiometricEmail();
+      // final biometricPassword = await _storage.getBiometricPassword();
+      // final biometricDisplayName = await _storage.getBiometricDisplayName();
+      // final biometricLoginEnabled = await _storage.isBiometricLoginEnabled();
+      // final biometricTransactionEnabled =
+      //     await _storage.isBiometricTransactionEnabled();
 
       // Device info
       final deviceInfo = await _storage.getDeviceInfo();
@@ -77,41 +77,41 @@ class VersionManager {
       final versionCode = await _storage.getAppVersionCode();
 
       // Clear everything
-      await _storage.clearAll();
+      // await _storage.clearAll();
 
       // Restore critical data
       if (authToken != null) await _storage.setAuthToken(authToken);
-      if (username != null) await _storage.setUsername(username);
-      if (rememberedEmail != null)
-        await _storage.setRememberedEmail(rememberedEmail);
-      if (password != null) await _storage.setPassword(password);
-      if (fcmToken != null) await _storage.saveFcmToken(fcmToken);
+      // if (username != null) await _storage.setUsername(username);
+      // if (rememberedEmail != null)
+      //   await _storage.setRememberedEmail(rememberedEmail);
+      // if (password != null) await _storage.setPassword(password);
+      // if (fcmToken != null) await _storage.saveFcmToken(fcmToken);
 
-      // Restore biometric data
-      if (biometricEmail != null && biometricPassword != null) {
-        await _storage.storeBiometricCredentials(
-          email: biometricEmail,
-          password: biometricPassword,
-          displayName: biometricDisplayName,
-        );
-      }
-      if (biometricLoginEnabled) {
-        await _storage.setBiometricLoginEnabled(true);
-      }
-      if (biometricTransactionEnabled) {
-        await _storage.setBiometricTransactionEnabled(true);
-      }
+      // // Restore biometric data
+      // if (biometricEmail != null && biometricPassword != null) {
+      //   await _storage.storeBiometricCredentials(
+      //     email: biometricEmail,
+      //     password: biometricPassword,
+      //     displayName: biometricDisplayName,
+      //   );
+      // }
+      // if (biometricLoginEnabled) {
+      //   await _storage.setBiometricLoginEnabled(true);
+      // }
+      // if (biometricTransactionEnabled) {
+      //   await _storage.setBiometricTransactionEnabled(true);
+      // }
 
-      // Restore device info
-      if (deviceInfo['macAddress'] != 'unknown') {
-        await _storage.setDeviceInfo(
-          macAddress: deviceInfo['macAddress']!,
-          ipAddress: deviceInfo['ipAddress']!,
-          latitude: deviceInfo['latitude']!,
-          longitude: deviceInfo['longitude']!,
-          platform: deviceInfo['platform']!,
-        );
-      }
+      // // Restore device info
+      // if (deviceInfo['macAddress'] != 'unknown') {
+      //   await _storage.setDeviceInfo(
+      //     macAddress: deviceInfo['macAddress']!,
+      //     ipAddress: deviceInfo['ipAddress']!,
+      //     latitude: deviceInfo['latitude']!,
+      //     longitude: deviceInfo['longitude']!,
+      //     platform: deviceInfo['platform']!,
+      //   );
+      // }
 
       // Restore version code
       if (versionCode != null) {
