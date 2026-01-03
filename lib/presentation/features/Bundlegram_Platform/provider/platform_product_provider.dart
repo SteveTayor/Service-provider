@@ -301,6 +301,18 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
   }
 
+  Future<void> ensureFreshData(BuildContext context) async {
+    // If we already have products, don't touch loading state
+    if (state.products.isNotEmpty) {
+      // refresh quietly in background
+      unawaited(fetchProducts(context));
+      return;
+    }
+
+    // If empty, THEN load visibly
+    await fetchProducts(context);
+  }
+
   /// Set or clear the selected beneficiary in state.
   /// Pass `null` to explicitly clear.
   void setSelectedBeneficiary(Beneficiary? b) {

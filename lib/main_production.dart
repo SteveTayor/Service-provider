@@ -59,7 +59,11 @@ Future<void> main() async {
 /// ------------------------------------------------------------
 
 Future<void> _loadEnv() async {
-  await dotenv.load(fileName: '.env');
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (e) {
+    debugPrint('⚠️ .env not found, continuing without it');
+  }
 }
 
 Future<void> _configureSystemUI() async {
@@ -80,7 +84,7 @@ Future<void> _configureSystemUI() async {
 
 Future<void> _initializeFirebase() async {
   await Firebase.initializeApp(
-    name: 'bundlegram',
+    // name: 'bundlegram',
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
@@ -94,15 +98,17 @@ Future<void> _initializeNotifications() async {
 }
 
 Future<void> _checkAppVersion() async {
-  try {
-    const storage = FlutterSecureStorage();
-    final secureStorage = SecureStorageHelper(storage);
-    final versionManager = VersionManager(secureStorage);
+  unawaited(() async {
+    try {
+      const storage = FlutterSecureStorage();
+      final secureStorage = SecureStorageHelper(storage);
+      final versionManager = VersionManager(secureStorage);
 
-    await versionManager.checkAndHandleAppUpdate();
-  } catch (e, st) {
-    debugPrint('Version check failed: $e\n$st');
-  }
+      await versionManager.checkAndHandleAppUpdate();
+    } catch (e, st) {
+      debugPrint('Version check failed: $e\n$st');
+    }
+  }());
 }
 
 void _setupGlobalErrorHandling() {

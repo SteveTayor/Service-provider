@@ -4,6 +4,7 @@ import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
+import 'package:intl/intl.dart';
 
 TransactionReceiptData extractReceiptFromPurchaseResponse(
   Map<String, dynamic>? data, {
@@ -48,6 +49,21 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
     return null;
   }
 
+  // String _formatDate(DateTime? date) {
+  //   if (date == null) return 'Unknown Date';
+
+  //   final localDate = date.toLocal(); // <-- Always convert first
+  //   final now = DateTime.now();
+  //   final today = DateTime(now.year, now.month, now.day);
+  //   final yesterday = today.subtract(const Duration(days: 1));
+  //   final txnDate = DateTime(localDate.year, localDate.month, localDate.day);
+
+  //   if (txnDate.isAtSameMomentAs(today)) return 'Today';
+  //   if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
+
+  //   return localDate.toIso8601String();
+  // }
+
   String _formatDate(DateTime? date) {
     if (date == null) return 'Unknown Date';
 
@@ -57,10 +73,10 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
     final yesterday = today.subtract(const Duration(days: 1));
     final txnDate = DateTime(localDate.year, localDate.month, localDate.day);
 
-    if (txnDate.isAtSameMomentAs(today)) return 'Today';
-    if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
+    // if (txnDate.isAtSameMomentAs(today)) return 'Today';
+    // if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
 
-    return localDate.toIso8601String();
+    return DateFormat('EEE MMM dd yyyy').format(localDate);
   }
 
   String _formatTime(DateTime? date) {

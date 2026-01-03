@@ -287,12 +287,23 @@ class NotificationProvider extends ChangeNotifier {
 
   String _formatNotificationTime(DateTime? dateTime) {
     if (dateTime == null) return '';
+
+    final localTime = dateTime.isUtc ? dateTime.toLocal() : dateTime;
+
     final now = DateTime.now();
-    final difference = now.difference(dateTime);
+    final difference = now.difference(localTime);
+
     if (difference.inDays > 0) {
-      return '${dateTime.day} ${_getMonthName(dateTime.month)} ${dateTime.year} • ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+      return '${localTime.day} '
+          '${_getMonthName(localTime.month)} '
+          '${localTime.year} • '
+          '${localTime.hour.toString().padLeft(2, '0')}:'
+          '${localTime.minute.toString().padLeft(2, '0')}';
     }
-    return 'Today • ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+
+    return 'Today • '
+        '${localTime.hour.toString().padLeft(2, '0')}:'
+        '${localTime.minute.toString().padLeft(2, '0')}';
   }
 
   int _getMonthNameIndex(String month) {

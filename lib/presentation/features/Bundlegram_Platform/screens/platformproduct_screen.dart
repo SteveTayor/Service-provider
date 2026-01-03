@@ -100,12 +100,8 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
         if (!mounted) return;
 
         try {
-          notifier.setLoading(); // 👈 force waiting state
-          await notifier.fetchProducts(context);
-          await notifier.refreshSubProductsForLoadedProducts(
-            context,
-            force: true,
-          );
+          // notifier.setLoading(); // force waiting state
+          await notifier.ensureFreshData(context);
         } catch (e, st) {
           logP('resume fetch error: $e\n$st');
         }
@@ -177,7 +173,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
         ? hasValidSubProduct
         : (!isPhoneBased || hasValidPhoneInput);
 
-    if (state.isLoading) {
+    if (state.isLoading && state.products.isEmpty) {
       return Scaffold(
         appBar: BundlegramAppbar(
           titleText: serviceType.title,
