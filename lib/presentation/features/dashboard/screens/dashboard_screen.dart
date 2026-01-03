@@ -6,6 +6,7 @@ import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_pr
 import 'package:bundlegram/presentation/features/dashboard/screens/widget/dashboardd_update_checker.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/transaction_screen.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/wallet_screen.dart';
+import 'package:bundlegram/presentation/general_widget/async_value/app_error_wiget.dart';
 import 'package:bundlegram/presentation/general_widget/nav_bar.dart';
 import 'package:bundlegram/presentation/general_widget/promo_modal.dart';
 import 'package:flutter/material.dart';
@@ -47,8 +48,14 @@ class _DashboardState extends ConsumerState<Dashboard> {
     }
   }
 
+  void _retryInitialization() {
+    ref.read(dashboardProvider.notifier).initDashboard(context);
+    hasInitialized = true;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final dashboardState = ref.watch(dashboardProvider);
     final currentIndex =
         ref.watch(dashboardProvider.select((p) => p.currentIndex));
 
@@ -59,6 +66,16 @@ class _DashboardState extends ConsumerState<Dashboard> {
         hasInitialized = true;
       });
     }
+    if (dashboardState.error != null && currentIndex != 3) {
+      return Scaffold(
+        body: AppErrorWidget(
+          error: dashboardState.error!,
+          errorMessage: 'Failed to load dashboard',
+          onRetry: _retryInitialization,
+        ),
+      );
+    }
+
     return PopScope(
       canPop: false, // Prevent default pop behavior
       onPopInvoked: (didPop) {

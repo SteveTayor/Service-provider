@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,13 +31,18 @@ class NotificationService {
 
   Future<void> initialize() async {
     // firebase init,
-    try {
-      await Firebase.initializeApp();
-    } catch (e) {
-      if (kDebugMode)
-        debugPrint(
-            'Firebase initialize error (possibly already initialized): $e');
-    }
+    // try {
+    //   await Firebase.initializeApp();
+    // } catch (e) {
+    //   if (kDebugMode)
+    //     debugPrint(
+    //         'Firebase initialize error (possibly already initialized): $e');
+    // }
+    final androidPlugin =
+        _notificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+
+    await androidPlugin?.createNotificationChannel(_pushChannel);
 
     // Init local notifications
     const androidSettings =
@@ -52,7 +59,8 @@ class NotificationService {
       initSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         if (kDebugMode) debugPrint('Notification tapped: ${response.payload}');
-        _handleNotificationTap(response.payload);
+        // _handleNotificationTap(response.payload);
+        _handleNotificationTap(response.data);
       },
     );
 
@@ -129,8 +137,9 @@ class NotificationService {
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
         if (kDebugMode)
           debugPrint('onMessageOpenedApp: ${message.notification?.title}');
-        _handleNotificationTap(
-            message.data['payload']?.toString() ?? message.data.toString());
+        // _handleNotificationTap(
+        //     message.data['payload']?.toString() ?? message.data.toString());
+        _handleNotificationTap(message.data);
       });
 
       // Terminated -> opened via notification
@@ -138,8 +147,9 @@ class NotificationService {
         if (message != null) {
           if (kDebugMode)
             debugPrint('getInitialMessage: ${message.notification?.title}');
-          _handleNotificationTap(
-              message.data['payload']?.toString() ?? message.data.toString());
+          // _handleNotificationTap(
+          //     message.data['payload']?.toString() ?? message.data.toString());
+          _handleNotificationTap(message.data);
         }
       });
     } catch (e) {
@@ -191,7 +201,9 @@ class NotificationService {
         message.notification?.title ?? 'No Title',
         message.notification?.body ?? 'No Body',
         platformDetails,
-        payload: message.data['payload']?.toString(),
+        payload:
+            // message.data['payload']?.toString() ??
+            jsonEncode(message.data),
       );
     } catch (e) {
       if (kDebugMode) debugPrint('Error displaying push notification: $e');
@@ -261,15 +273,51 @@ class NotificationService {
   }
 
   //to navigate to specific route on tap
-  void _handleNotificationTap(String? payload) {
-    if (kDebugMode) debugPrint('Handling tap with payload: $payload');
-    try {
-      if (navigatorKey.currentState != null) {
-        //  message screen
-        navigatorKey.currentState!.pushNamed('/messages', arguments: payload);
-      }
-    } catch (e) {
-      if (kDebugMode) debugPrint('Navigation error on notification tap: $e');
+  // void _handleNotificationTap(String? payload) {
+  //   if (kDebugMode) debugPrint('Handling tap with payload: $payload');
+  //   try {
+  //     if (navigatorKey.currentState != null) {
+  //       //  message screen
+  //       navigatorKey.currentState!.pushNamed('/messages', arguments: payload);
+  //     }
+  //   } catch (e) {
+  //     if (kDebugMode) debugPrint('Navigation error on notification tap: $e');
+  //   }
+  // }
+  void _handleNotificationTap(Map<String, dynamic> data) {
+    if (kDebugMode) debugPrint('Notification data: $data');
+
+    final type = data['type'];
+    final route = data['route'];
+
+    if (navigatorKey.currentState == null) return;
+
+    switch (type) {
+      case 'transaction':
+        navigatorKey.currentState!.pushNamed(
+          RouteConstants.wallet,
+          arguments: data['transactionId'],
+        );
+        break;
+
+      case 'message':
+        navigatorKey.currentState!.pushNamed(
+          RouteConstants.notification,
+          arguments: data['conversationId'],
+        );
+        break;
+
+      case 'security':
+        navigatorKey.currentState!.pushNamed(
+          RouteConstants.setting,
+        );
+        break;
+
+      default:
+        // fallback
+        if (route != null) {
+          navigatorKey.currentState!.pushNamed(route as String);
+        }
     }
   }
 }

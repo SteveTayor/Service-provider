@@ -10,6 +10,7 @@ import 'package:bundlegram/data/models/transaction/user_transactions_response.da
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
+import 'package:bundlegram/presentation/general_widget/async_value/app_error_wiget.dart';
 import 'package:bundlegram/presentation/general_widget/receipt_widget.dart';
 import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
 import 'package:bundlegram/presentation/general_widget/transaction_share_receipt.dart';
@@ -48,7 +49,13 @@ class RecentTransactionWidget extends ConsumerWidget {
         child: EmptytransactionWidget(),
       );
     }
-    if (recentState.error != null) return ErrorWidget('Something went wrong');
+    if (recentState.error != null) {
+      return AppErrorWidget(
+        error: recentState.error!,
+        errorMessage: 'Failed to load recent transactions',
+        onRetry: () => ref.refresh(transactionProvider),
+      );
+    }
     if (recentState.filteredServices.isEmpty) return EmptytransactionWidget();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

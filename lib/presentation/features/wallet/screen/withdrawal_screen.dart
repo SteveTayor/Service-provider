@@ -97,11 +97,24 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
   //     notifier.setSubmitting(false);
   //   });
   // }
+bool _didInitialFetch = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _didInitialFetch) return;
+      _didInitialFetch = true;
+
+      final provider = ref.read(withdrawalProvider);
+
+      debugPrint('[WithdrawalScreen] Initial fetch');
+      provider.fetchData(context);
+    });
   }
+
 
   @override
   void didChangeDependencies() {

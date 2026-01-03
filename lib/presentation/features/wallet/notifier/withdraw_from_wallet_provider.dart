@@ -101,9 +101,39 @@ class WithdrawalProvider extends ChangeNotifier {
     return value.toCurrency();
   }
 
+  // Future<void> fetchData(BuildContext context) async {
+  //   _setLoading(true);
+  //   await _fetchUserBanks(context);
+  //   _setLoading(false);
+  // }
+
   Future<void> fetchData(BuildContext context) async {
+    if (_userBanks.isNotEmpty && _selectedBank != null) return;
+
     _setLoading(true);
-    await _fetchUserBanks(context);
+
+    final token = await _storage.getAuthToken();
+    if (token == null) {
+      _setLoading(false);
+      context.showErrorSnackBar('Authentication token missing');
+      return;
+    }
+
+    final result = await _api.getUserBanks(token);
+
+    result.fold(
+      (fail) {
+        context.showErrorSnackBar(
+          sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
+        );
+      },
+      (data) {
+        _userBanks = data.data ?? [];
+        _selectedBank = _userBanks.isNotEmpty ? _userBanks.first : null;
+        notifyListeners();
+      },
+    );
+
     _setLoading(false);
   }
 

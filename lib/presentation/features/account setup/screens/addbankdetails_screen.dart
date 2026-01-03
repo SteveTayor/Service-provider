@@ -9,6 +9,7 @@ import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_dropdown.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
+import 'package:bundlegram/presentation/general_widget/async_value/app_error_wiget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -94,8 +95,12 @@ class AddBankDetailsScreen extends ConsumerWidget {
           ),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(
-          child: Text('Something went wrong'),
+        error: (e, st) => AppErrorWidget(
+          error: e,
+          errorMessage: 'Error occurred in loading available banks',
+          onRetry: () {
+            ref.read(globalProvider.notifier).fetchBanks(context);
+          },
         ),
       ),
     );

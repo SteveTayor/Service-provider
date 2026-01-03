@@ -129,6 +129,10 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
   }
 
+  void setLoading() {
+    state = state.copyWith(isLoading: true);
+  }
+
   /// Refreshing sub-products.
   /// Set force = true to bypass cache.
   Future<void> refreshSubProductsForLoadedProducts(
@@ -1163,7 +1167,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         );
         return;
       } else {
-        context.showErrorSnackBar("Biometric authentication failed");
+        debugPrint("Biometric authentication failed");
         // fallback → open PIN screen
       }
     }
@@ -1342,7 +1346,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
           //     : 'Transaction failed');
           final userMsg = userFacingMessageFromFailure(failure);
           final displayMessage = sanitizeErrorMessage(userMsg);
-          context.showErrorSnackBar(displayMessage);
+          debugPrint('Display message: $displayMessage');
+          // context.showErrorSnackBar(displayMessage);
           if (kDebugMode) {
             debugPrint('Transaction failed: $userMsg');
             debugPrint('Display message: $displayMessage');
@@ -1456,8 +1461,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
           }
         },
       );
-    } catch (e) {
+    } catch (e, st) {
       state = state.copyWith(isLoading: false, error: e.toString());
+      debugPrint("Error occuring during transaction is $e and stacktrace $st");
       context.dismissDialog();
       final msg = kDebugMode
           ? sanitizeErrorMessage(e)

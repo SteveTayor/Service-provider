@@ -6,6 +6,14 @@ String sanitizeErrorMessage(dynamic rawMessage) {
   String message = rawMessage.toString().trim();
   if (message.isEmpty) return fallback;
 
+// Normalize comparison
+  final fallbackLower = fallback.toLowerCase();
+
+// If fallback already exists anywhere → return ONLY fallback
+  if (message.toLowerCase().contains(fallbackLower)) {
+    return fallback;
+  }
+
   final lower = message.toLowerCase();
   // Reject messages that start with numbers or look like dumps
   final lines = message.split(RegExp(r'[\r\n]+'));

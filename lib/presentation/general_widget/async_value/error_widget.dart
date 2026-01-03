@@ -18,7 +18,7 @@ class ErrorMessageSanitizer {
     final networkFailureMatch =
         RegExp(r'NetworkFailure\((.*?)\)').firstMatch(message);
     if (networkFailureMatch != null) {
-      return 'Network failure, please try again later';
+      return 'Network failure, please try again later.';
     }
 
     // Remove any text inside parentheses for general errors
@@ -46,7 +46,7 @@ class ErrorMessageSanitizer {
 
     // Handle format exceptions
     if (message.contains('FormatException')) {
-      return 'Invalid data format received.';
+      return 'Something went twrong.';
     }
 
     // Clean up common Flutter/Dart error prefixes

@@ -14,12 +14,20 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   String? beneficiary,
 }) {
   // Safe get helpers
-  T? _get<T>(Map<String, dynamic>? m, List<String> keys) {
+  dynamic _getRaw(Map<String, dynamic>? m, List<String> keys) {
     if (m == null) return null;
     for (final k in keys) {
-      if (m.containsKey(k) && m[k] != null) return m[k] as T;
+      if (m.containsKey(k) && m[k] != null) {
+        return m[k];
+      }
     }
     return null;
+  }
+
+  String? _getString(Map<String, dynamic>? m, List<String> keys) {
+    final v = _getRaw(m, keys);
+    if (v == null) return null;
+    return v.toString();
   }
 
   double? _parseDouble(dynamic v) {
@@ -68,26 +76,26 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
   }
 
   // Look for id/refs/numbers in many common keys
-  final transRef = _get<String>(data, [
+  final transRef = _getString(data, [
         'trans_ref',
         'transRef',
         'trans_ref_no',
         'transaction_ref',
-        'trx_ref'
+        'trx_ref',
+        'trnxid',
+        'reference',
+        'ref',
       ]) ??
-      _get<String>(data, ['trnxid', 'reference', 'ref']) ??
-      'BNG-${_get<dynamic>(data, [
-                'id'
-              ]) ?? DateTime.now().millisecondsSinceEpoch}';
+      'BNG-${_getRaw(data, ['id']) ?? DateTime.now().millisecondsSinceEpoch}';
 
-  final transType = (_get<String>(
-              data, ['trans_type', 'transType', 'type', 'payment_type']) ??
-          '')
-      .toString()
-      .toLowerCase();
+  final transType =
+      (_getString(data, ['trans_type', 'transType', 'type', 'payment_type']) ??
+              '')
+          .toString()
+          .toLowerCase();
 
   // amount: prefer deduct_amount -> amount -> deductAmount etc.
-  final amountValue = _parseDouble(_get<dynamic>(
+  final amountValue = _parseDouble(_getRaw(
       data, ['deduct_amount', 'deductAmount', 'amount', 'deduct_amount_ng']));
   // fallback: use originalAmount if provided (try parse)
   final amountDouble = amountValue ?? _parseDouble(originalAmount);
@@ -102,14 +110,14 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
       }
     }
     // fallback from any raw amount string present
-    final raw = _get<String>(data, ['amount', 'deduct_amount', 'deductAmount']);
+    final raw = _getString(data, ['amount', 'deduct_amount', 'deductAmount']);
     if (raw != null && raw.isNotEmpty) return raw;
     if (originalAmount != null) return originalAmount;
     return '0.00';
   }
 
   // account/target fields
-  final accountNumber = _get<String>(data, [
+  final accountNumber = _getString(data, [
         'cr_acc',
         'crAcc',
         'account',
@@ -121,23 +129,21 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
       '';
 
   // balance before/after
-  final balanceBefore =
-      _get<dynamic>(data, ['balance_before', 'balanceBefore']);
-  final balanceAfter = _get<dynamic>(data, ['balance_after', 'balanceAfter']);
+  final balanceBefore = _getRaw(data, ['balance_before', 'balanceBefore']);
+  final balanceAfter = _getRaw(data, ['balance_after', 'balanceAfter']);
 
-  final createdAtRaw = _get<String>(data, ['created_at', 'createdAt', 'date']);
+  final createdAtRaw = _getString(data, ['created_at', 'createdAt', 'date']);
   final createdAt = _parseDate(createdAtRaw);
 
   // common additional fields
-  final token = _get<String>(data, ['token', 'token_no', 'purchase_token']);
-  final unit = _get<String>(data, ['unit']);
-  final cardPin = _get<String>(data, ['cardPin', 'card_pin', 'pin']);
+  final token = _getString(data, ['token', 'token_no', 'purchase_token']);
+  final unit = _getString(data, ['unit']);
+  final cardPin = _getString(data, ['cardPin', 'card_pin', 'pin']);
   final status =
-      _get<String>(data, ['status', 'transaction_status', 'state']) ??
-          'Unknown';
+      _getString(data, ['status', 'transaction_status', 'state']) ?? 'Unknown';
 
   //  bundle name
-  final description = _get<String>(data, [
+  final description = _getString(data, [
         'description',
         'description_text',
         'sub_name',
@@ -162,7 +168,7 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
       status: status,
       description: description,
       network: selectedProduct?.productName ??
-          _get<String>(data, ['network', 'provider']),
+          _getString(data, ['network', 'provider']),
       phoneNumber: accountNumber,
       userBalance: balanceAfter != null
           ? CurrencyFormatter.format(_parseDouble(balanceAfter))
@@ -183,7 +189,7 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
       status: status,
       description: description,
       network: selectedProduct?.productName ??
-          _get<String>(data, ['network', 'provider']),
+          _getString(data, ['network', 'provider']),
       dataBundle: selectedSubProduct?.subName ?? description,
       phoneNumber: accountNumber,
       userBalance: balanceAfter != null
@@ -205,7 +211,7 @@ TransactionReceiptData extractReceiptFromPurchaseResponse(
       status: status,
       description: description,
       meterNumber: accountNumber,
-      token: token!.formatAsToken(),
+      token: token?.formatAsToken(),
       units: unit,
       userBalance: balanceAfter != null
           ? CurrencyFormatter.format(_parseDouble(balanceAfter))

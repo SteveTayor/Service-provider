@@ -30,12 +30,14 @@ class LinkYourBvnScreen extends ConsumerStatefulWidget {
   ConsumerState<LinkYourBvnScreen> createState() => _LinkYourBvnScreenState();
 }
 
-class _LinkYourBvnScreenState extends ConsumerState<LinkYourBvnScreen> {
+class _LinkYourBvnScreenState extends ConsumerState<LinkYourBvnScreen>
+    with WidgetsBindingObserver {
   bool _isShowingFetchingDialog = false;
   bool _hasShownDisclaimer = false;
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // Run async fetches after first frame, but guard with try/catch
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.microtask(() async {
@@ -58,8 +60,23 @@ class _LinkYourBvnScreenState extends ConsumerState<LinkYourBvnScreen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      Future.microtask(() async {
+        if (!mounted) return;
+
+        try {
+          await ref.read(globalProvider.notifier).fetchBanks(context);
+          await ref.read(globalProvider.notifier).fetchProfile(context);
+        } catch (_) {}
+      });
+    }
+  }
+
+  @override
   void dispose() {
     // If dialog is still shown for some reason, dismiss it when disposing
+    WidgetsBinding.instance.removeObserver(this);
     if (_isShowingFetchingDialog && mounted) {
       Navigator.of(context, rootNavigator: true).maybePop();
     }
@@ -82,23 +99,23 @@ class _LinkYourBvnScreenState extends ConsumerState<LinkYourBvnScreen> {
     }
   }
 
-  void _maybeShowOrHideFetchingDialog(
-      bool fetching, TextEditingController acctController) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+  // void _maybeShowOrHideFetchingDialog(
+  //     bool fetching, TextEditingController acctController) {
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     if (!mounted) return;
 
-      final acctLen = acctController.text.trim().length;
-      final shouldShow = fetching && acctLen == 10;
+  //     final acctLen = acctController.text.trim().length;
+  //     final shouldShow = fetching && acctLen == 10;
 
-      if (shouldShow && !_isShowingFetchingDialog) {
-        _isShowingFetchingDialog = true;
-        context.showLoadingDialog(message: "Fetching account name...");
-      } else if (!shouldShow && _isShowingFetchingDialog) {
-        context.dismissDialog();
-        _isShowingFetchingDialog = false;
-      }
-    });
-  }
+  //     if (shouldShow && !_isShowingFetchingDialog) {
+  //       _isShowingFetchingDialog = true;
+  //       context.showLoadingDialog(message: "Fetching account name...");
+  //     } else if (!shouldShow && _isShowingFetchingDialog) {
+  //       context.dismissDialog();
+  //       _isShowingFetchingDialog = false;
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +130,19 @@ class _LinkYourBvnScreenState extends ConsumerState<LinkYourBvnScreen> {
 
     final bool isGlobalLoading = banksAsync.isLoading || profileAsync.isLoading;
 
-    _maybeShowOrHideFetchingDialog(provider.fetchingName, notifier.acct);
+    ref.listen(linkBvnProvider, (prev, next) {
+      final acctLen = notifier.acct.text.trim().length;
+      final shouldShow = next.fetchingName && acctLen == 10;
+
+      if (shouldShow && !_isShowingFetchingDialog) {
+        _isShowingFetchingDialog = true;
+        context.showLoadingDialog(message: "Fetching account name...");
+      } else if (!shouldShow && _isShowingFetchingDialog) {
+        context.dismissDialog();
+        _isShowingFetchingDialog = false;
+      }
+    });
+
     return BundlegramScaffold(
       resizeToAvoidBottomInset: true,
       appBar: const BundlegramAppbar(titleText: 'Link your BVN'),
