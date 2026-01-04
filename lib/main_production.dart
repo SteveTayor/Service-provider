@@ -41,17 +41,32 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 /// App entry
 /// ------------------------------------------------------------
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-  await _loadEnv();
-  await _configureSystemUI();
-  await _initializeFirebase();
-  await _initializeNotifications();
-  await _checkAppVersion();
+      //  block first frame
+      await _initializeFirebase();
+      await _initializeNotifications();
 
-  _setupGlobalErrorHandling();
+      // defer (DO NOT await)
+      unawaited(_loadEnv());
+      unawaited(_configureSystemUI());
+      unawaited(_checkAppVersion());
 
-  await _runApp();
+      _setupGlobalErrorHandling();
+
+      await bootstrap(
+        () => ProviderScope(
+          child: DevicePreview(
+            enabled: false,
+            builder: (_) => const App(),
+          ),
+        ),
+      );
+    },
+    _handleGlobalError,
+  );
 }
 
 /// ------------------------------------------------------------
@@ -130,21 +145,21 @@ void _setupGlobalErrorHandling() {
   };
 }
 
-Future<void> _runApp() async {
-  await runZonedGuarded(
-    () async {
-      await bootstrap(
-        () => ProviderScope(
-          child: DevicePreview(
-            enabled: false,
-            builder: (_) => const App(),
-          ),
-        ),
-      );
-    },
-    _handleGlobalError,
-  );
-}
+// Future<void> _runApp() async {
+//   await runZonedGuarded(
+//     () async {
+//       await bootstrap(
+//         () => ProviderScope(
+//           child: DevicePreview(
+//             enabled: false,
+//             builder: (_) => const App(),
+//           ),
+//         ),
+//       );
+//     },
+//     _handleGlobalError,
+//   );
+// }
 
 /// ------------------------------------------------------------
 /// Global error handler

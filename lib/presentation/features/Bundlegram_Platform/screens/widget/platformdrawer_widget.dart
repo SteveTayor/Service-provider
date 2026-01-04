@@ -120,7 +120,7 @@ class _PlatFormDrawerState extends ConsumerState<PlatFormDrawer>
     return Material(
       color: AppColors.background,
       child: SizedBox(
-        width: 260.w,
+        width: 220.w,
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics(),

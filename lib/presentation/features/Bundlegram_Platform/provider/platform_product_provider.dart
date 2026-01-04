@@ -70,6 +70,20 @@ const List<PlatformProductType> kValidationRequiredServices = [
   PlatformProductType.internetServices,
 ];
 
+TextEditingController _rehydrate(
+  TextEditingController controller, {
+  String? text,
+}) {
+  // If controller lost its attachment, recreate it
+  try {
+    // Try to access the controller to check if it's still valid
+    controller.text;
+    return controller;
+  } catch (_) {
+    return TextEditingController(text: text);
+  }
+}
+
 final platformProductProvider = StateNotifierProvider.family<
     PlatformProductNotifier, PlatformProductState, PlatformProductType>(
   (ref, serviceType) =>
@@ -151,6 +165,14 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
   }
 
+  void rehydrateControllers() {
+    state = state.copyWith(
+      firstInputController: _rehydrate(state.firstInputController),
+      secondaryInputController: _rehydrate(state.secondaryInputController),
+      amountController: _rehydrate(state.amountController),
+    );
+  }
+
   // Future<bool> hasSubProducts(int productId) async {
   //   if (_subProductsCache.containsKey(productId)) {
   //     return _subProductsCache[productId]!.isNotEmpty;
@@ -230,9 +252,16 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         dropdownOptions: options,
         selectedDataType: options.isNotEmpty ? options.first : null,
         selectedSubProduct: defaultSub,
-        amountController: _serviceType == PlatformProductType.electricity
-            ? state.amountController
-            : TextEditingController(),
+        // amountController: _serviceType == PlatformProductType.electricity
+        //     ? state.amountController
+        //     : TextEditingController(),
+        amountController: _rehydrate(
+          state.amountController,
+          text: _serviceType == PlatformProductType.electricity
+              ? state.amountController.text
+              : '',
+        ),
+
         error: null,
       );
       return;
@@ -261,9 +290,16 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         dropdownOptions: options,
         selectedDataType: options.isNotEmpty ? options.first : null,
         selectedSubProduct: defaultSubProduct,
-        amountController: _serviceType == PlatformProductType.electricity
-            ? state.amountController
-            : TextEditingController(),
+        // amountController: _serviceType == PlatformProductType.electricity
+        //     ? state.amountController
+        //     : TextEditingController(),
+        amountController: _rehydrate(
+          state.amountController,
+          text: _serviceType == PlatformProductType.electricity
+              ? state.amountController.text
+              : '',
+        ),
+
         error: result.status != 'success' ? result.message : null,
       );
 
@@ -332,7 +368,10 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       selectedPaymentType: null,
       subProducts: [],
       dropdownOptions: [],
-      amountController: TextEditingController(),
+      amountController: _rehydrate(
+        state.amountController,
+        text: "",
+      ),
       isValidated: false,
       validatedName: null,
     );
@@ -355,7 +394,10 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       selectedDataType: dataType,
       selectedSubProduct: null, // Clear selected subproduct
       selectedPresetAmount: null, // Clear preset amount
-      amountController: TextEditingController(),
+      amountController: _rehydrate(
+        state.amountController,
+        text: "",
+      ),
     );
   }
 
@@ -367,9 +409,12 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     state = state.copyWith(
       selectedSubProduct: subProduct,
       selectedPresetAmount: null,
-      amountController: _serviceType == PlatformProductType.electricity
-          ? state.amountController // Retain the current user-entered amount
-          : TextEditingController(text: subProduct.subPrice ?? ''),
+      amountController: _rehydrate(
+        state.amountController,
+        text: _serviceType == PlatformProductType.electricity
+            ? state.amountController.text
+            : subProduct.subPrice,
+      ),
     );
   }
 

@@ -48,7 +48,7 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   AppSvgIcon(
-                    onTap: () => platform.openDrawer(scaffoldKey),
+                    onTap: () => Scaffold.of(context).openDrawer(),
                     path: Assets.svgs.bars3,
                     width: 24.w,
                     fit: BoxFit.scaleDown,

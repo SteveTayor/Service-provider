@@ -20,13 +20,14 @@ class PlatformScreen extends ConsumerStatefulWidget {
   ConsumerState<PlatformScreen> createState() => _PlatformScreenState();
 }
 
-final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+// final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
 class _PlatformScreenState extends ConsumerState<PlatformScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
+      key: _scaffoldKey,
       drawer: const PlatFormDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {

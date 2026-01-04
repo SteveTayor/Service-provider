@@ -74,6 +74,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
       try {
         notifier.setLoading();
         await notifier.fetchProducts(context);
+        notifier.rehydrateControllers();
 
         await notifier.refreshSubProductsForLoadedProducts(
           context,
@@ -100,6 +101,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
         if (!mounted) return;
 
         try {
+          notifier.rehydrateControllers();
           // notifier.setLoading(); // force waiting state
           await notifier.ensureFreshData(context);
         } catch (e, st) {
@@ -141,7 +143,9 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
     //     : (!isPhoneBased ||
     //         (state.isPhoneInputValid && state.selectedProduct != null));
 
-    final r = MediaQuery.maybeOf(context) != null ? context.responsive : null;
+    final r =
+        // MediaQuery.maybeOf(context) != null ?
+        context.responsive;
 
     final serviceType = widget.serviceType;
 
@@ -242,7 +246,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
                   : SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.symmetric(
-                          horizontal: r!.spacing(16), vertical: r.spacing(16)),
+                          horizontal: r.spacing(16), vertical: r.spacing(16)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

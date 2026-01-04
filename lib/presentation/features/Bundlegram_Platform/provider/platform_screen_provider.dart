@@ -92,9 +92,9 @@ class PlatformProvider extends ChangeNotifier {
 
   // Navigation Actions
 
-  void openDrawer(GlobalKey<ScaffoldState> key) {
-    key.currentState?.openDrawer();
-  }
+  // void openDrawer(GlobalKey<ScaffoldState> key) {
+  //   key.currentState?.openDrawer();
+  // }
 
   void goToNotification(BuildContext context) {
     context.push('/notification');

@@ -121,12 +121,29 @@ class AppRouter {
         path: RouteConstants.enterPin,
         builder: (context, state) => const EnterPinScreen(),
       ),
+      // GoRoute(
+      //   path: RouteConstants.platformProduct,
+      //   builder: (context, state) {
+      //     // Expect that you called `context.go(path, extra: someServiceType)`
+      //     final serviceType = state.extra! as PlatformProductType;
+      //     return PlatformproductScreen(serviceType: serviceType);
+      //   },
+      // ),
       GoRoute(
         path: RouteConstants.platformProduct,
         builder: (context, state) {
-          // Expect that you called `context.go(path, extra: someServiceType)`
-          final serviceType = state.extra! as PlatformProductType;
-          return PlatformproductScreen(serviceType: serviceType);
+          final extra = state.extra;
+          if (extra is PlatformProductType) {
+            return PlatformproductScreen(serviceType: extra);
+          }
+
+          // Fallback: navigate to a safe route (dashboard) after frame, and
+          // return a placeholder widget while the navigation happens.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            // use GoRouter extension or context.go
+            context.go(RouteConstants.dashboard);
+          });
+          return const SizedBox.shrink();
         },
       ),
 
@@ -135,13 +152,28 @@ class AppRouter {
         builder: (context, state) => const SettingScreen(),
       ),
 
+      // GoRoute(
+      //   path: RouteConstants.changePassword,
+      //   builder: (context, state) {
+      //     final email = state.extra! as String;
+      //     return ChangepasswordScreen(email: email);
+      //   },
+      // ),
       GoRoute(
         path: RouteConstants.changePassword,
         builder: (context, state) {
-          final email = state.extra! as String;
-          return ChangepasswordScreen(email: email);
+          final email = state.extra;
+          if (email is String && email.isNotEmpty) {
+            return ChangepasswordScreen(email: email);
+          }
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.go(RouteConstants.login);
+          });
+          return const SizedBox.shrink();
         },
       ),
+
       GoRoute(
         path: RouteConstants.changeAccountPin,
         builder: (context, state) => const ChangeaccountpinScreen(),

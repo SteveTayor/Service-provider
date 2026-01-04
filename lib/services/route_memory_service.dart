@@ -11,11 +11,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///   WidgetsBinding.instance.addObserver(_routeMemory);
 ///   // remove observer on dispose
 class RouteMemoryService with WidgetsBindingObserver {
-  RouteMemoryService(this.router);
-
+  RouteMemoryService(this.router) {
+    // Mark ready only after first frame. Prevent reacting to lifecycle events
+    // that fire during restoration.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _isReady = true;
+    });
+  }
   final GoRouter router;
 
   static const _prefsKey = 'last_route_location';
+
+  bool _isReady = false;
 
   /// Routes we should NOT restore to (splash, auth, onboarding, etc).
   /// Use prefix matching for groups of routes.
@@ -29,50 +36,86 @@ class RouteMemoryService with WidgetsBindingObserver {
     return false;
   }
 
+  String? _getSafeLocation() {
+    try {
+      final config = router.routerDelegate.currentConfiguration;
+      if (config == null) return null;
+
+      // Use the URI to get the route location.
+      final uri = config.uri;
+      if (uri != null) {
+        final uriStr = uri.toString();
+        if (uriStr.isNotEmpty) return uriStr;
+      }
+    } catch (_) {
+      // router might be transitional during restoration; swallow errors.
+    }
+    return null;
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // IMPORTANT: do not mark this method async (must match signature).
+    if (!_isReady) return;
+
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
-      // Save location (best-effort). Use then() to avoid async/await inside override.
-      final location =
-          router.routerDelegate.currentConfiguration.uri.toString();
-      if (location.isEmpty || _isBlacklisted(location)) return;
+      final location = _getSafeLocation();
+      if (location == null || _isBlacklisted(location)) return;
 
-      SharedPreferences.getInstance().then((prefs) {
+      // Schedule write off the lifecycle call stack.
+      Future.microtask(() async {
         try {
-          prefs.setString(_prefsKey, location);
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(_prefsKey, location);
         } catch (_) {
           // ignore - best effort
         }
       });
+
       return;
     }
 
     if (state == AppLifecycleState.resumed) {
-      SharedPreferences.getInstance().then((prefs) {
+      // Schedule read off the lifecycle call stack.
+      Future.microtask(() async {
         try {
+          final prefs = await SharedPreferences.getInstance();
           final last = prefs.getString(_prefsKey);
           if (last == null || last.isEmpty) return;
-          // If already at the same location, nothing to do.
-          if (last == router.routerDelegate.currentConfiguration.uri.toString())
-            return;
           if (_isBlacklisted(last)) return;
 
-          // Defer navigation until after a frame to ensure router is ready.
+          String candidate = last;
+          if (!candidate.startsWith('/')) {
+            final uri = Uri.tryParse(candidate);
+            candidate = uri?.path ?? '';
+            if (candidate.isEmpty) return;
+            if (_isBlacklisted(candidate)) return;
+          }
+
+          final current = _getSafeLocation();
+          if (current != null && current == candidate) return;
+
           WidgetsBinding.instance.addPostFrameCallback((_) {
             try {
-              // If you want to guard deep-link logic or parameters, handle it here.
-              router.go(last);
+              router.go(candidate);
             } catch (_) {
-              // ignore navigation errors (route might no longer exist)
+              // ignore navigation errors
             }
           });
         } catch (_) {
           // ignore
         }
       });
+
+      return;
     }
+  }
+
+  static Future<void> clearSavedRoute() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_prefsKey);
+    } catch (_) {}
   }
 }
 
