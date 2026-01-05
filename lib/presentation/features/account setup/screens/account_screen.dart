@@ -133,92 +133,92 @@ class _AccountScreenState extends ConsumerState<AccountScreen>
 }
 
 // Alternative version with more subtle animations
-class AccountScreenSubtle extends ConsumerStatefulWidget {
-  const AccountScreenSubtle({super.key});
+// class AccountScreenSubtle extends ConsumerStatefulWidget {
+//   const AccountScreenSubtle({super.key});
 
-  @override
-  ConsumerState<AccountScreenSubtle> createState() =>
-      _AccountScreenSubtleState();
-}
+//   @override
+//   ConsumerState<AccountScreenSubtle> createState() =>
+//       _AccountScreenSubtleState();
+// }
 
-class _AccountScreenSubtleState extends ConsumerState<AccountScreenSubtle>
-    with SingleTickerProviderStateMixin {
-  late ScrollController _scrollController;
-  late AnimationController _controller;
+// class _AccountScreenSubtleState extends ConsumerState<AccountScreenSubtle>
+//     with SingleTickerProviderStateMixin {
+//   late ScrollController _scrollController;
+//   late AnimationController _controller;
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    );
+//   @override
+//   void initState() {
+//     super.initState();
+//     _scrollController = ScrollController();
+//     _controller = AnimationController(
+//       duration: const Duration(milliseconds: 1200),
+//       vsync: this,
+//     );
 
-    // Start animation after a brief delay
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (mounted) _controller.forward();
-    });
-  }
+//     // Start animation after a brief delay
+//     Future.delayed(const Duration(milliseconds: 100), () {
+//       if (mounted) _controller.forward();
+//     });
+//   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    _controller.dispose();
-    super.dispose();
-  }
+//   @override
+//   void dispose() {
+//     _scrollController.dispose();
+//     _controller.dispose();
+//     super.dispose();
+//   }
 
-  Widget _buildAnimatedChild({
-    required Widget child,
-    required int index,
-    double delay = 0.0,
-  }) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, _) {
-        final animationValue = Curves.easeOutCubic.transform(
-          (_controller.value - delay).clamp(0.0, 1.0),
-        );
+//   Widget _buildAnimatedChild({
+//     required Widget child,
+//     required int index,
+//     double delay = 0.0,
+//   }) {
+//     return AnimatedBuilder(
+//       animation: _controller,
+//       builder: (context, _) {
+//         final animationValue = Curves.easeOutCubic.transform(
+//           (_controller.value - delay).clamp(0.0, 1.0),
+//         );
 
-        return Transform.translate(
-          offset: Offset(0, (1 - animationValue) * 25),
-          child: Opacity(
-            opacity: animationValue,
-            child: child,
-          ),
-        );
-      },
-    );
-  }
+//         return Transform.translate(
+//           offset: Offset(0, (1 - animationValue) * 25),
+//           child: Opacity(
+//             opacity: animationValue,
+//             child: child,
+//           ),
+//         );
+//       },
+//     );
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                _buildAnimatedChild(
-                  child: const UserdetailWidget(),
-                  index: 0,
-                  delay: 0.0,
-                ),
-                20.verticalSpace,
-                _buildAnimatedChild(
-                  child: const AccountitemWidget(),
-                  index: 1,
-                  delay: 0.2,
-                ),
-                25.verticalSpace,
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: SafeArea(
+//         child: Padding(
+//           padding: const EdgeInsets.all(16),
+//           child: SingleChildScrollView(
+//             controller: _scrollController,
+//             physics: const BouncingScrollPhysics(),
+//             child: Column(
+//               children: [
+//                 _buildAnimatedChild(
+//                   child: const UserdetailWidget(),
+//                   index: 0,
+//                   delay: 0.0,
+//                 ),
+//                 20.verticalSpace,
+//                 _buildAnimatedChild(
+//                   child: const AccountitemWidget(),
+//                   index: 1,
+//                   delay: 0.2,
+//                 ),
+//                 25.verticalSpace,
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

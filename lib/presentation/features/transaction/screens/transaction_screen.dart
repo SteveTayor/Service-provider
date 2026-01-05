@@ -15,6 +15,7 @@ import 'package:bundlegram/presentation/features/transaction/screens/widgets/fil
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
+import 'package:bundlegram/presentation/general_widget/async_value/app_error_wiget.dart';
 import 'package:bundlegram/presentation/general_widget/async_value/app_future_builder.dart';
 import 'package:bundlegram/presentation/general_widget/receipt_widget.dart';
 import 'package:bundlegram/presentation/general_widget/service_list_item.dart';
@@ -38,7 +39,6 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
   final Set<String> _statusSet = {};
   final Set<String> _typeSet = {};
   final ScrollController _scrollController = ScrollController();
-  bool _isLoadingMore = false;
   final bool useResponsive = true;
 
   @override
@@ -54,19 +54,6 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
     _scrollController.addListener(_onScroll);
   }
 
-  // void _onScroll() {
-  //   if (_scrollController.position.pixels >=
-  //       _scrollController.position.maxScrollExtent - 200) {
-  //     // Avoid triggering multiple times while loading
-  //     if (!_isLoadingMore) {
-  //       _isLoadingMore = true;
-  //       Future.microtask(() {
-  //         ref.read(transactionHistoryProvider.notifier).loadMoreTransactions();
-  //         _isLoadingMore = false;
-  //       });
-  //     }
-  //   }
-  // }
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
@@ -82,8 +69,9 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final r = context.responsive;
-    final state = ref.watch(transactionHistoryProvider);
+    final txnsAsync = ref.watch(
+      globalProvider.select((g) => g.usersTransactions),
+    );
 
     return BundlegramScaffold(
       useResponsive: true,
@@ -131,134 +119,43 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
           ),
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await ref
-              .read(globalProvider.notifier)
-              .fetchUsersTransactions(context, force: true);
-          ref.read(transactionHistoryProvider.notifier).refresh();
+      body: txnsAsync.when(
+        data: (txnsResponse) {
+          return TransactionBody(
+            txnsResponse: txnsResponse,
+            scrollController: _scrollController,
+            useResponsive: useResponsive,
+            onShowTransactionDetails: _showTransactionDetails,
+          );
         },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: useResponsive ? r.spacing(10) : 10.w, // CHANGED
-              ),
-              child: AppTextField(
-                decoration: const InputDecoration().search(),
-                onChange: (value) {
-                  ref.read(transactionHistoryProvider.notifier).search(value);
-                },
-              ),
-            ),
-            SizedBox(
-              height: useResponsive ? r.spacing(20) : 20.h, // CHANGED
-            ),
-            Expanded(
-              child: AppAsyncBuilder(
-                state: ref
-                    .watch(globalProvider.select((g) => g.usersTransactions)),
-                onRetry: () async {
-                  await ref
-                      .read(globalProvider.notifier)
-                      .fetchUsersTransactions(context, force: true);
-                  ref.read(transactionHistoryProvider.notifier).refresh();
-                },
-                builder: (context, ref, txnsResponse) {
-                  final allTxns =
-                      ref.watch(transactionHistoryProvider).filteredServices;
-
-                  if (allTxns.isEmpty) {
-                    return const Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Center(child: EmptytransactionWidget()),
-                    );
-                  }
-
-                  return ListView.separated(
-                    controller: _scrollController,
-                    padding: EdgeInsets.symmetric(
-                      horizontal:
-                          useResponsive ? r.spacing(10) : 10.w, // CHANGED
-                      vertical: useResponsive ? r.spacing(25) : 25, // CHANGED
-                    ),
-                    itemCount: allTxns.length + 1,
-                    separatorBuilder: (_, __) => Padding(
-                      padding: EdgeInsets.only(
-                        bottom: useResponsive ? r.spacing(12) : 12,
-                        top: useResponsive ? r.spacing(10) : 10,
-                      ),
-                    ).withContainer(
-                      height: useResponsive ? r.spacing(25) : 25,
-                    ),
-                    itemBuilder: (ctx, index) {
-                      if (index == allTxns.length) {
-                        final state = ref.watch(transactionHistoryProvider);
-                        if (!state.hasMore) return const SizedBox.shrink();
-                        if (state.isLoadingMore) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: useResponsive ? r.spacing(12) : 12,
-                            ),
-                            child: Center(
-                                child:
-                                    CircularProgressIndicator(strokeWidth: 2)),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }
-
-                      final txn = allTxns[index];
-                      return InkWell(
-                        onTap: () => _showTransactionDetails(txn),
-                        child: ServiceListItem(
-                          transaction: txn,
-                          useResponsive: true,
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        error: (e, st) => AppErrorWidget(
+          error: e,
+          errorMessage: 'Unable to load transactions',
+          onRetry: () async {
+            await ref
+                .read(globalProvider.notifier)
+                .fetchUsersTransactions(context, force: true);
+            ref.read(transactionHistoryProvider.notifier).refresh();
+          },
         ),
       ),
     );
   }
 
   void _showTransactionDetails(UserTransactions txn) {
-    // final data = TransactionReceiptData(
-    //   transactionId: txn.transRef ?? 'BNG-${txn.id}',
-    //   date: _formatDate(txn.createdAt),
-    //   time: _formatTime(txn.createdAt),
-    //   type: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
-    //       ? txn.subProduct?.product?.productName
-    //       : txn.transType ?? 'N/A',
-    //   amount: txn.transType != 'fund_wallet' && txn.transType != "withdrawal"
-    //       ? CurrencyFormatter.format(txn.deductAmount ?? 0.0)
-    //       : txn.amount.toCurrency()),
-    //   accountNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
-    //   status: txn.status ?? 'Unknown',
-    //   description:
-    //       txn.subProduct?.subName ?? txn.subProduct?.product?.productName ?? '',
-    // );
-    // Construct receipt data dynamically based on transType contents
     TransactionReceiptData data;
     final transTypeLower = (txn.transType ?? '').toLowerCase();
 
     if (transTypeLower.contains('airtime')) {
-      // Handle airtime transaction
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
-        // type: txn.subProduct?.product?.productName,
         type: txn.transType,
         amount: txn.deductAmount.toCurrency(),
-        // accountNumber:
-        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
@@ -269,16 +166,12 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         balanceBefore: txn.balanceBefore?.toCurrency(),
       );
     } else if (transTypeLower.contains('data')) {
-      // Handle data transaction
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
-        // type: txn.subProduct?.product?.productName,
         type: txn.transType,
         amount: txn.deductAmount.toCurrency(),
-        // accountNumber:
-        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
@@ -290,7 +183,6 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         balanceBefore: txn.balanceBefore?.toCurrency(),
       );
     } else if (transTypeLower.contains('withdrawal')) {
-      // Handle withdrawal transaction
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
@@ -307,7 +199,6 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         balanceBefore: txn.balanceBefore?.toCurrency(),
       );
     } else if (transTypeLower.contains('fund_wallet')) {
-      // Handle fund wallet transaction
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
@@ -325,27 +216,21 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         balanceBefore: txn.balanceBefore?.toCurrency(),
       );
     } else if (transTypeLower.contains('cable')) {
-      // Handle data transaction
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: txn.transType,
-
         amount: txn.amount.toCurrency(),
-        // accountNumber:
-        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
-
         smartCardNumber: txn.crAcc,
         balanceBefore: txn.balanceBefore?.toCurrency(),
         userBalance: txn.balanceAfter?.toCurrency(),
       );
     } else if (transTypeLower.contains('electricity')) {
-      // Handle data transaction
       final unitsStr = txn.unit == null
           ? null
           : (txn.unit! % 1 == 0
@@ -357,15 +242,11 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: txn.transType,
-
         amount: txn.amount.toCurrency(),
-        // accountNumber:
-        //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
         description: txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
-
         meterNumber: txn.crAcc,
         token: txn.token,
         units: unitsStr,
@@ -378,7 +259,6 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
           : (txn.unit! % 1 == 0
               ? txn.unit!.toInt().toString()
               : txn.unit!.toString());
-      // Default case for other transaction types
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
@@ -420,7 +300,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
   String _formatDate(DateTime? date) {
     if (date == null) return 'Unknown Date';
 
-    final localDate = date.toLocal(); // <-- Always convert first
+    final localDate = date.toLocal();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
@@ -435,7 +315,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
   String _formatTime(DateTime? date) {
     if (date == null) return '--:--';
 
-    final localDate = date.toLocal(); // <-- Always convert first
+    final localDate = date.toLocal();
     final hour = localDate.hour;
     final minute = localDate.minute;
     final period = hour >= 12 ? 'pm' : 'am';
@@ -459,8 +339,116 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         return '0821971234';
     }
   }
+}
 
-  // Widget generateShareableReceipt(TransactionReceiptData data) {
-  //   return VisualReceiptCard(data: data);
-  // }
+class TransactionBody extends ConsumerWidget {
+  final GetAllUserTransactionResponse? txnsResponse;
+  final ScrollController scrollController;
+  final bool useResponsive;
+  final Function(UserTransactions) onShowTransactionDetails;
+
+  const TransactionBody({
+    super.key,
+    required this.txnsResponse,
+    required this.scrollController,
+    required this.useResponsive,
+    required this.onShowTransactionDetails,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final r = context.responsive;
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        await ref
+            .read(globalProvider.notifier)
+            .fetchUsersTransactions(context, force: true);
+        ref.read(transactionHistoryProvider.notifier).refresh();
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: useResponsive ? r.spacing(10) : 10.w,
+            ),
+            child: AppTextField(
+              decoration: const InputDecoration().search(),
+              onChange: (value) {
+                ref.read(transactionHistoryProvider.notifier).search(value);
+              },
+            ),
+          ),
+          SizedBox(
+            height: useResponsive ? r.spacing(20) : 20.h,
+          ),
+          Expanded(
+            child: _buildTransactionList(
+              context,
+              ref,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransactionList(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    final r = context.responsive;
+    final allTxns = ref.watch(transactionHistoryProvider).filteredServices;
+
+    if (allTxns.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.all(20),
+        child: Center(child: EmptytransactionWidget()),
+      );
+    }
+
+    return ListView.separated(
+      controller: scrollController,
+      padding: EdgeInsets.symmetric(
+        horizontal: useResponsive ? r.spacing(10) : 10.w,
+        vertical: useResponsive ? r.spacing(25) : 25,
+      ),
+      itemCount: allTxns.length + 1,
+      separatorBuilder: (_, __) => Padding(
+        padding: EdgeInsets.only(
+          bottom: useResponsive ? r.spacing(12) : 12,
+          top: useResponsive ? r.spacing(10) : 10,
+        ),
+      ).withContainer(
+        height: useResponsive ? r.spacing(25) : 25,
+      ),
+      itemBuilder: (ctx, index) {
+        if (index == allTxns.length) {
+          final state = ref.watch(transactionHistoryProvider);
+          if (!state.hasMore) return const SizedBox.shrink();
+          if (state.isLoadingMore) {
+            return Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: useResponsive ? r.spacing(12) : 12,
+              ),
+              child: const Center(
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        }
+
+        final txn = allTxns[index];
+        return InkWell(
+          onTap: () => onShowTransactionDetails(txn),
+          child: ServiceListItem(
+            transaction: txn,
+            useResponsive: true,
+          ),
+        );
+      },
+    );
+  }
 }

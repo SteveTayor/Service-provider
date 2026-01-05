@@ -10,6 +10,7 @@ import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
@@ -21,12 +22,12 @@ import 'package:bundlegram/presentation/general_widget/app_bar.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
+import 'package:bundlegram/presentation/general_widget/async_value/app_error_wiget.dart';
 import 'package:bundlegram/presentation/general_widget/async_value/app_future_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-// import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
@@ -67,7 +68,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = ref.watch(platformProvider);
+    final walletAsync =
+        ref.watch(globalProvider.select((g) => g.usersTransactions));
 
     return BundlegramScaffold(
       appBar: BundlegramAppbar(
@@ -82,230 +84,249 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           ),
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          context.showLoadingDialog();
-          try {
+      body: walletAsync.when(
+        data: (txnsResponse) {
+          return WalletBody(
+            isProcessing: _isProcessing,
+            onFundWallet: () => _handleFundWallet(context),
+            txnsResponse: txnsResponse,
+          );
+        },
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        error: (e, st) => AppErrorWidget(
+          error: e,
+          errorMessage: 'Unable to load wallet details',
+          onRetry: () async {
             await Future.wait([
               ref.read(globalProvider.notifier).fetchWalletBalance(context),
               ref.read(globalProvider.notifier).fetchUsersTransactions(context),
             ]);
-            unawaited(
-                ref.read(dashboardProvider.notifier).initDashboard(context));
             ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
-          } finally {
-            context.dismissDialog();
-          }
-        },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  // Calculate responsive height based on screen size
-                  final screenHeight = MediaQuery.of(context).size.height;
-                  final containerHeight = screenHeight > 700 ? 360.h : 320.h;
-
-                  return Container(
-                    color: AppColors.primaryColor,
-                    height: containerHeight,
-                    width: context.width,
-                    child: Stack(
-                      children: [
-                        // Content section
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Wallet balance',
-                                      style: context.textTheme.bodyMedium
-                                          ?.copyWith(
-                                        color: AppColors.white,
-                                        fontSize: 16.sp,
-                                      ),
-                                    ),
-                                    8.horizontalSpace,
-                                    GestureDetector(
-                                      onTap: () => ref
-                                          .read(platformProvider.notifier)
-                                          .toggleBalanceVisibility(),
-                                      child: Icon(
-                                        provider.isBalanceVisible
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                        color: AppColors.white,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Flexible(
-                                      child: BundlegramButton(
-                                        width: 105.w,
-                                        height: 40.h,
-                                        color: AppColors.white,
-                                        cornerRadius: 4.r,
-                                        text: 'Withdraw',
-                                        textStyle: context.textTheme.bodyMedium!
-                                            .copyWith(
-                                          color: AppColors.primaryColor,
-                                          fontSize: 16.sp,
-                                        ),
-                                        onPressed: () {
-                                          final profile =
-                                              ref.read(globalProvider).profile;
-                                          final bvn = profile.value?.data?.bvn;
-
-                                          if (bvn == null) {
-                                            WalletNotifier()
-                                                .showLinkBVNSnackBar(
-                                              context,
-                                              'BVN verification required to withdraw from your wallet.',
-                                              'Link now',
-                                            );
-                                          } else {
-                                            context.push(
-                                                RouteConstants.withdrawFund);
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  provider.isBalanceVisible
-                                      ? provider.formattedBalance
-                                      : '⁕⁕⁕⁕',
-                                  style: context.textTheme.titleLarge?.copyWith(
-                                    fontSize:
-                                        provider.isBalanceVisible ? 34 : 24,
-                                    color: AppColors.white,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                16.verticalSpace,
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Promo rewards',
-                                      style: context.textTheme.bodyMedium
-                                          ?.copyWith(
-                                        color: AppColors.white,
-                                        fontSize: 16.sp,
-                                      ),
-                                    ),
-                                    8.horizontalSpace,
-                                    GestureDetector(
-                                      onTap: () => ref
-                                          .read(platformProvider.notifier)
-                                          .toggleBalanceVisibility(),
-                                      child: Icon(
-                                        provider.isBalanceVisible
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                        color: AppColors.white,
-                                        size: 20,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  provider.isBalanceVisible
-                                      ? provider.formattedPromoBalance
-                                      : '⁕⁕⁕⁕',
-                                  style: context.textTheme.titleLarge?.copyWith(
-                                    fontSize:
-                                        provider.isBalanceVisible ? 34 : 24,
-                                    color: AppColors.white,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Growth image - positioned at bottom with constraints
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxHeight: containerHeight *
-                                  0.45, // 45% of container height
-                              minHeight: 80.h,
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.contain,
-                              alignment: Alignment.bottomCenter,
-                              child: Assets.images.growth.image(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-              32.verticalSpace,
-              BundlegramButton(
-                svgIconContainerColor: Colors.transparent,
-                leading: Assets.svgs.walletAdd,
-                text: 'Top-up wallet',
-                onPressed:
-                    _isProcessing ? null : () => _handleFundWallet(context),
-              ),
-              40.verticalSpace,
-              AppAsyncBuilder(
-                state: ref
-                    .watch(globalProvider.select((g) => g.usersTransactions)),
-                onRetry: () async {
-                  await Future.wait([
-                    ref
-                        .read(globalProvider.notifier)
-                        .fetchWalletBalance(context),
-                    ref
-                        .read(globalProvider.notifier)
-                        .fetchUsersTransactions(context),
-                  ]);
-                  ref
-                      .read(walletServiceHistoryProvider('wallet').notifier)
-                      .refresh();
-                },
-                builder: (context, ref, txnsResponse) {
-                  final walletTxns = txnsResponse?.data?.where((txn) {
-                    final type = txn.transType?.toLowerCase() ?? '';
-                    return type == 'fund_wallet' || type == 'withdrawal';
-                  }).toList();
-
-                  if (walletTxns == null || walletTxns.isEmpty) {
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 32),
-                      child: Center(child: EmptytransactionWidget()),
-                    );
-                  }
-
-                  return RecentTransactionWidget(
-                    SizedBox(height: 30),
-                    title: "Wallet Transactions",
-                    transactionProvider: walletTransactionsProvider,
-                  );
-                },
-              ),
-              35.verticalSpace,
-            ],
-          ),
+          },
         ),
       ),
+    );
+  }
+}
+
+class WalletBody extends ConsumerWidget {
+  final bool isProcessing;
+  final VoidCallback onFundWallet;
+  final GetAllUserTransactionResponse? txnsResponse;
+
+  const WalletBody({
+    super.key,
+    required this.isProcessing,
+    required this.onFundWallet,
+    required this.txnsResponse,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(platformProvider);
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.showLoadingDialog();
+        try {
+          await Future.wait([
+            ref.read(globalProvider.notifier).fetchWalletBalance(context),
+            ref.read(globalProvider.notifier).fetchUsersTransactions(context),
+          ]);
+          unawaited(
+              ref.read(dashboardProvider.notifier).initDashboard(context));
+          ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
+        } finally {
+          context.dismissDialog();
+        }
+      },
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final screenHeight = MediaQuery.of(context).size.height;
+                final containerHeight = screenHeight > 700 ? 360.h : 320.h;
+
+                return Container(
+                  color: AppColors.primaryColor,
+                  height: containerHeight,
+                  width: context.width,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Wallet balance',
+                                    style:
+                                        context.textTheme.bodyMedium?.copyWith(
+                                      color: AppColors.white,
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                  8.horizontalSpace,
+                                  GestureDetector(
+                                    onTap: () => ref
+                                        .read(platformProvider.notifier)
+                                        .toggleBalanceVisibility(),
+                                    child: Icon(
+                                      provider.isBalanceVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: AppColors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Flexible(
+                                    child: BundlegramButton(
+                                      width: 105.w,
+                                      height: 40.h,
+                                      color: AppColors.white,
+                                      cornerRadius: 4.r,
+                                      text: 'Withdraw',
+                                      textStyle: context.textTheme.bodyMedium!
+                                          .copyWith(
+                                        color: AppColors.primaryColor,
+                                        fontSize: 16.sp,
+                                      ),
+                                      onPressed: () {
+                                        final profile =
+                                            ref.read(globalProvider).profile;
+                                        final bvn = profile.value?.data?.bvn;
+
+                                        if (bvn == null) {
+                                          WalletNotifier().showLinkBVNSnackBar(
+                                            context,
+                                            'BVN verification required to withdraw from your wallet.',
+                                            'Link now',
+                                          );
+                                        } else {
+                                          context.push(
+                                              RouteConstants.withdrawFund);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                provider.isBalanceVisible
+                                    ? provider.formattedBalance
+                                    : '⁕⁕⁕⁕',
+                                style: context.textTheme.titleLarge?.copyWith(
+                                  fontSize: provider.isBalanceVisible ? 34 : 24,
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              16.verticalSpace,
+                              Row(
+                                children: [
+                                  Text(
+                                    'Promo rewards',
+                                    style:
+                                        context.textTheme.bodyMedium?.copyWith(
+                                      color: AppColors.white,
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                  8.horizontalSpace,
+                                  GestureDetector(
+                                    onTap: () => ref
+                                        .read(platformProvider.notifier)
+                                        .toggleBalanceVisibility(),
+                                    child: Icon(
+                                      provider.isBalanceVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: AppColors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                provider.isBalanceVisible
+                                    ? provider.formattedPromoBalance
+                                    : '⁕⁕⁕⁕',
+                                style: context.textTheme.titleLarge?.copyWith(
+                                  fontSize: provider.isBalanceVisible ? 34 : 24,
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: containerHeight * 0.45,
+                            minHeight: 80.h,
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.contain,
+                            alignment: Alignment.bottomCenter,
+                            child: Assets.images.growth.image(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            32.verticalSpace,
+            BundlegramButton(
+              svgIconContainerColor: Colors.transparent,
+              leading: Assets.svgs.walletAdd,
+              text: 'Top-up wallet',
+              onPressed: isProcessing ? null : onFundWallet,
+            ),
+            40.verticalSpace,
+            _buildTransactionSection(context, ref),
+            35.verticalSpace,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTransactionSection(BuildContext context, WidgetRef ref) {
+    final walletTxns = txnsResponse?.data?.where((txn) {
+      final type = txn.transType?.toLowerCase() ?? '';
+      return type == 'fund_wallet' || type == 'withdrawal';
+    }).toList();
+
+    if (walletTxns == null || walletTxns.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 32),
+        child: Center(child: EmptytransactionWidget()),
+      );
+    }
+
+    return RecentTransactionWidget(
+      SizedBox(height: 30),
+      title: "Wallet Transactions",
+      transactionProvider: walletTransactionsProvider,
     );
   }
 }
