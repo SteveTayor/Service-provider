@@ -1,6 +1,8 @@
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/accountitem_widget.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/userdetail_widget.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
+import 'package:bundlegram/presentation/general_widget/async_value/app_error_wiget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,7 +28,6 @@ class _AccountScreenState extends ConsumerState<AccountScreen>
 
     _scrollController = ScrollController();
 
-    // Animation controllers
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -37,7 +38,6 @@ class _AccountScreenState extends ConsumerState<AccountScreen>
       vsync: this,
     );
 
-    // Animations
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -54,7 +54,6 @@ class _AccountScreenState extends ConsumerState<AccountScreen>
       curve: Curves.easeOutCubic,
     ));
 
-    // Start animations
     _fadeController.forward();
     _slideController.forward();
   }
@@ -69,61 +68,105 @@ class _AccountScreenState extends ConsumerState<AccountScreen>
 
   @override
   Widget build(BuildContext context) {
+    final profileAsync = ref.watch(
+      globalProvider.select((g) => g.profile),
+    );
+
     return Scaffold(
       body: SafeArea(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: SlideTransition(
-            position: _slideAnimation,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics(),
-                ),
-                child: Column(
-                  children: [
-                    // Animated user detail section
-                    AnimatedBuilder(
-                      animation: _fadeController,
-                      builder: (context, child) {
-                        return Transform.translate(
-                          offset: Offset(0, (1 - _fadeAnimation.value) * 20),
-                          child: Opacity(
-                            opacity: _fadeAnimation.value,
-                            child: const UserdetailWidget(),
-                          ),
-                        );
-                      },
-                    ),
-                    20.verticalSpace,
+        child: profileAsync.when(
+          data: (_) {
+            // Don't pass data down, let children watch the provider
+            return AccountBody(
+              scrollController: _scrollController,
+              fadeAnimation: _fadeAnimation,
+              slideAnimation: _slideAnimation,
+              fadeController: _fadeController,
+            );
+          },
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          error: (e, st) => AppErrorWidget(
+            error: e,
+            errorMessage: 'Unable to load account details',
+            onRetry: () {
+              ref.read(globalProvider.notifier).fetchProfile(context);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-                    // Animated account items section with staggered animation
-                    TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 0.0, end: 1.0),
-                      duration: const Duration(milliseconds: 900),
-                      curve: Curves.easeOutBack,
-                      builder: (context, value, child) {
-                        return Transform.scale(
-                          scale: 0.8 + (0.2 * value),
-                          child: Transform.translate(
-                            offset: Offset(0, (1 - value) * 30),
-                            child: Opacity(
-                              opacity: value,
-                              child: const AccountitemWidget(),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    25.verticalSpace,
+// ============================================
+// AccountBody Widget
+// ============================================
+class AccountBody extends StatelessWidget {
+  final ScrollController scrollController;
+  final Animation<double> fadeAnimation;
+  final Animation<Offset> slideAnimation;
+  final AnimationController fadeController;
 
-                    // Add some extra space for better scroll experience
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-                  ],
+  const AccountBody({
+    super.key,
+    required this.scrollController,
+    required this.fadeAnimation,
+    required this.slideAnimation,
+    required this.fadeController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: fadeAnimation,
+      child: SlideTransition(
+        position: slideAnimation,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            controller: scrollController,
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            child: Column(
+              children: [
+                AnimatedBuilder(
+                  animation: fadeController,
+                  builder: (context, child) {
+                    return Transform.translate(
+                      offset: Offset(0, (1 - fadeAnimation.value) * 20),
+                      child: Opacity(
+                        opacity: fadeAnimation.value,
+                        // UserdetailWidget watches provider directly
+                        child: const UserdetailWidget(),
+                      ),
+                    );
+                  },
                 ),
-              ),
+                20.verticalSpace,
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  duration: const Duration(milliseconds: 900),
+                  curve: Curves.easeOutBack,
+                  builder: (context, value, child) {
+                    return Transform.scale(
+                      scale: 0.8 + (0.2 * value),
+                      child: Transform.translate(
+                        offset: Offset(0, (1 - value) * 30),
+                        child: Opacity(
+                          opacity: value,
+                          // AccountitemWidget watches provider directly
+                          child: const AccountitemWidget(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                25.verticalSpace,
+                SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+              ],
             ),
           ),
         ),
@@ -131,6 +174,132 @@ class _AccountScreenState extends ConsumerState<AccountScreen>
     );
   }
 }
+// class AccountScreen extends ConsumerStatefulWidget {
+//   const AccountScreen({super.key});
+
+//   @override
+//   ConsumerState<AccountScreen> createState() => _AccountScreenState();
+// }
+
+// class _AccountScreenState extends ConsumerState<AccountScreen>
+//     with TickerProviderStateMixin {
+//   late ScrollController _scrollController;
+//   late AnimationController _fadeController;
+//   late AnimationController _slideController;
+//   late Animation<double> _fadeAnimation;
+//   late Animation<Offset> _slideAnimation;
+
+//   @override
+//   void initState() {
+//     super.initState();
+
+//     _scrollController = ScrollController();
+
+//     // Animation controllers
+//     _fadeController = AnimationController(
+//       duration: const Duration(milliseconds: 800),
+//       vsync: this,
+//     );
+
+//     _slideController = AnimationController(
+//       duration: const Duration(milliseconds: 600),
+//       vsync: this,
+//     );
+
+//     // Animations
+//     _fadeAnimation = Tween<double>(
+//       begin: 0.0,
+//       end: 1.0,
+//     ).animate(CurvedAnimation(
+//       parent: _fadeController,
+//       curve: Curves.easeInOut,
+//     ));
+
+//     _slideAnimation = Tween<Offset>(
+//       begin: const Offset(0, 0.3),
+//       end: Offset.zero,
+//     ).animate(CurvedAnimation(
+//       parent: _slideController,
+//       curve: Curves.easeOutCubic,
+//     ));
+
+//     // Start animations
+//     _fadeController.forward();
+//     _slideController.forward();
+//   }
+
+//   @override
+//   void dispose() {
+//     _scrollController.dispose();
+//     _fadeController.dispose();
+//     _slideController.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: SafeArea(
+//         child: FadeTransition(
+//           opacity: _fadeAnimation,
+//           child: SlideTransition(
+//             position: _slideAnimation,
+//             child: Padding(
+//               padding: const EdgeInsets.all(16),
+//               child: SingleChildScrollView(
+//                 controller: _scrollController,
+//                 physics: const BouncingScrollPhysics(
+//                   parent: AlwaysScrollableScrollPhysics(),
+//                 ),
+//                 child: Column(
+//                   children: [
+//                     // Animated user detail section
+//                     AnimatedBuilder(
+//                       animation: _fadeController,
+//                       builder: (context, child) {
+//                         return Transform.translate(
+//                           offset: Offset(0, (1 - _fadeAnimation.value) * 20),
+//                           child: Opacity(
+//                             opacity: _fadeAnimation.value,
+//                             child: const UserdetailWidget(),
+//                           ),
+//                         );
+//                       },
+//                     ),
+//                     20.verticalSpace,
+
+//                     // Animated account items section with staggered animation
+//                     TweenAnimationBuilder<double>(
+//                       tween: Tween(begin: 0.0, end: 1.0),
+//                       duration: const Duration(milliseconds: 900),
+//                       curve: Curves.easeOutBack,
+//                       builder: (context, value, child) {
+//                         return Transform.scale(
+//                           scale: 0.8 + (0.2 * value),
+//                           child: Transform.translate(
+//                             offset: Offset(0, (1 - value) * 30),
+//                             child: Opacity(
+//                               opacity: value,
+//                               child: const AccountitemWidget(),
+//                             ),
+//                           ),
+//                         );
+//                       },
+//                     ),
+//                     25.verticalSpace,
+
+//                     // Add some extra space for better scroll experience
+//                     SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 // Alternative version with more subtle animations
 // class AccountScreenSubtle extends ConsumerStatefulWidget {
