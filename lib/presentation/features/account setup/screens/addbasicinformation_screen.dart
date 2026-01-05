@@ -99,7 +99,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
-class AddBasicInformationScreen extends ConsumerWidget {
+class AddBasicInformationScreen extends ConsumerStatefulWidget {
   final UserAction userAction;
   const AddBasicInformationScreen({
     Key? key,
@@ -107,13 +107,55 @@ class AddBasicInformationScreen extends ConsumerWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final provider = ref.watch(basicInfoProvider(userAction));
-    final notifier = provider;
+  ConsumerState<AddBasicInformationScreen> createState() =>
+      _AddBasicInformationScreenState();
+}
 
+// class AddBasicInformationScreen extends ConsumerWidget {
+//   final UserAction userAction;
+//   const AddBasicInformationScreen({
+//     Key? key,
+//     this.userAction = UserAction.create,
+//   }) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final provider = ref.watch(basicInfoProvider(userAction));
+//     final notifier = provider;
+
+//     final profileAsync = ref.watch(globalProvider).profile;
+
+//     // 🔒 Handle loading / error states FIRST (very important)
+//     if (profileAsync.isLoading) {
+//       return const BundlegramScaffold(
+//         body: Center(child: CircularProgressIndicator()),
+//       );
+//     }
+class _AddBasicInformationScreenState
+    extends ConsumerState<AddBasicInformationScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    ref.listen(
+      globalProvider,
+      (_, next) {
+        final profile = next.profile.value?.data;
+        if (profile != null) {
+          ref
+              .read(basicInfoProvider(widget.userAction))
+              .hydrateFromProfile(profile);
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = ref.watch(basicInfoProvider(widget.userAction));
+    final notifier = provider;
     final profileAsync = ref.watch(globalProvider).profile;
 
-    // 🔒 Handle loading / error states FIRST (very important)
     if (profileAsync.isLoading) {
       return const BundlegramScaffold(
         body: Center(child: CircularProgressIndicator()),
@@ -133,7 +175,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
     //   }
     // });
 
-    final titleText = userAction.isCreate
+    final titleText = widget.userAction.isCreate
         ? 'Add Basic Information'
         : 'Update Account Details';
 
@@ -184,8 +226,8 @@ class AddBasicInformationScreen extends ConsumerWidget {
           label: 'Phone Number',
           controller: notifier.phone,
           hintText: 'Phone Number',
-          readOnly: !userAction.isCreate,
-          isFilled: !userAction.isCreate,
+          readOnly: !widget.userAction.isCreate,
+          isFilled: !widget.userAction.isCreate,
           backgroundColor: AppColors.greyD0.withOpacity(0.3),
           prefixIcon: Padding(
             padding: context.symmetricPadding(16, 0),
@@ -204,7 +246,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
           options: const ['Male', 'Female'],
           selected: provider.gender,
           onChanged: notifier.setGender,
-          isFilled: userAction.isCreate
+          isFilled: widget.userAction.isCreate
               ? false
               : (bvnLinked ? hasGender : false) as bool,
         ),
@@ -215,7 +257,7 @@ class AddBasicInformationScreen extends ConsumerWidget {
           label: 'Address',
           controller: notifier.address,
           hintText: 'Enter Address',
-          isFilled: userAction.isCreate
+          isFilled: widget.userAction.isCreate
               ? false
               : (bvnLinked ? hasAddress : false) as bool,
           readOnly: bvnLinked,
@@ -229,7 +271,8 @@ class AddBasicInformationScreen extends ConsumerWidget {
           controller: notifier.dob,
           title: '',
           hintText: 'DD/MM/YYYY',
-          isFilled: userAction.isCreate ? false : (bvnLinked ? hasDob : false),
+          isFilled:
+              widget.userAction.isCreate ? false : (bvnLinked ? hasDob : false),
           readOnly: bvnLinked,
           validator: notifier.validateDate,
           onTap: () => notifier.pickDob(context),
@@ -261,13 +304,15 @@ class AddBasicInformationScreen extends ConsumerWidget {
                         child: ScaleAnimation(
                           scale: 0.8,
                           child: Opacity(
-                            opacity: userAction.isCreate ? 1 : 0.9,
+                            opacity: widget.userAction.isCreate ? 1 : 0.9,
                             child: BundlegramButton(
                               isEnabled: provider.loading
                                   ? false
-                                  : userAction.isCreate ||
+                                  : widget.userAction.isCreate ||
                                       (!hasGender || !hasAddress || !hasDob),
-                              text: userAction.isCreate ? 'Submit' : 'Update',
+                              text: widget.userAction.isCreate
+                                  ? 'Submit'
+                                  : 'Update',
                               onPressed: provider.loading
                                   ? null
                                   : () async {

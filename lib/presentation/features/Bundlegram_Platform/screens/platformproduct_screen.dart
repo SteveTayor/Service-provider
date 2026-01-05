@@ -74,7 +74,6 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
       try {
         notifier.setLoading();
         await notifier.fetchProducts(context);
-        notifier.rehydrateControllers();
 
         await notifier.refreshSubProductsForLoadedProducts(
           context,
@@ -101,7 +100,7 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
         if (!mounted) return;
 
         try {
-          notifier.rehydrateControllers();
+          // notifier.rehydrateControllers();
           // notifier.setLoading(); // force waiting state
           await notifier.ensureFreshData(context);
         } catch (e, st) {

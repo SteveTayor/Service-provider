@@ -192,17 +192,7 @@ import 'package:go_router/go_router.dart';
 // }
 final basicInfoProvider =
     ChangeNotifierProvider.family<BasicInfoProvider, UserAction>((ref, action) {
-  final provider = BasicInfoProvider(ref, ref.read(apiServiceProvider), action);
-
-  /// 🔑 Listen to profile changes SAFELY
-  ref.listen(globalProvider, (_, next) {
-    final profile = next.profile.value?.data;
-    if (profile != null) {
-      provider.hydrateFromProfile(profile);
-    }
-  });
-
-  return provider;
+  return BasicInfoProvider(ref, ref.read(apiServiceProvider), action);
 });
 
 class BasicInfoProvider extends ChangeNotifier {
@@ -249,7 +239,7 @@ class BasicInfoProvider extends ChangeNotifier {
   // SAFE PROFILE HYDRATION
   // -----------------------------
   void hydrateFromProfile(Data profile) {
-    if (_firstName.text.isNotEmpty) return;
+    if (_hydrated) return;
 
     _firstName.text = profile.firstName ?? '';
     _lastName.text = profile.lastName ?? '';
