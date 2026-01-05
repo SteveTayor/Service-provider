@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/data/models/notification_model.dart';
 import 'package:bundlegram/presentation/features/notifications/provider/notification_providers.dart';
@@ -84,8 +85,8 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                     'Mark all',
                     style: context.textTheme.labelSmall?.copyWith(
                       color: notificationState.isMarkingAllRead
-                          ? Colors.grey
-                          : Theme.of(context).primaryColor,
+                          ? AppColors.primaryColor
+                          : AppColors.grey5B,
                     ),
                   ),
                 ),
