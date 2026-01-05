@@ -41,10 +41,9 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 /// App entry
 /// ------------------------------------------------------------
 Future<void> main() async {
-  runZonedGuarded(
+  WidgetsFlutterBinding.ensureInitialized();
+  await runZonedGuarded(
     () async {
-      WidgetsFlutterBinding.ensureInitialized();
-
       //  block first frame
       await _initializeFirebase();
       await _initializeNotifications();
@@ -52,7 +51,7 @@ Future<void> main() async {
       // defer (DO NOT await)
       unawaited(_loadEnv());
       unawaited(_configureSystemUI());
-      unawaited(_checkAppVersion());
+      // unawaited(_checkAppVersion());
 
       _setupGlobalErrorHandling();
 
