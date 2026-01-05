@@ -47,7 +47,9 @@ class RouteMemoryService with WidgetsBindingObserver {
         final uriStr = uri.toString();
         if (uriStr.isNotEmpty) return uriStr;
       }
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('RouteMemory error1: $e\n$st');
+
       // router might be transitional during restoration; swallow errors.
     }
     return null;
@@ -67,7 +69,9 @@ class RouteMemoryService with WidgetsBindingObserver {
         try {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString(_prefsKey, location);
-        } catch (_) {
+        } catch (e, st) {
+          debugPrint('RouteMemory error2: $e\n$st');
+
           // ignore - best effort
         }
       });
@@ -98,11 +102,15 @@ class RouteMemoryService with WidgetsBindingObserver {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             try {
               router.go(candidate);
-            } catch (_) {
+            } catch (e, st) {
+              debugPrint('RouteMemory error3: $e\n$st');
+
               // ignore navigation errors
             }
           });
-        } catch (_) {
+        } catch (e, st) {
+          debugPrint('RouteMemory error4: $e\n$st');
+
           // ignore
         }
       });
@@ -115,7 +123,9 @@ class RouteMemoryService with WidgetsBindingObserver {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_prefsKey);
-    } catch (_) {}
+    } catch (e, st) {
+      debugPrint('RouteMemory error5: $e\n$st');
+    }
   }
 }
 
