@@ -133,21 +133,24 @@ class AddBasicInformationScreen extends ConsumerStatefulWidget {
 //     }
 class _AddBasicInformationScreenState
     extends ConsumerState<AddBasicInformationScreen> {
+  bool _didInitialFetch = false;
   @override
   void initState() {
     super.initState();
 
-    ref.listen(
-      globalProvider,
-      (_, next) {
-        final profile = next.profile.value?.data;
-        if (profile != null) {
-          ref
-              .read(basicInfoProvider(widget.userAction))
-              .hydrateFromProfile(profile);
-        }
-      },
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _didInitialFetch) return;
+      _didInitialFetch = true;
+
+      final profileAsync = ref.read(globalProvider).profile;
+      final profile = profileAsync.value?.data;
+
+      if (profile != null) {
+        final provider = ref.read(basicInfoProvider(widget.userAction));
+        debugPrint('[WithdrawalScreen] Initial fetch');
+        provider.hydrateFromProfile(profile);
+      }
+    });
   }
 
   @override

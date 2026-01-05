@@ -33,7 +33,7 @@ String userFacingMessageFromFailure(Failure fail) {
     return 'Server error. Please try again in a few minutes.';
   }
   if (fail is UnknownFailure) {
-    return 'Something went wrong. Please try again.';
+    return 'Something went wrong.';
   }
 
   // Generic fallback

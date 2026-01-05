@@ -39,6 +39,10 @@ class ErrorMessageSanitizer {
       return 'Server error. Please try again later.';
     }
 
+    if (message.contains('ServerFailure')) {
+      return 'Server error.';
+    }
+
     // Handle timeout errors
     if (message.contains('timeout') || message.contains('Timeout')) {
       return 'Request timed out. Please try again.';
@@ -64,7 +68,7 @@ class ErrorMessageSanitizer {
 
     // Return generic message if still too technical
     if (_isTechnicalError(message)) {
-      return 'Something went wrong. Please try again.';
+      return 'Something went wrong.';
     }
 
     return message.isEmpty ? 'Something went wrong' : message;
