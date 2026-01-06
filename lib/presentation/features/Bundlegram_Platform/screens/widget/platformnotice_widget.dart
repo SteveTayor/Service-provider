@@ -212,7 +212,8 @@ class _PlatformNoticeWidgetState extends State<PlatformNoticeWidget> {
                     final item = carouselItems[index];
 
                     return GradientPromoCard(
-                      height: 120.h,
+                      useResponsive: false,
+                      height: 125.h,
                       title: item['title'] as String,
                       subtitle: item['subtitle'] as String,
                       buttonText: item['buttonText'] as String,

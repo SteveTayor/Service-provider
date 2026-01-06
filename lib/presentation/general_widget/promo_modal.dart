@@ -77,7 +77,12 @@ class PromoModal extends StatelessWidget {
                 Expanded(
                   child: BundlegramButton(
                     text: 'Buy Data',
-                    // height: 48.h,
+                    height: 48.h,
+                    textStyle: context.textTheme.bodyMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: FontFamily.mabryPro,
+                    ),
                     onPressed: () {
                       context
                         ..pop()

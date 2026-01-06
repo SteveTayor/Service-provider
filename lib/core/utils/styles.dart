@@ -36,7 +36,7 @@ class BundlegramButtonStyle {
   static const double badgeDefaultWidth = 46;
   static const double buttonCornerRadius = 6;
   static const double badgeCornerRadius = 100;
-  static const double defaultFontSize = 18; // NEW: Default font size
+  static const double defaultFontSize = 16; // NEW: Default font size
   static const bool buttonIsEnable = true;
   static const bool buttonIsLoading = false;
 

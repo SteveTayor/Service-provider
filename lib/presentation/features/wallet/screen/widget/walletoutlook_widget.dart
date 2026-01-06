@@ -144,7 +144,7 @@ class _WalletoutlookWidgetState extends ConsumerState<WalletoutlookWidget> {
                       ? provider.formattedBalance
                       : '⁕⁕⁕⁕',
                   style: context.textTheme.titleLarge!.copyWith(
-                    fontSize: provider.isBalanceVisible ? 34 : 24,
+                    fontSize: provider.isBalanceVisible ? 26 : 20,
                     fontWeight: FontWeight.w500,
                     color: AppColors.white,
                   ),
