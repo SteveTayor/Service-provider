@@ -64,9 +64,9 @@ class NavBar extends ConsumerWidget {
             (index) => InkWell(
               onTap: () {
                 HapticFeedback.lightImpact();
-                ref
-                    .read(dashboardProvider.notifier)
-                    .onDestinationSelected(index, context);
+                ref.read(dashboardProvider.notifier).onDestinationSelected(
+                      index,
+                    );
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),

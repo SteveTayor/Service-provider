@@ -58,7 +58,7 @@ class _AppState extends ConsumerState<App> {
           child: MaterialApp.router(
             routerConfig: AppRouter.router,
             themeMode: ThemeMode.system,
-            // restorationScopeId: 'app',
+            restorationScopeId: 'app',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             debugShowCheckedModeBanner: false,

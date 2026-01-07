@@ -135,8 +135,8 @@ class WalletBody extends ConsumerWidget {
             ref.read(globalProvider.notifier).fetchWalletBalance(context),
             ref.read(globalProvider.notifier).fetchUsersTransactions(context),
           ]);
-          unawaited(
-              ref.read(dashboardProvider.notifier).initDashboard(context));
+          // unawaited(
+          //     ref.read(dashboardProvider.notifier).initDashboard(context));
           ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
         } finally {
           context.dismissDialog();

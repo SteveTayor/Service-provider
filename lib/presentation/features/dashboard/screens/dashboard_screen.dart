@@ -12,6 +12,104 @@ import 'package:bundlegram/presentation/general_widget/promo_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// class Dashboard extends ConsumerStatefulWidget {
+//   const Dashboard({super.key});
+
+//   @override
+//   ConsumerState<Dashboard> createState() => _DashboardState();
+// }
+
+// class _DashboardState extends ConsumerState<Dashboard> {
+//   bool hasInitialized = false;
+//   @override
+//   void initState() {
+//     super.initState();
+// // Only initDashboard if not last tab (AccountScreen = index 3)
+//     final currentIndex = ref.read(dashboardProvider).currentIndex;
+//     if (currentIndex != 3) {
+//       Future.microtask(() {
+//         ref.read(dashboardProvider.notifier).initDashboard(context);
+//         hasInitialized = true;
+//         _checkAndShowPromo();
+//       });
+//     }
+//   }
+
+//   Future<void> _checkAndShowPromo() async {
+//     final storage = ref.read(secureStorageHelperProvider);
+//     final hasSeenPromo = await storage.hasSeenPromoModal();
+
+//     if (!hasSeenPromo && mounted) {
+//       await Future.delayed(const Duration(milliseconds: 800));
+//       if (mounted) {
+//         showPromoModal(context);
+//         await storage.setHasSeenPromoModal(true);
+//       }
+//     }
+//   }
+
+//   void _retryInitialization() {
+//     ref.read(dashboardProvider.notifier).initDashboard(context);
+//     hasInitialized = true;
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final dashboardState = ref.watch(dashboardProvider);
+//     final currentIndex =
+//         ref.watch(dashboardProvider.select((p) => p.currentIndex));
+
+//     // If user navigates to a new tab and init wasn't done yet, do it now
+//     if (!hasInitialized && currentIndex != 3) {
+//       Future.microtask(() {
+//         ref.read(dashboardProvider.notifier).initDashboard(context);
+//         hasInitialized = true;
+//       });
+//     }
+//     if (dashboardState.error != null && currentIndex != 3) {
+//       return Scaffold(
+//         body: AppErrorWidget(
+//           error: dashboardState.error!,
+//           errorMessage: 'Failed to load dashboard',
+//           onRetry: _retryInitialization,
+//         ),
+//       );
+//     }
+
+//     return PopScope(
+//       canPop: false, // Prevent default pop behavior
+//       onPopInvoked: (didPop) {
+//         if (didPop) return; // If already popped, do nothing
+//         if (currentIndex != 0) {
+//           // If not on the first tab, switch to the first tab
+//           ref
+//               .read(dashboardProvider.notifier)
+//               .onDestinationSelected(0, context);
+//         } else {
+//           //  exit the app or do nothing
+//           // Navigator.of(context).pop();
+//         }
+//       },
+//       child: Scaffold(
+//         body: Stack(
+//           children: [
+//             IndexedStack(
+//               index: ref.watch(dashboardProvider.select((p) => p.currentIndex)),
+//               children: const [
+//                 PlatformScreen(),
+//                 WalletScreen(),
+//                 TransactionScreen(),
+//                 AccountScreen(),
+//               ],
+//             ),
+//             const DashboardUpdateChecker(),
+//           ],
+//         ),
+//         bottomNavigationBar: const NavBar(),
+//       ),
+//     );
+//   }
+// }
 class Dashboard extends ConsumerStatefulWidget {
   const Dashboard({super.key});
 
@@ -20,19 +118,13 @@ class Dashboard extends ConsumerStatefulWidget {
 }
 
 class _DashboardState extends ConsumerState<Dashboard> {
-  bool hasInitialized = false;
   @override
   void initState() {
     super.initState();
-// Only initDashboard if not last tab (AccountScreen = index 3)
-    final currentIndex = ref.read(dashboardProvider).currentIndex;
-    if (currentIndex != 3) {
-      Future.microtask(() {
-        ref.read(dashboardProvider.notifier).initDashboard(context);
-        hasInitialized = true;
-        _checkAndShowPromo();
-      });
-    }
+    Future.microtask(() {
+      ref.read(dashboardProvider.notifier).initialize();
+    });
+    _checkAndShowPromo();
   }
 
   Future<void> _checkAndShowPromo() async {
@@ -48,53 +140,26 @@ class _DashboardState extends ConsumerState<Dashboard> {
     }
   }
 
-  void _retryInitialization() {
-    ref.read(dashboardProvider.notifier).initDashboard(context);
-    hasInitialized = true;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final dashboardState = ref.watch(dashboardProvider);
     final currentIndex =
         ref.watch(dashboardProvider.select((p) => p.currentIndex));
 
-    // If user navigates to a new tab and init wasn't done yet, do it now
-    if (!hasInitialized && currentIndex != 3) {
-      Future.microtask(() {
-        ref.read(dashboardProvider.notifier).initDashboard(context);
-        hasInitialized = true;
-      });
-    }
-    if (dashboardState.error != null && currentIndex != 3) {
-      return Scaffold(
-        body: AppErrorWidget(
-          error: dashboardState.error!,
-          errorMessage: 'Failed to load dashboard',
-          onRetry: _retryInitialization,
-        ),
-      );
-    }
-
     return PopScope(
-      canPop: false, // Prevent default pop behavior
+      canPop: false,
       onPopInvoked: (didPop) {
-        if (didPop) return; // If already popped, do nothing
+        if (didPop) return;
         if (currentIndex != 0) {
-          // If not on the first tab, switch to the first tab
-          ref
-              .read(dashboardProvider.notifier)
-              .onDestinationSelected(0, context);
-        } else {
-          //  exit the app or do nothing
-          // Navigator.of(context).pop();
+          ref.read(dashboardProvider.notifier).onDestinationSelected(
+                0,
+              );
         }
       },
       child: Scaffold(
         body: Stack(
           children: [
             IndexedStack(
-              index: ref.watch(dashboardProvider.select((p) => p.currentIndex)),
+              index: currentIndex,
               children: const [
                 PlatformScreen(),
                 WalletScreen(),

@@ -32,7 +32,7 @@ class _PlatformScreenState extends ConsumerState<PlatformScreen> {
       body: RefreshIndicator(
         onRefresh: () async {
           // Trigger data refresh by calling _fetchDashboardData
-          await ref.read(dashboardProvider.notifier).initDashboard(context);
+          await ref.read(dashboardProvider.notifier).initialize();
         },
         child: SingleChildScrollView(
           physics:

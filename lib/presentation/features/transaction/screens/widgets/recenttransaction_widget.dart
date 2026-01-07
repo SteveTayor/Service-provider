@@ -36,44 +36,89 @@ class RecentTransactionWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final recentState = ref.watch(recentTransactionsProvider);
-    final recentState = ref.watch(transactionProvider);
+    final state = ref.watch(transactionProvider);
     final r = context.responsive;
-    // Wait until loading is done before rendering anything
-    if (recentState.isLoading) {
+
+    final transactions = state.filteredServices.take(5).toList();
+
+    // DATA FIRST — prefer cached data
+    if (transactions.isNotEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title!,
+            style: context.textTheme.titleSmall!
+                .copyWith(fontSize: r.textSize(18)),
+          ),
+          spacing ?? 20.verticalSpace,
+          _buildRecentTransactionsList(
+            context,
+            transactions,
+            state.isLoading,
+            ref,
+          ),
+        ],
+      );
+    }
+
+    // ERROR (only when no cached data)
+    if (state.error != null) {
+      return AppErrorWidget(
+        error: state.error!,
+        errorMessage: 'Failed to load recent transactions',
+        onRetry: () {
+          /// using invalidate
+          ref.invalidate(transactionProvider);
+        },
+      );
+    }
+
+    // LOADING (only when no data)
+    if (state.isLoading) {
       return _buildLoadingState();
     }
-    final recentTransactions = recentState.filteredServices.take(5).toList();
-    if (recentTransactions.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(20),
-        child: EmptytransactionWidget(),
-      );
-    }
-    if (recentState.error != null) {
-      return AppErrorWidget(
-        error: recentState.error!,
-        errorMessage: 'Failed to load recent transactions',
-        onRetry: () => ref.refresh(transactionProvider),
-      );
-    }
-    if (recentState.filteredServices.isEmpty) return EmptytransactionWidget();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title!,
-          style:
-              context.textTheme.titleSmall!.copyWith(fontSize: r.textSize(18)),
-        ),
-        spacing ?? 20.verticalSpace,
-        _buildRecentTransactionsList(
-          context,
-          recentTransactions,
-          recentState.isLoading,
-          ref,
-        ),
-      ],
+
+    // EMPTY STATE
+    return const Padding(
+      padding: EdgeInsets.all(20),
+      child: EmptytransactionWidget(),
     );
+    // if (recentState.isLoading) {
+    //   return _buildLoadingState();
+    // }
+    // final recentTransactions = recentState.filteredServices.take(5).toList();
+    // if (recentTransactions.isEmpty) {
+    //   return const Padding(
+    //     padding: EdgeInsets.all(20),
+    //     child: EmptytransactionWidget(),
+    //   );
+    // }
+    // if (recentState.error != null) {
+    //   return AppErrorWidget(
+    //     error: recentState.error!,
+    //     errorMessage: 'Failed to load recent transactions',
+    //     onRetry: () => ref.refresh(transactionProvider),
+    //   );
+    // }
+    // if (recentState.filteredServices.isEmpty) return EmptytransactionWidget();
+    // return Column(
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   children: [
+    //     Text(
+    //       title!,
+    //       style:
+    //           context.textTheme.titleSmall!.copyWith(fontSize: r.textSize(18)),
+    //     ),
+    //     spacing ?? 20.verticalSpace,
+    //     _buildRecentTransactionsList(
+    //       context,
+    //       recentTransactions,
+    //       recentState.isLoading,
+    //       ref,
+    //     ),
+    //   ],
+    // );
   }
 
   Widget _buildRecentTransactionsList(
@@ -82,18 +127,6 @@ class RecentTransactionWidget extends ConsumerWidget {
     bool isLoading,
     WidgetRef ref,
   ) {
-    // only show the skeleton if we're loading *and* have no items yet
-    if (isLoading && transactions.isEmpty) {
-      return _buildLoadingState();
-    }
-
-    if (transactions.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(20),
-        child: Center(child: EmptytransactionWidget()),
-      );
-    }
-
     return ListView.separated(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -109,10 +142,12 @@ class RecentTransactionWidget extends ConsumerWidget {
           highlightColor: Colors.transparent,
           onTap: () {
             HapticFeedback.lightImpact();
-            HapticFeedback.selectionClick();
             _showTransactionDetails(context, transaction);
           },
-          child: ServiceListItem(useResponsive: true, transaction: transaction),
+          child: ServiceListItem(
+            useResponsive: true,
+            transaction: transaction,
+          ),
         );
       },
     );

@@ -26,7 +26,9 @@ class ResetPasswordLinkScreen extends ConsumerWidget {
 
     return WillPopScope(
       onWillPop: () async {
-        ref.read(dashboardProvider.notifier).onDestinationSelected(0, context);
+        ref.read(dashboardProvider.notifier).onDestinationSelected(
+              0,
+            );
         context.pushReplacement(RouteConstants.dashboard);
         return false;
       },

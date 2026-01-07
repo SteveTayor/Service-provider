@@ -56,36 +56,44 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   final ApiService _api;
   final SecureStorageHelper _storage;
   final Ref _ref;
+  bool _isInitializing = false;
+  bool _isInitialized = false;
+
+  bool get isInitialized => _isInitialized;
 
   GlobalProvider(super.state, this._api, this._storage, this._ref);
 //  Restore session using existing token
-  // Future<void> restoreSession(BuildContext context) async {
-  //   final token = await _storage.getAuthToken();
-  //   if (token == null) {
-  //     _handleError('No saved session found', context);
-  //     final ctx = navigatorKey.currentContext;
+  Future<void> initialize() async {
+    //  never initialize twice
+    if (_isInitialized || _isInitializing) return;
 
-  //     if (ctx != null) {
-  //       WidgetsBinding.instance.addPostFrameCallback((_) {
-  //         ctx.go(RouteConstants.login);
-  //       });
-  //     }
-  //     //  ctx.go(RouteConstants.login);
-  //     return;
-  //   }
+    _isInitializing = true;
+    // state = state.copyWith(isLoading: true, error: null);
+    final ctx = navigatorKey.currentContext!;
 
-  //   // Re-fetch essential data
-  //   await Future.wait([
-  //     fetchProfile(context),
-  //     fetchWalletBalance(context),
-  //     fetchBanks(context),
-  //   ]);
+    try {
+      final storage = _ref.read(secureStorageHelperProvider);
+      final token = await storage.getAuthToken();
 
-  //   // Fetch background data without blocking UI
-  //   unawaited(fetchUserBanks(context));
-  //   unawaited(fetchVirtualAccount(context));
-  //   unawaited(fetchUsersTransactions(context, force: true));
-  // }
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+
+      // 🔥 ALL CORE APIS – CALLED ONCE 🔥
+      await Future.wait([
+        initializeWalletandAccounts(ctx),
+        initializePlatformDependencies(ctx),
+      ]);
+
+      _isInitialized = true;
+    } catch (e) {
+      _isInitialized = false;
+
+      rethrow;
+    } finally {
+      _isInitializing = false;
+    }
+  }
 
   Future<void> initializePlatformDependencies(BuildContext context) async {
     try {
@@ -110,37 +118,46 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     }
   }
 
+  // Future<bool> restoreSession(BuildContext context) async {
+  //   final token = await _storage.getAuthToken();
+  //   if (token == null) return false;
+  //   //fetchProfile ONLY (sequential)
+  //   final profileResult = await _api.getProfile(token);
+  //   bool profileOk = true;
+  //   profileResult.fold(
+  //     (fail) {
+  //       profileOk = false;
+  //     },
+  //     (data) {
+  //       state = state.copyWith(profile: AsyncData(data));
+  //     },
+  //   );
+  //   if (!profileOk) {
+  //     debugPrint('[restoreSession] Token invalid → fallback to email/password');
+  //     return false;
+  //   }
+  //   // Token confirmed valid → proceed to other calls
+  //   unawaited(fetchWalletBalance(context));
+  //   unawaited(fetchBanks(context));
+  //   unawaited(fetchUserBanks(context));
+  //   unawaited(fetchVirtualAccount(context));
+  //   unawaited(fetchEpinTransactionRequests(context, force: true));
+  //   unawaited(fetchUsersTransactions(context, force: true));
+  //   return true;
+  // }
   Future<bool> restoreSession(BuildContext context) async {
     final token = await _storage.getAuthToken();
     if (token == null) return false;
 
-    //fetchProfile ONLY (sequential)
     final profileResult = await _api.getProfile(token);
-    bool profileOk = true;
 
-    profileResult.fold(
-      (fail) {
-        profileOk = false;
-      },
+    return profileResult.fold(
+      (_) => false,
       (data) {
         state = state.copyWith(profile: AsyncData(data));
+        return true;
       },
     );
-
-    if (!profileOk) {
-      debugPrint('[restoreSession] Token invalid → fallback to email/password');
-      return false;
-    }
-
-    // Token confirmed valid → proceed to other calls
-    unawaited(fetchWalletBalance(context));
-    unawaited(fetchBanks(context));
-    unawaited(fetchUserBanks(context));
-    unawaited(fetchVirtualAccount(context));
-    unawaited(fetchEpinTransactionRequests(context, force: true));
-    unawaited(fetchUsersTransactions(context, force: true));
-
-    return true;
   }
 
   Future<void> initializeWalletandAccounts(BuildContext context) async {
@@ -159,17 +176,17 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     });
   }
 
-  Future<void> initializeData(BuildContext context) async {
-    state = state.copyWith(
-      profile: const AsyncLoading(),
-      walletBalance: const AsyncLoading(),
-      dashboardData: const AsyncLoading(),
-      banks: const AsyncLoading(),
-    );
-    await fetchBanks(context);
-    unawaited(fetchEpinTransactionRequests(context, force: true));
-    await fetchUsersTransactions(context);
-  }
+  // Future<void> initializeData(BuildContext context) async {
+  //   state = state.copyWith(
+  //     profile: const AsyncLoading(),
+  //     walletBalance: const AsyncLoading(),
+  //     dashboardData: const AsyncLoading(),
+  //     banks: const AsyncLoading(),
+  //   );
+  //   await fetchBanks(context);
+  //   unawaited(fetchEpinTransactionRequests(context, force: true));
+  //   await fetchUsersTransactions(context);
+  // }
 
   void _handleError(String message, BuildContext context) {
     context.showErrorSnackBar(message);

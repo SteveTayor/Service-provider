@@ -124,16 +124,6 @@ class TransactionHistoryNotifier
     );
   }
 
-  // void loadMoreTransactions() {
-  //   final current = state.filteredServices.length;
-  //   if (current >= _allTransactions.length) return; // all loaded
-
-  //   final nextBatch = _allTransactions.skip(current).take(_batchSize).toList();
-
-  //   final updated = [...state.filteredServices, ...nextBatch];
-  //   state = state.copyWith(filteredServices: updated);
-  // }
-
   void loadServices() {
     ref.read(globalProvider).usersTransactions.whenData((data) {
       _originalTransactions = data?.data ?? [];
