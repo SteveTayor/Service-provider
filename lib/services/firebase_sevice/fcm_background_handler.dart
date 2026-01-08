@@ -17,7 +17,8 @@ Future<void> fcmBackgroundHandler(RemoteMessage message) async {
   try {
     await NotificationService().displayPushNotification(message);
   } catch (e) {
-    if (kDebugMode)
+    if (kDebugMode) {
       debugPrint('Error while showing local notification in bg: $e');
+    }
   }
 }

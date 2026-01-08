@@ -97,19 +97,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //   }
 // }
 
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-
-class AddBasicInformationScreen extends ConsumerStatefulWidget {
-  final UserAction userAction;
-  const AddBasicInformationScreen({
-    Key? key,
-    this.userAction = UserAction.create,
-  }) : super(key: key);
-
-  @override
-  ConsumerState<AddBasicInformationScreen> createState() =>
-      _AddBasicInformationScreenState();
-}
 
 // class AddBasicInformationScreen extends ConsumerWidget {
 //   final UserAction userAction;
@@ -131,9 +118,23 @@ class AddBasicInformationScreen extends ConsumerStatefulWidget {
 //         body: Center(child: CircularProgressIndicator()),
 //       );
 //     }
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+class AddBasicInformationScreen extends ConsumerStatefulWidget {
+  final UserAction userAction;
+  const AddBasicInformationScreen({
+    Key? key,
+    this.userAction = UserAction.create,
+  }) : super(key: key);
+
+  @override
+  ConsumerState<AddBasicInformationScreen> createState() =>
+      _AddBasicInformationScreenState();
+}
+
 class _AddBasicInformationScreenState
     extends ConsumerState<AddBasicInformationScreen> {
   bool _didInitialFetch = false;
+  
   @override
   void initState() {
     super.initState();
@@ -170,14 +171,6 @@ class _AddBasicInformationScreenState
       return const BundlegramScaffold(body: SizedBox());
     }
 
-    // /// 🔑 Hydrate controllers ONCE, outside build logic
-    // ref.listen(globalProvider, (_, next) {
-    //   final data = next.profile.value?.data;
-    //   if (data != null) {
-    //     notifier.hydrateFromProfile(data);
-    //   }
-    // });
-
     final titleText = widget.userAction.isCreate
         ? 'Add Basic Information'
         : 'Update Account Details';
@@ -187,101 +180,81 @@ class _AddBasicInformationScreenState
     final hasGender = (profile.gender?.isNotEmpty ?? false) as bool;
     final hasAddress = (profile.address?.isNotEmpty ?? false) as bool;
     final hasDob = (profile.dob != null) as bool;
-    // Form fields data for cleaner animation mapping
+
+    // Form fields data for cleaner rendering
     final formFields = [
-      {
-        'widget': AppTextField(
-          label: "First Name",
-          controller: notifier.firstName,
-          hintText: 'First Name',
-          validateFunction: notifier.validateName,
-          readOnly: true,
-          isFilled: true,
-          backgroundColor: AppColors.greyD0.withOpacity(0.3),
+      AppTextField(
+        label: "First Name",
+        controller: notifier.firstName,
+        hintText: 'First Name',
+        validateFunction: notifier.validateName,
+        readOnly: true,
+        isFilled: true,
+        backgroundColor: AppColors.greyD0.withOpacity(0.3),
+      ),
+      AppTextField(
+        label: 'Last Name',
+        controller: notifier.lastName,
+        hintText: 'Last Name',
+        validateFunction: notifier.validateName,
+        readOnly: true,
+        isFilled: true,
+        backgroundColor: AppColors.greyD0.withOpacity(0.3),
+      ),
+      AppTextField(
+        label: "Email",
+        controller: notifier.email,
+        hintText: 'Email',
+        readOnly: true,
+        isFilled: true,
+        backgroundColor: AppColors.greyD0.withOpacity(0.3),
+      ),
+      AppTextField(
+        label: 'Phone Number',
+        controller: notifier.phone,
+        hintText: 'Phone Number',
+        readOnly: !widget.userAction.isCreate,
+        isFilled: !widget.userAction.isCreate,
+        backgroundColor: AppColors.greyD0.withOpacity(0.3),
+        prefixIcon: Padding(
+          padding: context.symmetricPadding(16, 0),
+          child: Text('+234', style: context.textTheme.bodyMedium),
         ),
-        'delay': 0,
-      },
-      {
-        'widget': AppTextField(
-          label: 'Last Name',
-          controller: notifier.lastName,
-          hintText: 'Last Name',
-          validateFunction: notifier.validateName,
-          readOnly: true,
-          isFilled: true,
-          backgroundColor: AppColors.greyD0.withOpacity(0.3),
-        ),
-        'delay': 100,
-      },
-      {
-        'widget': AppTextField(
-          label: "Email",
-          controller: notifier.email,
-          hintText: 'Email',
-          readOnly: true,
-          isFilled: true,
-          backgroundColor: AppColors.greyD0.withOpacity(0.3),
-        ),
-        'delay': 200,
-      },
-      {
-        'widget': AppTextField(
-          label: 'Phone Number',
-          controller: notifier.phone,
-          hintText: 'Phone Number',
-          readOnly: !widget.userAction.isCreate,
-          isFilled: !widget.userAction.isCreate,
-          backgroundColor: AppColors.greyD0.withOpacity(0.3),
-          prefixIcon: Padding(
-            padding: context.symmetricPadding(16, 0),
-            child: Text('+234', style: context.textTheme.bodyMedium),
-          ),
-          validateFunction: notifier.validatePhone,
-          onChange: (value) {
-            notifier.phone.text = value;
-          },
-        ),
-        'delay': 300,
-      },
-      {
-        'widget': AppDropdown(
-          title: provider.gender != "" ? provider.gender : "Gender",
-          options: const ['Male', 'Female'],
-          selected: provider.gender,
-          onChanged: notifier.setGender,
-          isFilled: widget.userAction.isCreate
-              ? false
-              : (bvnLinked ? hasGender : false) as bool,
-        ),
-        'delay': 400,
-      },
-      {
-        'widget': AppTextField(
-          label: 'Address',
-          controller: notifier.address,
-          hintText: 'Enter Address',
-          isFilled: widget.userAction.isCreate
-              ? false
-              : (bvnLinked ? hasAddress : false) as bool,
-          readOnly: bvnLinked,
-          backgroundColor: AppColors.greyD0.withOpacity(0.3),
-          validateFunction: notifier.validateNotEmpty,
-        ),
-        'delay': 500,
-      },
-      {
-        'widget': AppDatetextfield(
-          controller: notifier.dob,
-          title: '',
-          hintText: 'DD/MM/YYYY',
-          isFilled:
-              widget.userAction.isCreate ? false : (bvnLinked ? hasDob : false),
-          readOnly: bvnLinked,
-          validator: notifier.validateDate,
-          onTap: () => notifier.pickDob(context),
-        ),
-        'delay': 600,
-      },
+        validateFunction: notifier.validatePhone,
+        onChange: (value) {
+          notifier.phone.text = value;
+        },
+      ),
+      AppDropdown(
+        title: provider.gender != "" ? provider.gender : "Gender",
+        options: const ['Male', 'Female'],
+        selected: provider.gender,
+        onChanged: notifier.setGender,
+        isFilled: widget.userAction.isCreate
+            ? false
+            : (bvnLinked ? hasGender : false) as bool,
+      ),
+      AppTextField(
+        label: 'Address',
+        controller: notifier.address,
+        hintText: 'Enter Address',
+        isFilled: widget.userAction.isCreate
+            ? false
+            : (bvnLinked ? hasAddress : false) as bool,
+        readOnly: bvnLinked,
+        backgroundColor: AppColors.greyD0.withOpacity(0.3),
+        validateFunction: notifier.validateNotEmpty,
+      ),
+      AppDatetextfield(
+        controller: notifier.dob,
+        title: '',
+        hintText: 'DD/MM/YYYY',
+        isFilled:
+            widget.userAction.isCreate ? false : (bvnLinked ? hasDob : false),
+        readOnly: bvnLinked,
+        validator: notifier.validateDate,
+        onTap: () => notifier.pickDob(context),
+      ),
     ];
 
     return BundlegramScaffold(
@@ -289,64 +262,39 @@ class _AddBasicInformationScreenState
       appBar: BundlegramAppbar(titleText: titleText),
       body: Form(
         key: provider.formKey,
-        child: AnimationLimiter(
-          child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
-            itemCount: formFields.length + 1, // +1 for the submit button
-            itemBuilder: (context, index) {
-              if (index == formFields.length) {
-                // Submit button with its own animation
-                return AnimationConfiguration.staggeredList(
-                  position: index,
-                  delay: const Duration(milliseconds: 100),
-                  child: SlideAnimation(
-                    verticalOffset: 50.0,
-                    child: FadeInAnimation(
-                      child: Container(
-                        margin: EdgeInsets.only(top: 32.h),
-                        child: ScaleAnimation(
-                          scale: 0.8,
-                          child: Opacity(
-                            opacity: widget.userAction.isCreate ? 1 : 0.9,
-                            child: BundlegramButton(
-                              isEnabled: provider.loading
-                                  ? false
-                                  : widget.userAction.isCreate ||
-                                      (!hasGender || !hasAddress || !hasDob),
-                              text: widget.userAction.isCreate
-                                  ? 'Submit'
-                                  : 'Update',
-                              onPressed: provider.loading
-                                  ? null
-                                  : () async {
-                                      await provider.submit(context);
-                                    },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }
-
-              final field = formFields[index];
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                delay: Duration(milliseconds: field['delay'] as int),
-                child: SlideAnimation(
-                  verticalOffset: 30.0,
-                  child: FadeInAnimation(
-                    duration: const Duration(milliseconds: 600),
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 18.h),
-                      child: field['widget'] as Widget,
-                    ),
+        child: ListView.builder(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+          itemCount: formFields.length + 1, // +1 for the submit button
+          itemBuilder: (context, index) {
+            if (index == formFields.length) {
+              // Submit button
+              return Container(
+                margin: EdgeInsets.only(top: 32.h),
+                child: Opacity(
+                  opacity: widget.userAction.isCreate ? 1 : 0.9,
+                  child: BundlegramButton(
+                    isEnabled: provider.loading
+                        ? false
+                        : widget.userAction.isCreate ||
+                            (!hasGender || !hasAddress || !hasDob),
+                    text: widget.userAction.isCreate
+                        ? 'Submit'
+                        : 'Update',
+                    onPressed: provider.loading
+                        ? null
+                        : () async {
+                            await provider.submit(context);
+                          },
                   ),
                 ),
               );
-            },
-          ),
+            }
+
+            return Container(
+              margin: EdgeInsets.only(bottom: 18.h),
+              child: formFields[index],
+            );
+          },
         ),
       ),
     );

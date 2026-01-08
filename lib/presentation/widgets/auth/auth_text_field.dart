@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AuthTextField extends StatefulWidget {
-  final String label;
-  final String hint;
-  final TextEditingController controller;
-  final String? Function(String?)? validator;
-  final bool isPassword;
-  final TextInputType? keyboardType;
-
   const AuthTextField({
     super.key,
     required this.label,
@@ -17,6 +10,12 @@ class AuthTextField extends StatefulWidget {
     this.isPassword = false,
     this.keyboardType,
   });
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+  final String? Function(String?)? validator;
+  final bool isPassword;
+  final TextInputType? keyboardType;
 
   @override
   State<AuthTextField> createState() => _AuthTextFieldState();
@@ -51,4 +50,4 @@ class _AuthTextFieldState extends State<AuthTextField> {
       ),
     );
   }
-} 
+}

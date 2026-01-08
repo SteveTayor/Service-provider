@@ -45,9 +45,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref
-          .read(globalProvider.notifier)
-          .fetchUsersTransactions(context, force: true);
+      await ref.read(globalProvider.notifier).fetchUsersTransactions(context);
       ref.read(transactionHistoryProvider.notifier).loadServices();
     });
 

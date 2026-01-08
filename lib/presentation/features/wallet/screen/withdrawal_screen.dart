@@ -659,7 +659,6 @@
 //     );
 //   }
 // }
-
 import 'dart:async';
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
@@ -688,7 +687,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:go_router/go_router.dart';
 
 class WithdrawalScreen extends ConsumerStatefulWidget {
@@ -861,7 +859,6 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
       ),
       body: profileAsync.when(
         data: (_) {
-          // Profile loaded, now show withdrawal UI
           return const WithdrawalBody();
         },
         loading: () => const Center(
@@ -961,6 +958,14 @@ class WithdrawalBody extends ConsumerWidget {
     );
   }
 
+  bool _isAmountValid(String text) {
+    if (text.isEmpty) return false;
+    final amount = double.tryParse(text.replaceAll(',', ''));
+    if (amount == null || amount <= 0) return false;
+    if (amount < 500) return false;
+    return true;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final r = context.responsive;
@@ -984,275 +989,208 @@ class WithdrawalBody extends ConsumerWidget {
       },
     );
 
+    // Calculate if button should be enabled
+    final isAmountValid = _isAmountValid(provider.amountController.text);
+    final hasSelectedBank = provider.selectedBank != null;
+    final hasBvn = profileProv?.bvn != null;
+    final isButtonEnabled =
+        hasBvn && hasSelectedBank && isAmountValid && !provider.isSubmitting;
+
     return provider.isLoading
         ? const Center(child: CircularProgressIndicator())
         : RefreshIndicator(
             onRefresh: () async {
               await provider.fetchData(context);
             },
-            child: AnimationLimiter(
-              child: ListView(
-                padding: EdgeInsets.symmetric(
-                    horizontal: r.spacing(16), vertical: r.spacing(16)),
-                children: AnimationConfiguration.toStaggeredList(
-                  duration: const Duration(milliseconds: 600),
-                  childAnimationBuilder: (widget) => SlideAnimation(
-                    verticalOffset: 30.0,
-                    child: FadeInAnimation(
-                      child: widget,
+            child: ListView(
+              padding: EdgeInsets.symmetric(
+                  horizontal: r.spacing(16), vertical: r.spacing(16)),
+              children: [
+                AppDropdown(
+                  selected: provider.selectedBank != null
+                      ? 'Account ${provider.userBanks.indexOf(provider.selectedBank!) + 1} - '
+                          '${provider.selectedBank!.accountName ?? ''}'
+                      : null,
+                  title: provider.selectedBank != null
+                      ? 'Account ${provider.userBanks.indexOf(provider.selectedBank!) + 1}'
+                      : 'Select account',
+                  options: provider.userBanks
+                      .asMap()
+                      .entries
+                      .map(
+                        (entry) =>
+                            'Account ${entry.key + 1} - ${entry.value.accountName ?? ''}',
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value == null) return;
+
+                    final index = int.parse(value
+                            .split(' - ')[0]
+                            .replaceFirst('Account ', '')) -
+                        1;
+
+                    provider.setSelectedBank(provider.userBanks[index]);
+                  },
+                ),
+                SizedBox(height: r.spacing(24)),
+                Text(
+                  provider.selectedBank?.bankName ?? '',
+                ).withContainer(
+                  width: context.width,
+                  color: AppColors.greyD0.withOpacity(0.3),
+                  padding:
+                      context.symmetricPadding(r.spacing(16), r.spacing(12)),
+                  borderRadius: BorderRadius.circular(r.radiusSize(8)),
+                  border: Border.all(color: AppColors.greyD0),
+                ),
+                SizedBox(height: r.spacing(24)),
+                Text(
+                  provider.selectedBank?.accountNumber ?? '',
+                ).withContainer(
+                  width: context.width,
+                  color: AppColors.greyD0.withOpacity(0.3),
+                  padding:
+                      context.symmetricPadding(r.spacing(16), r.spacing(12)),
+                  borderRadius: BorderRadius.circular(r.radiusSize(8)),
+                  border: Border.all(color: AppColors.greyD0),
+                ),
+                SizedBox(height: r.spacing(24)),
+                Text(
+                  provider.selectedBank?.accountName ?? '',
+                ).withContainer(
+                  width: context.width,
+                  color: AppColors.greyD0.withOpacity(0.3),
+                  padding:
+                      context.symmetricPadding(r.spacing(16), r.spacing(12)),
+                  borderRadius: BorderRadius.circular(r.radiusSize(8)),
+                  border: Border.all(color: AppColors.greyD0),
+                ),
+                SizedBox(height: r.spacing(24)),
+                AppTextField(
+                  hintText: 'Enter amount',
+                  controller: provider.amountController,
+                  inputFormatters: [CurrencyTextInputFormatter()],
+                  keyboardType: TextInputType.number,
+                  readOnly: profileProv?.bvn == null ? true : false,
+                  validateFunction: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Amount is required';
+                    }
+                    final amount = double.tryParse(value.replaceAll(',', ''));
+                    if (amount == null || amount <= 0) {
+                      return 'Enter a valid amount';
+                    }
+                    if (amount < 500) {
+                      return 'Minimum withdrawal amount is 500';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: r.spacing(16)),
+                Row(
+                  children: [
+                    Container(
+                      width: r.spacing(6),
+                      height: r.spacing(6),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                    SizedBox(width: 6.w),
+                    Text(
+                      'Wallet balance',
+                      style: context.textTheme.bodyMedium,
+                    ),
+                    const Spacer(),
+                    Text(
+                      provider.formattedBalance,
+                      style: context.textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+                SizedBox(height: r.spacing(8)),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: r.spacing(12)),
+                  padding: EdgeInsets.all(r.spacing(12)),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: AppColors.primaryColor.withOpacity(0.2),
+                      width: 1,
                     ),
                   ),
-                  children: [
-                    AppDropdown(
-                      selected: provider.selectedBank != null
-                          ? 'Account ${provider.userBanks.indexOf(provider.selectedBank!) + 1} - '
-                              '${provider.selectedBank!.accountName ?? ''}'
-                          : null,
-                      title: provider.selectedBank != null
-                          ? 'Account ${provider.userBanks.indexOf(provider.selectedBank!) + 1}'
-                          : 'Select account',
-                      options: provider.userBanks
-                          .asMap()
-                          .entries
-                          .map(
-                            (entry) =>
-                                'Account ${entry.key + 1} - ${entry.value.accountName ?? ''}',
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        if (value == null) return;
-
-                        final index = int.parse(value
-                                .split(' - ')[0]
-                                .replaceFirst('Account ', '')) -
-                            1;
-
-                        provider.setSelectedBank(provider.userBanks[index]);
-                      },
-                    ),
-                    SizedBox(height: r.spacing(24)),
-                    AnimationConfiguration.staggeredList(
-                      position: 1,
-                      delay: const Duration(milliseconds: 100),
-                      child: SlideAnimation(
-                        horizontalOffset: -30.0,
-                        child: FadeInAnimation(
-                          child: Text(
-                            provider.selectedBank?.bankName ?? '',
-                          ).withContainer(
-                            width: context.width,
-                            color: AppColors.greyD0.withOpacity(0.3),
-                            padding: context.symmetricPadding(
-                                r.spacing(16), r.spacing(12)),
-                            borderRadius:
-                                BorderRadius.circular(r.radiusSize(8)),
-                            border: Border.all(color: AppColors.greyD0),
-                          ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Tooltip(
+                        preferBelow: false,
+                        message: 'Withdrawal service charge information',
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        showDuration: const Duration(seconds: 3),
+                        textStyle: const TextStyle(
+                          fontSize: 10,
+                          color: AppColors.white,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        triggerMode: TooltipTriggerMode.tap,
+                        child: const Icon(
+                          Icons.info_outline,
+                          size: 18,
+                          color: AppColors.primaryColor,
                         ),
                       ),
-                    ),
-                    SizedBox(height: r.spacing(24)),
-                    AnimationConfiguration.staggeredList(
-                      position: 2,
-                      delay: const Duration(milliseconds: 200),
-                      child: SlideAnimation(
-                        horizontalOffset: 30.0,
-                        child: FadeInAnimation(
-                          child: Text(
-                            provider.selectedBank?.accountNumber ?? '',
-                          ).withContainer(
-                            width: context.width,
-                            color: AppColors.greyD0.withOpacity(0.3),
-                            padding: context.symmetricPadding(
-                                r.spacing(16), r.spacing(12)),
-                            borderRadius:
-                                BorderRadius.circular(r.radiusSize(8)),
-                            border: Border.all(color: AppColors.greyD0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: r.spacing(24)),
-                    AnimationConfiguration.staggeredList(
-                      position: 3,
-                      delay: const Duration(milliseconds: 300),
-                      child: SlideAnimation(
-                        horizontalOffset: -30.0,
-                        child: FadeInAnimation(
-                          child: Text(
-                            provider.selectedBank?.accountName ?? '',
-                          ).withContainer(
-                            width: context.width,
-                            color: AppColors.greyD0.withOpacity(0.3),
-                            padding: context.symmetricPadding(
-                                r.spacing(16), r.spacing(12)),
-                            borderRadius:
-                                BorderRadius.circular(r.radiusSize(8)),
-                            border: Border.all(color: AppColors.greyD0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: r.spacing(24)),
-                    AnimationConfiguration.staggeredList(
-                      position: 4,
-                      delay: const Duration(milliseconds: 400),
-                      child: ScaleAnimation(
-                        scale: 0.8,
-                        child: FadeInAnimation(
-                          child: AppTextField(
-                            hintText: 'Enter amount',
-                            controller: provider.amountController,
-                            inputFormatters: [CurrencyTextInputFormatter()],
-                            keyboardType: TextInputType.number,
-                            readOnly: profileProv?.bvn == null ? true : false,
-                            validateFunction: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Amount is required';
-                              }
-                              final amount =
-                                  double.tryParse(value.replaceAll(',', ''));
-                              if (amount == null || amount <= 0) {
-                                return 'Enter a valid amount';
-                              }
-                              if (amount < 500) {
-                                return 'Minimum withdrawal amount is 500';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: r.spacing(16)),
-                    AnimationConfiguration.staggeredList(
-                      position: 5,
-                      delay: const Duration(milliseconds: 500),
-                      child: SlideAnimation(
-                        verticalOffset: 20.0,
-                        child: FadeInAnimation(
-                          child: Row(
+                      SizedBox(width: r.spacing(8)),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: AppColors.dateColor,
+                              fontSize: 12,
+                            ),
                             children: [
-                              Container(
-                                width: r.spacing(6),
-                                height: r.spacing(6),
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
+                              const TextSpan(
+                                  text: 'Note: A service charge of '),
+                              TextSpan(
+                                text: withdrawalServiceCharge.toCurrency(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
                                   color: AppColors.primaryColor,
                                 ),
                               ),
-                              SizedBox(width: 6.w),
-                              Text(
-                                'Wallet balance',
-                                style: context.textTheme.bodyMedium,
-                              ),
-                              const Spacer(),
-                              Text(
-                                provider.formattedBalance,
-                                style: context.textTheme.bodyMedium,
-                              ),
+                              const TextSpan(
+                                  text: ' applies to each withdrawal.'),
                             ],
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: r.spacing(8)),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: r.spacing(12)),
-                      padding: EdgeInsets.all(r.spacing(12)),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: AppColors.primaryColor.withOpacity(0.2),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Tooltip(
-                            preferBelow: false,
-                            message: 'Withdrawal service charge information',
-                            padding: const EdgeInsets.all(12),
-                            margin: const EdgeInsets.symmetric(horizontal: 20),
-                            showDuration: const Duration(seconds: 3),
-                            textStyle: const TextStyle(
-                              fontSize: 10,
-                              color: AppColors.white,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryColor.withOpacity(0.9),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            triggerMode: TooltipTriggerMode.tap,
-                            child: const Icon(
-                              Icons.info_outline,
-                              size: 18,
-                              color: AppColors.primaryColor,
-                            ),
-                          ),
-                          SizedBox(width: r.spacing(8)),
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.dateColor,
-                                  fontSize: 12,
-                                ),
-                                children: [
-                                  const TextSpan(
-                                      text: 'Note: A service charge of '),
-                                  TextSpan(
-                                    text: withdrawalServiceCharge.toCurrency(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.primaryColor,
-                                    ),
-                                  ),
-                                  const TextSpan(
-                                      text: ' applies to each withdrawal.'),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: r.spacing(40)),
-                    AnimationConfiguration.staggeredList(
-                      position: 6,
-                      delay: const Duration(milliseconds: 600),
-                      child: ScaleAnimation(
-                        scale: 0.7,
-                        child: SlideAnimation(
-                          verticalOffset: 50.0,
-                          child: FadeInAnimation(
-                            duration: const Duration(milliseconds: 800),
-                            child: BundlegramButton(
-                              useResponsive: true,
-                              isEnabled:
-                                  profileProv?.bvn == null ? false : true,
-                              text: provider.isSubmitting
-                                  ? "Requesting"
-                                  : 'Request withdrawal',
-                              isLoading: provider.isSubmitting,
-                              onPressed: provider.amountController.text.isEmpty
-                                  ? null
-                                  : () => _handleWithdrawal(
-                                        context,
-                                        ref,
-                                        provider,
-                                        profileProv,
-                                      ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+                SizedBox(height: r.spacing(40)),
+                BundlegramButton(
+                  useResponsive: true,
+                  isEnabled: isButtonEnabled,
+                  text: provider.isSubmitting
+                      ? "Requesting"
+                      : 'Request withdrawal',
+                  isLoading: provider.isSubmitting,
+                  onPressed: isButtonEnabled
+                      ? () => _handleWithdrawal(
+                            context,
+                            ref,
+                            provider,
+                            profileProv,
+                          )
+                      : null,
+                ),
+              ],
             ),
           );
   }

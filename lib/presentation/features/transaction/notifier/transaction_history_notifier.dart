@@ -36,7 +36,7 @@ class TransactionHistoryNotifier
     String? searchQuery,
   }) {
     // Start from the original master list
-    var temp = [..._originalTransactions];
+    var temp = _originalTransactions;
 
     // Apply search first (if provided)
     if (searchQuery != null && searchQuery.trim().isNotEmpty) {

@@ -1,14 +1,6 @@
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 
 class RecentTransactionsState {
-  final List<UserTransactions> services; // All fetched transactions
-  final List<UserTransactions> filteredServices; // After search/filters
-  final String? filterType; // (unused right now)
-  final bool isLoading;
-  final bool isLoadingMore;
-  final bool hasMore;
-  final Object? error;
-
   RecentTransactionsState({
     required this.services,
     required this.filteredServices,
@@ -18,7 +10,6 @@ class RecentTransactionsState {
     this.hasMore = true,
     this.error,
   });
-
   factory RecentTransactionsState.initial() {
     return RecentTransactionsState(
       services: [],
@@ -30,6 +21,13 @@ class RecentTransactionsState {
       error: null,
     );
   }
+  final List<UserTransactions> services; // All fetched transactions
+  final List<UserTransactions> filteredServices; // After search/filters
+  final String? filterType; // (unused right now)
+  final bool isLoading;
+  final bool isLoadingMore;
+  final bool hasMore;
+  final Object? error;
 
   RecentTransactionsState copyWith({
     List<UserTransactions>? services,

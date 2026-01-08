@@ -5,6 +5,7 @@ import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/providers/state/global_helper.dart';
 import 'package:bundlegram/core/providers/state/global_state.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
@@ -18,6 +19,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/pr
 import 'package:bundlegram/presentation/features/setting/screens/widget/pin_sheet.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/bulk%20e-pin/model/epin_mapper.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -171,9 +173,9 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     unawaited(fetchEpinTransactionRequests(context, force: true));
 
     // Defer transactions
-    Future.delayed(const Duration(milliseconds: 500), () {
-      fetchUsersTransactions(context);
-    });
+    // Future.delayed(const Duration(milliseconds: 500), () {
+    //   fetchUsersTransactions(context);
+    // });
   }
 
   // Future<void> initializeData(BuildContext context) async {
@@ -385,21 +387,27 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     final now = DateTime.now();
 
     // --- caching: only short-circuit if last fetch is recent AND we already have epin cached
-    if (!force && state.lastTransactionFetch != null) {
-      final diff = now.difference(state.lastTransactionFetch!);
-      if (diff.inMinutes < 10) {
-        // If we already have epinTransactions cached, it's safe to skip fetching again.
-        // But if epinTransactions is missing, we must continue so EPIN history is available.
-        if (state.epinTransactions is AsyncData) {
-          // Debug log
-          debugPrint(
-              '[fetchUsersTransactions] Skipping fetch (cache recent, ${diff.inMinutes}m ago)');
-          return;
-        } else {
-          debugPrint(
-              '[fetchUsersTransactions] Cache recent (${diff.inMinutes}m) but epin not present -> proceeding to fetch.');
-        }
-      }
+    // if (!force && state.lastTransactionFetch != null) {
+    //   final diff = now.difference(state.lastTransactionFetch!);
+    //   if (diff.inMinutes < 10) {
+    //     // If we already have epinTransactions cached, it's safe to skip fetching again.
+    //     // But if epinTransactions is missing, we must continue so EPIN history is available.
+    //     if (state.epinTransactions is AsyncData) {
+    //       // Debug log
+    //       debugPrint(
+    //           '[fetchUsersTransactions] Skipping fetch (cache recent, ${diff.inMinutes}m ago)');
+    //       return;
+    //     } else {
+    //       debugPrint(
+    //           '[fetchUsersTransactions] Cache recent (${diff.inMinutes}m) but epin not present -> proceeding to fetch.');
+    //     }
+    //   }
+    // }
+    if (!force &&
+        state.lastTransactionFetch != null &&
+        DateTime.now().difference(state.lastTransactionFetch!) <
+            const Duration(minutes: 5)) {
+      return;
     }
 
     state = state.copyWith(usersTransactions: const AsyncLoading());
@@ -479,7 +487,15 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     _logSamples(mainList, 'MAIN');
     _logSamples(epinAsTx, 'EPIN');
 
-    final merged = [...mainList, ...epinAsTx];
+    // final merged = [...mainList, ...epinAsTx];
+    final merged = await compute(
+      mergeAndSortTransactions,
+      {
+        'main': mainList,
+        'epin': epinAsTx,
+      },
+    );
+
     merged.sort((a, b) {
       final aDate = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
       final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);

@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 
 /// Main responsive builder widget
 class ResponsiveBuilder extends StatelessWidget {
-  final Widget Function(BuildContext context, ResponsiveInfo info) builder;
-
   const ResponsiveBuilder({
     required this.builder,
     Key? key,
   }) : super(key: key);
+  final Widget Function(BuildContext context, ResponsiveInfo info) builder;
 
   @override
   Widget build(BuildContext context) {
@@ -23,16 +22,15 @@ class ResponsiveBuilder extends StatelessWidget {
 
 /// Responsive builder with breakpoint-specific widgets
 class ResponsiveBreakpoint extends StatelessWidget {
-  final Widget phone;
-  final Widget? tablet;
-  final Widget? desktop;
-
   const ResponsiveBreakpoint({
     required this.phone,
     this.tablet,
     this.desktop,
     Key? key,
   }) : super(key: key);
+  final Widget phone;
+  final Widget? tablet;
+  final Widget? desktop;
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +48,6 @@ class ResponsiveBreakpoint extends StatelessWidget {
 
 /// Responsive scaffold with optional side panel for tablets/desktops
 class ResponsiveScaffold extends StatelessWidget {
-  final PreferredSizeWidget? appBar;
-  final Widget body;
-  final Widget? sidePanel;
-  final Widget? drawer;
-  final Widget? bottomNavigationBar;
-  final FloatingActionButton? floatingActionButton;
-  final Color? backgroundColor;
-  final double? sidePanelWidth;
-
   const ResponsiveScaffold({
     required this.body,
     this.appBar,
@@ -70,6 +59,14 @@ class ResponsiveScaffold extends StatelessWidget {
     this.sidePanelWidth,
     Key? key,
   }) : super(key: key);
+  final PreferredSizeWidget? appBar;
+  final Widget body;
+  final Widget? sidePanel;
+  final Widget? drawer;
+  final Widget? bottomNavigationBar;
+  final FloatingActionButton? floatingActionButton;
+  final Color? backgroundColor;
+  final double? sidePanelWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -124,15 +121,6 @@ class ResponsiveScaffold extends StatelessWidget {
 
 /// Responsive padding wrapper
 class ResponsivePadding extends StatelessWidget {
-  final Widget child;
-  final double? all;
-  final double? horizontal;
-  final double? vertical;
-  final double? left;
-  final double? right;
-  final double? top;
-  final double? bottom;
-
   const ResponsivePadding({
     required this.child,
     this.all,
@@ -144,6 +132,14 @@ class ResponsivePadding extends StatelessWidget {
     this.bottom,
     Key? key,
   }) : super(key: key);
+  final Widget child;
+  final double? all;
+  final double? horizontal;
+  final double? vertical;
+  final double? left;
+  final double? right;
+  final double? top;
+  final double? bottom;
 
   @override
   Widget build(BuildContext context) {
@@ -165,16 +161,15 @@ class ResponsivePadding extends StatelessWidget {
 
 /// Responsive sized box
 class ResponsiveSizedBox extends StatelessWidget {
-  final Widget? child;
-  final double? width;
-  final double? height;
-
   const ResponsiveSizedBox({
     this.child,
     this.width,
     this.height,
     Key? key,
   }) : super(key: key);
+  final Widget? child;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -189,14 +184,13 @@ class ResponsiveSizedBox extends StatelessWidget {
 
 /// Responsive gap (spacing)
 class ResponsiveGap extends StatelessWidget {
-  final double size;
-  final Axis direction;
-
   const ResponsiveGap(
     this.size, {
     this.direction = Axis.vertical,
     Key? key,
   }) : super(key: key);
+  final double size;
+  final Axis direction;
 
   @override
   Widget build(BuildContext context) {

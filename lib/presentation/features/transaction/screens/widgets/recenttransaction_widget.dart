@@ -39,7 +39,10 @@ class RecentTransactionWidget extends ConsumerWidget {
     final state = ref.watch(transactionProvider);
     final r = context.responsive;
 
-    final transactions = state.filteredServices.take(5).toList();
+    // final transactions = state.filteredServices.take(5).toList();
+    final transactions = state.filteredServices.length > 5
+        ? state.filteredServices.sublist(0, 5)
+        : state.filteredServices;
 
     // DATA FIRST — prefer cached data
     if (transactions.isNotEmpty) {
@@ -84,41 +87,6 @@ class RecentTransactionWidget extends ConsumerWidget {
       padding: EdgeInsets.all(20),
       child: EmptytransactionWidget(),
     );
-    // if (recentState.isLoading) {
-    //   return _buildLoadingState();
-    // }
-    // final recentTransactions = recentState.filteredServices.take(5).toList();
-    // if (recentTransactions.isEmpty) {
-    //   return const Padding(
-    //     padding: EdgeInsets.all(20),
-    //     child: EmptytransactionWidget(),
-    //   );
-    // }
-    // if (recentState.error != null) {
-    //   return AppErrorWidget(
-    //     error: recentState.error!,
-    //     errorMessage: 'Failed to load recent transactions',
-    //     onRetry: () => ref.refresh(transactionProvider),
-    //   );
-    // }
-    // if (recentState.filteredServices.isEmpty) return EmptytransactionWidget();
-    // return Column(
-    //   crossAxisAlignment: CrossAxisAlignment.start,
-    //   children: [
-    //     Text(
-    //       title!,
-    //       style:
-    //           context.textTheme.titleSmall!.copyWith(fontSize: r.textSize(18)),
-    //     ),
-    //     spacing ?? 20.verticalSpace,
-    //     _buildRecentTransactionsList(
-    //       context,
-    //       recentTransactions,
-    //       recentState.isLoading,
-    //       ref,
-    //     ),
-    //   ],
-    // );
   }
 
   Widget _buildRecentTransactionsList(

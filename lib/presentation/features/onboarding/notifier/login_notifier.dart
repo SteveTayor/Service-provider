@@ -353,9 +353,9 @@ class LoginProvider extends ChangeNotifier {
         debugPrint(
             '[Biometric] Just saved creds → email=$savedEmail, password=$savedPassword');
         // Fetch and cache users' transactions before routing
-        await _ref
-            .read(globalProvider.notifier)
-            .fetchUsersTransactions(context);
+        // await _ref
+        //     .read(globalProvider.notifier)
+        //     .fetchUsersTransactions(context);
         final localPin = await _storage.getPin(userEmail);
         if (localPin == null) {
           context.dismissDialog();

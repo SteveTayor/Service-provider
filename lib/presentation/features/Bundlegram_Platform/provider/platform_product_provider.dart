@@ -378,6 +378,28 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     );
   }
 
+  Future<void> selectProductAndLoadSubProducts(
+    BuildContext context,
+    Product product,
+    String providerIcon, {
+    bool force = true,
+    bool invalidateCache = false,
+  }) async {
+    // 1. Pure selection
+    selectProduct(product, providerIcon);
+
+    // 2. Cache invalidation (CRITICAL for phone changes)
+    if (invalidateCache && product.id != null) {
+      _subProductsCache.remove(product.id);
+      _subProductsFetchedAt.remove(product.id);
+    }
+
+    // 3. Explicit side-effect
+    if (_serviceType.hasSubProducts && product.id != null) {
+      await fetchSubProducts(context, product.id!, force: force);
+    }
+  }
+
   void selectPresetAmount(int amount) {
     state = state.copyWith(
       selectedPresetAmount: amount,
@@ -407,12 +429,6 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     state = state.copyWith(
       selectedSubProduct: subProduct,
       selectedPresetAmount: null,
-      // amountController: _rehydrate(
-      //   state.amountController,
-      //   text: _serviceType == PlatformProductType.electricity
-      //       ? state.amountController.text
-      //       : subProduct.subPrice,
-      // ),
       amountController: _serviceType == PlatformProductType.electricity
           ? state.amountController // Retain the current user-entered amount
           : TextEditingController(text: subProduct.subPrice ?? ''),
@@ -488,7 +504,15 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         // Found a product — select + fetch subproducts (same flow as applyBeneficiary)
         final providerIcon = normalizeAssetName(matchingProduct.productName,
             serviceType: _serviceType);
-        selectProduct(matchingProduct, providerIcon ?? '');
+        // selectProduct(matchingProduct, providerIcon ?? '');
+        await selectProductAndLoadSubProducts(
+          ctx,
+          matchingProduct,
+          providerIcon ?? '',
+          force: true,
+          invalidateCache: true,
+        );
+
         await fetchSubProducts(ctx, matchingProduct.id!, force: true);
         debugPrint(
             'Auto-selected product ${matchingProduct.productName} for phone $normalized');
@@ -554,7 +578,15 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       matchingProduct.productName,
       serviceType: _serviceType,
     );
-    selectProduct(matchingProduct, providerIcon ?? '');
+    // selectProduct(matchingProduct, providerIcon ?? '');
+    await selectProductAndLoadSubProducts(
+      ctx,
+      matchingProduct,
+      providerIcon ?? '',
+      force: true,
+      invalidateCache: true,
+    );
+
     await fetchSubProducts(ctx, matchingProduct.id!, force: true);
     debugPrint(
         'applyBeneficiary: selected product ${matchingProduct.productName} (${matchingProduct.id})');
@@ -1102,6 +1134,14 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     });
   }
 
+  bool _subProductMatchesProduct() {
+    final p = state.selectedProduct;
+    final s = state.selectedSubProduct;
+    if (p == null || s == null) return true;
+
+    return _extractBrand(s.subName ?? '') == _extractBrand(p.productName ?? '');
+  }
+
   double getTransactionAmount() {
     if (_serviceType == PlatformProductType.airtime ||
         _serviceType == PlatformProductType.betting ||
@@ -1165,12 +1205,24 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       child: TransactionSummary(
         assetPath: state.selectedProviderIcon,
         billValidatedName: state.validatedName,
-        transactionType: state.selectedSubProduct?.subName ??
-            state.selectedProduct?.productName,
+        // transactionType: state.selectedSubProduct?.subName ??
+        //     state.selectedProduct?.productName,
+        transactionType: _serviceType == PlatformProductType.airtime ||
+                _serviceType == PlatformProductType.mobileData
+            ? state.selectedProduct?.productName
+            : state.selectedSubProduct?.subName ??
+                state.selectedProduct?.productName,
         amount: amount.toCurrency(),
         discountedPrice: discountedAmount.toCurrency(),
         beneficiary: beneficiary,
         onPay: () {
+          // if (!_subProductMatchesProduct()) {
+          //   context.showErrorSnackBar(
+          //     'Selected data plan does not match provider. Please reselect.',
+          //   );
+          //   return;
+          // }
+
           initiatePurchase(
             context,
             amount.toString(),
