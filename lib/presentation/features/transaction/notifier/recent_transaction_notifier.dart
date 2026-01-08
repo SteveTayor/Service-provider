@@ -3,6 +3,7 @@ import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
 // class RecentTransactionsNotifier
@@ -117,6 +118,26 @@ import 'package:collection/collection.dart';
 //     state = state.copyWith(filteredServices: temp);
 //   }
 // }
+List<UserTransactions> takeTopKByDate(
+  Map<String, dynamic> args,
+) {
+  final all = args['all'] as List<UserTransactions>;
+  final k = args['k'] as int;
+
+  final pq = PriorityQueue<UserTransactions>(
+    (a, b) => a.createdAt!.compareTo(b.createdAt!),
+  );
+
+  for (final txn in all) {
+    if (txn.createdAt == null) continue;
+    pq.add(txn);
+    if (pq.length > k) pq.removeFirst();
+  }
+
+  final top = pq.toList()..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+
+  return top;
+}
 
 class RecentTransactionsNotifier
     extends StateNotifier<RecentTransactionsState> {
@@ -125,40 +146,77 @@ class RecentTransactionsNotifier
   RecentTransactionsNotifier(this.ref)
       : super(RecentTransactionsState.initial().copyWith(isLoading: true)) {
     // Listen for the global fetch completing…
+//     ref.listen<AsyncValue<GetAllUserTransactionResponse?>>(
+//       globalProvider.select((s) => s.usersTransactions),
+//       (prev, next) {
+//         next.when(
+//           data: (wrapper)async {
+//             try {
+//               // final limited = _takeTopKByDate(wrapper?.data ?? [], k: 10);
+//               final limited = await compute(
+//   takeTopKByDate,
+//   {'all': wrapper?.data ?? [], 'k': 10},
+// );
+
+//               state = state.copyWith(
+//                 services: limited,
+//                 filteredServices: limited,
+//                 isLoading: false,
+//                 error: null,
+//               );
+//             } catch (e) {
+//               state = state.copyWith(isLoading: false, error: e);
+//             }
+//           },
+//           error: (err, _) =>
+//               state = state.copyWith(isLoading: false, error: err),
+//           loading: () => state = state.copyWith(isLoading: true, error: null),
+//         );
+//       },
+//     );
+    int _lastCount = 0;
+
     ref.listen<AsyncValue<GetAllUserTransactionResponse?>>(
       globalProvider.select((s) => s.usersTransactions),
       (prev, next) {
-        next.when(
-          data: (wrapper) {
-            try {
-              final limited = _takeTopKByDate(wrapper?.data ?? [], k: 10);
-              state = state.copyWith(
-                services: limited,
-                filteredServices: limited,
-                isLoading: false,
-                error: null,
-              );
-            } catch (e) {
-              state = state.copyWith(isLoading: false, error: e);
-            }
-          },
-          error: (err, _) =>
-              state = state.copyWith(isLoading: false, error: err),
-          loading: () => state = state.copyWith(isLoading: true, error: null),
-        );
+        next.whenData((wrapper) async {
+          final list = wrapper?.data ?? [];
+          if (list.length == _lastCount) return;
+
+          _lastCount = list.length;
+          final limited = await compute(
+            takeTopKByDate,
+            {'all': list, 'k': 10},
+          );
+
+          state = state.copyWith(
+            services: limited,
+            filteredServices: limited,
+            isLoading: false,
+            error: null,
+          );
+        });
       },
     );
   }
 
-  void refresh() {
-    ref.read(globalProvider).usersTransactions.whenData((data) {
-      final limited = _takeTopKByDate(data?.data ?? [], k: 10);
+  Future<void> refresh() async {
+    ref.read(globalProvider).usersTransactions.whenData((data) async {
+      try {
+        // final limited = _takeTopKByDate(data?.data ?? [], k: 10);
+        final limited = await compute(
+          takeTopKByDate,
+          {'all': data?.data ?? [], 'k': 10},
+        );
 
-      state = state.copyWith(
-        services: limited,
-        filteredServices: limited,
-        isLoading: false,
-      );
+        state = state.copyWith(
+          services: limited,
+          filteredServices: limited,
+          isLoading: false,
+        );
+      } catch (e) {
+        state = state.copyWith(isLoading: false, error: e);
+      }
     });
   }
 
