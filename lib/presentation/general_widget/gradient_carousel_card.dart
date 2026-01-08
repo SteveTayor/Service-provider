@@ -90,7 +90,7 @@ class GradientPromoCard extends StatelessWidget {
                         title,
                         style: TextStyle(
                           fontSize:
-                              useResponsive ? r.textSize(14) : 14, // CHANGED
+                              useResponsive ? r.textSize(15) : 15, // CHANGED
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                           fontFamily: FontFamily.mabryPro,
@@ -105,7 +105,7 @@ class GradientPromoCard extends StatelessWidget {
                         subtitle,
                         style: TextStyle(
                           fontSize:
-                              useResponsive ? r.textSize(12) : 12, // CHANGED
+                              useResponsive ? r.textSize(13) : 13, // CHANGED
                           fontWeight: FontWeight.w400,
                           color: Colors.white,
                           fontFamily: FontFamily.mabryPro,

@@ -19,20 +19,29 @@ class WalletTransactionsNotifier
     ref.listen<AsyncValue<GetAllUserTransactionResponse?>>(
       globalProvider.select((s) => s.usersTransactions),
       (prev, next) {
-        next.whenData((wrapper) {
-          final filtered = (wrapper?.data ?? []).where((txn) {
-            final type = txn.transType?.toLowerCase() ?? '';
-            return type == 'fund_wallet' || type == 'withdrawal';
-          }).toList();
+        next.when(
+          data: (wrapper) {
+            final filtered = (wrapper?.data ?? []).where((txn) {
+              final type = txn.transType?.toLowerCase() ?? '';
+              return type == 'fund_wallet' || type == 'withdrawal';
+            }).toList();
 
-          final limited = _takeTopKByDate(filtered, k: 10);
+            final limited = _takeTopKByDate(filtered, k: 10);
 
-          state = state.copyWith(
-            services: limited,
-            filteredServices: limited,
-            isLoading: false,
-          );
-        });
+            state = state.copyWith(
+              services: limited,
+              filteredServices: limited,
+              isLoading: false,
+              error: null,
+            );
+          },
+          loading: () {
+            state = state.copyWith(isLoading: true, error: null);
+          },
+          error: (e, _) {
+            state = state.copyWith(isLoading: false, error: e);
+          },
+        );
       },
     );
   }

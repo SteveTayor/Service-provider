@@ -40,8 +40,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(globalProvider.notifier).fetchUsersTransactions(context);
+
+      ref.read(walletTransactionsProvider.notifier).refresh();
     });
   }
 
@@ -139,7 +141,9 @@ class WalletBody extends ConsumerWidget {
           //     ref.read(dashboardProvider.notifier).initDashboard(context));
           ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
         } finally {
-          context.dismissDialog();
+          if (context.mounted) {
+            context.dismissDialog();
+          }
         }
       },
       child: SingleChildScrollView(
