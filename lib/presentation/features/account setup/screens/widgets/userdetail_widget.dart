@@ -42,6 +42,16 @@ class UserdetailWidget extends ConsumerWidget {
       return ('$rest $firstName').capiTalizeFirstLast;
     }
 
+    final firstInitial =
+        (globalUserProvider.value?.data?.firstName?.isNotEmpty ?? false)
+            ? globalUserProvider.value!.data!.firstName![0]
+            : '';
+
+    final lastInitial =
+        (globalUserProvider.value?.data?.lastName?.isNotEmpty ?? false)
+            ? globalUserProvider.value!.data!.lastName![0]
+            : '';
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -50,7 +60,7 @@ class UserdetailWidget extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "${globalUserProvider.value?.data?.firstName?[0]}${globalUserProvider.value?.data?.lastName?[0]}",
+              "$firstInitial$lastInitial",
               style: context.textTheme.titleMedium!.copyWith(
                 color: AppColors.white,
               ),
@@ -63,7 +73,7 @@ class UserdetailWidget extends ConsumerWidget {
             ),
             12.verticalSpace,
             Text(
-              moveSurnameToEnd(globalUserProvider.value!.data!.name),
+              moveSurnameToEnd(globalUserProvider.value?.data?.name),
               style: context.textTheme.titleSmall,
             ),
             if (profileProv?.emailVerifiedAt == null ||

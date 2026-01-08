@@ -973,6 +973,7 @@ class WithdrawalBody extends ConsumerWidget {
     final globalUserProvider = ref.watch(globalProvider).profile;
     final profileProv = globalUserProvider.value?.data;
     String withdrawalServiceCharge = "100.0";
+    // Rebuild on text change
 
     ref.listen<WithdrawalProvider>(
       withdrawalProvider,
@@ -994,7 +995,8 @@ class WithdrawalBody extends ConsumerWidget {
     final hasSelectedBank = provider.selectedBank != null;
     final hasBvn = profileProv?.bvn != null;
     final isButtonEnabled =
-        hasBvn && hasSelectedBank && isAmountValid && !provider.isSubmitting;
+        // hasBvn ||
+        hasSelectedBank && isAmountValid && !provider.isSubmitting;
 
     return provider.isLoading
         ? const Center(child: CircularProgressIndicator())
@@ -1174,21 +1176,42 @@ class WithdrawalBody extends ConsumerWidget {
                   ),
                 ),
                 SizedBox(height: r.spacing(40)),
-                BundlegramButton(
-                  useResponsive: true,
-                  isEnabled: isButtonEnabled,
-                  text: provider.isSubmitting
-                      ? "Requesting"
-                      : 'Request withdrawal',
-                  isLoading: provider.isSubmitting,
-                  onPressed: isButtonEnabled
-                      ? () => _handleWithdrawal(
-                            context,
-                            ref,
-                            provider,
-                            profileProv,
-                          )
-                      : null,
+                // BundlegramButton(
+                //   useResponsive: true,
+                //   isEnabled: isButtonEnabled,
+                //   text: provider.isSubmitting
+                //       ? "Requesting"
+                //       : 'Request withdrawal',
+                //   isLoading: provider.isSubmitting,
+                //   onPressed: isButtonEnabled
+                //       ? () => _handleWithdrawal(
+                //             context,
+                //             ref,
+                //             provider,
+                //             profileProv,
+                //           )
+                //       : null,
+                // ),
+                ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: provider.amountController,
+                  builder: (_, value, __) {
+                    final isAmountValid = _isAmountValid(value.text);
+                    final isButtonEnabled = provider.selectedBank != null &&
+                        isAmountValid &&
+                        !provider.isSubmitting;
+
+                    return BundlegramButton(
+                      isEnabled: isButtonEnabled,
+                      onPressed: isButtonEnabled
+                          ? () => _handleWithdrawal(
+                              context, ref, provider, profileProv)
+                          : null,
+                      text: provider.isSubmitting
+                          ? "Requesting"
+                          : 'Request withdrawal',
+                      isLoading: provider.isSubmitting,
+                    );
+                  },
                 ),
               ],
             ),

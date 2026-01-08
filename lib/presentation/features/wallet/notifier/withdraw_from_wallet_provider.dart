@@ -44,6 +44,14 @@ class WithdrawalProvider extends ChangeNotifier {
   bool _isSubmitting = false;
   bool get isSubmitting => _isSubmitting;
 
+  String _amountText = '';
+  String get amountText => _amountText;
+
+  void onAmountChanged(String value) {
+    _amountText = value;
+    notifyListeners();
+  }
+
   Future<String> getIpAddress() async {
     try {
       final response =

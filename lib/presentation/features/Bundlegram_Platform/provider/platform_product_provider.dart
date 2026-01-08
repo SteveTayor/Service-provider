@@ -102,6 +102,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   /// TTL for cached subproducts (5 minutes)
   static const Duration _subProductsCacheTtl = Duration(minutes: 5);
 
+  String? _lastDetectedPhone;
+
   /// whether cache for a product is still fresh
   bool _isSubProductsCacheFresh(int productId) {
     final ts = _subProductsFetchedAt[productId];
@@ -363,15 +365,28 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     state = state.copyWith(
       selectedProduct: product,
       selectedProviderIcon: providerIcon,
-      selectedSubProduct: null,
-      selectedDataType: null,
+      // selectedSubProduct: null,
+      // selectedDataType: null,
       selectedPaymentType: null,
-      subProducts: [],
-      dropdownOptions: [],
+      // subProducts: [],
+      // dropdownOptions: [],
       // amountController: _rehydrate(
       //   state.amountController,
       //   text: "",
       // ),
+      // amountController: TextEditingController(),
+      isValidated: false,
+      validatedName: null,
+    );
+  }
+
+  void resetForNewProduct() {
+    state = state.copyWith(
+      selectedSubProduct: null,
+      selectedDataType: null,
+      selectedPresetAmount: null,
+      subProducts: [],
+      dropdownOptions: [],
       amountController: TextEditingController(),
       isValidated: false,
       validatedName: null,
@@ -385,6 +400,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     bool force = true,
     bool invalidateCache = false,
   }) async {
+    resetForNewProduct();
     // 1. Pure selection
     selectProduct(product, providerIcon);
 
@@ -437,10 +453,18 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
   /// Call when the user types a phone number or when pre-filled.
   ///  to auto-detect the network provider and select the matching product.
-  void detectAndSelectFromPhone(BuildContext ctx, String rawPhone) {
+  /// /// If allowPrefill == true, we treat this as "initial prefill from profile"
+  /// and we will attempt to select a matching product and fetch subProducts
+  /// so the UI (grid) can show bundles without an explicit beneficiary selection.
+  void detectAndSelectFromPhone(BuildContext ctx, String rawPhone,
+      {bool allowPrefill = false}) {
     _debounce?.cancel();
     // small debounce so we don't run detection on every keystroke
     _debounce = Timer(const Duration(milliseconds: 600), () async {
+      if (state.selectedBeneficiary != null && !allowPrefill) {
+        // beneficiary already applied; skip auto-detect
+        return;
+      }
       try {
         final phone = rawPhone.trim();
         // normalize +234 -> 0 form for easier prefix checks
@@ -467,6 +491,14 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         //   return;
         // }
 
+// if phone changed since last time, clear dependent selections to avoid mismatches
+        if (_lastDetectedPhone != normalized) {
+          _lastDetectedPhone = normalized;
+          state = state.copyWith(
+            selectedSubProduct: null,
+            selectedPresetAmount: null,
+          );
+        }
         final detected = _detectNetworkFromPhone(normalized);
         debugPrint('Auto-detected network: $detected');
 
@@ -513,7 +545,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
           invalidateCache: true,
         );
 
-        await fetchSubProducts(ctx, matchingProduct.id!, force: true);
+        // await fetchSubProducts(ctx, matchingProduct.id!, force: true);
         debugPrint(
             'Auto-selected product ${matchingProduct.productName} for phone $normalized');
       } catch (e, st) {
@@ -536,6 +568,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
     // 1) populate phone controller
     state.firstInputController.text = b.phoneNumber ?? '';
+
+// persist beneficiary in state so UI knows it is applied
+    setSelectedBeneficiary(b);
 
     // 2) detect/decide network (prefer backend value)
     final detectedNetwork = (b.network != null && b.network!.isNotEmpty)
@@ -587,7 +622,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       invalidateCache: true,
     );
 
-    await fetchSubProducts(ctx, matchingProduct.id!, force: true);
+    // await fetchSubProducts(ctx, matchingProduct.id!, force: true);
     debugPrint(
         'applyBeneficiary: selected product ${matchingProduct.productName} (${matchingProduct.id})');
   }
@@ -1538,7 +1573,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
           } else {
             context.dismissDialog();
             final userMsg = sanitizeErrorMessage(response.message);
-            context.showErrorSnackBar(userMsg);
+            // context.showErrorSnackBar(userMsg);
 
             // : 'Please try again later.';
             final notifId = DateTime.now().millisecondsSinceEpoch % 100000;

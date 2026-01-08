@@ -131,18 +131,18 @@ class WalletBody extends ConsumerWidget {
 
     return RefreshIndicator(
       onRefresh: () async {
-        context.showLoadingDialog();
+        // context.showLoadingDialog();
         try {
           await Future.wait([
             ref.read(globalProvider.notifier).fetchWalletBalance(context),
             ref.read(globalProvider.notifier).fetchUsersTransactions(context),
           ]);
+          ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
           // unawaited(
           //     ref.read(dashboardProvider.notifier).initDashboard(context));
-          ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
         } finally {
           if (context.mounted) {
-            context.dismissDialog();
+            // context.dismissDialog();
           }
         }
       },

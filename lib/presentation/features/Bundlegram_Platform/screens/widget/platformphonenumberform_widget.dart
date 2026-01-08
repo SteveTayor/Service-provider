@@ -161,6 +161,7 @@ class _PlatformPhoneNumberFormWidgetState
           notifier.detectAndSelectFromPhone(
             context,
             controller.text.trim(),
+            allowPrefill: true,
           );
         });
       }
@@ -221,20 +222,22 @@ class _PlatformPhoneNumberFormWidgetState
       (prev, next) {
         final prevCtrl = prev?.firstInputController;
         final nextCtrl = next.firstInputController;
-        if (prevCtrl != nextCtrl) {
-          // unbind old
+
+        if (prevCtrl != nextCtrl && nextCtrl != null) {
           if (_phoneListener != null && prevCtrl != null) {
             prevCtrl.removeListener(_phoneListener!);
           }
-          // bind new (only if non-null)
-          if (nextCtrl != null) {
-            // remove listener from our fallback controller if it was used
-            if (_phoneController != nextCtrl) {
-              if (_phoneListener != null)
-                _phoneController.removeListener(_phoneListener!);
-              _phoneController = nextCtrl;
-              _phoneController.addListener(_phoneListener!);
-            }
+
+          _phoneController = nextCtrl;
+          _phoneController.addListener(_phoneListener!);
+
+          // Re-detect provider if phone already exists
+          final text = nextCtrl.text.trim();
+          if (text.isNotEmpty) {
+            Future.microtask(() {
+              notifier.detectAndSelectFromPhone(context, text,
+                  allowPrefill: true);
+            });
           }
         }
       },

@@ -29,7 +29,6 @@ final dioProvider = Provider<Dio>((ref) {
     InterceptorsWrapper(
       onRequest: (options, handler) async {
         // static AccessToken from env
-        options.headers['AccessToken'] = localSterilizer;
 
         // Authorization token if user is authenticated
         final userToken = await secureStorage.getAuthToken();
@@ -37,6 +36,7 @@ final dioProvider = Provider<Dio>((ref) {
           options.headers['Authorization'] = 'Bearer $userToken';
         }
 
+        options.headers['AccessToken'] = localSterilizer;
         return handler.next(options);
       },
       onResponse: (response, handler) {
@@ -54,6 +54,8 @@ final dioProvider = Provider<Dio>((ref) {
         print('Response: ${error.response?.data}');
 
         final resData = error.response?.data;
+        final context = navigatorKey.currentContext;
+
         if (error.response?.statusCode == 401 &&
             (resData is Map &&
                 (resData['status']?.toString().toLowerCase() == 'logout' ||
@@ -65,23 +67,30 @@ final dioProvider = Provider<Dio>((ref) {
           // Clear local storage
           await secureStorage.deleteAuthToken();
 
-          final context = navigatorKey.currentContext;
-          if (context != null) {
-            final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
+          // if (context != null) {
+          //   final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
 
-            if (!currentRoute.contains(RouteConstants.lockScreen)) {
-              //Clear token
-              await secureStorage.deleteAuthToken();
-              // Show snackbar
+          //   if (!currentRoute.contains(RouteConstants.lockScreen)) {
+          //     //Clear token
+          //     await secureStorage.deleteAuthToken();
+          //     // Show snackbar
+          //     context.showCustomSnackBar(
+          //       'Session expired. Please log in again.',
+          //     );
+
+          //     // Navigate to lockscreen
+          //     unawaited(Future.microtask(() {
+          //       context.go(RouteConstants.lockScreen);
+          //     }));
+          //   }
+          // }
+          if (context != null) {
+            unawaited(Future.microtask(() {
               context.showCustomSnackBar(
                 'Session expired. Please log in again.',
               );
-
-              // Navigate to lockscreen
-              unawaited(Future.microtask(() {
-                context.go(RouteConstants.lockScreen);
-              }));
-            }
+              context.go(RouteConstants.lockScreen);
+            }));
           }
         }
 
@@ -102,19 +111,27 @@ final dioProvider = Provider<Dio>((ref) {
           await secureStorage.deleteAuthToken();
 
           final context = navigatorKey.currentContext;
-          if (context != null) {
-            final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
+          // if (context != null) {
+          //   final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
 
-            if (!currentRoute.contains(RouteConstants.login)) {
+          //   if (!currentRoute.contains(RouteConstants.login)) {
+          //     context.showCustomSnackBar(
+          //       'Your account has been banned. Contact support.',
+          //     );
+          //     unawaited(
+          //       Future.microtask(() {
+          //         context.go(RouteConstants.login);
+          //       }),
+          //     );
+          //   }
+          // }
+          if (context != null) {
+            unawaited(Future.microtask(() {
               context.showCustomSnackBar(
                 'Your account has been banned. Contact support.',
               );
-              unawaited(
-                Future.microtask(() {
-                  context.go(RouteConstants.login);
-                }),
-              );
-            }
+              context.go(RouteConstants.login);
+            }));
           }
         }
 

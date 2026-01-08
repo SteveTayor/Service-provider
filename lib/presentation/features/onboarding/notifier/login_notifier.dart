@@ -409,7 +409,8 @@ class LoginProvider extends ChangeNotifier {
     final token = await _storage.getAuthToken();
 
     if (token == null) {
-      context.showErrorSnackBar('No token found.');
+      // context.showErrorSnackBar('No token found.');
+      context.go(RouteConstants.login);
       return;
     }
 

@@ -155,8 +155,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   Future<void> _goToWalkThrough() async {
     final storage = ref.read(secureStorageHelperProvider);
     final rememberedEmail = await storage.getRememberedEmail();
+    final rememberedPin = await storage.getPin(rememberedEmail ?? '');
 
-    if (rememberedEmail != null) {
+    if (rememberedEmail != null && rememberedPin != null) {
       // Go to lock screen if email exists
       context.go(RouteConstants.lockScreen);
     } else {

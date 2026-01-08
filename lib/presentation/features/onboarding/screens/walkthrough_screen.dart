@@ -356,8 +356,10 @@ class _WalkthroughScreenState extends ConsumerState<WalkthroughScreen>
                         final storage = ref.read(secureStorageHelperProvider);
                         final rememberedEmail =
                             await storage.getRememberedEmail();
+                        final rememberedPin =
+                            await storage.getPin(rememberedEmail ?? '');
 
-                        if (rememberedEmail != null) {
+                        if (rememberedEmail != null && rememberedPin != null) {
                           unawaited(context.push(RouteConstants.lockScreen));
                         } else {
                           unawaited(context.push(RouteConstants.login));
