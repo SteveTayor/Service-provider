@@ -212,6 +212,7 @@
 //     _showToast(message, bgColor: Colors.orange, duration: duration);
 //   }
 // }
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:toastification/toastification.dart';
@@ -295,7 +296,7 @@ class CustomSnackBar {
       bgColor: AppColors.errorText,
       textColor: AppColors.white,
       icon: Icon(
-        Icons.error_outline,
+        CupertinoIcons.xmark_rectangle,
         color: AppColors.white,
         size: 24.sp,
       ),
