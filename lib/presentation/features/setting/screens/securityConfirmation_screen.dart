@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/validators.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
@@ -32,6 +33,7 @@ class _SecurityConfirmationScreenState
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
+  bool showPasswrd = true;
 
   @override
   void initState() {
@@ -116,9 +118,16 @@ class _SecurityConfirmationScreenState
                 children: [
                   AppTextField(
                     controller: _passwordController,
-                    obscureText: true,
+                    obscureText: showPasswrd,
                     hintText: 'Password',
-                    validateFunction: Validators.passcode(),
+                    suffixIcon: GestureDetector(
+                      onTap: () => setState(() => showPasswrd = !showPasswrd),
+                      child: Icon(
+                        showPasswrd ? Icons.visibility : Icons.visibility_off,
+                        color: AppColors.grey33,
+                        size: 24,
+                      ),
+                    ),
                     onChange: (_) => _validateForm(),
                     enabled: !_isLoading,
                   ),

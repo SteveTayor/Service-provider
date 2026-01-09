@@ -48,7 +48,7 @@ Future<void> main() async {
 
       //  block first frame
       await _initializeFirebase();
-      await _initializeNotifications();
+      // await _initializeNotifications();
 
       // defer (DO NOT await)
       unawaited(_loadEnv());
@@ -109,23 +109,23 @@ Future<void> _initializeFirebase() async {
   );
 }
 
-Future<void> _initializeNotifications() async {
-  await NotificationService().initialize();
-}
+// Future<void> _initializeNotifications() async {
+//   await NotificationService().initialize();
+// }
 
-Future<void> _checkAppVersion() async {
-  unawaited(() async {
-    try {
-      const storage = FlutterSecureStorage();
-      final secureStorage = SecureStorageHelper(storage);
-      final versionManager = VersionManager(secureStorage);
+// Future<void> _checkAppVersion() async {
+//   unawaited(() async {
+//     try {
+//       const storage = FlutterSecureStorage();
+//       final secureStorage = SecureStorageHelper(storage);
+//       final versionManager = VersionManager(secureStorage);
 
-      await versionManager.checkAndHandleAppUpdate();
-    } catch (e, st) {
-      debugPrint('Version check failed: $e\n$st');
-    }
-  }());
-}
+//       await versionManager.checkAndHandleAppUpdate();
+//     } catch (e, st) {
+//       debugPrint('Version check failed: $e\n$st');
+//     }
+//   }());
+// }
 
 void _setupGlobalErrorHandling() {
   FlutterError.onError = (details) {

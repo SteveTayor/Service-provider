@@ -446,7 +446,7 @@ class _TransactionDetailItem extends StatelessWidget {
                     HapticFeedback.lightImpact();
                     Clipboard.setData(ClipboardData(text: value));
                     navigatorKey.currentState!.context
-                        .showCustomSnackBar("Copied to clipboard");
+                        .showSuccessSnackBar("Copied to clipboard");
                   },
                   child: AppSvgIcon(path: Assets.svgs.copy),
                 ),

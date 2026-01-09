@@ -74,7 +74,7 @@ final dioProvider = Provider<Dio>((ref) {
           //     //Clear token
           //     await secureStorage.deleteAuthToken();
           //     // Show snackbar
-          //     context.showCustomSnackBar(
+          //     context.showSuccessSnackBar(
           //       'Session expired. Please log in again.',
           //     );
 
@@ -86,7 +86,7 @@ final dioProvider = Provider<Dio>((ref) {
           // }
           if (context != null) {
             unawaited(Future.microtask(() {
-              context.showCustomSnackBar(
+              context.showSuccessSnackBar(
                 'Session expired. Please log in again.',
               );
               context.go(RouteConstants.lockScreen);
@@ -115,7 +115,7 @@ final dioProvider = Provider<Dio>((ref) {
           //   final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
 
           //   if (!currentRoute.contains(RouteConstants.login)) {
-          //     context.showCustomSnackBar(
+          //     context.showSuccessSnackBar(
           //       'Your account has been banned. Contact support.',
           //     );
           //     unawaited(
@@ -127,7 +127,7 @@ final dioProvider = Provider<Dio>((ref) {
           // }
           if (context != null) {
             unawaited(Future.microtask(() {
-              context.showCustomSnackBar(
+              context.showSuccessSnackBar(
                 'Your account has been banned. Contact support.',
               );
               context.go(RouteConstants.login);

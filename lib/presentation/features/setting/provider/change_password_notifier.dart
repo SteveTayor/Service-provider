@@ -116,7 +116,7 @@ class ChangePasswordController extends ChangeNotifier {
       },
       (data) async {
         isLoading = false;
-        context.showCustomSnackBar('Password has been updated!');
+        context.showSuccessSnackBar('Password has been updated!');
         await Future.delayed(const Duration(milliseconds: 300));
         if (context.mounted) {
           debugPrint("Login in...");

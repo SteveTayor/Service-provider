@@ -113,7 +113,7 @@ class _PrivacysecurityScreenState extends ConsumerState<PrivacysecurityScreen> {
         pendingToggle = null;
         isLoading = false;
       });
-      context.showCustomSnackBar(
+      context.showSuccessSnackBar(
         '${_getSecurityTypeDisplayName(toggleType)} ${value ? 'enabled' : 'disabled'} successfully',
       );
     }

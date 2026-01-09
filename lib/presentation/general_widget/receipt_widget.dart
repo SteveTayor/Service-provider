@@ -399,7 +399,8 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper>
       if (result.status == ShareResultStatus.success) {
         debugPrint("Share successful");
         if (mounted) {
-          context.showCustomSnackBar('Transaction receipt shared successfully');
+          context
+              .showSuccessSnackBar('Transaction receipt shared successfully');
           // context.pop(); // close after success
         }
         shouldPopOnce = true;
@@ -438,7 +439,7 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper>
       );
 
       if (result['isSuccess'] == true) {
-        context.showCustomSnackBar("Receipt saved to gallery 📸");
+        context.showSuccessSnackBar("Receipt saved to gallery 📸");
         if (shouldPop) Navigator.pop(context);
       } else {
         _showError("Failed to save receipt to gallery.");

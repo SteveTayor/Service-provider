@@ -66,7 +66,7 @@ import 'package:go_router/go_router.dart';
 //             Clipboard.setData(ClipboardData(text: title));
 
 //             navigatorKey.currentState!.context
-//                 .showCustomSnackBar("Account number Copied");
+//                 .showSuccessSnackBar("Account number Copied");
 //           },
 //           path: Assets.svgs.phCopySimple,
 //         ),
@@ -171,7 +171,7 @@ import 'package:go_router/go_router.dart';
 // HapticFeedback.lightImpact() ;
 //               context.pop();
 //               // navigatorKey.currentState!.context
-//               //     .showCustomSnackBar("Coming soom");
+//               //     .showSuccessSnackBar("Coming soom");
 //               WalletNotifier().showAddMoneyViaDebitCard(context);
 //             },
 //             child: Text(
@@ -232,7 +232,7 @@ class _AddfundWidgetState extends ConsumerState<AddfundWidget> {
             HapticFeedback.lightImpact();
             Clipboard.setData(ClipboardData(text: title));
             navigatorKey.currentState!.context
-                .showCustomSnackBar("Account number copied");
+                .showSuccessSnackBar("Account number copied");
           },
           path: Assets.svgs.phCopySimple,
         ),

@@ -116,7 +116,7 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
           // Navigate to lock screen so user can unlock (PIN/biometric)
           ctx
             ..go(RouteConstants.lockScreen)
-            ..showCustomSnackBar('Locked out due to inactivity.');
+            ..showSuccessSnackBar('Locked out due to inactivity.');
         }
       } else {
         // Nothing to restore — route user to login instead of lock screen
@@ -133,7 +133,7 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
               .contains(RouteConstants.login)) {
         ctx
           ..go(RouteConstants.login)
-          ..showCustomSnackBar('Session expired.');
+          ..showSuccessSnackBar('Session expired.');
       }
     } finally {
       _isLoggingOut = false;

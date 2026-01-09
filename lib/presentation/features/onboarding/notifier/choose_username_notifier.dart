@@ -131,7 +131,7 @@ class ChooseUsernameProvider extends ChangeNotifier {
         if (_fromLogin) {
           context
             ..go(RouteConstants.dashboard)
-            ..showCustomSnackBar('Login Successful');
+            ..showSuccessSnackBar('Login Successful');
         } else {
           context.go(RouteConstants.onboardResult); // Default flow
         }

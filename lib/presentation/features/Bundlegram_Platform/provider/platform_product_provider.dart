@@ -1154,7 +1154,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                 'state.isValidated=${state.isValidated}');
 
             if (validated) {
-              context.showCustomSnackBar('Validated: ${response.data}');
+              context.showSuccessSnackBar('Validated: ${response.data}');
               debugPrint('Validation successful, calling onSuccess callback');
               onSuccess
                   ?.call(); // Call onSuccess to proceed to transaction summary

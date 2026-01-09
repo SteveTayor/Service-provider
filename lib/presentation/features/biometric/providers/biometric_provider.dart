@@ -50,7 +50,7 @@ class BiometricSetupProvider {
       );
       await biometricService.enableBiometricLogin();
       context
-          .showCustomSnackBar('Biometric authentication enabled successfully');
+          .showSuccessSnackBar('Biometric authentication enabled successfully');
     } else {
       context.showErrorSnackBar('Biometric authentication failed');
     }

@@ -292,7 +292,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
         if (_lastBack == null ||
             now.difference(_lastBack!) > const Duration(seconds: 3)) {
           _lastBack = now;
-          context.showCustomSnackBar(
+          context.showSuccessSnackBar(
             'Press back again to exit',
           );
           return false;

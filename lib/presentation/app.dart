@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:bundlegram/core/config/interceptors/inactivity_wrapper.dart';
 import 'package:bundlegram/core/providers/app_globals..dart';
 import 'package:bundlegram/core/providers/connectivity_provider.dart';
 import 'package:bundlegram/core/router/app_router.dart';
 import 'package:bundlegram/core/utils/themes.dart';
+import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
+import 'package:bundlegram/data/datasources/local/version_manager.dart';
 import 'package:bundlegram/presentation/no_internet.dart';
+import 'package:bundlegram/services/notification_services/notification_services.dart';
 import 'package:bundlegram/services/route_memory_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 // import 'package:bundlegram/presentation/routes/app_router.dart';
@@ -13,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -33,6 +39,37 @@ class _AppState extends ConsumerState<App> {
     super.initState();
     _routeMemoryService = RouteMemoryService(AppRouter.router);
     WidgetsBinding.instance.addObserver(_routeMemoryService);
+
+    _postFrameInit();
+  }
+
+  void _postFrameInit() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeDeferredServices();
+    });
+  }
+
+  Future<void> _initializeDeferredServices() async {
+    unawaited(NotificationService().initialize());
+    unawaited(_checkAppVersion());
+  }
+
+// Future<void> _initializeNotifications() async {
+//   await NotificationService().initialize();
+// }
+
+  Future<void> _checkAppVersion() async {
+    unawaited(() async {
+      try {
+        const storage = FlutterSecureStorage();
+        final secureStorage = SecureStorageHelper(storage);
+        final versionManager = VersionManager(secureStorage);
+
+        await versionManager.checkAndHandleAppUpdate();
+      } catch (e, st) {
+        debugPrint('Version check failed: $e\n$st');
+      }
+    }());
   }
 
   @override
