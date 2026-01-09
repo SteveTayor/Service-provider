@@ -7,6 +7,7 @@ import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatte
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_product_provider.dart';
+import 'package:bundlegram/presentation/general_widget/app_loader.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,6 +59,10 @@ class ProductItemGrid extends ConsumerWidget {
     if (!isAmountPresetGrid && state.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
+
+    if (!isAmountPresetGrid && state.isLoading) return AppLoader();
+    // if (!isAmountPresetGrid && validList.isEmpty && !state.isLoading)
+    //   return const Empty();
 
     if (!isAmountPresetGrid && validList.isEmpty) {
       // For mobileData we attempted to fetch subProducts — show a friendly message.

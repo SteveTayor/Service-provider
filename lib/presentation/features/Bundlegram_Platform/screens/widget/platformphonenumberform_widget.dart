@@ -119,52 +119,31 @@ class _PlatformPhoneNumberFormWidgetState
     final providerState = ref.read(provider);
     final notifier = ref.read(provider.notifier);
 
-    /// -------------------------------
-    /// 1. Set initial tab safely
-    /// -------------------------------
-    final selected = providerState.selectedSubProduct;
-    if (selected?.subName?.toLowerCase().contains('postpaid') ?? false) {
-      _tabController.index = 1;
-    }
-
-    /// -------------------------------
-    /// 2. SAFELY bind phone controller
-    /// -------------------------------
     _phoneController =
         providerState.firstInputController ?? TextEditingController();
 
-    _phoneListener = () {
-      final text = _phoneController.text.trim();
-      if (text.isNotEmpty) {
-        notifier.detectAndSelectFromPhone(context, text);
-      }
-    };
-
-    _phoneController.addListener(_phoneListener!);
-
-    /// -------------------------------
-    /// 3. Prefill phone (once, safely)
-    /// -------------------------------
+    // === PREFILL ONLY (show phone early during loading/shimmer) ===
     final profile = ref.read(globalProvider).profile.value?.data;
     final isPhoneBased = widget.serviceType == PlatformProductType.airtime ||
         widget.serviceType == PlatformProductType.mobileData;
 
-    if (isPhoneBased && profile != null) {
+    if (isPhoneBased &&
+        profile != null &&
+        _phoneController.text.trim().isEmpty) {
       final phone = formatPhone(profile.phone);
-      final controller = providerState.firstInputController;
+      _phoneController.text = phone;
+      debugPrint('[PLATFORM PHONE FORM] Prefilled phone: $phone');
+    }
 
-      if (controller != null && controller.text.trim().isEmpty) {
-        controller.text = phone;
-
-        // Avoid re-entrant update crash
-        Future.microtask(() {
-          notifier.detectAndSelectFromPhone(
-            context,
-            controller.text.trim(),
-            allowPrefill: true,
-          );
-        });
-      }
+    // === Attach listener (handles manual entry, beneficiary selection, etc.) ===
+    if (_phoneListener == null) {
+      _phoneListener = () {
+        final text = _phoneController.text.trim();
+        if (text.isNotEmpty && text.length >= 11) {
+          notifier.detectAndSelectFromPhone(context, text);
+        }
+      };
+      _phoneController.addListener(_phoneListener!);
     }
 
     /// -------------------------------
@@ -217,32 +196,33 @@ class _PlatformPhoneNumberFormWidgetState
     final showBeneficiaries =
         widget.serviceType == PlatformProductType.airtime ||
             widget.serviceType == PlatformProductType.mobileData;
-    ref.listen<PlatformProductState>(
-      platformProductProvider(widget.serviceType),
-      (prev, next) {
-        final prevCtrl = prev?.firstInputController;
-        final nextCtrl = next.firstInputController;
+    // ref.listen<PlatformProductState>(
+    //   platformProductProvider(widget.serviceType),
+    //   (prev, next) {
+    //     final prevCtrl = prev?.firstInputController;
+    //     final nextCtrl = next.firstInputController;
 
-        if (prevCtrl != nextCtrl && nextCtrl != null) {
-          if (_phoneListener != null && prevCtrl != null) {
-            prevCtrl.removeListener(_phoneListener!);
-          }
+    //     if (prevCtrl != nextCtrl && nextCtrl != null) {
+    //       if (_phoneListener != null && prevCtrl != null) {
+    //         prevCtrl.removeListener(_phoneListener!);
+    //       }
 
-          _phoneController = nextCtrl;
-          _phoneController.addListener(_phoneListener!);
+    //       _phoneController = nextCtrl;
+    //       _phoneController.addListener(_phoneListener!);
 
-          // Re-detect provider if phone already exists
-          final text = nextCtrl.text.trim();
-          if (text.isNotEmpty) {
-            Future.microtask(() {
-              notifier.detectAndSelectFromPhone(context, text,
-                  allowPrefill: true);
-            });
-          }
-        }
-      },
-    );
-
+    //       // Re-detect provider if phone already exists
+    //       final text = nextCtrl.text.trim();
+    //       if (text.isNotEmpty) {
+    //         Future.microtask(() {
+    //           notifier.detectAndSelectFromPhone(context, text,
+    //               allowPrefill: true);
+    //         });
+    //       }
+    //     }
+    //   },
+    // );
+    debugPrint(
+        '[PLATFORM PHONE FORM] Building form widget with phone controller: $_phoneController');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

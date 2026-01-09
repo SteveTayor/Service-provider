@@ -1,4 +1,5 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformquickaction_widget.dart';
@@ -32,7 +33,10 @@ class _PlatformScreenState extends ConsumerState<PlatformScreen> {
       body: RefreshIndicator(
         onRefresh: () async {
           // Trigger data refresh by calling _fetchDashboardData
-          await ref.read(dashboardProvider.notifier).initialize();
+          // await ref.read(dashboardProvider.notifier).initialize();
+          final global = ref.read(globalProvider.notifier);
+          await global.initializeWalletandAccounts(context);
+          await ref.read(recentTransactionsProvider.notifier).refresh();
         },
         child: SingleChildScrollView(
           physics:
@@ -64,7 +68,7 @@ class _PlatformScreenState extends ConsumerState<PlatformScreen> {
                   transactionProvider: recentTransactionsProvider,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 50,
               ),
             ],

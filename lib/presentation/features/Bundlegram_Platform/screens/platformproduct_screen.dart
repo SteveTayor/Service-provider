@@ -68,23 +68,50 @@ class _PlatformproductScreenState extends ConsumerState<PlatformproductScreen>
     final notifier =
         ref.read(platformProductProvider(widget.serviceType).notifier);
 
+    // In PlatformproductScreen.initState() — replace the entire microtask with this updated version
     Future.microtask(() async {
       if (!mounted) return;
-
       try {
         notifier.setLoading();
         await notifier.fetchProducts(context);
+        // NOTE: We NO LONGER call refreshSubProductsForLoadedProducts here.
+        // It was pre-fetching subProducts for the "first" products,
+        // which could cause a brief wrong grid if the profile phone belongs to a different network.
 
-        await notifier.refreshSubProductsForLoadedProducts(
-          context,
-          force: true,
-          maxChecks: 3,
-        );
+        // === INITIAL AUTO-DETECTION AFTER PRODUCTS LOADED ===
+        final isPhoneBased =
+            widget.serviceType == PlatformProductType.airtime ||
+                widget.serviceType == PlatformProductType.mobileData;
+
+        if (isPhoneBased) {
+          final controller = ref
+              .read(platformProductProvider(widget.serviceType))
+              .firstInputController;
+          String phone = controller.text.trim();
+
+          final profile = ref.read(globalProvider).profile.value?.data;
+
+          // If still empty (rare, but safe), prefill from profile
+          if (phone.isEmpty && profile != null) {
+            phone = formatPhone(profile.phone);
+            controller.text = phone;
+            debugPrint('[PLATFORM SCREEN] Late prefill from profile: $phone');
+          }
+
+          if (phone.isNotEmpty && phone.length >= 11) {
+            debugPrint(
+                '[PLATFORM SCREEN] Running initial detection for phone: $phone');
+            // This will select the correct provider + fetch its subProducts
+            notifier.detectAndSelectFromPhone(context, phone);
+          } else {
+            debugPrint(
+                '[PLATFORM SCREEN] No valid phone to auto-detect — waiting for user input');
+          }
+        }
       } catch (e, st) {
         logP('initState error: $e\n$st');
       }
     });
-
     logP('initState() end');
   }
 

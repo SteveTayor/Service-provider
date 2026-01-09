@@ -126,19 +126,22 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       error: result.status != 'success' ? result.message : null,
     );
 
-    // Auto-select first product only when none is selected yet
-    if (result.data != null &&
-        result.data!.isNotEmpty &&
-        state.selectedProduct == null) {
-      final firstProduct = result.data!.first;
-      final providerIcon = normalizeAssetName(
-        firstProduct.productName,
-        serviceType: _serviceType,
-      );
-      selectProduct(firstProduct, providerIcon ?? '');
-      // await fetchSubProducts(context, firstProduct.id!);
-      await fetchSubProducts(context, firstProduct.id!, force: true);
-    }
+    // // Auto-select first product only when none is selected yet
+    // if (result.data != null &&
+    //     result.data!.isNotEmpty &&
+    //     state.selectedProduct == null) {
+    //   final firstProduct = result.data!.first;
+    //   final providerIcon = normalizeAssetName(
+    //     firstProduct.productName,
+    //     serviceType: _serviceType,
+    //   );
+    // selectProduct(firstProduct, providerIcon ?? '');
+    // await fetchSubProducts(context, firstProduct.id!);
+    // await fetchSubProducts(
+    //   context,
+    //   firstProduct.id!,
+    // );
+    // }
 
     if (result.status != 'success') {
       context.showErrorSnackBar(result.message ?? 'Failed to load products');
@@ -387,7 +390,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       selectedPresetAmount: null,
       subProducts: [],
       dropdownOptions: [],
-      amountController: TextEditingController(),
+      // amountController: TextEditingController(),
+      amountController: state.amountController,
+
       isValidated: false,
       validatedName: null,
     );
@@ -433,7 +438,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       selectedDataType: dataType,
       selectedSubProduct: null, // Clear selected subproduct
       selectedPresetAmount: null, // Clear preset amount
-      amountController: TextEditingController(),
+      // amountController: TextEditingController(),
+      amountController: state.amountController,
     );
   }
 
@@ -512,6 +518,12 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             matchingProduct = p;
             break;
           }
+        }
+        if (matchingProduct != null &&
+            matchingProduct.id == state.selectedProduct?.id) {
+          debugPrint(
+              'Detected same provider (${matchingProduct.productName}), skipping reset/refetch');
+          return; // Nothing to do — keep existing subProducts/grid
         }
 
         // fallback: brand match by extracting brand

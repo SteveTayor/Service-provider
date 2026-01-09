@@ -81,7 +81,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
         throw Exception('No authentication token found');
       }
 
-      // 🔥 ALL CORE APIS – CALLED ONCE 🔥
+      // ALL CORE APIS – CALLED ONCE
       await Future.wait([
         initializeWalletandAccounts(ctx),
         initializePlatformDependencies(ctx),
