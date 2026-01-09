@@ -302,6 +302,7 @@ class WithdrawalProvider extends ChangeNotifier {
         _amountController.clear();
         setSubmitting(false);
         notifyListeners();
+
         // Return the success message to be used in the subTitle
         return res.message ?? 'Withdrawal request successfully received';
       },

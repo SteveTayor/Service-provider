@@ -28,6 +28,21 @@ class NotificationService {
     importance: Importance.max,
     playSound: true,
   );
+  static const AndroidNotificationChannel _generalChannel =
+      AndroidNotificationChannel(
+    'general_channel',
+    'General Notifications',
+    description: 'Channel for general app notifications',
+    importance: Importance.max,
+  );
+
+  static const AndroidNotificationChannel _scheduledChannel =
+      AndroidNotificationChannel(
+    'scheduled_channel',
+    'Scheduled Notifications',
+    description: 'Channel for scheduled notifications',
+    importance: Importance.max,
+  );
 
   Future<void> initialize() async {
     // firebase init,
@@ -43,6 +58,8 @@ class NotificationService {
             AndroidFlutterLocalNotificationsPlugin>();
 
     await androidPlugin?.createNotificationChannel(_pushChannel);
+    await androidPlugin?.createNotificationChannel(_generalChannel);
+    await androidPlugin?.createNotificationChannel(_scheduledChannel);
 
     // Init local notifications
     const androidSettings =
@@ -60,7 +77,10 @@ class NotificationService {
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         if (kDebugMode) debugPrint('Notification tapped: ${response.payload}');
         // _handleNotificationTap(response.payload);
-        _handleNotificationTap(response.data);
+        if (response.payload != null) {
+          final data = jsonDecode(response.payload!) as Map<dynamic, dynamic>;
+          _handleNotificationTap(Map<String, dynamic>.from(data));
+        }
       },
     );
 
@@ -105,6 +125,12 @@ class NotificationService {
 
   Future<void> _initializeFirebaseMessaging() async {
     try {
+      await _firebaseMessaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
       // APNs token (iOS) - use retry because it may not be ready immediately
       String? apnsToken = await _getAPNSTokenWithRetry();
       if (kDebugMode) debugPrint('APNs token: $apnsToken');
@@ -287,19 +313,12 @@ class NotificationService {
   void _handleNotificationTap(Map<String, dynamic> data) {
     if (kDebugMode) debugPrint('Notification data: $data');
 
-    final type = data['type'];
-    final route = data['route'];
+    final type = data['type']?.toString();
+    final route = data['route']?.toString();
 
     if (navigatorKey.currentState == null) return;
 
     switch (type) {
-      case 'transaction':
-        navigatorKey.currentState!.pushNamed(
-          RouteConstants.wallet,
-          arguments: data['transactionId'],
-        );
-        break;
-
       case 'message':
         navigatorKey.currentState!.pushNamed(
           RouteConstants.notification,
@@ -311,6 +330,13 @@ class NotificationService {
         navigatorKey.currentState!.pushNamed(
           RouteConstants.setting,
         );
+        break;
+      case 'withdraw':
+      case 'transaction':
+        navigatorKey.currentState!.pushNamed(
+          RouteConstants.notification,
+        );
+
         break;
 
       default:

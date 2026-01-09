@@ -660,6 +660,7 @@
 //   }
 // }
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
@@ -683,6 +684,7 @@ import 'package:bundlegram/presentation/general_widget/app_dropdown.dart';
 import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:bundlegram/presentation/general_widget/async_value/app_error_wiget.dart';
+import 'package:bundlegram/services/notification_services/notification_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -939,6 +941,26 @@ class WithdrawalBody extends ConsumerWidget {
             onVerified: (pin) async {
               final message = await provider.requestWithdrawal(ctx, pin);
               if (message == null) return;
+
+              final notifPayload = jsonEncode({
+                'route': RouteConstants.transactionSuccess,
+                'type': 'withdraw',
+                'message': message,
+                'amount': provider.amountController.text,
+              });
+
+              final notifId =
+                  DateTime.now().millisecondsSinceEpoch.remainder(100000);
+
+              unawaited(
+                NotificationService().showNotification(
+                  id: notifId,
+                  title: 'Withdrawal request',
+                  body:
+                      'You initiated a withdrawal of ${provider.amountController.text.toCurrency()}',
+                  payload: notifPayload,
+                ),
+              );
 
               unawaited(
                 Navigator.pushReplacement(
