@@ -1206,9 +1206,7 @@ class WithdrawalBody extends ConsumerWidget {
                           ? () => _handleWithdrawal(
                               context, ref, provider, profileProv)
                           : null,
-                      text: provider.isSubmitting
-                          ? "Requesting"
-                          : 'Request withdrawal',
+                      text: provider.isSubmitting ? "Requesting" : 'Withdraw',
                       isLoading: provider.isSubmitting,
                     );
                   },
