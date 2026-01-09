@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
@@ -191,12 +192,19 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   //   await fetchUsersTransactions(context);
   // }
 
-  void _handleError(String message, BuildContext context) {
+  void handleError(String message, BuildContext context) {
     context.showErrorSnackBar(message);
     debugPrint('GlobalProvider Error: $message');
   }
 
-  void _handleFailure(Failure failure, BuildContext context) async {
+  void showError(String message) {
+    final ctx = navigatorKey.currentContext;
+    if (ctx == null) return;
+
+    ctx.showErrorSnackBar(sanitizeErrorMessage(message));
+  }
+
+  void handleFailure(Failure failure, BuildContext context) async {
     // final message = failure.properties.isNotEmpty
     //     ? failure.properties.join('\n')
     //     : 'Something went wrong';
@@ -220,13 +228,13 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   Future<void> fetchProfile(BuildContext context) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
-      return _handleError('Authentication token missing', context);
+      return handleError('Authentication token missing', context);
     }
 
     final result = await _api.getProfile(token);
     result.fold(
       (fail) {
-        _handleFailure(fail, context);
+        handleFailure(fail, context);
         state = state.copyWith(profile: AsyncError(fail, StackTrace.current));
       },
       (data) {
@@ -248,13 +256,13 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   Future<void> fetchWalletBalance(BuildContext context) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
-      return _handleError('Authentication token missing', context);
+      return handleError('Authentication token missing', context);
     }
 
     final result = await _api.getWallet(token);
     result.fold(
       (fail) {
-        _handleFailure(fail, context);
+        handleFailure(fail, context);
         state =
             state.copyWith(walletBalance: AsyncError(fail, StackTrace.current));
       },
@@ -266,7 +274,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       BuildContext context, int month, int year) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
-      _handleError('Authentication token missing', context);
+      handleError('Authentication token missing', context);
       state = state.copyWith(
           dashboardData: const AsyncError('No token', StackTrace.empty));
       return;
@@ -282,7 +290,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
       return response.fold(
         (fail) {
-          _handleFailure(fail, context);
+          handleFailure(fail, context);
           throw fail; // Automatically puts into AsyncError
         },
         (data) => data,
@@ -295,13 +303,13 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   Future<void> fetchBanks(BuildContext context) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
-      return _handleError('Authentication token missing', context);
+      return handleError('Authentication token missing', context);
     }
 
     final result = await _api.getAllBanks(token);
     result.fold(
       (fail) {
-        _handleFailure(fail, context);
+        handleFailure(fail, context);
         state = state.copyWith(banks: AsyncError(fail, StackTrace.current));
       },
       (data) => state = state.copyWith(banks: AsyncData(data)),
@@ -311,14 +319,14 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   Future<void> fetchUserBanks(BuildContext context) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
-      return _handleError('Authentication token missing', context);
+      return handleError('Authentication token missing', context);
     }
 
     final result = await _api.getUserBanks(token);
     result.fold(
       (fail) {
         state = state.copyWith(userBanks: AsyncError(fail, StackTrace.current));
-        _handleFailure(fail, context);
+        handleFailure(fail, context);
       },
       (data) {
         state = state.copyWith(userBanks: AsyncData(data));
@@ -330,14 +338,14 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   Future<void> fetchVirtualAccount(BuildContext context) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
-      return _handleError('Authentication token missing', context);
+      return handleError('Authentication token missing', context);
     }
 
     state = state.copyWith(virtualAccounts: const AsyncLoading());
     final result = await _api.getVirtualAccount(token);
     result.fold(
       (fail) {
-        _handleFailure(fail, context);
+        handleFailure(fail, context);
         state = state.copyWith(
             virtualAccounts: AsyncError(fail, StackTrace.current));
       },
@@ -349,7 +357,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   //     {bool force = false}) async {
   //   final token = await _storage.getAuthToken();
   //   if (token == null) {
-  //     return _handleError('Authentication token missing', context);
+  //     return handleError('Authentication token missing', context);
   //   }
 
   //   final now = DateTime.now();
@@ -366,7 +374,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   //   final result = await _api.getAllTransactions(token);
   //   result.fold(
   //     (fail) {
-  //       _handleFailure(fail, context);
+  //       handleFailure(fail, context);
   //       state = state.copyWith(
   //         usersTransactions: AsyncError(fail, StackTrace.current),
   //       );
@@ -426,7 +434,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       final epinResult = await _api.getEpinTransactionRequests(token);
       epinResult.fold(
         (fail) {
-          _handleFailure(fail, context);
+          handleFailure(fail, context);
           // keep going: we still want main transactions even if epin failed
           debugPrint(
               '[fetchUsersTransactions] epin fetch failed: ${fail.properties}');
@@ -450,7 +458,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
     if (mainWrapper == null && epinWrapper == null) {
       final fail = mainFailure!;
-      _handleFailure(fail, context);
+      handleFailure(fail, context);
       state = state.copyWith(
         usersTransactions: AsyncError(fail, StackTrace.current),
       );
@@ -535,7 +543,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
     // If main failed but epin succeeded, still surface main error non-blocking
     if (mainFailure != null && epinWrapper != null) {
-      _handleFailure(mainFailure!, context);
+      handleFailure(mainFailure!, context);
     }
   }
 
@@ -544,7 +552,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       {bool force = false}) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
-      return _handleError('Authentication token missing', context);
+      return handleError('Authentication token missing', context);
     }
 
     // Caching: if not forced and we already have data, skip
@@ -561,7 +569,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
     result.fold(
       (fail) {
-        _handleFailure(fail, context);
+        handleFailure(fail, context);
         state = state.copyWith(
           epinTransactions: AsyncError(fail, StackTrace.current),
         );

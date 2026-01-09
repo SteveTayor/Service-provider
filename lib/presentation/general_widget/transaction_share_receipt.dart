@@ -276,7 +276,9 @@ class TransactionReceiptWidget extends StatelessWidget {
           value: data.meterNumber!,
           useResponsive: useResponsive,
         ),
-      if (data.quantity != null && data.quantity!.isNotEmpty)
+      if (data.quantity != null &&
+          data.quantity!.isNotEmpty &&
+          data.type?.toLowerCase() == 'electricity')
         _TransactionDetailItem(
           label: 'Quantity',
           value: data.quantity!,

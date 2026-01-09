@@ -6,7 +6,11 @@ import 'package:bundlegram/presentation/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -156,6 +160,18 @@ class NotificationService {
           debugPrint('FCM onMessage: ${message.notification?.title}');
         if (message.notification != null) {
           displayPushNotification(message);
+          final context = navigatorKey.currentContext;
+          if (context != null) {
+            // showInAppBanner(message, context);
+            InAppBanner.show(
+              context,
+              title: message.notification!.title ?? 'New Notification',
+              body: message.notification!.body ?? '',
+              // onTap: () {
+              //   _handleNotificationTap(message.data);
+              // },
+            );
+          }
         }
       });
 
@@ -182,6 +198,103 @@ class NotificationService {
       if (kDebugMode) debugPrint('Error initializing Firebase Messaging: $e');
     }
   }
+
+  // void showInAppBanner(RemoteMessage message, BuildContext context) {
+  //   final title = message.notification?.title ?? 'New notification';
+  //   final body = message.notification?.body ?? '';
+
+  //   showOverlayNotification(
+  //     (context) {
+  //       return Material(
+  //         color: Colors.transparent,
+  //         child: Container(
+  //           margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+  //           decoration: BoxDecoration(
+  //             color: Colors.white,
+  //             borderRadius: BorderRadius.circular(12.r),
+  //             boxShadow: [
+  //               BoxShadow(
+  //                 color: Colors.black.withOpacity(0.15),
+  //                 blurRadius: 12,
+  //                 offset: const Offset(0, 4),
+  //               ),
+  //             ],
+  //           ),
+  //           child: InkWell(
+  //             onTap: () {
+  //               OverlaySupportEntry.of(context)?.dismiss();
+  //               // Navigate to notifications screen
+  //               context.push(RouteConstants.notification);
+  //             },
+  //             borderRadius: BorderRadius.circular(12.r),
+  //             child: Padding(
+  //               padding: EdgeInsets.all(14.w),
+  //               child: Row(
+  //                 children: [
+  //                   // App icon
+  //                   ClipRRect(
+  //                     borderRadius: BorderRadius.circular(8.r),
+  //                     child: Image.asset(
+  //                       'assets/images/ic_launcher-playstore.png',
+  //                       width: 30.w,
+  //                       height: 30.h,
+  //                       fit: BoxFit.cover,
+  //                     ),
+  //                   ),
+  //                   SizedBox(width: 12.w),
+
+  //                   // Title and body
+  //                   Expanded(
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       mainAxisSize: MainAxisSize.min,
+  //                       children: [
+  //                         Text(
+  //                           title,
+  //                           style: TextStyle(
+  //                             fontSize: 12.sp,
+  //                             fontWeight: FontWeight.w600,
+  //                             color: Colors.black87,
+  //                           ),
+  //                           maxLines: 1,
+  //                           overflow: TextOverflow.ellipsis,
+  //                         ),
+  //                         if (body.isNotEmpty) ...[
+  //                           SizedBox(height: 4.h),
+  //                           Text(
+  //                             body,
+  //                             style: TextStyle(
+  //                               fontSize: 10.sp,
+  //                               color: Colors.black54,
+  //                               height: 1.3,
+  //                             ),
+  //                             maxLines: 2,
+  //                             overflow: TextOverflow.ellipsis,
+  //                           ),
+  //                         ],
+  //                       ],
+  //                     ),
+  //                   ),
+
+  //                   SizedBox(width: 8.w),
+
+  //                   // Subtle indicator
+  //                   Icon(
+  //                     Icons.chevron_right,
+  //                     color: Colors.black26,
+  //                     size: 12.sp,
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //     duration: const Duration(seconds: 4),
+  //     position: NotificationPosition.top,
+  //   );
+  // }
 
   Future<String?> _getAPNSTokenWithRetry() async {
     String? apnsToken;
@@ -345,5 +458,124 @@ class NotificationService {
           navigatorKey.currentState!.pushNamed(route as String);
         }
     }
+  }
+}
+
+class InAppBanner {
+  static void show(
+    BuildContext context, {
+    required String title,
+    required String body,
+    // String? imagePath,
+    VoidCallback? onTap,
+    Duration duration = const Duration(seconds: 4),
+  }) {
+    showOverlayNotification(
+      (overlayContext) {
+        return Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.only(top: 30.w),
+            margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: InkWell(
+              onTap: () {
+                OverlaySupportEntry.of(overlayContext)?.dismiss();
+                onTap?.call();
+              },
+              borderRadius: BorderRadius.circular(12.r),
+              child: Padding(
+                padding: EdgeInsets.all(14.w),
+                child: Row(
+                  children: [
+                    // App icon or custom image
+                    // if (imagePath != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: Image.asset(
+                        "assets/images/ic_launcher-playstore.png",
+                        width: 30.w,
+                        height: 30.h,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 30.w,
+                            height: 30.h,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Icon(
+                              Icons.image,
+                              size: 16.sp,
+                              color: Colors.grey.shade600,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+
+                    // Title and body
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            title,
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (body.isNotEmpty) ...[
+                            SizedBox(height: 4.h),
+                            Text(
+                              body,
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                color: Colors.black54,
+                                height: 1.3,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(width: 8.w),
+
+                    // Subtle indicator
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.black26,
+                      size: 12.sp,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      duration: duration,
+      position: NotificationPosition.top,
+    );
   }
 }

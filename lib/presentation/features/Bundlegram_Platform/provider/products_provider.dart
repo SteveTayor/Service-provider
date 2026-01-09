@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/models/beneficiaries/get_all_beneficiaries.dart';
@@ -10,10 +12,12 @@ import 'package:bundlegram/data/models/products/get_all_products_response.dart';
 import 'package:bundlegram/data/models/products/get_sub_products_response.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
+import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_product_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 /// Sanitizes backend or unexpected error messages to be safe for display.
 /// - Strips HTML
@@ -43,7 +47,11 @@ final authTokenProvider = FutureProvider<String>((ref) async {
   final storage = ref.read(secureStorageHelperProvider);
   final token = await storage.getAuthToken();
   if (token == null) {
-    throw AuthenticationFailure(['No auth token found']);
+    final context = navigatorKey.currentContext;
+    if (context != null) context.go(RouteConstants.login);
+    context?.showErrorSnackBar('Session expired. Please log in again.');
+    // throw AuthenticationFailure(['No auth token found']);
+    return '';
   }
   return token;
 });
@@ -66,11 +74,15 @@ final productsProvider =
         return result.fold(
           (failure) {
             // Always sanitize before throwing so UI never shows raw HTML or overly long text
-            final safeMsg = failure.properties.isNotEmpty
-                ? _sanitizeErrorMessage(failure.properties.first)
-                : 'Failed to fetch airtime products';
+            // final safeMsg = failure.properties.isNotEmpty
+            //     ? _sanitizeErrorMessage(failure.properties.first)
+            //     : 'Failed to fetch airtime products';
 
-            throw ServerFailure([safeMsg]);
+            // throw ServerFailure([safeMsg]);
+            ref
+                .read(globalProvider.notifier)
+                .handleFailure(failure, navigatorKey.currentContext!);
+            return GetAllProductsResponse(data: []);
           },
           (data) => data,
         );
@@ -84,10 +96,14 @@ final productsProvider =
 
         return result.fold(
           (failure) {
-            final safeMsg = failure.properties.isNotEmpty
-                ? _sanitizeErrorMessage(failure.properties.first)
-                : 'Failed to fetch mobile data products';
-            throw ServerFailure([safeMsg]);
+            // final safeMsg = failure.properties.isNotEmpty
+            //     ? _sanitizeErrorMessage(failure.properties.first)
+            //     : 'Failed to fetch mobile data products';
+            // throw ServerFailure([safeMsg]);
+            ref
+                .read(globalProvider.notifier)
+                .handleFailure(failure, navigatorKey.currentContext!);
+            return GetAllProductsResponse(data: []);
           },
           (data) => data,
         );
@@ -106,16 +122,22 @@ final productsProvider =
       };
       if (typeKey == null) {
         throw ValidationFailure(['Unknown product type']);
+        // ref.read(globalProvider.notifier).showError('Unknown product type');
+        // return null;
       }
       final result =
           await ref.read(apiServiceProvider).getProductByType(bearer, typeKey);
 
       return result.fold(
         (failure) {
-          final safeMsg = failure.properties.isNotEmpty
-              ? _sanitizeErrorMessage(failure.properties.first)
-              : 'Failed to fetch products for $typeKey';
-          throw ServerFailure([safeMsg]);
+          // final safeMsg = failure.properties.isNotEmpty
+          //     ? _sanitizeErrorMessage(failure.properties.first)
+          //     : 'Failed to fetch products for $typeKey';
+          // throw ServerFailure([safeMsg]);
+          ref
+              .read(globalProvider.notifier)
+              .handleFailure(failure, navigatorKey.currentContext!);
+          return GetAllProductsResponse(data: []);
         },
         (data) => data,
       );
@@ -139,10 +161,14 @@ final subProductsProvider =
 
       return result.fold(
         (failure) {
-          final safeMsg = failure.properties.isNotEmpty
-              ? _sanitizeErrorMessage(failure.properties.first)
-              : 'Failed to fetch sub-products';
-          throw ServerFailure([safeMsg]);
+          // final safeMsg = failure.properties.isNotEmpty
+          //     ? _sanitizeErrorMessage(failure.properties.first)
+          //     : 'Failed to fetch sub-products';
+          // throw ServerFailure([safeMsg]);
+          ref
+              .read(globalProvider.notifier)
+              .handleFailure(failure, navigatorKey.currentContext!);
+          return GetAllSubProductsResponse(data: []);
         },
         (data) => data,
       );
@@ -167,10 +193,14 @@ final subProductsByCategoryProvider = FutureProvider.family<
 
       return result.fold(
         (failure) {
-          final safeMsg = failure.properties.isNotEmpty
-              ? _sanitizeErrorMessage(failure.properties.first)
-              : 'Failed to fetch sub-products by category';
-          throw ServerFailure([safeMsg]);
+          // final safeMsg = failure.properties.isNotEmpty
+          //     ? _sanitizeErrorMessage(failure.properties.first)
+          //     : 'Error occurred while fetching services';
+          // throw ServerFailure([safeMsg]);
+          ref
+              .read(globalProvider.notifier)
+              .handleFailure(failure, navigatorKey.currentContext!);
+          return GetAllSubProductsResponse(data: []);
         },
         (data) => data,
       );
@@ -193,10 +223,14 @@ final beneficiariesProvider =
 
     return result.fold(
       (failure) {
-        final safeMsg = failure.properties.isNotEmpty
-            ? _sanitizeErrorMessage(failure.properties.first)
-            : 'Failed to load beneficiaries';
-        throw ServerFailure([safeMsg]);
+        // final safeMsg = failure.properties.isNotEmpty
+        //     ? _sanitizeErrorMessage(failure.properties.first)
+        //     : 'Failed to load beneficiaries';
+        // throw ServerFailure([safeMsg]);
+        ref
+            .read(globalProvider.notifier)
+            .handleFailure(failure, navigatorKey.currentContext!);
+        return [];
       },
       (response) {
         return response.data ?? [];

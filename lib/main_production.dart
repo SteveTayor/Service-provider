@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 /// ------------------------------------------------------------
 /// Firebase background handler
@@ -61,7 +62,9 @@ Future<void> main() async {
         () => ProviderScope(
           child: DevicePreview(
             enabled: false,
-            builder: (_) => const App(),
+            builder: (_) => const OverlaySupport.global(
+              child: App(),
+            ),
           ),
         ),
       );

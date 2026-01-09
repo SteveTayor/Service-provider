@@ -8,6 +8,7 @@ import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -1554,6 +1555,13 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               body: successBody,
               payload: notifPayload,
             ));
+
+            InAppBanner.show(
+              context,
+              title:
+                  '${_serviceType.title.capiTalizeFirstLast} Purchase Successful',
+              body: successBody,
+            );
             final Map<String, dynamic>? respData =
                 response.data is Map<String, dynamic>
                     ? response.data as Map<String, dynamic>
