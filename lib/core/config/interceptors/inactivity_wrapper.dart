@@ -103,9 +103,10 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
         hasBiometric = false;
       }
 
-      final bool hasSavedState = (token != null && token.isNotEmpty) ||
+      final bool hasSavedState =
+          // (token != null && token.isNotEmpty) ||
           (rememberedEmail != null && rememberedEmail.isNotEmpty) ||
-          hasBiometric;
+              hasBiometric;
 
       // Find current route safely
       final currentRoute = ModalRoute.of(ctx)?.settings.name ?? '';
@@ -127,6 +128,7 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
       }
     } catch (e) {
       // Last-resort: log and attempt to navigate to login
+      debugPrint('Error during inactivity logout: $e');
       final ctx = navigatorKey.currentContext;
       if (ctx != null &&
           !(ModalRoute.of(ctx)?.settings.name ?? '')

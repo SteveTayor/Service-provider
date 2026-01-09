@@ -78,7 +78,8 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       final token = await storage.getAuthToken();
 
       if (token == null) {
-        throw Exception('No authentication token found');
+        return;
+        // throw Exception('No authentication token found');
       }
 
       // ALL CORE APIS – CALLED ONCE
@@ -200,13 +201,14 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     //     ? failure.properties.join('\n')
     //     : 'Something went wrong';
 
-    if (failure is AuthenticationFailure &&
-        failure.properties.contains(
-            'Your session has expired or you are already logged in on another device.')) {
-      await _storage.deleteAuthToken();
+    if (failure is ServerFailure ||
+        (failure is AuthenticationFailure &&
+            failure.properties.contains(
+                'Your session has expired or you are already logged in on another device.'))) {
+      // await _storage.deleteAuthToken();
       final ctx = navigatorKey.currentContext;
       if (ctx != null) {
-        ctx.go(RouteConstants.login);
+        ctx.go(RouteConstants.lockScreen);
       }
     } else {
       final userMsg = userFacingMessageFromFailure(failure);
