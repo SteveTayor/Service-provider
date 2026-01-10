@@ -1242,10 +1242,31 @@ class WithdrawalBody extends ConsumerWidget {
                 //           )
                 //       : null,
                 // ),
+                // ValueListenableBuilder<TextEditingValue>(
+                //   valueListenable: provider.amountController,
+                //   builder: (_, value, __) {
+                //     final isAmountValid = _isAmountValid(value.text);
+                //     final isButtonEnabled = provider.selectedBank != null &&
+                //         isAmountValid &&
+                //         !provider.isSubmitting;
+
+                //     return BundlegramButton(
+                //       isEnabled: isButtonEnabled,
+                //       onPressed: isButtonEnabled
+                //           ? () => _handleWithdrawal(
+                //               context, ref, provider, profileProv)
+                //           : null,
+                //       text: provider.isSubmitting ? "Requesting" : 'Withdraw',
+                //       isLoading: provider.isSubmitting,
+                //     );
+                //   },
+                // ),
                 ValueListenableBuilder<TextEditingValue>(
                   valueListenable: provider.amountController,
                   builder: (_, value, __) {
-                    final isAmountValid = _isAmountValid(value.text);
+                    final isAmountValid = _isAmountValid(
+                      value.text,
+                    );
                     final isButtonEnabled = provider.selectedBank != null &&
                         isAmountValid &&
                         !provider.isSubmitting;
@@ -1253,10 +1274,14 @@ class WithdrawalBody extends ConsumerWidget {
                     return BundlegramButton(
                       isEnabled: isButtonEnabled,
                       onPressed: isButtonEnabled
-                          ? () => _handleWithdrawal(
-                              context, ref, provider, profileProv)
+                          ? () => _showWithdrawalPreview(
+                                context,
+                                ref,
+                                provider,
+                                profileProv,
+                              )
                           : null,
-                      text: provider.isSubmitting ? "Requesting" : 'Withdraw',
+                      text: 'Continue',
                       isLoading: provider.isSubmitting,
                     );
                   },
