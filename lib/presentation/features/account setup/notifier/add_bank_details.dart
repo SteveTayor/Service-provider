@@ -141,6 +141,7 @@ class AddBankProvider extends ChangeNotifier {
             _setLoading(false);
             return true;
           } else {
+            debugPrint("The response error on adding banks is ${resp.message}");
             final userMsg = sanitizeErrorMessage(resp.message);
             context.showErrorSnackBar(userMsg);
             _setLoading(false);
@@ -151,6 +152,7 @@ class AddBankProvider extends ChangeNotifier {
       );
     } catch (e) {
       context.dismissDialog();
+      debugPrint("The caught error on adding banks $e");
       // Friendly UI for users
       context.showErrorSnackBar('An error occurred. Please try again.');
     } finally {

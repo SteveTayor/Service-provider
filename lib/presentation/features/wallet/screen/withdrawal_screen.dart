@@ -1013,6 +1013,7 @@ class WithdrawalBody extends ConsumerWidget {
     final amount = double.tryParse(text.replaceAll(',', ''));
     if (amount == null || amount <= 0) return false;
     if (amount < 500) return false;
+
     return true;
   }
 

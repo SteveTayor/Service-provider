@@ -296,7 +296,7 @@ class CustomSnackBar {
       bgColor: AppColors.errorText,
       textColor: AppColors.white,
       icon: Icon(
-        CupertinoIcons.xmark_rectangle,
+        Icons.error,
         color: AppColors.white,
         size: 24.sp,
       ),

@@ -109,45 +109,48 @@ class TransactionSummary extends ConsumerWidget {
                     // ),
                     Flexible(
                       child: isDiscount
-                          ? Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8.w,
-                                vertical: 4.h,
-                              ),
+                          ? FittedBox(
+                              fit: BoxFit.scaleDown,
                               alignment: Alignment.centerRight,
-                              decoration: BoxDecoration(
-                                color: _discountColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(4.r),
-                                border: Border.all(
-                                  color: _discountColor,
-                                  width: 0.8,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w,
+                                  vertical: 4.h,
                                 ),
-                              ),
-                              child: Text(
-                                value,
-                                textAlign: TextAlign.right,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                softWrap: true,
-                                style: TextStyle(
-                                  color: _discountColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12.sp,
+                                decoration: BoxDecoration(
+                                  color: _discountColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(4.r),
+                                  border: Border.all(
+                                    color: _discountColor,
+                                    width: 0.8,
+                                  ),
+                                ),
+                                child: Text(
+                                  value,
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    color: _discountColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12.sp,
+                                  ),
+                                  maxLines: 1,
                                 ),
                               ),
                             )
-                          : Text(
-                              value.contains('Buy')
-                                  ? value.replaceFirst('Buy', '').trim()
-                                  : value,
-                              textAlign: TextAlign.right,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                              softWrap: true,
-                              style: TextStyle(
-                                color: AppColors.grey33,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12.sp,
+                          : FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                value.contains('Buy')
+                                    ? value.replaceFirst('Buy', '').trim()
+                                    : value,
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  color: AppColors.grey33,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12.sp,
+                                ),
+                                maxLines: 1,
                               ),
                             ),
                     ),
@@ -228,7 +231,7 @@ class TransactionSummary extends ConsumerWidget {
                   ],
                 ),
                 8.verticalSpace,
-                Divider(color: AppColors.divider),
+                const Divider(color: AppColors.divider),
               ],
             ),
           ),

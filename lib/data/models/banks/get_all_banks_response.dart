@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_dynamic_calls
 
+import 'package:flutter/material.dart';
+
 class GetAllBanksResponse {
   final String? status;
   final List<BankDetails>? data;
@@ -11,14 +13,19 @@ class GetAllBanksResponse {
     this.message,
   });
 
-  factory GetAllBanksResponse.fromJson(Map<String, dynamic> json) =>
-      GetAllBanksResponse(
-        status: json["status"] as String,
-        data: (json['data'] as List<dynamic>)
-            .map((e) => BankDetails.fromJson(e as Map<String, dynamic>))
-            .toList(),
-        message: json["message"] as String,
-      );
+  factory GetAllBanksResponse.fromJson(Map<String, dynamic> json) {
+    debugPrint(
+      'Parsing banks response: data type = ${json["data"].runtimeType}',
+    );
+
+    return GetAllBanksResponse(
+      status: json["status"] as String?,
+      data: (json["data"] as List<dynamic>?)
+          ?.map((e) => BankDetails.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      message: json["message"] as String?,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "status": status,
@@ -43,11 +50,10 @@ class BankDetails {
     this.createdAt,
     this.updatedAt,
   });
-
   factory BankDetails.fromJson(Map<String, dynamic> json) => BankDetails(
-        bankCode: json["bank_code"] as String,
-        bankName: json["bank_name"] as String,
-        status: json["status"] as String,
+        bankCode: json["bank_code"] as String?,
+        bankName: json["bank_name"] as String?,
+        status: json["status"] as String?,
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
       );

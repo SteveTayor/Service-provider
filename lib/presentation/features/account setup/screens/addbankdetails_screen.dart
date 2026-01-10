@@ -15,11 +15,39 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AddBankDetailsScreen extends ConsumerWidget {
+class AddBankDetailsScreen extends ConsumerStatefulWidget {
   const AddBankDetailsScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AddBankDetailsScreen> createState() =>
+      _AddBankDetailsScreenState();
+}
+
+class _AddBankDetailsScreenState extends ConsumerState<AddBankDetailsScreen> {
+  late final ProviderSubscription _banksSub;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _banksSub = ref.listenManual(
+      globalProvider.select((s) => s.banks),
+      (previous, next) {
+        if (next is AsyncError) {
+          ref.watch(globalProvider.notifier).fetchBanks(context);
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _banksSub.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final provider = ref.watch(addBankProvider);
     final notifier = ref.read(addBankProvider.notifier);
     // WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -29,13 +57,13 @@ class AddBankDetailsScreen extends ConsumerWidget {
     //   }
     // });
     // final banksAsync = ref.watch(globalProvider.select((s) => s.banks));
-    Future.microtask(() async {
-      ref.listen(globalProvider.select((s) => s.banks), (_, next) {
-        if (next is AsyncError || next is AsyncLoading) {
-          ref.read(globalProvider.notifier).fetchBanks(context);
-        }
-      });
-    });
+    // Future.microtask(() async {
+    //   ref.listen(globalProvider.select((s) => s.banks), (_, next) {
+    //     if (next is AsyncError || next is AsyncLoading) {
+    //       ref.read(globalProvider.notifier).fetchBanks(context);
+    //     }
+    //   });
+    // });
 
     final banksAsync = ref.watch(globalProvider.select((s) => s.banks));
     return BundlegramScaffold(

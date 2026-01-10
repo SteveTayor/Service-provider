@@ -475,7 +475,7 @@ class InAppBanner {
         return Material(
           color: Colors.transparent,
           child: Container(
-            padding: EdgeInsets.only(top: 30.w),
+            padding: EdgeInsets.only(top: 20.w),
             margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -535,7 +535,7 @@ class InAppBanner {
                           Text(
                             title,
                             style: TextStyle(
-                              fontSize: 12.sp,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
                               color: Colors.black87,
                             ),
@@ -547,7 +547,7 @@ class InAppBanner {
                             Text(
                               body,
                               style: TextStyle(
-                                fontSize: 10.sp,
+                                fontSize: 12.sp,
                                 color: Colors.black54,
                                 height: 1.3,
                               ),

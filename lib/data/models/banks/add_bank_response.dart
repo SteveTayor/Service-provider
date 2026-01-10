@@ -9,14 +9,23 @@ class AddBankResponse {
     required this.message,
   });
 
-  factory AddBankResponse.fromJson(Map<String, dynamic> json) =>
-      AddBankResponse(
-        status: json["status"] as String?,
-        data: json["data"] == null
-            ? null
-            : Data.fromJson(json["data"] as Map<String, dynamic>),
-        message: json["message"] as String?,
-      );
+  // factory AddBankResponse.fromJson(Map<String, dynamic> json) =>
+  //     AddBankResponse(
+  //       status: json["status"] as String?,
+  //       data: json["data"] == null
+  //           ? null
+  //           : Data.fromJson(json["data"] as Map<String, dynamic>),
+  //       message: json["message"] as String?,
+  //     );
+  factory AddBankResponse.fromJson(Map<String, dynamic> json) {
+    final rawData = json['data'];
+
+    return AddBankResponse(
+      status: json['status']?.toString(),
+      data: rawData is Map<String, dynamic> ? Data.fromJson(rawData) : null,
+      message: json['message']?.toString(),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "status": status,
@@ -35,13 +44,13 @@ class Data {
   final Attributes? headers;
 
   Data({
-    required this.attributes,
-    required this.request,
-    required this.query,
-    required this.server,
-    required this.files,
-    required this.cookies,
-    required this.headers,
+    this.attributes,
+    this.request,
+    this.query,
+    this.server,
+    this.files,
+    this.cookies,
+    this.headers,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(

@@ -137,8 +137,8 @@ class _WithdrawalaccountScreenState
   Future<void> _initializeData() async {
     setState(() => _showShimmer = true);
 
+    await ref.read(globalProvider.notifier).fetchUserBanks(context);
     await ref.read(withdrawalAccountProvider).fetchData(context);
-
     // Delay for better UX - minimum shimmer display time
     await Future.delayed(const Duration(milliseconds: 800));
 
