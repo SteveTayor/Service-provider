@@ -29,7 +29,7 @@ class WithdrawalPreview extends StatelessWidget {
 
   Widget _buildSummaryRow(String label, String value, {bool isCharge = false}) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      padding: EdgeInsets.symmetric(vertical: 4.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -53,16 +53,18 @@ class WithdrawalPreview extends StatelessWidget {
           // Value - takes remaining space
           Expanded(
             flex: 3,
-            child: Text(
-              value,
-              textAlign: TextAlign.right,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              softWrap: true,
-              style: TextStyle(
-                color: isCharge ? AppColors.errorText : AppColors.grey33,
-                fontWeight: FontWeight.w500,
-                fontSize: 12.sp,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: Text(
+                value,
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  color: isCharge ? AppColors.primaryColor : AppColors.grey33,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14.sp,
+                ),
+                maxLines: 1,
               ),
             ),
           ),
@@ -87,7 +89,7 @@ class WithdrawalPreview extends StatelessWidget {
         children: [
           // Header - Fixed at top
           Container(
-            padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.all(5.w),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
@@ -103,8 +105,8 @@ class WithdrawalPreview extends StatelessWidget {
                     Expanded(
                       child: Center(
                         child: Text(
-                          'Withdrawal Summary',
-                          style: context.textTheme.bodyLarge?.copyWith(
+                          'Summary',
+                          style: context.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -128,7 +130,7 @@ class WithdrawalPreview extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Column(
                 children: [
-                  16.verticalSpace,
+                  8.verticalSpace,
 
                   // Amount Display
                   Text(
@@ -169,45 +171,45 @@ class WithdrawalPreview extends StatelessWidget {
 
                   8.verticalSpace,
 
-                  Divider(color: AppColors.divider, thickness: 1),
+                  // Divider(color: AppColors.divider, thickness: 1),
 
-                  8.verticalSpace,
+                  // 8.verticalSpace,
 
                   // Total Amount
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Text(
-                            'Total',
-                            style: TextStyle(
-                              color: AppColors.grey33,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        8.horizontalSpace,
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            totalAmount,
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              color: AppColors.grey33,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12.sp,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(vertical: 8.h),
+                  //   child: Row(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       Expanded(
+                  //         flex: 4,
+                  //         child: Text(
+                  //           'Total',
+                  //           style: TextStyle(
+                  //             color: AppColors.grey33,
+                  //             fontSize: 14.sp,
+                  //             fontWeight: FontWeight.w600,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       8.horizontalSpace,
+                  //       Expanded(
+                  //         flex: 3,
+                  //         child: Text(
+                  //           totalAmount,
+                  //           textAlign: TextAlign.right,
+                  //           style: TextStyle(
+                  //             color: AppColors.grey33,
+                  //             fontWeight: FontWeight.w600,
+                  //             fontSize: 12.sp,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
 
-                  20.verticalSpace,
+                  // 10.verticalSpace,
                 ],
               ),
             ),

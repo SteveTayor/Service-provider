@@ -39,13 +39,13 @@ class TransactionSummary extends ConsumerWidget {
   final String? billValidatedName;
 
 // Discount color - greenish to indicate savings
-  // static const Color _discountColor = Colors.teal;
-  static const Color _discountColor = Color(0xFF10B981);
+  static const Color _discountColor = AppColors.primaryColor;
+  // static const Color _discountColor = Color(0xFF10B981);
 
   Widget _buildSummaryRow(String label, String value,
       {bool isDiscount = false}) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      padding: EdgeInsets.symmetric(vertical: 4.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -111,9 +111,10 @@ class TransactionSummary extends ConsumerWidget {
                       child: isDiscount
                           ? Container(
                               padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
+                                horizontal: 8.w,
                                 vertical: 4.h,
                               ),
+                              alignment: Alignment.centerRight,
                               decoration: BoxDecoration(
                                 color: _discountColor.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(4.r),
@@ -277,7 +278,7 @@ class TransactionSummary extends ConsumerWidget {
                     Text(
                       discountedPrice ?? amount,
                       style: TextStyle(
-                        fontSize: 30.sp, // Responsive font size
+                        fontSize: 26.sp, // Responsive font size
                         fontWeight: FontWeight.bold,
                         color: AppColors.grey33,
                       ),
@@ -285,7 +286,7 @@ class TransactionSummary extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                     ),
-                    32.verticalSpace,
+                    26.verticalSpace,
                     _buildSummaryRow('Transaction type', transactionType!),
                     4.verticalSpace,
                     _buildSummaryRow('Amount to pay', amount),
