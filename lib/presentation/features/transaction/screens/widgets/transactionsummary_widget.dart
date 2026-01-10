@@ -38,7 +38,12 @@ class TransactionSummary extends ConsumerWidget {
   final bool isBecomeAnAgent;
   final String? billValidatedName;
 
-  Widget _buildSummaryRow(String label, String value) {
+// Discount color - greenish to indicate savings
+  // static const Color _discountColor = Colors.teal;
+  static const Color _discountColor = Color(0xFF10B981);
+
+  Widget _buildSummaryRow(String label, String value,
+      {bool isDiscount = false}) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
@@ -51,6 +56,7 @@ class TransactionSummary extends ConsumerWidget {
               label,
               style: TextStyle(
                 color: AppColors.grey83,
+                fontSize: 12.sp,
               ),
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
@@ -86,20 +92,63 @@ class TransactionSummary extends ConsumerWidget {
                             ),
                       4.horizontalSpace,
                     ],
+                    // Flexible(
+                    //   child: Text(
+                    //     value.contains('Buy')
+                    //         ? value.replaceFirst('Buy', '').trim()
+                    //         : value,
+                    //     textAlign: TextAlign.right,
+                    //     overflow: TextOverflow.ellipsis,
+                    //     maxLines: 2,
+                    //     softWrap: true,
+                    //     style: TextStyle(
+                    //       color: AppColors.grey33,
+                    //       fontWeight: FontWeight.w500,
+                    //     ),
+                    //   ),
+                    // ),
                     Flexible(
-                      child: Text(
-                        value.contains('Buy')
-                            ? value.replaceFirst('Buy', '').trim()
-                            : value,
-                        textAlign: TextAlign.right,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        softWrap: true,
-                        style: TextStyle(
-                          color: AppColors.grey33,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      child: isDiscount
+                          ? Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                                vertical: 4.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _discountColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4.r),
+                                border: Border.all(
+                                  color: _discountColor,
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: Text(
+                                value,
+                                textAlign: TextAlign.right,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                softWrap: true,
+                                style: TextStyle(
+                                  color: _discountColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              value.contains('Buy')
+                                  ? value.replaceFirst('Buy', '').trim()
+                                  : value,
+                              textAlign: TextAlign.right,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              softWrap: true,
+                              style: TextStyle(
+                                color: AppColors.grey33,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12.sp,
+                              ),
+                            ),
                     ),
                   ],
                 ),
@@ -189,41 +238,46 @@ class TransactionSummary extends ConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Column(
                 children: [
-                  12.verticalSpace,
+                  8.verticalSpace,
                   if (isBecomeAnAgent != true) ...[
                     Text(
                       discountedPrice ?? amount,
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w500,
+                        color: discountedPrice != null ? _discountColor : null,
                       ),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                     ),
-                    32.verticalSpace,
+                    25.verticalSpace,
                     if (transactionType != null) ...[
                       _buildSummaryRow('Transaction type', transactionType!),
-                      8.verticalSpace,
+                      4.verticalSpace,
                     ],
                     _buildSummaryRow('Amount', amount),
-                    8.verticalSpace,
+                    4.verticalSpace,
                     if (billValidatedName != null) ...[
                       _buildSummaryRow('Name', billValidatedName!),
-                      8.verticalSpace,
+                      4.verticalSpace,
                     ],
                     if (discountedPrice != null) ...[
-                      _buildSummaryRow('Discounted price', discountedPrice!),
-                      8.verticalSpace,
+                      _buildSummaryRow(
+                        'Discounted price',
+                        discountedPrice!,
+                        isDiscount: true,
+                      ),
+                      4.verticalSpace,
                     ],
                     _buildSummaryRow('Payment method', paymentMethod),
-                    8.verticalSpace,
+                    4.verticalSpace,
                     if (beneficiary != null && beneficiary!.isNotEmpty)
                       _buildSummaryRow('Beneficiary', beneficiary!),
                   ] else ...[
                     Text(
                       discountedPrice ?? amount,
                       style: TextStyle(
-                        fontSize: 32.sp, // Responsive font size
+                        fontSize: 30.sp, // Responsive font size
                         fontWeight: FontWeight.bold,
                         color: AppColors.grey33,
                       ),
@@ -233,11 +287,11 @@ class TransactionSummary extends ConsumerWidget {
                     ),
                     32.verticalSpace,
                     _buildSummaryRow('Transaction type', transactionType!),
-                    8.verticalSpace,
+                    4.verticalSpace,
                     _buildSummaryRow('Amount to pay', amount),
-                    8.verticalSpace,
+                    4.verticalSpace,
                     _buildSummaryRow('Payment method', paymentMethod),
-                    16.verticalSpace,
+                    14.verticalSpace,
                     Row(
                       children: [
                         AppSvgIcon(path: Assets.svgs.balance),
@@ -265,7 +319,7 @@ class TransactionSummary extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ],
-                  24.verticalSpace,
+                  20.verticalSpace,
                 ],
               ),
             ),

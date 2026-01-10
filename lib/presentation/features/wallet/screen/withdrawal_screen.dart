@@ -676,6 +676,7 @@ import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
+import 'package:bundlegram/presentation/features/transaction/screens/widgets/withdrawal_preview.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/withdraw_from_wallet_provider.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
@@ -880,6 +881,33 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
 
 class WithdrawalBody extends ConsumerWidget {
   const WithdrawalBody({super.key});
+
+  void _showWithdrawalPreview(
+    BuildContext context,
+    WidgetRef ref,
+    WithdrawalProvider provider,
+    dynamic profileProv,
+  ) {
+    context.showBottomSheet(
+      showIcon: true,
+      child: WithdrawalPreview(
+        amount: provider.amountController.text,
+        accountName: provider.selectedBank?.accountName ?? '',
+        accountNumber: provider.selectedBank?.accountNumber ?? '',
+        bankName: provider.selectedBank?.bankName ?? '',
+        transactionFee: '100.0',
+        onPay: () {
+          context.pop(); // Close the preview
+          _handleWithdrawal(
+            context,
+            ref,
+            provider,
+            profileProv,
+          );
+        },
+      ),
+    );
+  }
 
   Future<void> _handleWithdrawal(
     BuildContext context,
