@@ -29,7 +29,7 @@ class ResetPasswordLinkScreen extends ConsumerWidget {
         ref.read(dashboardProvider.notifier).onDestinationSelected(
               0,
             );
-        context.pushReplacement(RouteConstants.dashboard);
+        context.go(RouteConstants.dashboard);
         return false;
       },
       child: BundlegramScaffold(

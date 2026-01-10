@@ -311,7 +311,13 @@ class TransactionSummary extends ConsumerWidget {
                         ),
                         4.horizontalSpace,
                         InkWell(
-                          onTap: () => context.go(RouteConstants.dashboard),
+                          onTap: () {
+                            // final dashProv =
+                            ref
+                                .read(dashboardProvider.notifier)
+                                .onDestinationSelected(1);
+                            context.go(RouteConstants.dashboard);
+                          },
                           child: Text(
                             'Top-up >',
                             style: context.textTheme.bodySmall!
