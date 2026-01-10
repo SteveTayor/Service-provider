@@ -245,6 +245,7 @@ class TransactionSummary extends ConsumerWidget {
                       discountedPrice ?? amount,
                       style: context.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w500,
+                        fontSize: 26.sp,
                         color: discountedPrice != null ? _discountColor : null,
                       ),
                       textAlign: TextAlign.center,
@@ -280,7 +281,8 @@ class TransactionSummary extends ConsumerWidget {
                       style: TextStyle(
                         fontSize: 26.sp, // Responsive font size
                         fontWeight: FontWeight.bold,
-                        color: AppColors.grey33,
+                        // color: AppColors.grey33,
+                        color: AppColors.primaryColor,
                       ),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
