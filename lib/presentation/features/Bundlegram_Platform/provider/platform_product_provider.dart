@@ -36,6 +36,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/pr
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/choosebiller.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/purchase_bill_wrapper.dart';
 import 'package:bundlegram/presentation/features/biometric/providers/biometric_service.dart';
+import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/airtime/widget/airtime_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/betting/widget/betting_success.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/bulk%20e-pin/bulkE-pin_screen.dart';
@@ -1586,6 +1587,10 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               receipt,
             );
             context.dismissDialog();
+            _ref.read(dashboardProvider.notifier).initialize();
+            _ref
+                .read(globalProvider.notifier)
+                .initializeWalletandAccounts(context);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (ctx) => screen),

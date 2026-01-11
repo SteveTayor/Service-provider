@@ -562,11 +562,11 @@ class InAppBanner {
                     SizedBox(width: 8.w),
 
                     // Subtle indicator
-                    Icon(
-                      Icons.chevron_right,
-                      color: Colors.black26,
-                      size: 12.sp,
-                    ),
+                    //   Icon(
+                    //     Icons.chevron_right,
+                    //     color: Colors.black26,
+                    //     size: 12.sp,
+                    //   ),
                   ],
                 ),
               ),
