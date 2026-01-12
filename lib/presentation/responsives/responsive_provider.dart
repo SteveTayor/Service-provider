@@ -54,10 +54,10 @@ class ResponsiveInfo {
         // Adjust for orientation on tablets
         if (mq.orientation == Orientation.landscape) {
           scaleFactor = (width / 900).clamp(1.0, 1.15);
-          textScaleFactor = 0.97;
+          textScaleFactor = 0.95;
         } else {
           scaleFactor = (width / 700).clamp(0.95, 1.1);
-          textScaleFactor = 0.97;
+          textScaleFactor = 0.95;
         }
         break;
       case DeviceType.desktop:
