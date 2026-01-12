@@ -72,7 +72,7 @@ class ResponsiveInfo {
       scaleFactor: scaleFactor,
       orientation: mq.orientation,
       safeArea: mq.padding,
-      textScaleFactor: mq.textScaleFactor,
+      textScaleFactor: textScaleFactor,
     );
   }
 
