@@ -50,6 +50,27 @@ class GradientPromoCard extends StatelessWidget {
 
     final effectiveHeight = height ?? (useResponsive ? r.spacing(129) : 129.h);
     final effectiveWidth = width ?? double.infinity;
+    // Tablet-specific text sizes
+    final titleSize = useResponsive
+        ? r.when(
+            phone: r.textSize(15),
+            tablet: 18.0, // Larger on tablets
+          )
+        : 15.0;
+
+    final subtitleSize = useResponsive
+        ? r.when(
+            phone: r.textSize(13),
+            tablet: 15.0, // Larger on tablets
+          )
+        : 13.0;
+
+    final buttonSize = useResponsive
+        ? r.when(
+            phone: r.textSize(12),
+            tablet: 15.0,
+          )
+        : 12.0;
 
     return GestureDetector(
       onTap: onTap,
@@ -89,8 +110,9 @@ class GradientPromoCard extends StatelessWidget {
                       Text(
                         title,
                         style: TextStyle(
-                          fontSize:
-                              useResponsive ? r.textSize(15) : 15, // CHANGED
+                          // fontSize:
+                          //     useResponsive ? r.textSize(15) : 15, // CHANGED
+                          fontSize: titleSize,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                           fontFamily: FontFamily.mabryPro,
@@ -104,8 +126,9 @@ class GradientPromoCard extends StatelessWidget {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          fontSize:
-                              useResponsive ? r.textSize(13) : 13, // CHANGED
+                          // fontSize:
+                          //     useResponsive ? r.textSize(13) : 13, // CHANGED
+                          fontSize: subtitleSize,
                           fontWeight: FontWeight.w400,
                           color: Colors.white,
                           fontFamily: FontFamily.mabryPro,
@@ -138,9 +161,10 @@ class GradientPromoCard extends StatelessWidget {
                           child: Text(
                             buttonText,
                             style: TextStyle(
-                              fontSize: useResponsive
-                                  ? r.textSize(12)
-                                  : 12, // CHANGED
+                              // fontSize: useResponsive
+                              //     ? r.textSize(12)
+                              //     : 12, // CHANGED
+                              fontSize: buttonSize,
                               fontWeight: FontWeight.w700,
                               fontFamily: FontFamily.mabryPro,
                               color: Colors.white,

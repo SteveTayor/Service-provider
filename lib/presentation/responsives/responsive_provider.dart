@@ -43,20 +43,26 @@ class ResponsiveInfo {
 
     // Calculate scale factor based on device type and orientation
     double scaleFactor;
+    double textScaleFactor;
+
     switch (deviceType) {
       case DeviceType.phone:
         scaleFactor = 1.0;
+        textScaleFactor = 1.0;
         break;
       case DeviceType.tablet:
         // Adjust for orientation on tablets
         if (mq.orientation == Orientation.landscape) {
-          scaleFactor = (width / 900).clamp(1.0, 1.3);
+          scaleFactor = (width / 900).clamp(1.0, 1.15);
+          textScaleFactor = 0.95;
         } else {
-          scaleFactor = (width / 700).clamp(0.95, 1.15);
+          scaleFactor = (width / 700).clamp(0.95, 1.1);
+          textScaleFactor = 0.95;
         }
         break;
       case DeviceType.desktop:
         scaleFactor = (width / 1200).clamp(1.1, 1.6);
+        textScaleFactor = 1.0;
         break;
     }
 
