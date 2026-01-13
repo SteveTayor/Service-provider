@@ -11,6 +11,7 @@ import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:in_app_update/in_app_update.dart';
@@ -344,30 +345,41 @@ class AppActionsNotifier {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Update Available'),
+        title: const Text('Update Available '),
         content: Text(
-            'A new version of Bundlegram is available!\n\nCurrent: $current\nLatest: $latest'),
+            'A new version of Bundlegram is available!\nCurrent: $current\nLatest: $latest'),
         actions: [
-          TextButton(
-            onPressed: () => context.pop(),
-            child: const Text(
-              'Later',
-              style: TextStyle(
-                color: AppColors.primaryColor,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                fontFamily: FontFamily.mabryPro,
+          Row(
+            children: [
+              TextButton(
+                onPressed: () => context.pop(),
+                child: Text(
+                  'Later',
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: FontFamily.mabryPro,
+                  ),
+                ),
               ),
-            ),
-          ),
-          BundlegramButton(
-            onPressed: () {
-              context.pop();
-              _redirectToStore(context);
-            },
-            text: 'Update',
-            cornerRadius: 8,
-            buttonStyle: BundlegramButtonStyle.primary(),
+              6.horizontalSpace,
+              BundlegramButton(
+                onPressed: () {
+                  context.pop();
+                  _redirectToStore(context);
+                },
+                text: 'Update',
+                height: 48.h,
+                textStyle: context.textTheme.bodyMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: FontFamily.mabryPro,
+                ),
+                cornerRadius: 8,
+                buttonStyle: BundlegramButtonStyle.primary(),
+              ),
+            ],
           ),
         ],
       ),
