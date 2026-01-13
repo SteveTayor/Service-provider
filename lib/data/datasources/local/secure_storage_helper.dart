@@ -24,8 +24,17 @@ class SecureStorageHelper {
   static const _fcmTokenKey = 'fcm_token';
   static const _hasSeenPromoKey = 'has_seen_promo_modal';
   static const _lastVersionNameKey = 'last_version_name';
+  static const _themeModeKey = 'app_theme_mode';
 
   SecureStorageHelper(this._storage);
+
+  Future<void> setThemeMode(String mode) async {
+    await _storage.write(key: _themeModeKey, value: mode);
+  }
+
+  Future<String?> getThemeMode() async {
+    return await _storage.read(key: _themeModeKey);
+  }
 
   Future<void> setLastVersionName(String version) async {
     await _storage.write(key: _lastVersionNameKey, value: version);

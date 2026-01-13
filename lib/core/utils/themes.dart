@@ -36,12 +36,40 @@ class AppTheme {
     onSurface: AppColors.white,
   );
 
+  // static final ColorScheme _lightColorScheme = ColorScheme.light(
+  //   primary: AppColors.primaryColor,
+  //   secondary: AppColors.primaryColor,
+  //   background: AppColors.background,
+  //   surface: AppColors.white,
+  //   onPrimary: Colors.white,
+  //   onSurface: AppColors.black,
+  //   onBackground: AppColors.black,
+  // );
+
+  // static final ColorScheme _darkColorScheme = ColorScheme.dark(
+  //   primary: AppColors.primaryColor,
+  //   secondary: AppColors.primaryColor,
+  //   background: const Color(0xFF0F1115),
+  //   surface: const Color(0xFF1A1D23),
+  //   onPrimary: Colors.white,
+  //   onSurface: Colors.white,
+  //   onBackground: Colors.white,
+  // );
+
+  // static AppBarTheme _appBarTheme(ColorScheme colorScheme) => AppBarTheme(
+  //       color: colorScheme.onSurface,
+  //     );
   static AppBarTheme _appBarTheme(ColorScheme colorScheme) => AppBarTheme(
-        color: colorScheme.onSurface,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+        elevation: 0,
+        centerTitle: true,
       );
 
+  // static IconThemeData _iconThemeData(ColorScheme colorScheme) =>
+  //     IconThemeData(color: colorScheme.onPrimary);
   static IconThemeData _iconThemeData(ColorScheme colorScheme) =>
-      IconThemeData(color: colorScheme.onPrimary);
+      IconThemeData(color: colorScheme.onSurface);
 
   // Original text theme (using screenutil)
   static TextTheme _textTheme(ColorScheme colorScheme) => TextTheme(

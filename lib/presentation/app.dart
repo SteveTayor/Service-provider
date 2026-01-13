@@ -4,6 +4,7 @@ import 'package:bundlegram/core/config/interceptors/inactivity_wrapper.dart';
 import 'package:bundlegram/core/providers/app_globals..dart';
 import 'package:bundlegram/core/providers/connectivity_provider.dart';
 import 'package:bundlegram/core/router/app_router.dart';
+import 'package:bundlegram/core/utils/theme/theme_notifier.dart';
 import 'package:bundlegram/core/utils/themes.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/datasources/local/version_manager.dart';
@@ -81,6 +82,8 @@ class _AppState extends ConsumerState<App> {
   @override
   Widget build(BuildContext context) {
     final connectivityProv = ref.watch(connectivityStatusProvider);
+    final themeNotifier = ref.read(themeProvider.notifier);
+    final themeState = ref.watch(themeProvider);
 
     return ScreenUtilInit(
       designSize: const Size(390, 800),
@@ -95,9 +98,12 @@ class _AppState extends ConsumerState<App> {
           child: MaterialApp.router(
             routerConfig: AppRouter.router,
             themeMode: ThemeMode.system,
-            restorationScopeId: 'app',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
+
+            // themeMode: themeNotifier.flutterThemeMode,
+
+            restorationScopeId: 'app',
             debugShowCheckedModeBanner: false,
             locale: const Locale('en', 'NG'),
             // builder: DevicePreview.appBuilder,
