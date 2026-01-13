@@ -36,7 +36,8 @@ class ListtileswitchWidget extends StatelessWidget {
               ),
             ),
             CupertinoSwitch(
-              activeTrackColor: AppColors.primaryColor,
+              // activeTrackColor: AppColors.primaryColor,
+              activeTrackColor: Theme.of(context).colorScheme.primary,
               value: switchValue,
               onChanged: onToggle,
             ),
