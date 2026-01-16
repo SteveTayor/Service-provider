@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
+import 'package:bundlegram/presentation/features/setting/screens/widget/pin_sheet.dart';
 import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -356,6 +358,23 @@ class LoginProvider extends ChangeNotifier {
         // await _ref
         //     .read(globalProvider.notifier)
         //     .fetchUsersTransactions(context);
+// final profile = profileRes.fold((_) => null, (r) => r);
+
+        final serverPin = profile?.data?.pin;
+
+        if (serverPin == null) {
+          // SERVER says no PIN yet → enforce creation
+          context.dismissDialog();
+
+          await context.showBottomSheet(
+            child: const PinSheet(),
+            isDismissible: false,
+            showDragHandle: false,
+          );
+
+          return;
+        }
+
         final localPin = await _storage.getPin(userEmail);
         if (localPin == null) {
           context.dismissDialog();

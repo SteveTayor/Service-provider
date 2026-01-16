@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/errors.dart';
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
@@ -92,17 +93,17 @@ class PinController extends ChangeNotifier {
 
   Future<void> checkPin(BuildContext context) async {
     final entered = pin.join();
+    unawaited(context.showLoadingDialog());
 
     switch (mode) {
       case PinScreenMode.create:
         initialPin = entered;
         mode = PinScreenMode.confirm;
         reset();
-        unawaited(context.push(RouteConstants.pinScreen));
+        context.dismissDialog(); // Close loading dialog
+        // Call the onComplete callback to notify the sheet to rebuild
         if (onCompleted != null) {
           onCompleted!.call();
-        } else {
-          unawaited(context.push(RouteConstants.pinScreen));
         }
         break;
 
@@ -110,43 +111,45 @@ class PinController extends ChangeNotifier {
         if (entered == initialPin) {
           await _createPinOnServer(context, entered);
         } else {
-          showError("PIN does not match. Try again.");
+          context.dismissDialog();
+          Navigator.of(context).pop();
+          showError('PIN does not match. Try again.');
         }
         break;
-
-      // ✅ Removed validate stage completely
     }
   }
 
   Future<void> _createPinOnServer(BuildContext context, String pin) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
-      context.showErrorSnackBar("Token missing. Please log in again.");
+      context.showErrorSnackBar('Token missing. Please log in again.');
       return;
     }
 
     final res = await _api.createPin(token, pin, pin);
-    res.fold((failure) {
+    await res.fold((failure) {
       final userMsg = userFacingMessageFromFailure(failure);
       final displayMsg = sanitizeErrorMessage(userMsg);
       context.showErrorSnackBar(displayMsg);
     }, (data) async {
-      if (data.status == "success") {
+      if (data.status == 'success') {
         final userEmail = await _storage.getRememberedEmail();
         if (userEmail != null) {
           await _storage.setPin(userEmail, pin);
         }
-        unawaited(Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (ctx) => const TransactionSuccessful(
-              title: 'Account pin created!',
-              subTitle:
-                  'You can now use your account PIN when performing transactions.',
-              isBasicInfo: true,
+        unawaited(
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (ctx) => const TransactionSuccessful(
+                title: 'Account pin created!',
+                subTitle:
+                    'You can now use your account PIN when performing transactions.',
+                isBasicInfo: true,
+              ),
             ),
           ),
-        ));
+        );
       }
     });
   }
@@ -155,7 +158,7 @@ class PinController extends ChangeNotifier {
       String password, BuildContext context) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
-      context.showErrorSnackBar("Token missing. Please log in again.");
+      context.showErrorSnackBar('Token missing. Please log in again.');
       return false;
     }
 
