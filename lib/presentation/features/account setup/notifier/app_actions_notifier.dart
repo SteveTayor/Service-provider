@@ -179,8 +179,11 @@ class AppActionsNotifier {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Update Available'),
-        content: const Text(
+        content: Text(
           'A new version of Bundlegram is available! Would you like to update now?',
+          style: context.textTheme.labelSmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         actions: [
           TextButton(
