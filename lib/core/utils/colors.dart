@@ -38,8 +38,7 @@ class AppColors {
   static const Color searchHintColor = Color(0xFF8E8E8E);
   static const Color closeAcctColor = Color(0xFF333333);
 
-  static const Color darkBlueBackground = Color(0xFF0F172A);
-  static const Color darkBlueSurface = Color(0xFF111827);
-  static const Color darkBlueCard = Color(0xFF1C1F2B);
-
+  // static const Color darkBlueBackground = Color(0xFF0F172A);
+  // static const Color darkBlueSurface = Color(0xFF111827);
+  // static const Color darkBlueCard = Color(0xFF1C1F2B);
 }

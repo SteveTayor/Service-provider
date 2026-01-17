@@ -437,6 +437,7 @@ class LoginProvider extends ChangeNotifier {
     unawaited(context.showLoadingDialog(message: 'Logging out...'));
 
     final result = await _api.logout('Bearer $token');
+    _ref.invalidate(globalProvider);
 
     context.dismissDialog();
 

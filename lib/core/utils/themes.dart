@@ -13,51 +13,51 @@ class AppTheme {
   static ThemeData _themeData(ColorScheme colorScheme) => ThemeData(
         appBarTheme: _appBarTheme(colorScheme),
         brightness: colorScheme.brightness,
-        // scaffoldBackgroundColor: AppColors.background,
+        scaffoldBackgroundColor: AppColors.background,
 
-        scaffoldBackgroundColor: colorScheme.background,
+        // scaffoldBackgroundColor: colorScheme.background,
         iconTheme: _iconThemeData(colorScheme),
         colorScheme: colorScheme,
         textTheme: _textTheme(colorScheme),
       );
 
-  // static final ColorScheme _lightColorScheme =
-  //     const ColorScheme.light().copyWith(
-  //   primary: AppColors.primaryColor,
-  //   secondary: AppColors.primaryColor,
-  //   onPrimary: AppColors.primaryColor,
-  //   surface: AppColors.white,
-  //   onSurface: AppColors.black,
-  // );
-
-  // static final ColorScheme _darkColorScheme = const ColorScheme.dark().copyWith(
-  //   primary: AppColors.primaryColor,
-  //   secondary: AppColors.primaryColor,
-  //   onPrimary: AppColors.primaryColor,
-  //   surface: AppColors.black,
-  //   onSurface: AppColors.white,
-  // );
-
   static final ColorScheme _lightColorScheme =
       const ColorScheme.light().copyWith(
     primary: AppColors.primaryColor,
     secondary: AppColors.primaryColor,
-    background: AppColors.background,
+    onPrimary: AppColors.primaryColor,
     surface: AppColors.white,
-    onPrimary: Colors.white,
     onSurface: AppColors.black,
-    onBackground: AppColors.black,
   );
 
   static final ColorScheme _darkColorScheme = const ColorScheme.dark().copyWith(
     primary: AppColors.primaryColor,
     secondary: AppColors.primaryColor,
-    background: AppColors.darkBlueBackground,
-    surface: AppColors.darkBlueSurface,
-    onPrimary: Colors.white,
-    onSurface: Colors.white,
-    onBackground: Colors.white,
+    onPrimary: AppColors.primaryColor,
+    surface: AppColors.black,
+    onSurface: AppColors.white,
   );
+
+  // static final ColorScheme _lightColorScheme =
+  //     const ColorScheme.light().copyWith(
+  //   primary: AppColors.primaryColor,
+  //   secondary: AppColors.primaryColor,
+  //   background: AppColors.background,
+  //   surface: AppColors.white,
+  //   onPrimary: Colors.white,
+  //   onSurface: AppColors.black,
+  //   onBackground: AppColors.black,
+  // );
+
+  // static final ColorScheme _darkColorScheme = const ColorScheme.dark().copyWith(
+  //   primary: AppColors.primaryColor,
+  //   secondary: AppColors.primaryColor,
+  //   background: AppColors.darkBlueBackground,
+  //   surface: AppColors.darkBlueSurface,
+  //   onPrimary: Colors.white,
+  //   onSurface: Colors.white,
+  //   onBackground: Colors.white,
+  // );
 
   // static AppBarTheme _appBarTheme(ColorScheme colorScheme) => AppBarTheme(
   //       color: colorScheme.onSurface,
