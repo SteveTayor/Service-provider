@@ -1,5 +1,6 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
+import 'package:bundlegram/core/extensions/subproduct_ext.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
@@ -36,25 +37,29 @@ class ProductItemGrid extends ConsumerWidget {
 
     // final validList =
     // products.where((e) => e.dataSize != null && e.dataSize! > 0).toList();
-    final validList =
-        products.where((e) => e.dataSize != null && e.dataSize! > 0).toList()
-          ..sort((a, b) {
-            // Convert everything to MB for sorting
-            double sizeInMB(SubProduct p) {
-              String? name = p.subName?.toUpperCase();
+    // final validList =
+    //     products.where((e) => e.dataSize != null && e.dataSize! > 0).toList()
+    //       ..sort((a, b) {
+    //         // Convert everything to MB for sorting
+    //         double sizeInMB(SubProduct p) {
+    //           String? name = p.subName?.toUpperCase();
 
-              // Priority: Check TB, then GB, else assume MB
-              if (name != null && name.contains('TB')) {
-                return p.dataSize! * 1024 * 1024; // TB to MB
-              } else if (name != null && name.contains('GB')) {
-                return p.dataSize! * 1024; // GB to MB
-              } else {
-                return p.dataSize!; // already in MB
-              }
-            }
+    //           // Priority: Check TB, then GB, else assume MB
+    //           if (name != null && name.contains('TB')) {
+    //             return p.dataSize! * 1024 * 1024; // TB to MB
+    //           } else if (name != null && name.contains('GB')) {
+    //             return p.dataSize! * 1024; // GB to MB
+    //           } else {
+    //             return p.dataSize!; // already in MB
+    //           }
+    //         }
 
-            return sizeInMB(a).compareTo(sizeInMB(b));
-          });
+    //         return sizeInMB(a).compareTo(sizeInMB(b));
+    //       });
+    final validList = products
+        .where((e) => e.cleanedSubName.isNotEmpty)
+        .toList()
+      ..sort((a, b) => a.sortSizeInMb.compareTo(b.sortSizeInMb));
 
     if (!isAmountPresetGrid && state.isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -114,7 +119,7 @@ class ProductItemGrid extends ConsumerWidget {
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(vertical: 16.h),
                   child: Text(
-                    '${formatAmount(amount)}',
+                    formatAmount(amount),
                     style: context.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w500,
                       // fontSize: 14,
@@ -129,22 +134,22 @@ class ProductItemGrid extends ConsumerWidget {
               final item = validList[i];
               final isSelected = state.selectedSubProduct?.id == item.id;
 
-              String formatNumber(double value) {
-                return value.toStringAsFixed(1).endsWith('.0')
-                    ? value.toStringAsFixed(0)
-                    : value.toStringAsFixed(1);
-              }
+              // String formatNumber(double value) {
+              //   return value.toStringAsFixed(1).endsWith('.0')
+              //       ? value.toStringAsFixed(0)
+              //       : value.toStringAsFixed(1);
+              // }
 
-              String formattedData;
-              if (item.dataSize! < 0.1) {
-                formattedData = '${formatNumber(item.dataSize! * 10000)}MB';
-              } else if (item.dataSize! < 1) {
-                formattedData = '${formatNumber(item.dataSize! * 1000)}MB';
-              } else if (item.subName?.contains('TB') == true) {
-                formattedData = '${formatNumber(item.dataSize!)}TB';
-              } else {
-                formattedData = '${formatNumber(item.dataSize!)}GB';
-              }
+              // String formattedData;
+              // if (item.dataSize! < 0.1) {
+              //   formattedData = '${formatNumber(item.dataSize! * 10000)}MB';
+              // } else if (item.dataSize! < 1) {
+              //   formattedData = '${formatNumber(item.dataSize! * 1000)}MB';
+              // } else if (item.subName?.contains('TB') == true) {
+              //   formattedData = '${formatNumber(item.dataSize!)}TB';
+              // } else {
+              //   formattedData = '${formatNumber(item.dataSize!)}GB';
+              // }
 
               return GestureDetector(
                 onTap: () => notifier.selectSubProduct(item),
@@ -165,8 +170,9 @@ class ProductItemGrid extends ConsumerWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          formattedData,
-                          // textAlign: TextAlign.start,
+                          item.displayName,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
                           style: context.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w500,
                             // fontSize: 14,

@@ -26,6 +26,10 @@ class BeneficiaryDropdown extends ConsumerStatefulWidget {
 class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
   bool expanded = false;
 
+  void _safeSetState(VoidCallback fn) {
+    if (mounted) setState(fn);
+  }
+
   @override
   Widget build(BuildContext context) {
     final shouldShow = widget.serviceType == PlatformProductType.airtime ||
@@ -46,7 +50,7 @@ class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
         children: [
           // HEADER (always visible)
           InkWell(
-            onTap: () => setState(() => expanded = !expanded),
+            onTap: () => _safeSetState(() => expanded = !expanded),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
               child: Row(
@@ -107,57 +111,62 @@ class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
                     ...list.map((b) {
                       final network = (b.network ?? '').trim();
                       final asset = notifier.normalizeAssetName(
-                        network,
-                        serviceType: widget.serviceType,
-                      );
+                            network,
+                            serviceType: widget.serviceType,
+                          ) ??
+                          '';
 
-                      final isSvg = asset?.toLowerCase().endsWith('.svg');
+                      // final isSvg = asset?.toLowerCase().endsWith('.svg');
 
-                      Widget leading;
-                      if (asset != null && asset.endsWith('.svg')) {
-                        leading = CircleAvatar(
-                          radius: 14.r,
-                          backgroundColor: Colors.white,
-                          child: AppSvgIcon(path: asset),
-                        );
-                      } else if (asset != null && asset.isNotEmpty) {
-                        leading = CircleAvatar(
-                          radius: 14.r,
-                          backgroundColor: Colors.white,
-                          child: Image.asset(
-                            asset,
-                            width: 24.w,
-                            height: 24.h,
-                          ),
-                        );
-                      } else {
-                        leading = CircleAvatar(
-                          radius: 14.r,
-                          child: Text(
-                            network.isNotEmpty ? network[0] : '?',
-                          ),
-                        );
-                      }
+                      // Widget leading;
+                      // if (asset != null && asset.endsWith('.svg')) {
+                      //   leading = CircleAvatar(
+                      //     radius: 14.r,
+                      //     backgroundColor: Colors.white,
+                      //     child: AppSvgIcon(path: asset),
+                      //   );
+                      // } else if (asset != null && asset.isNotEmpty) {
+                      //   leading = CircleAvatar(
+                      //     radius: 14.r,
+                      //     backgroundColor: Colors.white,
+                      //     child: Image.asset(
+                      //       asset,
+                      //       width: 24.w,
+                      //       height: 24.h,
+                      //     ),
+                      //   );
+                      // } else {
+                      //   leading = CircleAvatar(
+                      //     radius: 14.r,
+                      //     child: Text(
+                      //       network.isNotEmpty ? network[0] : '?',
+                      //     ),
+                      //   );
+                      // }
 
                       return InkWell(
                         onTap: () async {
-                          notifier.setSelectedBeneficiary(b);
-                          await notifier.applyBeneficiary(context, b);
+                          _safeSetState(() => expanded = false);
 
-                          setState(() => expanded = false);
+                          notifier.setSelectedBeneficiary(b);
+
+                          // Guard context before passing into async call
+                          if (!context.mounted) return;
+                          await notifier.applyBeneficiary(context, b);
                         },
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: 10.h, horizontal: 12.w),
                           child: Row(
                             children: [
-                              AppSvgIcon(
-                                useCircleAvatar: true,
-                                path: asset!,
-                                width: 40,
-                                height: 40,
-                                fit: BoxFit.scaleDown,
-                              ),
+                              // AppSvgIcon(
+                              //   useCircleAvatar: true,
+                              //   path: asset,
+                              //   width: 40,
+                              //   height: 40,
+                              //   fit: BoxFit.scaleDown,
+                              // ),
+                              _buildLeading(asset, network),
                               12.horizontalSpace,
                               Expanded(
                                 child: Text(
@@ -209,6 +218,46 @@ class _BeneficiaryDropdownState extends ConsumerState<BeneficiaryDropdown> {
               },
             ),
         ],
+      ),
+    );
+  }
+
+  // Extracted safe leading builder — no force-unwrap, handles all asset states
+  Widget _buildLeading(String asset, String network) {
+    if (asset.endsWith('.svg')) {
+      return AppSvgIcon(
+        useCircleAvatar: true,
+        path: asset,
+        width: 40,
+        height: 40,
+        fit: BoxFit.scaleDown,
+      );
+    }
+    if (asset.isNotEmpty) {
+      return CircleAvatar(
+        radius: 20.r,
+        backgroundColor: Colors.white,
+        child: Image.asset(
+          asset,
+          width: 24.w,
+          height: 24.h,
+          errorBuilder: (_, __, ___) => Text(
+            network.isNotEmpty ? network[0].toUpperCase() : '?',
+          ),
+        ),
+      );
+    }
+    // Fallback: initial letter avatar
+    return CircleAvatar(
+      radius: 20.r,
+      backgroundColor: AppColors.primaryColor.withOpacity(0.1),
+      child: Text(
+        network.isNotEmpty ? network[0].toUpperCase() : '?',
+        style: TextStyle(
+          color: AppColors.primaryColor,
+          fontWeight: FontWeight.w600,
+          fontSize: 14.sp,
+        ),
       ),
     );
   }
