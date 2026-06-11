@@ -10,7 +10,7 @@ class AppConstants {
   static const String appVersion = '1.2.0';
 
   /// App build number
-  static const String appBuildNumber = '23';
+  static const String appBuildNumber = '24';
 
   /// Default animation duration
   static const Duration defaultAnimationDuration = Duration(milliseconds: 300);
