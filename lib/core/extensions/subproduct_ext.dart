@@ -38,7 +38,7 @@ extension SubProductUiExtension on SubProduct {
     // Supports:
     // 1.5GB, 100MB, B1.5TB, 50Mbps, 1Gbps
     final sizeMatch = RegExp(
-      r'([A-Za-z]*\d+(?:\.\d+)?\s*(?:TB|GB|MB|Gbps|Mbps))',
+      r'([A-Za-z]*\d+(?:\.\d+)?\s*(?:Gbps|Mbps|TB|GB|MB))',
       caseSensitive: false,
     ).firstMatch(text);
 
@@ -87,5 +87,28 @@ extension SubProductUiExtension on SubProduct {
       default:
         return value;
     }
+  }
+
+  int get sortPriority {
+    final name = displayName.toUpperCase();
+
+    // KMN always last
+    if (name.startsWith('KMN')) {
+      return 4;
+    }
+
+    // Fibre / speed plans
+    if (name.contains('MBPS') || name.contains('GBPS')) {
+      return 3;
+    }
+
+    // Broadband plans like B30GB, B1.5TB, B120GB
+    if (RegExp(r'^B\d+(\.\d+)?(MB|GB|TB)', caseSensitive: false)
+        .hasMatch(name)) {
+      return 2;
+    }
+
+    // Normal plans first
+    return 1;
   }
 }

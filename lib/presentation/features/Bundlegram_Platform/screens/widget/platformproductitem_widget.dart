@@ -56,10 +56,23 @@ class ProductItemGrid extends ConsumerWidget {
 
     //         return sizeInMB(a).compareTo(sizeInMB(b));
     //       });
-    final validList = products
-        .where((e) => e.cleanedSubName.isNotEmpty)
-        .toList()
-      ..sort((a, b) => a.sortSizeInMb.compareTo(b.sortSizeInMb));
+    // final validList = products
+    //     .where((e) => e.cleanedSubName.isNotEmpty)
+    //     .toList()
+    //   ..sort((a, b) => a.sortSizeInMb.compareTo(b.sortSizeInMb));
+
+    final validList =
+        products.where((e) => e.cleanedSubName.isNotEmpty).toList()
+          ..sort((a, b) {
+            // 1) Normal plans first
+            // 2) Broadband / Fibre next
+            // 3) KMN last
+            final priorityCompare = a.sortPriority.compareTo(b.sortPriority);
+            if (priorityCompare != 0) return priorityCompare;
+
+            // Same group: sort by size
+            return a.sortSizeInMb.compareTo(b.sortSizeInMb);
+          });
 
     if (!isAmountPresetGrid && state.isLoading) {
       return const Center(child: CircularProgressIndicator());
