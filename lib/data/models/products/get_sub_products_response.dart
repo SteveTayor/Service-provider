@@ -37,7 +37,8 @@ class SubProduct {
   final String? subName;
   final String? subPrice;
   final String? userPercent;
-  final int? agentPercent;
+  final double? agentPercent; // changed from int? — API sends 0.4, 1.0 etc.
+  final double? merchantDiscount;
   final String? optionalParam;
   final dynamic dataId;
   final String? dataType;
@@ -58,6 +59,7 @@ class SubProduct {
     this.subPrice,
     this.userPercent,
     this.agentPercent,
+    this.merchantDiscount,
     this.optionalParam,
     this.dataId,
     this.dataType,
@@ -83,7 +85,8 @@ class SubProduct {
         userPercent: json["user_percent"] != null
             ? json["user_percent"] as String?
             : null,
-        agentPercent: json["agent_percent"] as int?,
+        agentPercent: (json["agent_percent"] as num?)?.toDouble(),
+        merchantDiscount: (json["merchant_discount"] as num?)?.toDouble(),
         optionalParam: json["optional_param"] != null
             ? json["optional_param"] as String?
             : null,
@@ -126,6 +129,7 @@ class SubProduct {
         "sub_price": subPrice,
         "user_percent": userPercent,
         "agent_percent": agentPercent,
+        "merchant_discount": merchantDiscount,
         "optional_param": optionalParam,
         "data_id": dataId,
         "data_type": dataType,

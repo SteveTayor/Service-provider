@@ -193,6 +193,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   // }
 
   void handleError(String message, BuildContext context) {
+    if (!context.mounted) return;
     context.showErrorSnackBar(message);
     debugPrint('GlobalProvider Error: $message');
   }
@@ -204,25 +205,47 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     ctx.showErrorSnackBar(sanitizeErrorMessage(message));
   }
 
-  void handleFailure(Failure failure, BuildContext context) async {
-    // final message = failure.properties.isNotEmpty
-    //     ? failure.properties.join('\n')
-    //     : 'Something went wrong';
-
+  // void handleFailure(Failure failure, BuildContext context) async {
+  //   if (failure is ServerFailure ||
+  //       (failure is AuthenticationFailure &&
+  //           failure.properties.contains(
+  //               'Your session has expired or you are already logged in on another device.'))) {
+  //     final ctx = navigatorKey.currentContext;
+  //     if (ctx != null) {
+  //       ctx.go(RouteConstants.lockScreen);
+  //     }
+  //   } else {
+  //     // Guard: only show snackbar if context is still valid
+  //     if (!context.mounted) return;
+  //     final userMsg = userFacingMessageFromFailure(failure);
+  //     context.showErrorSnackBar(userMsg);
+  //   }
+  // }
+  void handleFailure(Failure failure, BuildContext? callerContext) async {
     if (failure is ServerFailure ||
         (failure is AuthenticationFailure &&
             failure.properties.contains(
                 'Your session has expired or you are already logged in on another device.'))) {
-      // await _storage.deleteAuthToken();
       final ctx = navigatorKey.currentContext;
       if (ctx != null) {
         ctx.go(RouteConstants.lockScreen);
       }
-    } else {
-      final userMsg = userFacingMessageFromFailure(failure);
-      context.showErrorSnackBar(userMsg);
-      // context.showErrorSnackBar(message);
+      return;
     }
+
+    // Prefer caller context if still alive, fall back to global nav context
+    final ctx = (callerContext?.mounted == true)
+        ? callerContext!
+        : navigatorKey.currentContext;
+
+    if (ctx == null) {
+      debugPrint('[GlobalProvider] handleFailure: no valid context, '
+          'swallowing error: ${failure.properties}');
+      return;
+    }
+
+    final userMsg = userFacingMessageFromFailure(failure);
+    ctx.showErrorSnackBar(userMsg);
   }
 
   Future<void> fetchProfile(BuildContext context) async {

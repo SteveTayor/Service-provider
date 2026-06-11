@@ -197,6 +197,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       return _subProductsCache[productId]!.isNotEmpty;
     }
 
+    // Invalidate Riverpod cache when forcing or stale
+    if (force) {
+      _ref.invalidate(subProductsProvider(productId));
+    }
+
     try {
       final result = await _ref.read(subProductsProvider(productId).future);
       final subs = result.data ?? [];
@@ -241,9 +246,20 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   //     context.showErrorSnackBar(result.message ?? 'Failed to load subproducts');
   //   }
   // }
-  Future<void> fetchSubProducts(BuildContext context, int productId,
-      {bool force = false}) async {
+  Future<void> fetchSubProducts(
+    BuildContext context,
+    int productId, {
+    bool force = false,
+  }) async {
     if (!_serviceType.hasSubProducts) return;
+
+    // If forced, invalidate BOTH the local cache AND the Riverpod provider
+    // so a fresh network request is always made
+    if (force || !_isSubProductsCacheFresh(productId)) {
+      _subProductsCache.remove(productId);
+      _subProductsFetchedAt.remove(productId);
+      _ref.invalidate(subProductsProvider(productId)); // ← key addition
+    }
 
     // If we have fresh cache and not forced, return immediately with cached data
     if (!force &&
@@ -415,6 +431,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     if (invalidateCache && product.id != null) {
       _subProductsCache.remove(product.id);
       _subProductsFetchedAt.remove(product.id);
+      _ref.invalidate(subProductsProvider(product.id!));
     }
 
     // 3. Explicit side-effect

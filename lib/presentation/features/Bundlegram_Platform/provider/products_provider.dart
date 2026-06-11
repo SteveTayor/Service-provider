@@ -64,6 +64,8 @@ final productsProvider =
   (ref, serviceType) async {
     final token = await ref.read(authTokenProvider.future);
     final bearer = 'Bearer $token';
+
+    BuildContext? _safeCtx() => navigatorKey.currentContext;
     try {
       // Airtime uses SERVICE endpoint
       if (serviceType == PlatformProductType.airtime) {
@@ -74,14 +76,10 @@ final productsProvider =
         return result.fold(
           (failure) {
             // Always sanitize before throwing so UI never shows raw HTML or overly long text
-            // final safeMsg = failure.properties.isNotEmpty
-            //     ? _sanitizeErrorMessage(failure.properties.first)
-            //     : 'Failed to fetch airtime products';
-
-            // throw ServerFailure([safeMsg]);
-            ref
-                .read(globalProvider.notifier)
-                .handleFailure(failure, navigatorKey.currentContext!);
+            final ctx = _safeCtx();
+            if (ctx != null) {
+              ref.read(globalProvider.notifier).handleFailure(failure, ctx);
+            }
             return GetAllProductsResponse(data: []);
           },
           (data) => data,
@@ -96,13 +94,10 @@ final productsProvider =
 
         return result.fold(
           (failure) {
-            // final safeMsg = failure.properties.isNotEmpty
-            //     ? _sanitizeErrorMessage(failure.properties.first)
-            //     : 'Failed to fetch mobile data products';
-            // throw ServerFailure([safeMsg]);
-            ref
-                .read(globalProvider.notifier)
-                .handleFailure(failure, navigatorKey.currentContext!);
+            final ctx = _safeCtx();
+            if (ctx != null) {
+              ref.read(globalProvider.notifier).handleFailure(failure, ctx);
+            }
             return GetAllProductsResponse(data: []);
           },
           (data) => data,
@@ -130,13 +125,10 @@ final productsProvider =
 
       return result.fold(
         (failure) {
-          // final safeMsg = failure.properties.isNotEmpty
-          //     ? _sanitizeErrorMessage(failure.properties.first)
-          //     : 'Failed to fetch products for $typeKey';
-          // throw ServerFailure([safeMsg]);
-          ref
-              .read(globalProvider.notifier)
-              .handleFailure(failure, navigatorKey.currentContext!);
+          final ctx = _safeCtx();
+          if (ctx != null) {
+            ref.read(globalProvider.notifier).handleFailure(failure, ctx);
+          }
           return GetAllProductsResponse(data: []);
         },
         (data) => data,
@@ -149,11 +141,10 @@ final productsProvider =
 
 /// Fetch sub-products
 final subProductsProvider =
-    FutureProvider.family<GetAllSubProductsResponse, int>(
+    FutureProvider.autoDispose.family<GetAllSubProductsResponse, int>(
   (ref, productId) async {
     final token = await ref.read(authTokenProvider.future);
     final bearer = 'Bearer $token';
-
     final api = ref.read(apiServiceProvider);
 
     try {
@@ -161,13 +152,11 @@ final subProductsProvider =
 
       return result.fold(
         (failure) {
-          // final safeMsg = failure.properties.isNotEmpty
-          //     ? _sanitizeErrorMessage(failure.properties.first)
-          //     : 'Failed to fetch sub-products';
-          // throw ServerFailure([safeMsg]);
-          ref
-              .read(globalProvider.notifier)
-              .handleFailure(failure, navigatorKey.currentContext!);
+          // Safe context — no force-unwrap
+          final ctx = navigatorKey.currentContext;
+          if (ctx != null) {
+            ref.read(globalProvider.notifier).handleFailure(failure, ctx);
+          }
           return GetAllSubProductsResponse(data: []);
         },
         (data) => data,
@@ -193,13 +182,10 @@ final subProductsByCategoryProvider = FutureProvider.family<
 
       return result.fold(
         (failure) {
-          // final safeMsg = failure.properties.isNotEmpty
-          //     ? _sanitizeErrorMessage(failure.properties.first)
-          //     : 'Error occurred while fetching services';
-          // throw ServerFailure([safeMsg]);
-          ref
-              .read(globalProvider.notifier)
-              .handleFailure(failure, navigatorKey.currentContext!);
+          final ctx = navigatorKey.currentContext;
+          if (ctx != null) {
+            ref.read(globalProvider.notifier).handleFailure(failure, ctx);
+          }
           return GetAllSubProductsResponse(data: []);
         },
         (data) => data,

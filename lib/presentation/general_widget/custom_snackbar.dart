@@ -229,40 +229,49 @@ class CustomSnackBar {
     Duration duration = const Duration(seconds: 3),
     ToastificationType type = ToastificationType.info,
   }) {
-    toastification.show(
-      dismissDirection: DismissDirection.down,
-      padding: EdgeInsets.symmetric(
-        horizontal: 8.w,
-        // vertical: 8.h,
-      ),
-      context: context,
-      type: type,
-      style: ToastificationStyle.flat,
-      title: Text(
-        message,
-        style: TextStyle(
-          color: textColor,
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w500,
+    // Guard: never try to show a toast on a detached/unmounted context
+    if (!context.mounted) {
+      debugPrint(
+          '[CustomSnackBar] Context not mounted, dropping toast: $message');
+      return;
+    }
+
+    try {
+      toastification.show(
+        dismissDirection: DismissDirection.down,
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
+        context: context,
+        type: type,
+        style: ToastificationStyle.flat,
+        title: Text(
+          message,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-      ),
-      icon: icon,
-      backgroundColor: bgColor,
-      // foregroundColor: textColor,
-      autoCloseDuration: duration,
-      alignment: Alignment.bottomCenter,
-      borderRadius: BorderRadius.circular(12.r),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ],
-      showProgressBar: false,
-      closeButtonShowType: CloseButtonShowType.none,
-      pauseOnHover: false,
-    );
+        icon: icon,
+        backgroundColor: bgColor,
+        autoCloseDuration: duration,
+        alignment: Alignment.bottomCenter,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        showProgressBar: false,
+        closeButtonShowType: CloseButtonShowType.none,
+        pauseOnHover: false,
+      );
+    } catch (e) {
+      // Catch the null overlay crash — log, never rethrow
+      debugPrint('[CustomSnackBar] Toast failed (overlay not ready?): $e\n'
+          'Message was: $message');
+    }
   }
 
   static void show(
