@@ -9,45 +9,55 @@ extension SubProductUiExtension on SubProduct {
         .trim();
   }
 
-  /// Returns the title exactly in the format you want:
-  /// - 1.5GB Binge
-  /// - 3GB Binge
-  /// - 75MB Daily
-  /// - 12GB Flexi
+  /// Keeps only the center/core aspect of the plan name.
   ///
-  /// Rules:
-  /// - start from the bundle size token (MB/GB/TB)
-  /// - remove trailing numeric code like 600, 1000, 5000
-  /// - remove the word "Plan"
-  /// - normalize spaces
+  /// Examples:
+  /// - Airtel GIFTING 1.5GB Binge 600        -> 1.5GB
+  /// - Airtel GIFTING 400MB Flexi 500        -> 400MB
+  /// - Airtel GIFTING 75MB Daily Plan        -> 75MB Daily
+  /// - MTN GIFTING B1.5TB Broadband          -> B1.5TB
+  /// - MTN GIFTING 50Mbps FibreX            -> 50Mbps
+  /// - MTN GIFTING KMN1yr Keep My Number    -> KMN1yr
+  /// - MTN GIFTING KMN2yrs Keep My Number   -> KMN2yrs
   String get displayName {
     final text = cleanedSubName;
     if (text.isEmpty) return 'Bundle';
 
-    final match = RegExp(
-      r'(\d+(?:\.\d+)?\s*(?:TB|GB|MB).*)',
+    // Special handling for KMN plans.
+    final kmnMatch = RegExp(
+      r'\bKMN\s*\d+\s*(?:yr|yrs|year|years)\b',
       caseSensitive: false,
     ).firstMatch(text);
 
-    // If no size is found, return the cleaned raw name.
-    if (match == null) return text;
+    if (kmnMatch != null) {
+      // Remove spaces so it becomes KMN1yr, KMN2yrs, etc.
+      return kmnMatch.group(0)!.replaceAll(RegExp(r'\s+'), '');
+    }
 
-    String result = match.group(1)!;
+    // Match the first meaningful token that contains a size/speed unit.
+    // Supports:
+    // 1.5GB, 100MB, B1.5TB, 50Mbps, 1Gbps
+    final sizeMatch = RegExp(
+      r'([A-Za-z]*\d+(?:\.\d+)?\s*(?:TB|GB|MB|Gbps|Mbps))',
+      caseSensitive: false,
+    ).firstMatch(text);
 
-    // Remove trailing numeric package code, e.g. "600", "1000", "5000"
-    result = result.replaceFirst(
-      RegExp(r'\s+\d+\s*$'),
-      '',
-    );
+    if (sizeMatch == null) {
+      return text;
+    }
 
-    // Remove the word "Plan" anywhere in the result
-    result = result.replaceAll(
-      RegExp(r'\bPlan\b', caseSensitive: false),
-      '',
-    );
+    // Keep the matched token exactly, but normalize any inner spaces.
+    String result = sizeMatch.group(1)!;
+    result = result.replaceAll(RegExp(r'\s+'), '');
 
-    // Normalize repeated spaces after cleanup
-    result = result.replaceAll(RegExp(r'\s+'), ' ').trim();
+    // Keep "Daily" only when it appears after the size token.
+    final afterSize = text.substring(sizeMatch.end).trim();
+    final hasDaily =
+        RegExp(r'\bDaily\b', caseSensitive: false).hasMatch(afterSize);
+
+    if (hasDaily) {
+      return '$result Daily';
+    }
 
     return result;
   }
