@@ -40,11 +40,9 @@ class VersionManager {
         await _clearStaleData();
 
 //  flag GlobalProvider to invalidate Riverpod caches
-      // on the first boot after this update. Uses consume pattern so it
-      // fires exactly once.
-      await _storage.setMigrationPendingInvalidation(true);
-
-
+        // on the first boot after this update. Uses consume pattern so it
+        // fires exactly once.
+        await _storage.setMigrationPendingInvalidation(true);
 
         // Save new version
         await _saveCurrentVersion(currentVersion, currentBuildNumber);
@@ -60,74 +58,75 @@ class VersionManager {
   }
 
   /// Clear stale data while preserving critical user data
-Future<void> _clearStaleData() async {
-  try {
-    // Read all keys currently in storage
-    final all = await _storage.readAll();
+  Future<void> _clearStaleData() async {
+    try {
+      // Read all keys currently in storage
+      final all = await _storage.readAll();
 
-    // These keys must never be deleted — user would be logged out
-    // or lose critical settings if they were removed.
-    const preserve = {
-      // Auth
-      'auth_token',
+      // These keys must never be deleted — user would be logged out
+      // or lose critical settings if they were removed.
+      const preserve = {
+        // Auth
+        'auth_token',
 
-      // Login credentials
-      'remembered_email',
-      'sign_in_password',
-      'cached_username',
+        // Login credentials
+        'remembered_email',
+        'sign_in_password',
+        'cached_username',
 
-      // PIN (keyed as '{email}_pin' — matched by prefix below)
-      // handled separately via startsWith check
+        // PIN (keyed as '{email}_pin' — matched by prefix below)
+        // handled separately via startsWith check
 
-      // Biometric
-      'biometric_email',
-      'biometric_password',
-      'biometric_display_name',
-      'biometric_login_enabled',
-      'biometric_transaction_enabled',
+        // Biometric
+        'biometric_email',
+        'biometric_password',
+        'biometric_display_name',
+        'biometric_login_enabled',
+        'biometric_transaction_enabled',
 
-      // FCM — losing this means no push notifications until next token refresh
-      'fcm_token',
+        // FCM — losing this means no push notifications until next token refresh
+        'fcm_token',
 
-      // Device info — needed for transaction requests
-      'mac_address',
-      'ip_address',
-      'latitude',
-      'longitude',
-      'platform',
+        // Device info — needed for transaction requests
+        'mac_address',
+        'ip_address',
+        'latitude',
+        'longitude',
+        'platform',
 
-      // Version tracking — must survive or we loop forever
-      'last_version_name',
-      'app_version_code',
+        // Version tracking — must survive or we loop forever
+        'last_version_name',
+        'app_version_code',
 
-      // Migration flag we just wrote — must not delete it here
-      'migration_pending_invalidation',
+        // Migration flag we just wrote — must not delete it here
+        'migration_pending_invalidation',
 
-      // User preferences
-      'app_theme_mode',
-      'has_seen_promo_modal',
-    };
+        // User preferences
+        'app_theme_mode',
+        'has_seen_promo_modal',
+      };
 
-    int deleted = 0;
-    for (final key in all.keys) {
-      // Preserve PIN keys — stored as '{email}_pin'
-      if (key.endsWith('_pin')) continue;
+      int deleted = 0;
+      for (final key in all.keys) {
+        // Preserve PIN keys — stored as '{email}_pin'
+        if (key.endsWith('_pin')) continue;
 
-      // Preserve anything in the explicit set
-      if (preserve.contains(key)) continue;
+        // Preserve anything in the explicit set
+        if (preserve.contains(key)) continue;
 
-      //Everything else is refetchable — delete it
-      await _storage.delete(key: key);
-      deleted++;
-      debugPrint('[VersionManager] deleted stale key: $key');
+        //Everything else is refetchable — delete it
+        await _storage.delete(key);
+        deleted++;
+        debugPrint('[VersionManager] deleted stale key: $key');
+      }
+
+      debugPrint('[VersionManager] _clearStaleData: deleted $deleted keys, '
+          'preserved ${all.length - deleted}');
+    } catch (e, st) {
+      debugPrint('Error clearing stale data: $e\n$st');
     }
-
-    debugPrint('[VersionManager] _clearStaleData: deleted $deleted keys, '
-        'preserved ${all.length - deleted}');
-  } catch (e, st) {
-    debugPrint('Error clearing stale data: $e\n$st');
   }
-}
+
   Future<void> _saveCurrentVersion(String version, int buildNumber) async {
     try {
       await _storage.setLastVersionName(version);

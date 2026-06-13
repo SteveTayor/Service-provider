@@ -26,27 +26,38 @@ class SecureStorageHelper {
   static const _lastVersionNameKey = 'last_version_name';
   static const _themeModeKey = 'app_theme_mode';
 // ─── Migration invalidation flag ──────────────────────────────────────────
-static const _migrationInvalidationKey = 'migration_pending_invalidation';
+  static const _migrationInvalidationKey = 'migration_pending_invalidation';
 
   SecureStorageHelper(this._storage);
 
-Future<void> setMigrationPendingInvalidation(bool value) async {
-  await _storage.write(
-    key: _migrationInvalidationKey,
-    value: value.toString(),
-  );
-}
-
-/// Read-and-delete — returns true exactly once per migration, never again.
-Future<bool> consumeMigrationPendingInvalidation() async {
-  final value = await _storage.read(key: _migrationInvalidationKey);
-  if (value == 'true') {
-    await _storage.delete(key: _migrationInvalidationKey);
-    return true;
+  Future<void> setMigrationPendingInvalidation(bool value) async {
+    await _storage.write(
+      key: _migrationInvalidationKey,
+      value: value.toString(),
+    );
   }
-  return false;
-}
 
+  /// Read-and-delete — returns true exactly once per migration, never again.
+  Future<bool> consumeMigrationPendingInvalidation() async {
+    final value = await _storage.read(key: _migrationInvalidationKey);
+    if (value == 'true') {
+      await _storage.delete(key: _migrationInvalidationKey);
+      return true;
+    }
+    return false;
+  }
+
+  /// Returns all key-value pairs currently in secure storage.
+  /// Used by VersionManager to selectively delete stale keys.
+  Future<Map<String, String>> readAll() async {
+    return await _storage.readAll();
+  }
+
+  /// Deletes a single key from secure storage.
+  /// Used by VersionManager for selective cleanup.
+  Future<void> delete(String key) async {
+    await _storage.delete(key: key);
+  }
 
   Future<void> setThemeMode(String mode) async {
     await _storage.write(key: _themeModeKey, value: mode);
