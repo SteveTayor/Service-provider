@@ -25,8 +25,28 @@ class SecureStorageHelper {
   static const _hasSeenPromoKey = 'has_seen_promo_modal';
   static const _lastVersionNameKey = 'last_version_name';
   static const _themeModeKey = 'app_theme_mode';
+// ─── Migration invalidation flag ──────────────────────────────────────────
+static const _migrationInvalidationKey = 'migration_pending_invalidation';
 
   SecureStorageHelper(this._storage);
+
+Future<void> setMigrationPendingInvalidation(bool value) async {
+  await _storage.write(
+    key: _migrationInvalidationKey,
+    value: value.toString(),
+  );
+}
+
+/// Read-and-delete — returns true exactly once per migration, never again.
+Future<bool> consumeMigrationPendingInvalidation() async {
+  final value = await _storage.read(key: _migrationInvalidationKey);
+  if (value == 'true') {
+    await _storage.delete(key: _migrationInvalidationKey);
+    return true;
+  }
+  return false;
+}
+
 
   Future<void> setThemeMode(String mode) async {
     await _storage.write(key: _themeModeKey, value: mode);

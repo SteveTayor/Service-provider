@@ -168,7 +168,7 @@ final subProductsProvider =
 );
 
 /// Fetch sub-products by category
-final subProductsByCategoryProvider = FutureProvider.family<
+final subProductsByCategoryProvider =  FutureProvider.autoDispose.family<
     GetAllSubProductsResponse, (int productId, String category)>(
   (ref, tuple) async {
     final token = await ref.read(authTokenProvider.future);
@@ -213,9 +213,10 @@ final beneficiariesProvider =
         //     ? _sanitizeErrorMessage(failure.properties.first)
         //     : 'Failed to load beneficiaries';
         // throw ServerFailure([safeMsg]);
-        ref
-            .read(globalProvider.notifier)
-            .handleFailure(failure, navigatorKey.currentContext!);
+   final ctx = navigatorKey.currentContext; // ✅ no !
+        if (ctx != null) {
+          ref.read(globalProvider.notifier).handleFailure(failure, ctx);
+        }
         return [];
       },
       (response) {

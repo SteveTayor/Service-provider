@@ -83,6 +83,13 @@ class GlobalProvider extends StateNotifier<GlobalState> {
         // throw Exception('No authentication token found');
       }
 
+      // Consume the flag set by VersionManager during boot.
+    // Fires exactly once per version bump — deleted immediately after reading.
+    final shouldInvalidate = await storage.consumeMigrationPendingInvalidation();
+    if (shouldInvalidate) {
+      _invalidateAllProductProviders();
+    }
+
       // ALL CORE APIS – CALLED ONCE
       await Future.wait([
         initializeWalletandAccounts(ctx),
@@ -98,6 +105,17 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       _isInitializing = false;
     }
   }
+
+  void _invalidateAllProductProviders() {
+  for (final type in PlatformProductType.values) {
+    _ref.invalidate(productsProvider(type));
+  }
+  _ref.invalidate(subProductsProvider);
+  _ref.invalidate(subProductsByCategoryProvider);
+  _ref.invalidate(beneficiariesProvider);
+  _ref.invalidate(minimalBeneficiariesProvider);
+  debugPrint('[GlobalProvider] Post-update: all product providers invalidated');
+}
 
   Future<void> initializePlatformDependencies(BuildContext context) async {
     try {

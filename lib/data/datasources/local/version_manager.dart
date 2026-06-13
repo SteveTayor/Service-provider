@@ -39,6 +39,13 @@ class VersionManager {
         // Clear stale data but preserve important user data
         await _clearStaleData();
 
+//  flag GlobalProvider to invalidate Riverpod caches
+      // on the first boot after this update. Uses consume pattern so it
+      // fires exactly once.
+      await _storage.setMigrationPendingInvalidation(true);
+
+
+
         // Save new version
         await _saveCurrentVersion(currentVersion, currentBuildNumber);
 
@@ -53,78 +60,74 @@ class VersionManager {
   }
 
   /// Clear stale data while preserving critical user data
-  Future<void> _clearStaleData() async {
-    try {
-      // Get current critical data before clearing
-      final authToken = await _storage.getAuthToken();
-      // final username = await _storage.getUsername();
-      // final rememberedEmail = await _storage.getRememberedEmail();
-      // final password = await _storage.getPassword();
-      // final fcmToken = await _storage.getFcmToken();
+Future<void> _clearStaleData() async {
+  try {
+    // Read all keys currently in storage
+    final all = await _storage.readAll();
 
-      // // Biometric data
-      // final biometricEmail = await _storage.getBiometricEmail();
-      // final biometricPassword = await _storage.getBiometricPassword();
-      // final biometricDisplayName = await _storage.getBiometricDisplayName();
-      // final biometricLoginEnabled = await _storage.isBiometricLoginEnabled();
-      // final biometricTransactionEnabled =
-      //     await _storage.isBiometricTransactionEnabled();
+    // These keys must never be deleted — user would be logged out
+    // or lose critical settings if they were removed.
+    const preserve = {
+      // Auth
+      'auth_token',
 
-      // Device info
-      final deviceInfo = await _storage.getDeviceInfo();
+      // Login credentials
+      'remembered_email',
+      'sign_in_password',
+      'cached_username',
 
-      // Version info
-      final versionCode = await _storage.getAppVersionCode();
+      // PIN (keyed as '{email}_pin' — matched by prefix below)
+      // handled separately via startsWith check
 
-      // Clear everything
-      // await _storage.clearAll();
+      // Biometric
+      'biometric_email',
+      'biometric_password',
+      'biometric_display_name',
+      'biometric_login_enabled',
+      'biometric_transaction_enabled',
 
-      // Restore critical data
-      if (authToken != null) await _storage.setAuthToken(authToken);
-      // if (username != null) await _storage.setUsername(username);
-      // if (rememberedEmail != null)
-      //   await _storage.setRememberedEmail(rememberedEmail);
-      // if (password != null) await _storage.setPassword(password);
-      // if (fcmToken != null) await _storage.saveFcmToken(fcmToken);
+      // FCM — losing this means no push notifications until next token refresh
+      'fcm_token',
 
-      // // Restore biometric data
-      // if (biometricEmail != null && biometricPassword != null) {
-      //   await _storage.storeBiometricCredentials(
-      //     email: biometricEmail,
-      //     password: biometricPassword,
-      //     displayName: biometricDisplayName,
-      //   );
-      // }
-      // if (biometricLoginEnabled) {
-      //   await _storage.setBiometricLoginEnabled(true);
-      // }
-      // if (biometricTransactionEnabled) {
-      //   await _storage.setBiometricTransactionEnabled(true);
-      // }
+      // Device info — needed for transaction requests
+      'mac_address',
+      'ip_address',
+      'latitude',
+      'longitude',
+      'platform',
 
-      // // Restore device info
-      // if (deviceInfo['macAddress'] != 'unknown') {
-      //   await _storage.setDeviceInfo(
-      //     macAddress: deviceInfo['macAddress']!,
-      //     ipAddress: deviceInfo['ipAddress']!,
-      //     latitude: deviceInfo['latitude']!,
-      //     longitude: deviceInfo['longitude']!,
-      //     platform: deviceInfo['platform']!,
-      //   );
-      // }
+      // Version tracking — must survive or we loop forever
+      'last_version_name',
+      'app_version_code',
 
-      // Restore version code
-      if (versionCode != null) {
-        await _storage.setAppVersionCode(versionCode);
-      }
+      // Migration flag we just wrote — must not delete it here
+      'migration_pending_invalidation',
 
-      debugPrint(
-          'Cleared stale data after app update - preserved critical user data');
-    } catch (e, st) {
-      debugPrint('Error clearing stale data: $e\n$st');
+      // User preferences
+      'app_theme_mode',
+      'has_seen_promo_modal',
+    };
+
+    int deleted = 0;
+    for (final key in all.keys) {
+      // Preserve PIN keys — stored as '{email}_pin'
+      if (key.endsWith('_pin')) continue;
+
+      // Preserve anything in the explicit set
+      if (preserve.contains(key)) continue;
+
+      //Everything else is refetchable — delete it
+      await _storage.delete(key: key);
+      deleted++;
+      debugPrint('[VersionManager] deleted stale key: $key');
     }
-  }
 
+    debugPrint('[VersionManager] _clearStaleData: deleted $deleted keys, '
+        'preserved ${all.length - deleted}');
+  } catch (e, st) {
+    debugPrint('Error clearing stale data: $e\n$st');
+  }
+}
   Future<void> _saveCurrentVersion(String version, int buildNumber) async {
     try {
       await _storage.setLastVersionName(version);
@@ -135,10 +138,10 @@ class VersionManager {
   }
 
   /// Force clear all app data (use with caution - e.g., on logout)
-  Future<void> clearAllData() async {
-    await _storage.clearAll();
-    debugPrint('All app data cleared');
-  }
+  // Future<void> clearAllData() async {
+  //   await _storage.clearAll();
+  //   debugPrint('All app data cleared');
+  // }
 
   /// Check if this is the first launch after install
   Future<bool> isFirstLaunch() async {
