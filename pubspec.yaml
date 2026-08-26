@@ -62,7 +62,7 @@ dependencies:
 
 
 dependency_overrides:
-  analyzer_plugin: ^0.14.0   # This version supports analyzer 7+
+  analyzer_plugin: ^0.13.0   # This version supports analyzer 7+
 
 dev_dependencies:
   bloc_test: ^10.0.0
