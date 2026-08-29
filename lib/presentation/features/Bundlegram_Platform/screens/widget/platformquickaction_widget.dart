@@ -71,32 +71,43 @@ class PlatformQuickActionWidget extends ConsumerWidget {
               50.verticalSpace,
               const WalletoutlookWidget(),
               41.verticalSpace,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  PlatformItemWidget(
-                    title: 'Buy data',
-                    icon: Assets.svgs.mobile,
-                    onPressed: () => platform.goToProduct(
-                        context, PlatformProductType.mobileData),
-                  ),
-                  PlatformItemWidget(
-                    title: 'Buy airtime',
-                    icon: Assets.svgs.simcard2,
-                    onPressed: () => platform.goToProduct(
-                        context, PlatformProductType.airtime),
-                  ),
-                  PlatformItemWidget(
-                    title: 'Pay bills',
-                    icon: Assets.svgs.walletMinus,
-                    onPressed: () => platform.openBillBottomSheet(context),
-                  ),
-                  PlatformItemWidget(
-                    title: 'Withdraw',
-                    icon: Assets.svgs.walletMoneyPaymentFinanceWallet,
-                    onPressed: () => platform.goToWithdrawFund(context),
-                  ),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    PlatformItemWidget(
+                      title: 'Buy data',
+                      icon: Assets.svgs.mobile,
+                      onPressed: () => platform.goToProduct(
+                          context, PlatformProductType.mobileData),
+                    ),
+                    PlatformItemWidget(
+                      title: 'Buy airtime',
+                      icon: Assets.svgs.simcard2,
+                      onPressed: () => platform.goToProduct(
+                          context, PlatformProductType.airtime),
+                    ),
+                    PlatformItemWidget(
+                      title: 'Pay bills',
+                      icon: Assets.svgs.walletMinus,
+                      onPressed: () => platform.openBillBottomSheet(context),
+                    ),
+                    PlatformItemWidget(
+                      title: 'Withdraw',
+                      icon: Assets.svgs.walletMoneyPaymentFinanceWallet,
+                      onPressed: () => platform.goToWithdrawFund(context),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 16.w),
+                      child: PlatformItemWidget(
+                        title: 'Airtime 2 Cash',
+                        iconData: Icons.currency_exchange,
+                        onPressed: () => platform.goToAirtimeToCash(context),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ).withContainer(

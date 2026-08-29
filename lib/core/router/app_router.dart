@@ -9,6 +9,7 @@ import 'package:bundlegram/presentation/features/account%20setup/screens/becomea
 import 'package:bundlegram/presentation/features/account%20setup/screens/helpandsupport_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/linkyourbvn_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/withdrawalaccount_screen.dart';
+import 'package:bundlegram/presentation/features/airtime-to-cash-feature/screens/airtime_to_cash_screen.dart';
 import 'package:bundlegram/presentation/features/dashboard/screens/dashboard_screen.dart';
 import 'package:bundlegram/presentation/features/lock_screen/views/lock_screen.dart';
 import 'package:bundlegram/presentation/features/notifications/screens/notification_screen.dart';
@@ -250,6 +251,12 @@ class AppRouter {
       GoRoute(
         path: RouteConstants.promo,
         builder: (context, state) => const PromoScreen(),
+      ),
+
+      // AIrtime to cash
+      GoRoute(
+        path: RouteConstants.airtimeToCash,
+        builder: (context, state) => const AirtimeToCashScreen(),
       ),
 
       //   ShellRoute(

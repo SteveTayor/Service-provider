@@ -337,4 +337,8 @@ class PlatformProvider extends ChangeNotifier {
   void openStatisticsBottomSheet(BuildContext context) {
     context.showBottomSheet(child: const StatisticsDashboard());
   }
+
+  void goToAirtimeToCash(BuildContext context) {
+    context.push(RouteConstants.airtimeToCash);
+  }
 }

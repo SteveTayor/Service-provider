@@ -6,13 +6,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PlatformItemWidget extends StatelessWidget {
-  const PlatformItemWidget(
-      {required this.title,
-      required this.icon,
-      required this.onPressed,
-      super.key});
+  const PlatformItemWidget({
+    required this.title,
+    required this.onPressed,
+    this.icon,
+    this.iconData,
+    super.key,
+  }) : assert(
+          icon != null || iconData != null,
+          'Provide either icon (asset path) or iconData (fallback Material icon)',
+        );
+
   final String title;
-  final String icon;
+
+  /// Existing behaviour — SVG asset path.
+  final String? icon;
+
+  /// New — fallback Material icon for items that don't have a designed
+  /// asset yet. Takes precedence only when [icon]
+  /// is null, so nothing about the existing four quick actions changes.
+  final IconData? iconData;
+
   final VoidCallback onPressed;
 
   @override
@@ -31,14 +45,19 @@ class PlatformItemWidget extends StatelessWidget {
               shape: BoxShape.circle,
               color: const Color(0xffDDB9B4).withOpacity(0.48),
             ),
-            child: AppSvgIcon(path: icon),
+            child: icon != null
+                ? AppSvgIcon(path: icon!)
+                : Icon(
+                    iconData,
+                    color: AppColors.white,
+                    size: r.iconSize(base: 22),
+                  ),
           ),
           SizedBox(height: r.spacing(8)),
           Text(
             title,
             style: context.textTheme.bodyMedium!.copyWith(
               color: AppColors.white,
-              // fontSize: 14,
             ),
           ),
         ],

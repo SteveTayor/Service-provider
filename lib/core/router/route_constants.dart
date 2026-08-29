@@ -35,8 +35,10 @@ class RouteConstants {
   static const String topUpResult = '/topUpResult';
   static const String withdrawFund = '/withdrawFund';
   static const String enterPin = '/enterPin';
+
 ////
   static const String platformProduct = '/platformProduct';
+  static const String airtimeToCash = '/airtimeToCash';
 
   //// User Account
   static const String setting = '/settings';
