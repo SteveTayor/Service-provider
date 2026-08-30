@@ -1,5 +1,6 @@
-import 'package:bundlegram/presentation/features/transaction/notifier/e-pin_history_provider.dart';
+﻿import 'package:bundlegram/presentation/features/transaction/notifier/e-pin_history_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/all_service_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_notifier.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
@@ -52,7 +53,7 @@ final ePinHistoryProvider =
   (ref) => EpinHistoryNotifier(ref),
 );
 
-// ✅ Wallet history now using the .family provider properly
+// âœ… Wallet history now using the .family provider properly
 final walletServiceHistoryProvider = StateNotifierProvider.family<
     WalletServiceHistoryNotifier,
     ServiceHistoryState,
@@ -70,3 +71,4 @@ final transactionHistoryProvider =
     StateNotifierProvider<TransactionHistoryNotifier, RecentTransactionsState>(
   (ref) => TransactionHistoryNotifier(ref),
 );
+

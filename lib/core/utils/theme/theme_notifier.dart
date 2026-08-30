@@ -1,8 +1,9 @@
-import 'package:bundlegram/core/utils/theme/theme_mode_enum.dart';
+﻿import 'package:bundlegram/core/utils/theme/theme_mode_enum.dart';
 import 'package:bundlegram/core/utils/theme/theme_state.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeState>((ref) {
   final storage = ref.read(secureStorageHelperProvider);
@@ -42,3 +43,4 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
     }
   }
 }
+

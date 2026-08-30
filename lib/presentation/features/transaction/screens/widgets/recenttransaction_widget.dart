@@ -1,4 +1,4 @@
-import 'package:bundlegram/core/extensions/context_extensions.dart';
+﻿import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/responsive_extensions.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
@@ -17,6 +17,7 @@ import 'package:bundlegram/presentation/general_widget/transaction_share_receipt
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:go_router/go_router.dart';
@@ -44,7 +45,7 @@ class RecentTransactionWidget extends ConsumerWidget {
         ? state.filteredServices.sublist(0, 5)
         : state.filteredServices;
 
-    // DATA FIRST — prefer cached data
+    // DATA FIRST â€” prefer cached data
     if (transactions.isNotEmpty) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -418,3 +419,4 @@ class RecentTransactionWidget extends ConsumerWidget {
     );
   }
 }
+

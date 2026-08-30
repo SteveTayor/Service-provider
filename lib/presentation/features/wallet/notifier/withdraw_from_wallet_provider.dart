@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -18,6 +18,7 @@ import 'package:bundlegram/presentation/features/wallet/screen/topup_failed_scre
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -325,3 +326,4 @@ class WithdrawalProvider extends ChangeNotifier {
     super.dispose();
   }
 }
+

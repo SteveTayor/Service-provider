@@ -1,7 +1,8 @@
-import 'package:bundlegram/data/models/products/epin/epin_trannsactions.dart';
+﻿import 'package:bundlegram/data/models/products/epin/epin_trannsactions.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/bulk%20e-pin/model/epin_mapper.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 
@@ -184,3 +185,4 @@ class EpinHistoryNotifier extends StateNotifier<ServiceHistoryState> {
     return double.tryParse(raw.replaceAll(',', '')) ?? 0.0;
   }
 }
+

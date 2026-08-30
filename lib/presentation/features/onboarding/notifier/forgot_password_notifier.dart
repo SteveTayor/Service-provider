@@ -1,4 +1,4 @@
-// lib/presentation/features/onboarding/notifier/forgot_password_provider.dart
+﻿// lib/presentation/features/onboarding/notifier/forgot_password_provider.dart
 import 'dart:async';
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/failures.dart';
@@ -9,6 +9,7 @@ import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/widgets/forgotpassword_otp_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:go_router/go_router.dart';
@@ -176,3 +177,4 @@ class ForgetPasswordProvider extends ChangeNotifier {
     super.dispose();
   }
 }
+

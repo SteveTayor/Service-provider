@@ -131,7 +131,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
     final storage = ref.read(secureStorageHelperProvider);
     final hasSeenPromo = await storage.hasSeenPromoModal();
 
-    if (!hasSeenPromo && mounted) {
+    if (!(hasSeenPromo ?? false) && mounted) {
       await Future.delayed(const Duration(milliseconds: 800));
       if (mounted) {
         showPromoModal(context);

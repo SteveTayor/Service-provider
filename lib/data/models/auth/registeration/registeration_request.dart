@@ -12,7 +12,7 @@ RegisterRequest registerRequestFromJson(String str) =>
     RegisterRequest.fromJson(json.decode(str) as Map<String, dynamic>);
 
 @freezed
-class RegisterRequest with _$RegisterRequest {
+abstract class RegisterRequest with _$RegisterRequest {
   const factory RegisterRequest({
     @JsonKey(name: "email") String? email,
     @JsonKey(name: "phone") String? phone,

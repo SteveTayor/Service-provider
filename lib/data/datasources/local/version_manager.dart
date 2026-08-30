@@ -26,7 +26,8 @@ class VersionManager {
       if (lastVersion == null || lastBuildNumber == null) {
         await _saveCurrentVersion(currentVersion, currentBuildNumber);
         debugPrint(
-            'First app launch - version saved: $currentVersion ($currentBuildNumber)');
+          'First app launch - version saved: $currentVersion ($currentBuildNumber)',
+        );
         return false;
       }
 
@@ -34,12 +35,13 @@ class VersionManager {
       if (lastVersion != currentVersion ||
           lastBuildNumber != currentBuildNumber) {
         debugPrint(
-            'App updated from $lastVersion ($lastBuildNumber) to $currentVersion ($currentBuildNumber)');
+          'App updated from $lastVersion ($lastBuildNumber) to $currentVersion ($currentBuildNumber)',
+        );
 
         // Clear stale data but preserve important user data
         await _clearStaleData();
 
-//  flag GlobalProvider to invalidate Riverpod caches
+        //  flag GlobalProvider to invalidate Riverpod caches
         // on the first boot after this update. Uses consume pattern so it
         // fires exactly once.
         await _storage.setMigrationPendingInvalidation(true);
@@ -120,8 +122,10 @@ class VersionManager {
         debugPrint('[VersionManager] deleted stale key: $key');
       }
 
-      debugPrint('[VersionManager] _clearStaleData: deleted $deleted keys, '
-          'preserved ${all.length - deleted}');
+      debugPrint(
+        '[VersionManager] _clearStaleData: deleted $deleted keys, '
+        'preserved ${all.length - deleted}',
+      );
     } catch (e, st) {
       debugPrint('Error clearing stale data: $e\n$st');
     }
@@ -150,7 +154,7 @@ class VersionManager {
 }
 
 @Riverpod(keepAlive: true)
-VersionManager versionManager(VersionManagerRef ref) {
+VersionManager versionManager(Ref ref) {
   final storage = ref.watch(secureStorageHelperProvider);
   return VersionManager(storage);
 }

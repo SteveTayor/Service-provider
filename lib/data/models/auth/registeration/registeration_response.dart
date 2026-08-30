@@ -15,7 +15,7 @@ String registerResponseToJson(RegisterResponse data) =>
     json.encode(data.toJson());
 
 @freezed
-class RegisterResponse with _$RegisterResponse {
+abstract class RegisterResponse with _$RegisterResponse {
   const factory RegisterResponse({
     @JsonKey(name: "status") String? status,
     @JsonKey(name: "data") RegistrationData? data,
@@ -27,7 +27,7 @@ class RegisterResponse with _$RegisterResponse {
 }
 
 @freezed
-class RegistrationData with _$RegistrationData {
+abstract class RegistrationData with _$RegistrationData {
   const factory RegistrationData({
     @JsonKey(name: "token") String? token,
     @JsonKey(name: "user") User? user,
@@ -38,7 +38,7 @@ class RegistrationData with _$RegistrationData {
 }
 
 @freezed
-class User with _$User {
+abstract class User with _$User {
   const factory User({
     @JsonKey(name: "first_name") String? firstName,
     @JsonKey(name: "last_name") String? lastName,

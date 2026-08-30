@@ -6,9 +6,8 @@ part of 'profile_setup_request.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ProfileSetupRequestImpl _$$ProfileSetupRequestImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ProfileSetupRequestImpl(
+_ProfileSetupRequest _$ProfileSetupRequestFromJson(Map<String, dynamic> json) =>
+    _ProfileSetupRequest(
       firstName: json['first_name'] as String?,
       lastName: json['last_name'] as String?,
       address: json['address'] as String?,
@@ -17,13 +16,13 @@ _$ProfileSetupRequestImpl _$$ProfileSetupRequestImplFromJson(
       email: json['email'] as String?,
     );
 
-Map<String, dynamic> _$$ProfileSetupRequestImplToJson(
-        _$ProfileSetupRequestImpl instance) =>
-    <String, dynamic>{
-      'first_name': instance.firstName,
-      'last_name': instance.lastName,
-      'address': instance.address,
-      'date_of_birth': instance.dateOfBirth,
-      'gender': instance.gender,
-      'email': instance.email,
-    };
+Map<String, dynamic> _$ProfileSetupRequestToJson(
+  _ProfileSetupRequest instance,
+) => <String, dynamic>{
+  'first_name': instance.firstName,
+  'last_name': instance.lastName,
+  'address': instance.address,
+  'date_of_birth': instance.dateOfBirth,
+  'gender': instance.gender,
+  'email': instance.email,
+};

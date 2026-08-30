@@ -17,16 +17,15 @@ class ApiClient {
       responseType: ResponseType.json,
     );
 
-
     _dio.interceptors.add(
-        LogInterceptor(
-          request: true,
-          requestBody: true,
-          responseBody: true,
-          responseHeader: true,
-          error: true,
-        ),
-      );
+      LogInterceptor(
+        request: true,
+        requestBody: true,
+        responseBody: true,
+        responseHeader: true,
+        error: true,
+      ),
+    );
   }
 
   Future<void> _onRequest(
@@ -117,8 +116,8 @@ class ApiClient {
 }
 
 @Riverpod(keepAlive: true)
-ApiClient apiClient(ApiClientRef ref) {
+ApiClient apiClient(Ref ref) {
   final dio = Dio();
   final secureStorage = ref.watch(secureStorageHelperProvider);
   return ApiClient(dio, secureStorage);
-} 
+}

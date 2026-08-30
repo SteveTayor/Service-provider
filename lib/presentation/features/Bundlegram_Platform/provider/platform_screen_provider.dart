@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
@@ -19,6 +19,7 @@ import 'package:bundlegram/presentation/features/transaction/screens/widgets/sta
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:bundlegram/data/models/banks/get_virtual_account_response.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:go_router/go_router.dart';
@@ -107,7 +108,7 @@ class PlatformProvider extends ChangeNotifier {
     if (bvn == null) {
       WalletNotifier().showLinkBVNSnackBar(
         context,
-        'BVN verification required to withdraw from your wallet.',
+        'BVN verification required to withdraw fromÂ yourÂ wallet.',
         'Link now',
       );
     } else {
@@ -315,7 +316,7 @@ class PlatformProvider extends ChangeNotifier {
   //       return;
   //     }
 
-  //     // All good — navigate to product screen (existing behaviour)
+  //     // All good â€” navigate to product screen (existing behaviour)
   //     unawaited(Navigator.push(
   //       context,
   //       MaterialPageRoute(
@@ -342,3 +343,4 @@ class PlatformProvider extends ChangeNotifier {
     context.push(RouteConstants.airtimeToCash);
   }
 }
+

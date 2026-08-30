@@ -6,7 +6,7 @@ part 'auth_model.freezed.dart';
 part 'auth_model.g.dart';
 
 @freezed
-class LoginRequest with _$LoginRequest {
+abstract class LoginRequest with _$LoginRequest {
   const factory LoginRequest({
     required String email,
     required String password,
@@ -19,7 +19,7 @@ class LoginRequest with _$LoginRequest {
 }
 
 @freezed
-class RegisterRequest with _$RegisterRequest {
+abstract class RegisterRequest with _$RegisterRequest {
   const factory RegisterRequest({
     required String email,
     required String phone,
@@ -34,46 +34,40 @@ class RegisterRequest with _$RegisterRequest {
 }
 
 @freezed
-class ForgotPasswordRequest with _$ForgotPasswordRequest {
-  const factory ForgotPasswordRequest({
-    required String email,
-  }) = _ForgotPasswordRequest;
+abstract class ForgotPasswordRequest with _$ForgotPasswordRequest {
+  const factory ForgotPasswordRequest({required String email}) =
+      _ForgotPasswordRequest;
 
   factory ForgotPasswordRequest.fromJson(Map<String, dynamic> json) =>
       _$ForgotPasswordRequestFromJson(json);
 }
 
 @freezed
-class VerifyOtpRequest with _$VerifyOtpRequest {
-  const factory VerifyOtpRequest({
-    required String email,
-    required String otp,
-  }) = _VerifyOtpRequest;
+abstract class VerifyOtpRequest with _$VerifyOtpRequest {
+  const factory VerifyOtpRequest({required String email, required String otp}) =
+      _VerifyOtpRequest;
 
   factory VerifyOtpRequest.fromJson(Map<String, dynamic> json) =>
       _$VerifyOtpRequestFromJson(json);
 }
 
 @freezed
-class VerifyEmailRequest with _$VerifyEmailRequest {
-  const factory VerifyEmailRequest({
-    required String otp,
-  }) = _VerifyEmailRequest;
+abstract class VerifyEmailRequest with _$VerifyEmailRequest {
+  const factory VerifyEmailRequest({required String otp}) = _VerifyEmailRequest;
   factory VerifyEmailRequest.fromJson(Map<String, dynamic> json) =>
       _$VerifyEmailRequestFromJson(json);
 }
 
 @freezed
-class DeleteAccountRequest with _$DeleteAccountRequest {
-  const factory DeleteAccountRequest({
-    required String pin,
-  }) = _DeleteAccountRequest;
+abstract class DeleteAccountRequest with _$DeleteAccountRequest {
+  const factory DeleteAccountRequest({required String pin}) =
+      _DeleteAccountRequest;
   factory DeleteAccountRequest.fromJson(Map<String, dynamic> json) =>
       _$DeleteAccountRequestFromJson(json);
 }
 
 @freezed
-class NewPasswordRequest with _$NewPasswordRequest {
+abstract class NewPasswordRequest with _$NewPasswordRequest {
   const factory NewPasswordRequest({
     required String email,
     required String password,
@@ -85,27 +79,25 @@ class NewPasswordRequest with _$NewPasswordRequest {
 }
 
 @freezed
-class AddUsernameRequest with _$AddUsernameRequest {
-  const factory AddUsernameRequest({
-    required String username,
-  }) = _AddUsernameRequest;
+abstract class AddUsernameRequest with _$AddUsernameRequest {
+  const factory AddUsernameRequest({required String username}) =
+      _AddUsernameRequest;
 
   factory AddUsernameRequest.fromJson(Map<String, dynamic> json) =>
       _$AddUsernameRequestFromJson(json);
 }
 
 @freezed
-class CheckUsernameRequest with _$CheckUsernameRequest {
-  const factory CheckUsernameRequest({
-    required String username,
-  }) = _CheckUsernameRequest;
+abstract class CheckUsernameRequest with _$CheckUsernameRequest {
+  const factory CheckUsernameRequest({required String username}) =
+      _CheckUsernameRequest;
 
   factory CheckUsernameRequest.fromJson(Map<String, dynamic> json) =>
       _$CheckUsernameRequestFromJson(json);
 }
 
 @freezed
-class ChangePinRequest with _$ChangePinRequest {
+abstract class ChangePinRequest with _$ChangePinRequest {
   const factory ChangePinRequest({
     @JsonKey(name: "oldPin") required String oldPin,
     @JsonKey(name: "newPin") required String newPin,
@@ -116,7 +108,7 @@ class ChangePinRequest with _$ChangePinRequest {
 }
 
 @freezed
-class ResetPinRequest with _$ResetPinRequest {
+abstract class ResetPinRequest with _$ResetPinRequest {
   const factory ResetPinRequest({
     @JsonKey(name: "password") required String password,
   }) = _ResetPinRequest;
@@ -126,7 +118,7 @@ class ResetPinRequest with _$ResetPinRequest {
 }
 
 @freezed
-class CreatePinRequest with _$CreatePinRequest {
+abstract class CreatePinRequest with _$CreatePinRequest {
   const factory CreatePinRequest({
     @JsonKey(name: "pin") required String pin,
     @JsonKey(name: "pin_confirmation") required String pinConfirmation,
@@ -137,17 +129,16 @@ class CreatePinRequest with _$CreatePinRequest {
 }
 
 @freezed
-class VerifyPinRequest with _$VerifyPinRequest {
-  const factory VerifyPinRequest({
-    @JsonKey(name: "pin") required String pin,
-  }) = _VerifyPinRequest;
+abstract class VerifyPinRequest with _$VerifyPinRequest {
+  const factory VerifyPinRequest({@JsonKey(name: "pin") required String pin}) =
+      _VerifyPinRequest;
 
   factory VerifyPinRequest.fromJson(Map<String, dynamic> json) =>
       _$VerifyPinRequestFromJson(json);
 }
 
 @freezed
-class ChangePasswordRequest with _$ChangePasswordRequest {
+abstract class ChangePasswordRequest with _$ChangePasswordRequest {
   const factory ChangePasswordRequest({
     @JsonKey(name: "oldPassword") required String oldPassword,
     @JsonKey(name: "newPassword") required String newPassword,

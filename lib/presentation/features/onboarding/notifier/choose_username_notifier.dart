@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
@@ -9,6 +9,7 @@ import 'package:bundlegram/data/models/auth/registeration/username/username_resp
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 
 final chooseUsernameProvider = ChangeNotifierProvider((ref) {
@@ -149,3 +150,4 @@ class ChooseUsernameProvider extends ChangeNotifier {
     super.dispose();
   }
 }
+

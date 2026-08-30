@@ -6,22 +6,46 @@ part of 'version_manager.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$versionManagerHash() => r'a4a341af404f9a1ef04f30a4a7889902dd402379';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [versionManager].
 @ProviderFor(versionManager)
-final versionManagerProvider = Provider<VersionManager>.internal(
-  versionManager,
-  name: r'versionManagerProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$versionManagerHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final versionManagerProvider = VersionManagerProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef VersionManagerRef = ProviderRef<VersionManager>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class VersionManagerProvider
+    extends $FunctionalProvider<VersionManager, VersionManager, VersionManager>
+    with $Provider<VersionManager> {
+  VersionManagerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'versionManagerProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$versionManagerHash();
+
+  @$internal
+  @override
+  $ProviderElement<VersionManager> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  VersionManager create(Ref ref) {
+    return versionManager(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(VersionManager value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<VersionManager>(value),
+    );
+  }
+}
+
+String _$versionManagerHash() => r'a4a341af404f9a1ef04f30a4a7889902dd402379';

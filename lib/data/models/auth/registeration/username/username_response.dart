@@ -12,7 +12,7 @@ UsernameResponse UsernameResponseFromJson(String str) =>
     UsernameResponse.fromJson(json.decode(str) as Map<String, dynamic>);
 
 @freezed
-class UsernameResponse with _$UsernameResponse {
+abstract class UsernameResponse with _$UsernameResponse {
   const factory UsernameResponse({
     @JsonKey(name: "status") String? status,
     @JsonKey(name: "data") String? data,

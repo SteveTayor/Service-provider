@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -56,6 +56,7 @@ import 'package:bundlegram/services/notification_services/notification_services.
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -258,7 +259,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     if (force || !_isSubProductsCacheFresh(productId)) {
       _subProductsCache.remove(productId);
       _subProductsFetchedAt.remove(productId);
-      _ref.invalidate(subProductsProvider(productId)); // ← key addition
+      _ref.invalidate(subProductsProvider(productId)); // â† key addition
     }
 
     // If we have fresh cache and not forced, return immediately with cached data
@@ -333,7 +334,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       // user to pull-to-refresh
-      context.showErrorSnackBar('Could not fetch services — pull to refresh');
+      context.showErrorSnackBar('Could not fetch services â€” pull to refresh');
     }
   }
 
@@ -542,7 +543,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             matchingProduct.id == state.selectedProduct?.id) {
           debugPrint(
               'Detected same provider (${matchingProduct.productName}), skipping reset/refetch');
-          return; // Nothing to do — keep existing subProducts/grid
+          return; // Nothing to do â€” keep existing subProducts/grid
         }
 
         // fallback: brand match by extracting brand
@@ -557,14 +558,14 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         }
 
         if (matchingProduct == null) {
-          // No provider auto-found — clear any auto selection, keep manual selection if present
+          // No provider auto-found â€” clear any auto selection, keep manual selection if present
           debugPrint(
               'No auto match for $detected, leaving UI for manual selection.');
           // state = state.copyWith(error: 'Could not auto-detect provider for this number.');
           return;
         }
 
-        // Found a product — select + fetch subproducts (same flow as applyBeneficiary)
+        // Found a product â€” select + fetch subproducts (same flow as applyBeneficiary)
         final providerIcon = normalizeAssetName(matchingProduct.productName,
             serviceType: _serviceType);
         // selectProduct(matchingProduct, providerIcon ?? '');
@@ -582,7 +583,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       } catch (e, st) {
         debugPrint('Error in detectAndSelectFromPhone: $e');
         debugPrintStack(stackTrace: st);
-        // don't throw — just keep UI stable
+        // don't throw â€” just keep UI stable
       }
     });
   }
@@ -762,7 +763,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             }
 
             debugPrint(
-                "✅ Found subProduct: ${selectedSubProduct.subName} (id: ${selectedSubProduct.id})");
+                "âœ… Found subProduct: ${selectedSubProduct.subName} (id: ${selectedSubProduct.id})");
 
             if (selectedSubProduct != null && state.selectedProduct != null) {
               selectSubProduct(selectedSubProduct);
@@ -1344,7 +1345,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         return;
       } else {
         debugPrint("Biometric authentication failed");
-        // fallback → open PIN screen
+        // fallback â†’ open PIN screen
       }
     }
     unawaited(
@@ -1732,3 +1733,4 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     super.dispose();
   }
 }
+

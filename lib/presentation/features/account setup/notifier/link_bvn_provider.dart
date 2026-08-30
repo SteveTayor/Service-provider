@@ -1,4 +1,4 @@
-// lib/presentation/features/account_setup/providers/link_bvn_provider.dart
+﻿// lib/presentation/features/account_setup/providers/link_bvn_provider.dart
 import 'dart:async';
 import 'dart:developer';
 
@@ -14,6 +14,7 @@ import 'package:bundlegram/presentation/features/transaction/screens/widgets/tra
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:intl/intl.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
@@ -294,3 +295,4 @@ class LinkBvnProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+

@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/errors.dart';
@@ -9,6 +9,7 @@ import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
@@ -213,3 +214,4 @@ class PinController extends ChangeNotifier {
     super.dispose();
   }
 }
+

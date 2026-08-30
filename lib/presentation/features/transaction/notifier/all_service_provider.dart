@@ -1,8 +1,9 @@
-import 'package:bundlegram/core/extensions/string_extensions.dart';
+﻿import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
   AllServiceHistoryNotifier(this.ref, this.serviceType)
@@ -176,3 +177,4 @@ class AllServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+﻿import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
@@ -7,6 +7,7 @@ import 'package:bundlegram/data/models/notification_model.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:uuid/uuid.dart';
 
 final notificationProvider =
@@ -262,7 +263,7 @@ class NotificationProvider extends ChangeNotifier {
 // Parse notification time for sorting
   DateTime _parseNotificationTime(String time) {
     if (time.startsWith('Today')) {
-      final timeParts = time.split(' • ')[1].split(':');
+      final timeParts = time.split(' â€¢ ')[1].split(':');
       final now = DateTime.now();
       return DateTime(
         now.year,
@@ -272,7 +273,7 @@ class NotificationProvider extends ChangeNotifier {
         int.parse(timeParts[1]),
       );
     }
-    final parts = time.split(' • ');
+    final parts = time.split(' â€¢ ');
     final dateParts = parts[0].split(' ');
     final timeParts = parts[1].split(':');
     final month = _getMonthNameIndex(dateParts[1]);
@@ -296,12 +297,12 @@ class NotificationProvider extends ChangeNotifier {
     if (difference.inDays > 0) {
       return '${localTime.day} '
           '${_getMonthName(localTime.month)} '
-          '${localTime.year} • '
+          '${localTime.year} â€¢ '
           '${localTime.hour.toString().padLeft(2, '0')}:'
           '${localTime.minute.toString().padLeft(2, '0')}';
     }
 
-    return 'Today • '
+    return 'Today â€¢ '
         '${localTime.hour.toString().padLeft(2, '0')}:'
         '${localTime.minute.toString().padLeft(2, '0')}';
   }
@@ -352,3 +353,4 @@ class NotificationProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+

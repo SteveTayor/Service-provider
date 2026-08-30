@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,268 +9,281 @@ part of 'become_a_merchant_request.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-BecomeAMerchantRequest _$BecomeAMerchantRequestFromJson(
-    Map<String, dynamic> json) {
-  return _BecomeAMerchantRequest.fromJson(json);
-}
 
 /// @nodoc
 mixin _$BecomeAMerchantRequest {
-  @JsonKey(name: "mac_address")
-  String get macAddress => throw _privateConstructorUsedError;
-  @JsonKey(name: "ip_address")
-  String get ipAddress => throw _privateConstructorUsedError;
-  @JsonKey(name: "latitude")
-  String get latitude => throw _privateConstructorUsedError;
-  @JsonKey(name: "longitude")
-  String get longitude => throw _privateConstructorUsedError;
-  @JsonKey(name: "platform")
-  String get platform => throw _privateConstructorUsedError;
+
+@JsonKey(name: "mac_address") String get macAddress;@JsonKey(name: "ip_address") String get ipAddress;@JsonKey(name: "latitude") String get latitude;@JsonKey(name: "longitude") String get longitude;@JsonKey(name: "platform") String get platform;
+/// Create a copy of BecomeAMerchantRequest
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$BecomeAMerchantRequestCopyWith<BecomeAMerchantRequest> get copyWith => _$BecomeAMerchantRequestCopyWithImpl<BecomeAMerchantRequest>(this as BecomeAMerchantRequest, _$identity);
 
   /// Serializes this BecomeAMerchantRequest to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of BecomeAMerchantRequest
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $BecomeAMerchantRequestCopyWith<BecomeAMerchantRequest> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BecomeAMerchantRequest&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.platform, platform) || other.platform == platform));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,macAddress,ipAddress,latitude,longitude,platform);
+
+@override
+String toString() {
+  return 'BecomeAMerchantRequest(macAddress: $macAddress, ipAddress: $ipAddress, latitude: $latitude, longitude: $longitude, platform: $platform)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $BecomeAMerchantRequestCopyWith<$Res> {
-  factory $BecomeAMerchantRequestCopyWith(BecomeAMerchantRequest value,
-          $Res Function(BecomeAMerchantRequest) then) =
-      _$BecomeAMerchantRequestCopyWithImpl<$Res, BecomeAMerchantRequest>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: "mac_address") String macAddress,
-      @JsonKey(name: "ip_address") String ipAddress,
-      @JsonKey(name: "latitude") String latitude,
-      @JsonKey(name: "longitude") String longitude,
-      @JsonKey(name: "platform") String platform});
-}
+abstract mixin class $BecomeAMerchantRequestCopyWith<$Res>  {
+  factory $BecomeAMerchantRequestCopyWith(BecomeAMerchantRequest value, $Res Function(BecomeAMerchantRequest) _then) = _$BecomeAMerchantRequestCopyWithImpl;
+@useResult
+$Res call({
+@JsonKey(name: "mac_address") String macAddress,@JsonKey(name: "ip_address") String ipAddress,@JsonKey(name: "latitude") String latitude,@JsonKey(name: "longitude") String longitude,@JsonKey(name: "platform") String platform
+});
 
+
+
+
+}
 /// @nodoc
-class _$BecomeAMerchantRequestCopyWithImpl<$Res,
-        $Val extends BecomeAMerchantRequest>
+class _$BecomeAMerchantRequestCopyWithImpl<$Res>
     implements $BecomeAMerchantRequestCopyWith<$Res> {
-  _$BecomeAMerchantRequestCopyWithImpl(this._value, this._then);
+  _$BecomeAMerchantRequestCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final BecomeAMerchantRequest _self;
+  final $Res Function(BecomeAMerchantRequest) _then;
 
-  /// Create a copy of BecomeAMerchantRequest
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? macAddress = null,
-    Object? ipAddress = null,
-    Object? latitude = null,
-    Object? longitude = null,
-    Object? platform = null,
-  }) {
-    return _then(_value.copyWith(
-      macAddress: null == macAddress
-          ? _value.macAddress
-          : macAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      ipAddress: null == ipAddress
-          ? _value.ipAddress
-          : ipAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      latitude: null == latitude
-          ? _value.latitude
-          : latitude // ignore: cast_nullable_to_non_nullable
-              as String,
-      longitude: null == longitude
-          ? _value.longitude
-          : longitude // ignore: cast_nullable_to_non_nullable
-              as String,
-      platform: null == platform
-          ? _value.platform
-          : platform // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
+/// Create a copy of BecomeAMerchantRequest
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? macAddress = null,Object? ipAddress = null,Object? latitude = null,Object? longitude = null,Object? platform = null,}) {
+  return _then(_self.copyWith(
+macAddress: null == macAddress ? _self.macAddress : macAddress // ignore: cast_nullable_to_non_nullable
+as String,ipAddress: null == ipAddress ? _self.ipAddress : ipAddress // ignore: cast_nullable_to_non_nullable
+as String,latitude: null == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
+as String,longitude: null == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
+as String,platform: null == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
 }
 
-/// @nodoc
-abstract class _$$BecomeAMerchantRequestImplCopyWith<$Res>
-    implements $BecomeAMerchantRequestCopyWith<$Res> {
-  factory _$$BecomeAMerchantRequestImplCopyWith(
-          _$BecomeAMerchantRequestImpl value,
-          $Res Function(_$BecomeAMerchantRequestImpl) then) =
-      __$$BecomeAMerchantRequestImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: "mac_address") String macAddress,
-      @JsonKey(name: "ip_address") String ipAddress,
-      @JsonKey(name: "latitude") String latitude,
-      @JsonKey(name: "longitude") String longitude,
-      @JsonKey(name: "platform") String platform});
 }
 
-/// @nodoc
-class __$$BecomeAMerchantRequestImplCopyWithImpl<$Res>
-    extends _$BecomeAMerchantRequestCopyWithImpl<$Res,
-        _$BecomeAMerchantRequestImpl>
-    implements _$$BecomeAMerchantRequestImplCopyWith<$Res> {
-  __$$BecomeAMerchantRequestImplCopyWithImpl(
-      _$BecomeAMerchantRequestImpl _value,
-      $Res Function(_$BecomeAMerchantRequestImpl) _then)
-      : super(_value, _then);
 
-  /// Create a copy of BecomeAMerchantRequest
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? macAddress = null,
-    Object? ipAddress = null,
-    Object? latitude = null,
-    Object? longitude = null,
-    Object? platform = null,
-  }) {
-    return _then(_$BecomeAMerchantRequestImpl(
-      macAddress: null == macAddress
-          ? _value.macAddress
-          : macAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      ipAddress: null == ipAddress
-          ? _value.ipAddress
-          : ipAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      latitude: null == latitude
-          ? _value.latitude
-          : latitude // ignore: cast_nullable_to_non_nullable
-              as String,
-      longitude: null == longitude
-          ? _value.longitude
-          : longitude // ignore: cast_nullable_to_non_nullable
-              as String,
-      platform: null == platform
-          ? _value.platform
-          : platform // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
+/// Adds pattern-matching-related methods to [BecomeAMerchantRequest].
+extension BecomeAMerchantRequestPatterns on BecomeAMerchantRequest {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _BecomeAMerchantRequest value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _BecomeAMerchantRequest() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _BecomeAMerchantRequest value)  $default,){
+final _that = this;
+switch (_that) {
+case _BecomeAMerchantRequest():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _BecomeAMerchantRequest value)?  $default,){
+final _that = this;
+switch (_that) {
+case _BecomeAMerchantRequest() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "mac_address")  String macAddress, @JsonKey(name: "ip_address")  String ipAddress, @JsonKey(name: "latitude")  String latitude, @JsonKey(name: "longitude")  String longitude, @JsonKey(name: "platform")  String platform)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _BecomeAMerchantRequest() when $default != null:
+return $default(_that.macAddress,_that.ipAddress,_that.latitude,_that.longitude,_that.platform);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "mac_address")  String macAddress, @JsonKey(name: "ip_address")  String ipAddress, @JsonKey(name: "latitude")  String latitude, @JsonKey(name: "longitude")  String longitude, @JsonKey(name: "platform")  String platform)  $default,) {final _that = this;
+switch (_that) {
+case _BecomeAMerchantRequest():
+return $default(_that.macAddress,_that.ipAddress,_that.latitude,_that.longitude,_that.platform);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "mac_address")  String macAddress, @JsonKey(name: "ip_address")  String ipAddress, @JsonKey(name: "latitude")  String latitude, @JsonKey(name: "longitude")  String longitude, @JsonKey(name: "platform")  String platform)?  $default,) {final _that = this;
+switch (_that) {
+case _BecomeAMerchantRequest() when $default != null:
+return $default(_that.macAddress,_that.ipAddress,_that.latitude,_that.longitude,_that.platform);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$BecomeAMerchantRequestImpl implements _BecomeAMerchantRequest {
-  const _$BecomeAMerchantRequestImpl(
-      {@JsonKey(name: "mac_address") required this.macAddress,
-      @JsonKey(name: "ip_address") required this.ipAddress,
-      @JsonKey(name: "latitude") required this.latitude,
-      @JsonKey(name: "longitude") required this.longitude,
-      @JsonKey(name: "platform") required this.platform});
 
-  factory _$BecomeAMerchantRequestImpl.fromJson(Map<String, dynamic> json) =>
-      _$$BecomeAMerchantRequestImplFromJson(json);
+class _BecomeAMerchantRequest implements BecomeAMerchantRequest {
+  const _BecomeAMerchantRequest({@JsonKey(name: "mac_address") required this.macAddress, @JsonKey(name: "ip_address") required this.ipAddress, @JsonKey(name: "latitude") required this.latitude, @JsonKey(name: "longitude") required this.longitude, @JsonKey(name: "platform") required this.platform});
+  factory _BecomeAMerchantRequest.fromJson(Map<String, dynamic> json) => _$BecomeAMerchantRequestFromJson(json);
 
-  @override
-  @JsonKey(name: "mac_address")
-  final String macAddress;
-  @override
-  @JsonKey(name: "ip_address")
-  final String ipAddress;
-  @override
-  @JsonKey(name: "latitude")
-  final String latitude;
-  @override
-  @JsonKey(name: "longitude")
-  final String longitude;
-  @override
-  @JsonKey(name: "platform")
-  final String platform;
+@override@JsonKey(name: "mac_address") final  String macAddress;
+@override@JsonKey(name: "ip_address") final  String ipAddress;
+@override@JsonKey(name: "latitude") final  String latitude;
+@override@JsonKey(name: "longitude") final  String longitude;
+@override@JsonKey(name: "platform") final  String platform;
 
-  @override
-  String toString() {
-    return 'BecomeAMerchantRequest(macAddress: $macAddress, ipAddress: $ipAddress, latitude: $latitude, longitude: $longitude, platform: $platform)';
-  }
+/// Create a copy of BecomeAMerchantRequest
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$BecomeAMerchantRequestCopyWith<_BecomeAMerchantRequest> get copyWith => __$BecomeAMerchantRequestCopyWithImpl<_BecomeAMerchantRequest>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$BecomeAMerchantRequestImpl &&
-            (identical(other.macAddress, macAddress) ||
-                other.macAddress == macAddress) &&
-            (identical(other.ipAddress, ipAddress) ||
-                other.ipAddress == ipAddress) &&
-            (identical(other.latitude, latitude) ||
-                other.latitude == latitude) &&
-            (identical(other.longitude, longitude) ||
-                other.longitude == longitude) &&
-            (identical(other.platform, platform) ||
-                other.platform == platform));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, macAddress, ipAddress, latitude, longitude, platform);
-
-  /// Create a copy of BecomeAMerchantRequest
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$BecomeAMerchantRequestImplCopyWith<_$BecomeAMerchantRequestImpl>
-      get copyWith => __$$BecomeAMerchantRequestImplCopyWithImpl<
-          _$BecomeAMerchantRequestImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$BecomeAMerchantRequestImplToJson(
-      this,
-    );
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$BecomeAMerchantRequestToJson(this, );
 }
 
-abstract class _BecomeAMerchantRequest implements BecomeAMerchantRequest {
-  const factory _BecomeAMerchantRequest(
-          {@JsonKey(name: "mac_address") required final String macAddress,
-          @JsonKey(name: "ip_address") required final String ipAddress,
-          @JsonKey(name: "latitude") required final String latitude,
-          @JsonKey(name: "longitude") required final String longitude,
-          @JsonKey(name: "platform") required final String platform}) =
-      _$BecomeAMerchantRequestImpl;
-
-  factory _BecomeAMerchantRequest.fromJson(Map<String, dynamic> json) =
-      _$BecomeAMerchantRequestImpl.fromJson;
-
-  @override
-  @JsonKey(name: "mac_address")
-  String get macAddress;
-  @override
-  @JsonKey(name: "ip_address")
-  String get ipAddress;
-  @override
-  @JsonKey(name: "latitude")
-  String get latitude;
-  @override
-  @JsonKey(name: "longitude")
-  String get longitude;
-  @override
-  @JsonKey(name: "platform")
-  String get platform;
-
-  /// Create a copy of BecomeAMerchantRequest
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$BecomeAMerchantRequestImplCopyWith<_$BecomeAMerchantRequestImpl>
-      get copyWith => throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BecomeAMerchantRequest&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.platform, platform) || other.platform == platform));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,macAddress,ipAddress,latitude,longitude,platform);
+
+@override
+String toString() {
+  return 'BecomeAMerchantRequest(macAddress: $macAddress, ipAddress: $ipAddress, latitude: $latitude, longitude: $longitude, platform: $platform)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$BecomeAMerchantRequestCopyWith<$Res> implements $BecomeAMerchantRequestCopyWith<$Res> {
+  factory _$BecomeAMerchantRequestCopyWith(_BecomeAMerchantRequest value, $Res Function(_BecomeAMerchantRequest) _then) = __$BecomeAMerchantRequestCopyWithImpl;
+@override @useResult
+$Res call({
+@JsonKey(name: "mac_address") String macAddress,@JsonKey(name: "ip_address") String ipAddress,@JsonKey(name: "latitude") String latitude,@JsonKey(name: "longitude") String longitude,@JsonKey(name: "platform") String platform
+});
+
+
+
+
+}
+/// @nodoc
+class __$BecomeAMerchantRequestCopyWithImpl<$Res>
+    implements _$BecomeAMerchantRequestCopyWith<$Res> {
+  __$BecomeAMerchantRequestCopyWithImpl(this._self, this._then);
+
+  final _BecomeAMerchantRequest _self;
+  final $Res Function(_BecomeAMerchantRequest) _then;
+
+/// Create a copy of BecomeAMerchantRequest
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? macAddress = null,Object? ipAddress = null,Object? latitude = null,Object? longitude = null,Object? platform = null,}) {
+  return _then(_BecomeAMerchantRequest(
+macAddress: null == macAddress ? _self.macAddress : macAddress // ignore: cast_nullable_to_non_nullable
+as String,ipAddress: null == ipAddress ? _self.ipAddress : ipAddress // ignore: cast_nullable_to_non_nullable
+as String,latitude: null == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
+as String,longitude: null == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
+as String,platform: null == platform ? _self.platform : platform // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+// dart format on

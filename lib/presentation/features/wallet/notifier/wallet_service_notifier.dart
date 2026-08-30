@@ -1,8 +1,9 @@
-import 'package:bundlegram/core/extensions/string_extensions.dart';
+﻿import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/data/dummy_datda.dart';
 import 'package:bundlegram/data/models/wallet/service_model.dart';
 import 'package:bundlegram/presentation/features/wallet/notifier/wallet_service_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 
 final walletServiceHistoryProvider = StateNotifierProvider.family<
@@ -108,3 +109,4 @@ class WalletServiceHistoryNotifier extends StateNotifier<ServiceHistoryState> {
     state = state.copyWith(filteredTransactions: temp);
   }
 }
+

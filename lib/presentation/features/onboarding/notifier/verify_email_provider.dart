@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/errors.dart';
@@ -11,6 +11,7 @@ import 'package:bundlegram/presentation/features/account%20setup/screens/widgets
 import 'package:bundlegram/presentation/features/dashboard/screens/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
@@ -46,7 +47,7 @@ class VerifyEmailProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Step 1: Send the OTP to the user’s email
+  /// Step 1: Send the OTP to the userâ€™s email
   Future<bool> sendEmailOtp(BuildContext context) async {
     _sending = true;
     notifyListeners();
@@ -142,13 +143,13 @@ class VerifyEmailProvider extends ChangeNotifier {
           // });
           _ref.read(globalProvider.notifier).fetchProfile(context);
           _verifying = false;
-          // ✅ Dismiss OTP sheet if still open
+          // âœ… Dismiss OTP sheet if still open
           if (Navigator.of(context, rootNavigator: true).canPop()) {
             Navigator.of(context, rootNavigator: true).pop();
           }
 
           context.showSuccessSnackBar(resp.message ?? 'Email verified');
-          // ✅ Navigate after dismiss
+          // âœ… Navigate after dismiss
           context.pushReplacement(RouteConstants.dashboard);
           otpCtrl.clear();
 
@@ -175,3 +176,4 @@ class VerifyEmailProvider extends ChangeNotifier {
     super.dispose();
   }
 }
+

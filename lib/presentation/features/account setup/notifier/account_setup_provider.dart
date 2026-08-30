@@ -1,4 +1,4 @@
-import 'package:bundlegram/core/extensions/context_extensions.dart';
+﻿import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
@@ -9,6 +9,7 @@ import 'package:bundlegram/presentation/features/account%20setup/screens/widgets
 import 'package:bundlegram/presentation/features/account%20setup/state/account_setup_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 
 final accountSetupProvider = ChangeNotifierProvider<AccountSetupProvider>(
@@ -59,7 +60,7 @@ class AccountSetupProvider extends ChangeNotifier {
       AccountSetupStep(
         asset: Assets.svgs.addbasicinfo,
         title: 'Add basic information',
-        label: 'Let’s know more about you',
+        label: 'Letâ€™s know more about you',
         done: basicInfo,
         route: RouteConstants.addbasicinformation,
       ),
@@ -131,3 +132,4 @@ class AccountSetupProvider extends ChangeNotifier {
     return false;
   }
 }
+

@@ -2,11 +2,13 @@
 
 part of 'api_definition.dart';
 
+// dart format off
+
 // **************************************************************************
 // RetrofitGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter,avoid_unused_constructor_parameters,unreachable_from_main,avoid_redundant_argument_values
 
 class _ApiDefinition implements ApiDefinition {
   _ApiDefinition(this._dio, {this.baseUrl, this.errorLogger}) {
@@ -28,7 +30,8 @@ class _ApiDefinition implements ApiDefinition {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'AccessToken': accessToken};
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<RegisterResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -44,7 +47,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = RegisterResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -56,7 +59,8 @@ class _ApiDefinition implements ApiDefinition {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'AccessToken': accessToken};
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<LoginResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -72,7 +76,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = LoginResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -109,7 +113,7 @@ class _ApiDefinition implements ApiDefinition {
         (json) => json as dynamic,
       );
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -124,7 +128,8 @@ class _ApiDefinition implements ApiDefinition {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'AccessToken': accessToken};
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<UsernameResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -140,7 +145,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = UsernameResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -159,7 +164,8 @@ class _ApiDefinition implements ApiDefinition {
       r'AccessToken': accessToken,
     };
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<UsernameResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -175,7 +181,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = UsernameResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -206,7 +212,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = ProfileResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -237,7 +243,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetWalletResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -271,7 +277,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetAllBanksResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -286,7 +292,8 @@ class _ApiDefinition implements ApiDefinition {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'AccessToken': accessToken};
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<ForgotPasswordResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -302,7 +309,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = ForgotPasswordResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -317,7 +324,8 @@ class _ApiDefinition implements ApiDefinition {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'AccessToken': accessToken};
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<NewPasswordResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -333,7 +341,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = NewPasswordResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -352,7 +360,8 @@ class _ApiDefinition implements ApiDefinition {
       r'AccessToken': accessToken,
     };
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<ChangePasswordResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -368,7 +377,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = ChangePasswordResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -387,7 +396,8 @@ class _ApiDefinition implements ApiDefinition {
       r'AccessToken': accessToken,
     };
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<ChangePinResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -403,7 +413,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = ChangePinResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -422,7 +432,8 @@ class _ApiDefinition implements ApiDefinition {
       r'AccessToken': accessToken,
     };
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<ResetPinResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -438,7 +449,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = ResetPinResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -457,7 +468,8 @@ class _ApiDefinition implements ApiDefinition {
       r'AccessToken': accessToken,
     };
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<CreatePinResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -473,7 +485,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = CreatePinResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -492,7 +504,8 @@ class _ApiDefinition implements ApiDefinition {
       r'AccessToken': accessToken,
     };
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<BaseResponse<dynamic>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -511,7 +524,7 @@ class _ApiDefinition implements ApiDefinition {
         (json) => json as dynamic,
       );
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -547,7 +560,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = DashboardDataResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -562,7 +575,8 @@ class _ApiDefinition implements ApiDefinition {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'AccessToken': accessToken};
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<BaseResponse<dynamic>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -581,7 +595,7 @@ class _ApiDefinition implements ApiDefinition {
         (json) => json as dynamic,
       );
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -600,7 +614,8 @@ class _ApiDefinition implements ApiDefinition {
       r'Authorization': bearer,
     };
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<BaseResponse<dynamic>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -619,7 +634,7 @@ class _ApiDefinition implements ApiDefinition {
         (json) => json as dynamic,
       );
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -656,7 +671,7 @@ class _ApiDefinition implements ApiDefinition {
         (json) => json as dynamic,
       );
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -675,7 +690,8 @@ class _ApiDefinition implements ApiDefinition {
       r'Authorization': bearer,
     };
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<ProfileSetupResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -691,7 +707,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = ProfileSetupResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -727,7 +743,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = LinkBvnResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -761,7 +777,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetVirtualAccountsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -780,7 +796,8 @@ class _ApiDefinition implements ApiDefinition {
       r'Authorization': bearer,
     };
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<BaseResponse<dynamic>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -799,7 +816,7 @@ class _ApiDefinition implements ApiDefinition {
         (json) => json as dynamic,
       );
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -833,7 +850,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetAllUserBanksResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -869,7 +886,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = AddBankResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -905,7 +922,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = FetchAccountNameResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -944,7 +961,7 @@ class _ApiDefinition implements ApiDefinition {
         (json) => json as dynamic,
       );
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -979,7 +996,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = DeleteBankResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1014,7 +1031,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = MakeBankDefaultResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1049,7 +1066,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetAllProductsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1084,7 +1101,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetAllProductsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1119,7 +1136,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetAllSubProductsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1155,7 +1172,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetAllSubProductsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1191,7 +1208,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = ValidateBillResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1230,7 +1247,7 @@ class _ApiDefinition implements ApiDefinition {
         (json) => json as dynamic,
       );
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1269,7 +1286,7 @@ class _ApiDefinition implements ApiDefinition {
         (json) => json as dynamic,
       );
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1304,7 +1321,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetAllUserTransactionResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1338,7 +1355,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetAllUserTransactionResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1357,7 +1374,8 @@ class _ApiDefinition implements ApiDefinition {
       r'Authorization': bearer,
     };
     _headers.removeWhere((k, v) => v == null);
-    final _data = body;
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
     final _options = _setStreamType<BaseResponse<dynamic>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -1376,7 +1394,7 @@ class _ApiDefinition implements ApiDefinition {
         (json) => json as dynamic,
       );
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1410,7 +1428,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = AllNotificationResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1444,7 +1462,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = MarkNotificationAsReadResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1478,7 +1496,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetAllPromoResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1517,7 +1535,7 @@ class _ApiDefinition implements ApiDefinition {
         (json) => json as dynamic,
       );
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1551,7 +1569,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetAllBeneficiariesResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1585,7 +1603,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = GetAllBeneficiariesResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1621,7 +1639,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = EpinResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1656,7 +1674,7 @@ class _ApiDefinition implements ApiDefinition {
     try {
       _value = EpinTransactionRequestsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
+      errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
     return _value;
@@ -1689,3 +1707,5 @@ class _ApiDefinition implements ApiDefinition {
     return Uri.parse(dioBaseUrl).resolveUri(url).toString();
   }
 }
+
+// dart format on

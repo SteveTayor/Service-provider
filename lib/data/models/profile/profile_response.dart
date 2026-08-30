@@ -5,7 +5,7 @@ part 'profile_response.freezed.dart';
 part 'profile_response.g.dart';
 
 @freezed
-class ProfileResponse with _$ProfileResponse {
+abstract class ProfileResponse with _$ProfileResponse {
   const factory ProfileResponse({
     @JsonKey(name: "status") String? status,
     @JsonKey(name: "data") Data? data,
@@ -17,7 +17,7 @@ class ProfileResponse with _$ProfileResponse {
 }
 
 @freezed
-class Data with _$Data {
+abstract class Data with _$Data {
   const factory Data({
     @JsonKey(name: "id") int? id,
     @JsonKey(name: "first_name") String? firstName,

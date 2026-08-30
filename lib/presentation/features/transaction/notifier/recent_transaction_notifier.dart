@@ -1,10 +1,11 @@
-import 'package:bundlegram/core/extensions/string_extensions.dart';
+﻿import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:collection/collection.dart';
 
 List<UserTransactions> takeTopKByDate(
@@ -34,7 +35,7 @@ class RecentTransactionsNotifier
 
   RecentTransactionsNotifier(this.ref)
       : super(RecentTransactionsState.initial().copyWith(isLoading: true)) {
-    // Listen for the global fetch completing…
+    // Listen for the global fetch completingâ€¦
 //     ref.listen<AsyncValue<GetAllUserTransactionResponse?>>(
 //       globalProvider.select((s) => s.usersTransactions),
 //       (prev, next) {
@@ -191,3 +192,4 @@ class RecentTransactionsNotifier
     return top;
   }
 }
+

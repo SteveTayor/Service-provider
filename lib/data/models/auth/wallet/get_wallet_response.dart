@@ -5,7 +5,7 @@ part 'get_wallet_response.freezed.dart';
 part 'get_wallet_response.g.dart';
 
 @freezed
-class GetWalletResponse with _$GetWalletResponse {
+abstract class GetWalletResponse with _$GetWalletResponse {
   const factory GetWalletResponse({
     @JsonKey(name: "wallet") String? wallet,
     @JsonKey(name: "promo_bonus", fromJson: _toDouble) double? promoBonus,

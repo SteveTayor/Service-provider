@@ -1,7 +1,8 @@
-import 'package:bundlegram/core/providers/global_provider.dart';
+﻿import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:collection/collection.dart';
 
 final walletTransactionsProvider =
@@ -80,3 +81,4 @@ class WalletTransactionsNotifier
     return top;
   }
 }
+

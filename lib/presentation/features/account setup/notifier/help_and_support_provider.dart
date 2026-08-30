@@ -1,9 +1,10 @@
-import 'package:bundlegram/core/extensions/snackbar_extension.dart';
+﻿import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -120,3 +121,4 @@ class HelpSupportProvider extends ChangeNotifier {
     }
   }
 }
+

@@ -1,4 +1,5 @@
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
+﻿// import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 // import 'package:logging/logging.dart';
 
 // abstract class BaseStateNotifier<T> extends StateNotifier<T> {
@@ -35,3 +36,4 @@
 //     super.dispose();
 //   }
 // }
+

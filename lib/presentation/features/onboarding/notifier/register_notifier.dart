@@ -1,4 +1,4 @@
-// ignore_for_file: unawaited_futures
+﻿// ignore_for_file: unawaited_futures
 
 import 'dart:async';
 import 'dart:developer';
@@ -11,6 +11,7 @@ import 'package:bundlegram/data/models/auth/auth_model.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:go_router/go_router.dart';
@@ -176,3 +177,4 @@ class RegisterProvider extends ChangeNotifier {
     super.dispose();
   }
 }
+

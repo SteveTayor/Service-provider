@@ -1,7 +1,7 @@
 import 'package:bundlegram/presentation/features/onboarding/notifier/onboard_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class OnboardingNotifier extends AutoDisposeNotifier<OnboardingState> {
+class OnboardingNotifier extends Notifier<OnboardingState> {
   @override
   OnboardingState build() {
     return OnboardingState.initial();
@@ -14,5 +14,5 @@ class OnboardingNotifier extends AutoDisposeNotifier<OnboardingState> {
 
 final onboardingNotifierProvider =
     NotifierProvider.autoDispose<OnboardingNotifier, OnboardingState>(
-  OnboardingNotifier.new,
-);
+      OnboardingNotifier.new,
+    );

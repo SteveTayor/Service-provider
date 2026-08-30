@@ -23,9 +23,12 @@ import 'package:overlay_support/overlay_support.dart';
 /// ------------------------------------------------------------
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // This callback runs in its own background isolate — Firebase and the
+  // notification channels created in the foreground isolate are NOT
+  // automatically available here, so both must be (re)initialized before
+  // displayPushNotification can actually post anything.
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await NotificationService().initialize();
 
   if (kDebugMode) {
     debugPrint('[FCM BG] ${message.messageId}');
@@ -43,34 +46,29 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 /// App entry
 /// ------------------------------------------------------------
 Future<void> main() async {
-  await runZonedGuarded(
-    () async {
-      WidgetsFlutterBinding.ensureInitialized();
+  await runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-      //  block first frame
-      await _initializeFirebase();
-      // await _initializeNotifications();
+    _setupGlobalErrorHandling();
 
-      // defer (DO NOT await)
-      unawaited(_loadEnv());
-      unawaited(_configureSystemUI());
-      unawaited(_checkAppVersion());
+    // Block first frame on things the app cannot safely run without.
+    await _initializeFirebase();
+    await NotificationService().initialize();
+    await _loadEnv();
+    await _configureSystemUI();
 
-      _setupGlobalErrorHandling();
+    // Genuinely non-critical / explicitly designed not to block boot.
+    unawaited(_checkAppVersion());
 
-      await bootstrap(
-        () => ProviderScope(
-          child: DevicePreview(
-            enabled: false,
-            builder: (_) => const OverlaySupport.global(
-              child: App(),
-            ),
-          ),
+    await bootstrap(
+      () => ProviderScope(
+        child: DevicePreview(
+          enabled: false,
+          builder: (_) => const OverlaySupport.global(child: App()),
         ),
-      );
-    },
-    _handleGlobalError,
-  );
+      ),
+    );
+  }, _handleGlobalError);
 }
 
 /// ------------------------------------------------------------
@@ -102,42 +100,50 @@ Future<void> _configureSystemUI() async {
 }
 
 Future<void> _initializeFirebase() async {
-  await Firebase.initializeApp(
-    // name: 'bundlegram',
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  FirebaseMessaging.onBackgroundMessage(
-    firebaseMessagingBackgroundHandler,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  } catch (e, st) {
+    // Most commonly a "duplicate app" error on hot restart, or a
+    // misconfigured platform Firebase file. Either way this must not take
+    // the whole app down before runZonedGuarded even gets a chance.
+    debugPrint('Firebase initialize error: $e\n$st');
+  }
 }
 
-// Future<void> _initializeNotifications() async {
-//   await NotificationService().initialize();
-// }
-
 Future<void> _checkAppVersion() async {
-    try {
+  try {
     const storage = FlutterSecureStorage();
     final secureStorage = SecureStorageHelper(storage);
     final versionManager = VersionManager(secureStorage);
-    await versionManager.checkAndHandleAppUpdate(); // ← uses your existing method
+    await versionManager.checkAndHandleAppUpdate();
   } catch (e, st) {
     debugPrint('Version check failed: $e\n$st');
-    // Non-fatal — never blocks app boot
+    // Non-fatal — never blocks app boot.
   }
 }
 
 void _setupGlobalErrorHandling() {
   FlutterError.onError = (details) {
-    if (kDebugMode) {
-      Zone.current.handleUncaughtError(
+    // Always show Flutter's own formatted console dump / red error screen
+    // first — this used to be skipped entirely in debug mode, which meant
+    // losing the built-in error UI during development.
+    FlutterError.presentError(details);
+    if (!kDebugMode) {
+      _handleGlobalError(
         details.exception,
         details.stack ?? StackTrace.current,
       );
-    } else {
-      _handleGlobalError(details.exception, details.stack);
     }
+  };
+
+  // Renders in place of the default grey error box outside of debug mode,
+  // e.g. if a widget's build() throws after the app is already running.
+  ErrorWidget.builder = (details) {
+    if (kDebugMode) return ErrorWidget(details.exception);
+    return MiniErrorScreen(details: details);
   };
 
   PlatformDispatcher.instance.onError = (error, stack) {
@@ -147,28 +153,16 @@ void _setupGlobalErrorHandling() {
   };
 }
 
-// Future<void> _runApp() async {
-//   await runZonedGuarded(
-//     () async {
-//       await bootstrap(
-//         () => ProviderScope(
-//           child: DevicePreview(
-//             enabled: false,
-//             builder: (_) => const App(),
-//           ),
-//         ),
-//       );
-//     },
-//     _handleGlobalError,
-//   );
-// }
-
 /// ------------------------------------------------------------
 /// Global error handler
 /// ------------------------------------------------------------
 void _handleGlobalError(Object error, StackTrace? stack) {
   debugPrint('Global error: $error');
   if (stack != null) debugPrintStack(stackTrace: stack);
+
+  // TODO: send to a crash-reporting backend (e.g. Firebase Crashlytics)
+  // once that dependency is added to pubspec.yaml — currently this is
+  // console-only and nothing is captured in release builds.
 
   final navContext = navigatorKey.currentContext;
   if (navContext != null) {
@@ -178,7 +172,7 @@ void _handleGlobalError(Object error, StackTrace? stack) {
 }
 
 /// ------------------------------------------------------------
-/// Optional minimal error screen (debug only)
+/// Minimal error screen shown via ErrorWidget.builder outside debug mode
 /// ------------------------------------------------------------
 class MiniErrorScreen extends StatelessWidget {
   final FlutterErrorDetails details;

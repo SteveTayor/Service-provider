@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,213 +9,275 @@ part of 'profile_setup_response.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-ProfileSetupResponse _$ProfileSetupResponseFromJson(Map<String, dynamic> json) {
-  return _ProfileSetupResponse.fromJson(json);
-}
 
 /// @nodoc
 mixin _$ProfileSetupResponse {
-  @JsonKey(name: "status")
-  String? get status => throw _privateConstructorUsedError;
-  @JsonKey(name: "data")
-  String? get data => throw _privateConstructorUsedError;
-  @JsonKey(name: "message")
-  String? get message => throw _privateConstructorUsedError;
+
+@JsonKey(name: "status") String? get status;@JsonKey(name: "data") String? get data;@JsonKey(name: "message") String? get message;
+/// Create a copy of ProfileSetupResponse
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ProfileSetupResponseCopyWith<ProfileSetupResponse> get copyWith => _$ProfileSetupResponseCopyWithImpl<ProfileSetupResponse>(this as ProfileSetupResponse, _$identity);
 
   /// Serializes this ProfileSetupResponse to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson();
 
-  /// Create a copy of ProfileSetupResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $ProfileSetupResponseCopyWith<ProfileSetupResponse> get copyWith =>
-      throw _privateConstructorUsedError;
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileSetupResponse&&(identical(other.status, status) || other.status == status)&&(identical(other.data, data) || other.data == data)&&(identical(other.message, message) || other.message == message));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,status,data,message);
+
+@override
+String toString() {
+  return 'ProfileSetupResponse(status: $status, data: $data, message: $message)';
+}
+
+
 }
 
 /// @nodoc
-abstract class $ProfileSetupResponseCopyWith<$Res> {
-  factory $ProfileSetupResponseCopyWith(ProfileSetupResponse value,
-          $Res Function(ProfileSetupResponse) then) =
-      _$ProfileSetupResponseCopyWithImpl<$Res, ProfileSetupResponse>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: "status") String? status,
-      @JsonKey(name: "data") String? data,
-      @JsonKey(name: "message") String? message});
-}
+abstract mixin class $ProfileSetupResponseCopyWith<$Res>  {
+  factory $ProfileSetupResponseCopyWith(ProfileSetupResponse value, $Res Function(ProfileSetupResponse) _then) = _$ProfileSetupResponseCopyWithImpl;
+@useResult
+$Res call({
+@JsonKey(name: "status") String? status,@JsonKey(name: "data") String? data,@JsonKey(name: "message") String? message
+});
 
+
+
+
+}
 /// @nodoc
-class _$ProfileSetupResponseCopyWithImpl<$Res,
-        $Val extends ProfileSetupResponse>
+class _$ProfileSetupResponseCopyWithImpl<$Res>
     implements $ProfileSetupResponseCopyWith<$Res> {
-  _$ProfileSetupResponseCopyWithImpl(this._value, this._then);
+  _$ProfileSetupResponseCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final ProfileSetupResponse _self;
+  final $Res Function(ProfileSetupResponse) _then;
 
-  /// Create a copy of ProfileSetupResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? status = freezed,
-    Object? data = freezed,
-    Object? message = freezed,
-  }) {
-    return _then(_value.copyWith(
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-      data: freezed == data
-          ? _value.data
-          : data // ignore: cast_nullable_to_non_nullable
-              as String?,
-      message: freezed == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
-  }
+/// Create a copy of ProfileSetupResponse
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? status = freezed,Object? data = freezed,Object? message = freezed,}) {
+  return _then(_self.copyWith(
+status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String?,data: freezed == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
+as String?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
 }
 
-/// @nodoc
-abstract class _$$ProfileSetupResponseImplCopyWith<$Res>
-    implements $ProfileSetupResponseCopyWith<$Res> {
-  factory _$$ProfileSetupResponseImplCopyWith(_$ProfileSetupResponseImpl value,
-          $Res Function(_$ProfileSetupResponseImpl) then) =
-      __$$ProfileSetupResponseImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: "status") String? status,
-      @JsonKey(name: "data") String? data,
-      @JsonKey(name: "message") String? message});
 }
 
-/// @nodoc
-class __$$ProfileSetupResponseImplCopyWithImpl<$Res>
-    extends _$ProfileSetupResponseCopyWithImpl<$Res, _$ProfileSetupResponseImpl>
-    implements _$$ProfileSetupResponseImplCopyWith<$Res> {
-  __$$ProfileSetupResponseImplCopyWithImpl(_$ProfileSetupResponseImpl _value,
-      $Res Function(_$ProfileSetupResponseImpl) _then)
-      : super(_value, _then);
 
-  /// Create a copy of ProfileSetupResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? status = freezed,
-    Object? data = freezed,
-    Object? message = freezed,
-  }) {
-    return _then(_$ProfileSetupResponseImpl(
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-      data: freezed == data
-          ? _value.data
-          : data // ignore: cast_nullable_to_non_nullable
-              as String?,
-      message: freezed == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
+/// Adds pattern-matching-related methods to [ProfileSetupResponse].
+extension ProfileSetupResponsePatterns on ProfileSetupResponse {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ProfileSetupResponse value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ProfileSetupResponse() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ProfileSetupResponse value)  $default,){
+final _that = this;
+switch (_that) {
+case _ProfileSetupResponse():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ProfileSetupResponse value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ProfileSetupResponse() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "status")  String? status, @JsonKey(name: "data")  String? data, @JsonKey(name: "message")  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ProfileSetupResponse() when $default != null:
+return $default(_that.status,_that.data,_that.message);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "status")  String? status, @JsonKey(name: "data")  String? data, @JsonKey(name: "message")  String? message)  $default,) {final _that = this;
+switch (_that) {
+case _ProfileSetupResponse():
+return $default(_that.status,_that.data,_that.message);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "status")  String? status, @JsonKey(name: "data")  String? data, @JsonKey(name: "message")  String? message)?  $default,) {final _that = this;
+switch (_that) {
+case _ProfileSetupResponse() when $default != null:
+return $default(_that.status,_that.data,_that.message);case _:
+  return null;
+
+}
+}
+
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$ProfileSetupResponseImpl implements _ProfileSetupResponse {
-  const _$ProfileSetupResponseImpl(
-      {@JsonKey(name: "status") this.status,
-      @JsonKey(name: "data") this.data,
-      @JsonKey(name: "message") this.message});
 
-  factory _$ProfileSetupResponseImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ProfileSetupResponseImplFromJson(json);
+class _ProfileSetupResponse implements ProfileSetupResponse {
+  const _ProfileSetupResponse({@JsonKey(name: "status") this.status, @JsonKey(name: "data") this.data, @JsonKey(name: "message") this.message});
+  factory _ProfileSetupResponse.fromJson(Map<String, dynamic> json) => _$ProfileSetupResponseFromJson(json);
 
-  @override
-  @JsonKey(name: "status")
-  final String? status;
-  @override
-  @JsonKey(name: "data")
-  final String? data;
-  @override
-  @JsonKey(name: "message")
-  final String? message;
+@override@JsonKey(name: "status") final  String? status;
+@override@JsonKey(name: "data") final  String? data;
+@override@JsonKey(name: "message") final  String? message;
 
-  @override
-  String toString() {
-    return 'ProfileSetupResponse(status: $status, data: $data, message: $message)';
-  }
+/// Create a copy of ProfileSetupResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ProfileSetupResponseCopyWith<_ProfileSetupResponse> get copyWith => __$ProfileSetupResponseCopyWithImpl<_ProfileSetupResponse>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$ProfileSetupResponseImpl &&
-            (identical(other.status, status) || other.status == status) &&
-            (identical(other.data, data) || other.data == data) &&
-            (identical(other.message, message) || other.message == message));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, status, data, message);
-
-  /// Create a copy of ProfileSetupResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$ProfileSetupResponseImplCopyWith<_$ProfileSetupResponseImpl>
-      get copyWith =>
-          __$$ProfileSetupResponseImplCopyWithImpl<_$ProfileSetupResponseImpl>(
-              this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ProfileSetupResponseImplToJson(
-      this,
-    );
-  }
+@override
+Map<String, dynamic> toJson() {
+  return _$ProfileSetupResponseToJson(this, );
 }
 
-abstract class _ProfileSetupResponse implements ProfileSetupResponse {
-  const factory _ProfileSetupResponse(
-          {@JsonKey(name: "status") final String? status,
-          @JsonKey(name: "data") final String? data,
-          @JsonKey(name: "message") final String? message}) =
-      _$ProfileSetupResponseImpl;
-
-  factory _ProfileSetupResponse.fromJson(Map<String, dynamic> json) =
-      _$ProfileSetupResponseImpl.fromJson;
-
-  @override
-  @JsonKey(name: "status")
-  String? get status;
-  @override
-  @JsonKey(name: "data")
-  String? get data;
-  @override
-  @JsonKey(name: "message")
-  String? get message;
-
-  /// Create a copy of ProfileSetupResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ProfileSetupResponseImplCopyWith<_$ProfileSetupResponseImpl>
-      get copyWith => throw _privateConstructorUsedError;
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileSetupResponse&&(identical(other.status, status) || other.status == status)&&(identical(other.data, data) || other.data == data)&&(identical(other.message, message) || other.message == message));
 }
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,status,data,message);
+
+@override
+String toString() {
+  return 'ProfileSetupResponse(status: $status, data: $data, message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ProfileSetupResponseCopyWith<$Res> implements $ProfileSetupResponseCopyWith<$Res> {
+  factory _$ProfileSetupResponseCopyWith(_ProfileSetupResponse value, $Res Function(_ProfileSetupResponse) _then) = __$ProfileSetupResponseCopyWithImpl;
+@override @useResult
+$Res call({
+@JsonKey(name: "status") String? status,@JsonKey(name: "data") String? data,@JsonKey(name: "message") String? message
+});
+
+
+
+
+}
+/// @nodoc
+class __$ProfileSetupResponseCopyWithImpl<$Res>
+    implements _$ProfileSetupResponseCopyWith<$Res> {
+  __$ProfileSetupResponseCopyWithImpl(this._self, this._then);
+
+  final _ProfileSetupResponse _self;
+  final $Res Function(_ProfileSetupResponse) _then;
+
+/// Create a copy of ProfileSetupResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? status = freezed,Object? data = freezed,Object? message = freezed,}) {
+  return _then(_ProfileSetupResponse(
+status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String?,data: freezed == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
+as String?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+// dart format on

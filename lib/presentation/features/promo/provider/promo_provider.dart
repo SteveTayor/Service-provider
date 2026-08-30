@@ -1,4 +1,4 @@
-import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+﻿import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/extensions/promo_wrapper_extension.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/data/models/promo/redeem_promo_request.dart';
@@ -8,6 +8,7 @@ import 'package:bundlegram/presentation/features/promo/model/promo_model.dart';
 import 'package:bundlegram/presentation/features/promo/model/promo_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 // class PromoNotifier extends StateNotifier<PromoState> {
 //   PromoNotifier() : super(const PromoState()) {
@@ -20,8 +21,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //       // const PromoModel(
 //       //   id: '1',
 //       //   code: 'LOYALTY2500',
-//       //   title: 'We are giving ₦2500 free bonus to our loyal customers',
-//       //   description: 'Just hit ₦50,000 spend this month!',
+//       //   title: 'We are giving â‚¦2500 free bonus to our loyal customers',
+//       //   description: 'Just hit â‚¦50,000 spend this month!',
 //       //   amount: 2500,
 //       //   backgroundColor: '#EEF3FF',
 //       //   textColor: '#C9DAFF',
@@ -29,7 +30,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //       // const PromoModel(
 //       //   id: '2',
 //       //   code: 'WELCOME5000',
-//       //   title: 'Get ₦5000 free in your promo wallet as a welcome gift',
+//       //   title: 'Get â‚¦5000 free in your promo wallet as a welcome gift',
 //       //   description: 'Your first wallet top-up is all it takes!',
 //       //   amount: 5000,
 //       //   isClaimed: true,
@@ -179,3 +180,4 @@ final promoProvider =
   final _api = ref.read(apiServiceProvider);
   return PromoNotifier(ref, _api);
 });
+

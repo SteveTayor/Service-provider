@@ -1,6 +1,7 @@
-// ```dart
+﻿// ```dart
 // // lib/presentation/features/account_setup/providers/basic_info_provider.dart
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 // import 'package:bundlegram/core/providers/global_provider.dart';
 // import 'package:bundlegram/data/models/profile/user_profile.dart';
 
@@ -102,6 +103,7 @@
 // ```dart
 // // lib/presentation/features/account_setup/providers/link_bvn_provider.dart
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 // import 'package:bundlegram/core/providers/global_provider.dart';
 // import 'package:bundlegram/data/models/banks/get_virtual_account_response.dart';
 
@@ -193,6 +195,7 @@
 // ```dart
 // // lib/presentation/features/account_setup/providers/add_bank_provider.dart
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 // import 'package:bundlegram/core/providers/global_provider.dart';
 
 // class AddBankState {
@@ -261,3 +264,4 @@
 // );
 
 // ```
+

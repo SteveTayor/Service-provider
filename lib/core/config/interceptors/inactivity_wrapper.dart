@@ -9,8 +9,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class InactivityWrapper extends ConsumerStatefulWidget {
+  const InactivityWrapper({
+    super.key,
+    required this.child,
+    this.timeoutDuration = const Duration(minutes: 10),
+  });
+
   final Widget child;
-  const InactivityWrapper({super.key, required this.child});
+
+  /// How long the app can sit idle before locking/logging out. Exposed as a
+  /// constructor param (rather than a hardcoded const) so widget tests can
+  /// pass a short duration instead of waiting out the real timeout.
+  final Duration timeoutDuration;
 
   @override
   ConsumerState<InactivityWrapper> createState() => _InactivityWrapperState();
@@ -20,30 +30,32 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
     with WidgetsBindingObserver {
   Timer? _inactivityTimer;
   DateTime _lastInteraction = DateTime.now();
-  final _timeoutDuration = const Duration(minutes: 10);
-  final FocusNode _keyboardFocusNode = FocusNode();
   bool _isLoggingOut = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _keyboardFocusNode.requestFocus(); // so RawKeyboardListener can work
+    // Focus-independent: fires regardless of which widget currently has
+    // focus, so typing into a TextField still resets the timer. A
+    // KeyboardListener tied to a local FocusNode would go silent the
+    // moment focus moves to any text field elsewhere in the app.
+    HardwareKeyboard.instance.addHandler(_handleHardwareKeyEvent);
     _initializeTimer();
   }
 
   @override
   void dispose() {
     _cancelTimer();
-    _keyboardFocusNode.dispose();
+    HardwareKeyboard.instance.removeHandler(_handleHardwareKeyEvent);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
-  /// Always resets timer to 5 minutes
+  /// Resets the timer to [widget.timeoutDuration] from now.
   void _initializeTimer() {
     _cancelTimer();
-    _inactivityTimer = Timer(_timeoutDuration, _handleTimeout);
+    _inactivityTimer = Timer(widget.timeoutDuration, _handleTimeout);
   }
 
   void _cancelTimer() {
@@ -51,91 +63,72 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
     _inactivityTimer = null;
   }
 
-  /// Called on any user interaction
+  bool _handleHardwareKeyEvent(KeyEvent event) {
+    _handleUserInteraction();
+    return false; // don't consume the event — just observe it
+  }
+
+  /// Called on any user interaction.
   void _handleUserInteraction([_]) {
     _lastInteraction = DateTime.now();
     _initializeTimer();
   }
 
-  /// Handles inactivity logout
+  /// Handles inactivity logout/lock.
   Future<void> _handleTimeout() async {
     if (_isLoggingOut) return; // prevent multiple triggers
     _isLoggingOut = true;
 
-    // final secureStorage = ref.read(secureStorageHelperProvider);
-    // await secureStorage.deleteAuthToken();
-
-    // final ctx = navigatorKey.currentContext;
-    // if (ctx != null) {
-    //   // use navigatorKey context for accurate route detection
-    //   final currentRoute = ModalRoute.of(ctx)?.settings.name ?? '';
-
-    //   if (!currentRoute.contains(RouteConstants.lockScreen)) {
-    //     ctx
-    //       ..go(RouteConstants.lockScreen)
-    //       ..showCustomSnackBar('Locked out due to inactivity.');
-    //   }
-    // }
-
-    // _isLoggingOut = false;
     try {
       final ctx = navigatorKey.currentContext;
-      if (ctx == null) {
-        _isLoggingOut = false;
-        return;
-      }
+      if (ctx == null) return;
 
-      // Read secure storage to decide whether the app had saved auth/credentials.
+      // Read secure storage to decide whether the app had saved
+      // credentials worth locking (vs. forcing a full re-login).
       final secureStorage = ref.read(secureStorageHelperProvider);
 
-      // Best-effort read (non-blocking for UI). We await to ensure we know the truth.
-      String? token;
       String? rememberedEmail;
       bool hasBiometric = false;
       try {
-        token = await secureStorage.getAuthToken();
         rememberedEmail = await secureStorage.getRememberedEmail();
         hasBiometric = await secureStorage.hasBiometricCredentials();
       } catch (e) {
-        // If secure storage fails for any reason, fall back to forcing login (safer).
-        token = null;
+        // If secure storage fails for any reason, fall back to forcing
+        // login (safer default than assuming saved state exists).
         rememberedEmail = null;
         hasBiometric = false;
       }
 
       final bool hasSavedState =
-          // (token != null && token.isNotEmpty) ||
           (rememberedEmail != null && rememberedEmail.isNotEmpty) ||
-              hasBiometric;
+          hasBiometric;
 
-      // Find current route safely
       final currentRoute = ModalRoute.of(ctx)?.settings.name ?? '';
 
       if (hasSavedState) {
-        // If we already on lock screen, do nothing
+        // Already on lock screen — nothing to do.
         if (!currentRoute.contains(RouteConstants.lockScreen)) {
-          // Navigate to lock screen so user can unlock (PIN/biometric)
           ctx
             ..go(RouteConstants.lockScreen)
-            ..showSuccessSnackBar('Locked out due to inactivity.');
+            ..showErrorSnackBar('Locked out due to inactivity.');
         }
       } else {
-        // Nothing to restore — route user to login instead of lock screen
+        // Nothing to restore — route to login instead of lock screen.
         if (!currentRoute.contains(RouteConstants.login)) {
-          // Clear any sensitive in-memory state if needed here (optional)
           ctx.go(RouteConstants.login);
         }
       }
     } catch (e) {
-      // Last-resort: log and attempt to navigate to login
+      // Last-resort: log and attempt to navigate to login.
       debugPrint('Error during inactivity logout: $e');
       final ctx = navigatorKey.currentContext;
       if (ctx != null &&
-          !(ModalRoute.of(ctx)?.settings.name ?? '')
-              .contains(RouteConstants.login)) {
+          !(ModalRoute.of(ctx)?.settings.name ?? '').contains(
+            RouteConstants.login,
+          )) {
         ctx
           ..go(RouteConstants.login)
-          ..showSuccessSnackBar('Session expired.');
+          ..showErrorSnackBar('Session expired.');
       }
     } finally {
       _isLoggingOut = false;
@@ -148,8 +141,12 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
 
     if (state == AppLifecycleState.paused) {
       _lastInteraction = DateTime.now();
+      // Stop the foreground timer — the resume-time elapsed check below
+      // is the single source of truth for what happens next
+      _cancelTimer();
     } else if (state == AppLifecycleState.resumed) {
-      if (DateTime.now().difference(_lastInteraction) > _timeoutDuration) {
+      if (DateTime.now().difference(_lastInteraction) >
+          widget.timeoutDuration) {
         _handleTimeout();
       } else {
         _initializeTimer();
@@ -159,16 +156,12 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
 
   @override
   Widget build(BuildContext context) {
-    return KeyboardListener(
-      focusNode: _keyboardFocusNode,
-      onKeyEvent: (_) => _handleUserInteraction(),
-      child: Listener(
-        behavior: HitTestBehavior.translucent,
-        onPointerDown: _handleUserInteraction,
-        onPointerMove: _handleUserInteraction,
-        onPointerUp: _handleUserInteraction,
-        child: widget.child,
-      ),
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: _handleUserInteraction,
+      onPointerMove: _handleUserInteraction,
+      onPointerUp: _handleUserInteraction,
+      child: widget.child,
     );
   }
 }

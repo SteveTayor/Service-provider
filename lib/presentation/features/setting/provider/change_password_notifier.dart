@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/errors.dart';
@@ -11,6 +11,7 @@ import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:bundlegram/presentation/features/onboarding/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 
 final changePasswordProvider = ChangeNotifierProvider.autoDispose
@@ -46,14 +47,14 @@ class ChangePasswordController extends ChangeNotifier {
   bool showNewPassword = true;
   bool showConfirmPassword = true;
 
-  // ✅ Add getter to determine if new password fields should be enabled
+  // âœ… Add getter to determine if new password fields should be enabled
   bool get enableNewPasswordFields =>
       currentPasswordController.text.trim().length >= 6;
 
   void validateForm() {
     final formIsValid = formKey.currentState?.validate() ?? false;
 
-    // ✅ Only enable submit button when form is valid AND all required fields have input
+    // âœ… Only enable submit button when form is valid AND all required fields have input
     isFormValid = formIsValid &&
         currentPasswordController.text.trim().isNotEmpty &&
         newPasswordController.text.trim().isNotEmpty &&
@@ -144,3 +145,4 @@ class ChangePasswordController extends ChangeNotifier {
     super.dispose();
   }
 }
+

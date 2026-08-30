@@ -6,16 +6,14 @@ part of 'username_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$UsernameResponseImpl _$$UsernameResponseImplFromJson(
-        Map<String, dynamic> json) =>
-    _$UsernameResponseImpl(
+_UsernameResponse _$UsernameResponseFromJson(Map<String, dynamic> json) =>
+    _UsernameResponse(
       status: json['status'] as String?,
       data: json['data'] as String?,
       message: json['message'] as String?,
     );
 
-Map<String, dynamic> _$$UsernameResponseImplToJson(
-        _$UsernameResponseImpl instance) =>
+Map<String, dynamic> _$UsernameResponseToJson(_UsernameResponse instance) =>
     <String, dynamic>{
       'status': instance.status,
       'data': instance.data,

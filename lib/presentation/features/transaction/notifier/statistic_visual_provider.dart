@@ -1,9 +1,10 @@
-import 'dart:developer';
+﻿import 'dart:developer';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_data_response.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/data/models/dashboard/dashboard_request.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
@@ -199,3 +200,4 @@ class StatisticsDashboardNotifier extends StateNotifier<StatisticsState> {
     return _isFutureMonth(state.currentRequest!);
   }
 }
+

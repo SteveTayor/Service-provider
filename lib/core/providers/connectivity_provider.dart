@@ -1,6 +1,7 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 // final connectivityProvider = StateNotifierProvider<ConnectivityNotifier, bool>(
 //   (ref) => ConnectivityNotifier(),
@@ -36,3 +37,4 @@ final connectivityStatusProvider = StreamProvider<ConnectivityResult>((ref) {
     return results.isNotEmpty ? results.first : ConnectivityResult.none;
   });
 });
+

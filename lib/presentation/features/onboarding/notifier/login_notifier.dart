@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
@@ -14,6 +14,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:dartz/dartz.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/data/models/auth/auth_model.dart';
@@ -93,7 +94,7 @@ class LoginProvider extends ChangeNotifier {
     final ipAddress = deviceInfo['ipAddress'];
     final platform = deviceInfo['platform'];
 
-    // Make location optional — only require device id, ip and platform
+    // Make location optional â€” only require device id, ip and platform
     return macAddress != null &&
         macAddress != 'unknown' &&
         ipAddress != null &&
@@ -170,7 +171,7 @@ class LoginProvider extends ChangeNotifier {
         platform: platform,
       );
     } catch (e, st) {
-      // Unexpected error — log or report to analytics. Do NOT show user-facing error.
+      // Unexpected error â€” log or report to analytics. Do NOT show user-facing error.
       debugPrint('Unexpected error collecting device info: $e\n$st');
       // Optionally send to crash reporting service.
     }
@@ -276,7 +277,7 @@ class LoginProvider extends ChangeNotifier {
         final isSameUser = enteredIdentifier == storedEmail ||
             enteredIdentifier == storedUsername;
         if (!isSameUser) {
-          // New login → clear previous cache
+          // New login â†’ clear previous cache
           await _storage.clearRememberedEmail();
           await _storage.clearUsername();
           // Also clear old PIN to avoid mismatch
@@ -353,7 +354,7 @@ class LoginProvider extends ChangeNotifier {
         final savedEmail = await _storage.getBiometricEmail();
         final savedPassword = await _storage.getBiometricPassword();
         debugPrint(
-            '[Biometric] Just saved creds → email=$savedEmail, password=$savedPassword');
+            '[Biometric] Just saved creds â†’ email=$savedEmail, password=$savedPassword');
         // Fetch and cache users' transactions before routing
         // await _ref
         //     .read(globalProvider.notifier)
@@ -363,7 +364,7 @@ class LoginProvider extends ChangeNotifier {
         final serverPin = profile?.data?.pin;
 
         if (serverPin == null) {
-          // SERVER says no PIN yet → enforce creation
+          // SERVER says no PIN yet â†’ enforce creation
           context.dismissDialog();
 
           await context.showBottomSheet(
@@ -472,3 +473,4 @@ class LoginProvider extends ChangeNotifier {
     super.dispose();
   }
 }
+

@@ -1,5 +1,6 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -38,11 +39,11 @@ class SquadPaymentNotifier
       );
 
       final decoded = jsonDecode(response.body) as Map<String, dynamic>;
-      print('🔍 Squad init response: $decoded');
+      print('ðŸ” Squad init response: $decoded');
 
       if (response.statusCode == 200) {
         final squadResponse = SquadPaymentResponse.fromJson(decoded);
-        print('✅ squadResponse after fromJson: $squadResponse');
+        print('âœ… squadResponse after fromJson: $squadResponse');
         final checkoutUrl = squadResponse.data?.checkoutUrl;
         print("checkouturl is: $checkoutUrl");
         // await launchUrl(
@@ -213,3 +214,4 @@ class Recurring {
 
   Map<String, dynamic> toJson() => {'type': type};
 }
+

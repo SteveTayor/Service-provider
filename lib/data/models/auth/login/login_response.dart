@@ -12,7 +12,7 @@ LoginResponse loginResponseFromJson(String str) =>
     LoginResponse.fromJson(json.decode(str) as Map<String, dynamic>);
 
 @freezed
-class LoginResponse with _$LoginResponse {
+abstract class LoginResponse with _$LoginResponse {
   const factory LoginResponse({
     @JsonKey(name: "status") String? status,
     @JsonKey(name: "data") Data? data,
@@ -24,7 +24,7 @@ class LoginResponse with _$LoginResponse {
 }
 
 @freezed
-class Data with _$Data {
+abstract class Data with _$Data {
   const factory Data({
     @JsonKey(name: "token") String? token,
     @JsonKey(name: "payload") Payload? payload,
@@ -34,7 +34,7 @@ class Data with _$Data {
 }
 
 @freezed
-class Payload with _$Payload {
+abstract class Payload with _$Payload {
   const factory Payload({
     @JsonKey(name: "id") int? id,
     @JsonKey(name: "first_name") String? firstName,

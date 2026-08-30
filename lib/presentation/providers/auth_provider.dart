@@ -1,6 +1,7 @@
-// import 'dart:convert';
+﻿// import 'dart:convert';
 
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 // import 'package:bundlegram/data/models/auth/auth_model.dart';
 // import 'package:bundlegram/data/repositories/auth_repository.dart';
 

@@ -1,9 +1,10 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 import 'package:bundlegram/presentation/features/wallet/payment_webview/models/verify_payment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:http/http.dart' as http;
 
 final squadPaymentVerifierProvider = StateNotifierProvider<SquadPaymentVerifier,
@@ -34,7 +35,7 @@ class SquadPaymentVerifier
 
       final jsonBody = jsonDecode(response.body) as Map<String, dynamic>;
       debugPrint(
-          "📡 Verify API response: ${response.statusCode} ${response.body}");
+          "ðŸ“¡ Verify API response: ${response.statusCode} ${response.body}");
 
       final verification = SquadPaymentVerificationResponse.fromJson(jsonBody);
 
@@ -46,3 +47,4 @@ class SquadPaymentVerifier
     }
   }
 }
+

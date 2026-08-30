@@ -10,7 +10,7 @@ part 'become_a_merchant_request.freezed.dart';
 part 'become_a_merchant_request.g.dart';
 
 @freezed
-class BecomeAMerchantRequest with _$BecomeAMerchantRequest {
+abstract class BecomeAMerchantRequest with _$BecomeAMerchantRequest {
   const factory BecomeAMerchantRequest({
     @JsonKey(name: "mac_address") required String macAddress,
     @JsonKey(name: "ip_address") required String ipAddress,

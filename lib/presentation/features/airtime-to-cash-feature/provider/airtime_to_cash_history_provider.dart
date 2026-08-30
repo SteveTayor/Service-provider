@@ -6,6 +6,7 @@ import 'package:bundlegram/data/airtime_to_cash_repository.dart';
 import 'package:bundlegram/data/mock_airtime_to_cash_repository.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/airtime_to_cash_transaction.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 class AirtimeToCashHistoryState {
   const AirtimeToCashHistoryState({
@@ -36,17 +37,20 @@ class AirtimeToCashHistoryState {
   }
 }
 
-final airtimeToCashHistoryProvider = StateNotifierProvider.autoDispose<
-    AirtimeToCashHistoryNotifier, AirtimeToCashHistoryState>(
-  (ref) =>
-      AirtimeToCashHistoryNotifier(ref.read(airtimeToCashRepositoryProvider))
-        ..refresh(),
-);
+final airtimeToCashHistoryProvider =
+    StateNotifierProvider.autoDispose<
+      AirtimeToCashHistoryNotifier,
+      AirtimeToCashHistoryState
+    >(
+      (ref) => AirtimeToCashHistoryNotifier(
+        ref.read(airtimeToCashRepositoryProvider),
+      )..refresh(),
+    );
 
 class AirtimeToCashHistoryNotifier
     extends StateNotifier<AirtimeToCashHistoryState> {
   AirtimeToCashHistoryNotifier(this._repository)
-      : super(const AirtimeToCashHistoryState());
+    : super(const AirtimeToCashHistoryState());
 
   final IAirtimeToCashRepository _repository;
   Timer? _searchDebounce;

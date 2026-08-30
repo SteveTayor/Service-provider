@@ -6,15 +6,13 @@ part of 'get_wallet_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$GetWalletResponseImpl _$$GetWalletResponseImplFromJson(
-        Map<String, dynamic> json) =>
-    _$GetWalletResponseImpl(
+_GetWalletResponse _$GetWalletResponseFromJson(Map<String, dynamic> json) =>
+    _GetWalletResponse(
       wallet: json['wallet'] as String?,
       promoBonus: _toDouble(json['promo_bonus']),
     );
 
-Map<String, dynamic> _$$GetWalletResponseImplToJson(
-        _$GetWalletResponseImpl instance) =>
+Map<String, dynamic> _$GetWalletResponseToJson(_GetWalletResponse instance) =>
     <String, dynamic>{
       'wallet': instance.wallet,
       'promo_bonus': instance.promoBonus,

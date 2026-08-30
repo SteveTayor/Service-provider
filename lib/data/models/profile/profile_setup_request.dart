@@ -5,7 +5,7 @@ part 'profile_setup_request.freezed.dart';
 part 'profile_setup_request.g.dart';
 
 @freezed
-class ProfileSetupRequest with _$ProfileSetupRequest {
+abstract class ProfileSetupRequest with _$ProfileSetupRequest {
   const factory ProfileSetupRequest({
     @JsonKey(name: "first_name") String? firstName,
     @JsonKey(name: "last_name") String? lastName,

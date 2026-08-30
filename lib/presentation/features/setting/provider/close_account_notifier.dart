@@ -1,4 +1,4 @@
-import 'package:bundlegram/core/error/error_sanitixed_users.dart';
+﻿import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
@@ -9,6 +9,7 @@ import 'package:bundlegram/presentation/features/setting/screens/close_account_s
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/transaction_success_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 
 final closeAccountProvider =
@@ -65,3 +66,4 @@ class CloseAccountController extends ChangeNotifier {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/errors.dart';
@@ -12,6 +12,7 @@ import 'package:bundlegram/presentation/features/airtime-to-cash-feature/model/a
 import 'package:bundlegram/presentation/features/airtime-to-cash-feature/provider/airtime_to_cash_history_provider.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 const int kOtpResendSeconds = 30;
 
@@ -234,10 +235,10 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     if (amount == null || amount <= 0)
       return 'Enter the amount of airtime to sell';
     if (amount < network.minAmount) {
-      return 'Minimum amount is ₦${network.minAmount.toStringAsFixed(0)}';
+      return 'Minimum amount is â‚¦${network.minAmount.toStringAsFixed(0)}';
     }
     if (amount > network.maxAmount) {
-      return 'Maximum amount is ₦${network.maxAmount.toStringAsFixed(0)}';
+      return 'Maximum amount is â‚¦${network.maxAmount.toStringAsFixed(0)}';
     }
     final balance = state.airtimeBalance?.amount ?? 0;
     if (amount > balance) return 'Amount exceeds your airtime balance';
@@ -325,3 +326,4 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     super.dispose();
   }
 }
+

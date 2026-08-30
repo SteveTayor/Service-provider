@@ -4,7 +4,7 @@ part 'profile_setup_response.freezed.dart';
 part 'profile_setup_response.g.dart';
 
 @freezed
-class ProfileSetupResponse with _$ProfileSetupResponse {
+abstract class ProfileSetupResponse with _$ProfileSetupResponse {
   const factory ProfileSetupResponse({
     @JsonKey(name: "status") String? status,
     @JsonKey(name: "data") String? data,

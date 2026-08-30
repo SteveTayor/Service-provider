@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'auth_entity.freezed.dart';
 
 @freezed
-class AuthEntity with _$AuthEntity {
+abstract class AuthEntity with _$AuthEntity {
   const factory AuthEntity({
     required String email,
     required String phone,
@@ -16,4 +16,4 @@ class AuthEntity with _$AuthEntity {
   const AuthEntity._();
 
   String get fullName => '$firstName $lastName';
-} 
+}

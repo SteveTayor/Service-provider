@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/extensions/snackbar_extension.dart';
@@ -8,11 +8,13 @@ import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/products_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/repositories/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 
 // final dashboardProvider = ChangeNotifierProvider<DashboardProvider>((ref) {
@@ -160,3 +162,4 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+

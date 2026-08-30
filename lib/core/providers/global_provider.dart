@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:developer';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
@@ -23,6 +23,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 
 final globalProvider = StateNotifierProvider<GlobalProvider, GlobalState>(
@@ -34,12 +35,12 @@ final globalProvider = StateNotifierProvider<GlobalProvider, GlobalState>(
   ),
 );
 
-/// Returns the K transactions with the latest createdAt, sorted newest→oldest.
+/// Returns the K transactions with the latest createdAt, sorted newestâ†’oldest.
 List<UserTransactions> _takeTopKByDate(
   List<UserTransactions> all, {
   required int k,
 }) {
-  // Min-heap ordered oldest→newest
+  // Min-heap ordered oldestâ†’newest
   final pq = PriorityQueue<UserTransactions>(
     (a, b) => a.createdAt!.compareTo(b.createdAt!),
   );
@@ -50,7 +51,7 @@ List<UserTransactions> _takeTopKByDate(
     if (pq.length > k) pq.removeFirst();
   }
 
-  // Now heap has at most K items — pull them out and sort descending
+  // Now heap has at most K items â€” pull them out and sort descending
   final top = pq.toList()..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
   return top;
 }
@@ -84,13 +85,13 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       }
 
       // Consume the flag set by VersionManager during boot.
-    // Fires exactly once per version bump — deleted immediately after reading.
+    // Fires exactly once per version bump â€” deleted immediately after reading.
     final shouldInvalidate = await storage.consumeMigrationPendingInvalidation();
     if (shouldInvalidate) {
       _invalidateAllProductProviders();
     }
 
-      // ALL CORE APIS – CALLED ONCE
+      // ALL CORE APIS â€“ CALLED ONCE
       await Future.wait([
         initializeWalletandAccounts(ctx),
         initializePlatformDependencies(ctx),
@@ -155,10 +156,10 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   //     },
   //   );
   //   if (!profileOk) {
-  //     debugPrint('[restoreSession] Token invalid → fallback to email/password');
+  //     debugPrint('[restoreSession] Token invalid â†’ fallback to email/password');
   //     return false;
   //   }
-  //   // Token confirmed valid → proceed to other calls
+  //   // Token confirmed valid â†’ proceed to other calls
   //   unawaited(fetchWalletBalance(context));
   //   unawaited(fetchBanks(context));
   //   unawaited(fetchUserBanks(context));
@@ -621,3 +622,4 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     );
   }
 }
+

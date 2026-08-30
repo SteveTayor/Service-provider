@@ -5,11 +5,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 
-enum BiometricAuthType {
-  login,
-  transaction,
-  setup,
-}
+enum BiometricAuthType { login, transaction, setup }
 
 final biometricServiceProvider = Provider((ref) => BiometricService(ref));
 
@@ -89,9 +85,9 @@ class BiometricService {
         localizedReason: reason,
         authMessages: [
           AndroidAuthMessages(
-            biometricHint: biometricHint ?? 'Verify your identity',
-            biometricRequiredTitle:
-                biometricRequiredTitle ?? 'Authentication Required',
+            // biometricHint: biometricHint ?? 'Verify your identity',
+            // biometricRequiredTitle:
+            //     biometricRequiredTitle ?? 'Authentication Required',
             signInTitle: signInTitle ?? 'Authorize',
             cancelButton: cancelButtonText,
           ),
@@ -100,11 +96,11 @@ class BiometricService {
             localizedFallbackTitle: 'Use Passcode',
           ),
         ],
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-          useErrorDialogs: true,
-        ),
+        // options: const AuthenticationOptions(
+        //   stickyAuth: true,
+        //   biometricOnly: true,
+        //   useErrorDialogs: true,
+        // ),
       );
 
       debugPrint("[Biometric] Auth result = $result");
@@ -118,8 +114,9 @@ class BiometricService {
   }
 
   Future<bool> get isBiometricLoginEnabled async {
-    final enabled =
-        await _ref.read(secureStorageHelperProvider).isBiometricLoginEnabled();
+    final enabled = await _ref
+        .read(secureStorageHelperProvider)
+        .isBiometricLoginEnabled();
     debugPrint("[Biometric] Login enabled = $enabled");
     return enabled;
   }
@@ -165,8 +162,11 @@ class BiometricService {
     String? displayName,
   }) async {
     debugPrint(
-        "[Biometric] Storing credentials for $email, displayName=$displayName");
-    await _ref.read(secureStorageHelperProvider).storeBiometricCredentials(
+      "[Biometric] Storing credentials for $email, displayName=$displayName",
+    );
+    await _ref
+        .read(secureStorageHelperProvider)
+        .storeBiometricCredentials(
           email: email,
           password: password,
           displayName: displayName,
@@ -174,29 +174,33 @@ class BiometricService {
   }
 
   Future<String?> getBiometricEmail() async {
-    final email =
-        await _ref.read(secureStorageHelperProvider).getBiometricEmail();
+    final email = await _ref
+        .read(secureStorageHelperProvider)
+        .getBiometricEmail();
     debugPrint("[Biometric] Stored email = $email");
     return email;
   }
 
   Future<String?> getBiometricPassword() async {
-    final pass =
-        await _ref.read(secureStorageHelperProvider).getBiometricPassword();
+    final pass = await _ref
+        .read(secureStorageHelperProvider)
+        .getBiometricPassword();
     debugPrint("[Biometric] Stored password = ${pass != null ? '***' : null}");
     return pass;
   }
 
   Future<String?> getBiometricDisplayName() async {
-    final name =
-        await _ref.read(secureStorageHelperProvider).getBiometricDisplayName();
+    final name = await _ref
+        .read(secureStorageHelperProvider)
+        .getBiometricDisplayName();
     debugPrint("[Biometric] Stored displayName = $name");
     return name;
   }
 
   Future<bool> hasBiometricCredentials() async {
-    final has =
-        await _ref.read(secureStorageHelperProvider).hasBiometricCredentials();
+    final has = await _ref
+        .read(secureStorageHelperProvider)
+        .hasBiometricCredentials();
     debugPrint("[Biometric] Has stored credentials = $has");
     return has;
   }

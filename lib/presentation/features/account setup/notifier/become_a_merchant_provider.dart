@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
@@ -25,6 +25,7 @@ import 'package:bundlegram/presentation/features/wallet/screen/topup_failed_scre
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -70,7 +71,7 @@ class BecomeAgentProvider extends ChangeNotifier {
               title: "Transaction Failed",
               serviceContent: "transaction",
               errorMessage:
-                  'Your wallet balance (${parsedBalance.toCurrency()}) is less than the required ₦10,000.00. Please fund your wallet.',
+                  'Your wallet balance (${parsedBalance.toCurrency()}) is less than the required â‚¦10,000.00. Please fund your wallet.',
               onRetry: () {
                 context.pushReplacement(RouteConstants.dashboard);
               },
@@ -81,7 +82,7 @@ class BecomeAgentProvider extends ChangeNotifier {
         //   ErrorPopup(
         //     title: 'Insufficient Funds',
         //     message:
-        //         'Your wallet balance (${parsedBalance.toCurrency()}) is less than the required ₦10,000.00. Please fund your wallet.',
+        //         'Your wallet balance (${parsedBalance.toCurrency()}) is less than the required â‚¦10,000.00. Please fund your wallet.',
         //     onOkay: () {
         //       context.go(RouteConstants.dashboard); // Route to dashboard
         //     },
@@ -137,7 +138,7 @@ class BecomeAgentProvider extends ChangeNotifier {
         }
       }
 
-      // ❌ If not biometric or failed → fallback to EnterPinScreen
+      // âŒ If not biometric or failed â†’ fallback to EnterPinScreen
 
       // If balance is sufficient, navigate to EnterPinScreen
       context.pop(); // Close the bottom sheet
@@ -268,3 +269,4 @@ class BecomeAgentProvider extends ChangeNotifier {
     return "unknown";
   }
 }
+

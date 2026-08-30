@@ -1,4 +1,4 @@
-import 'package:bundlegram/core/extensions/context_extensions.dart';
+﻿import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/currency_extension.dart';
 import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
@@ -25,6 +25,7 @@ import 'package:bundlegram/presentation/features/transaction/screens/widgets/emp
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -501,3 +502,4 @@ class _ServiceHistoryScreenState extends ConsumerState<ServiceHistoryScreen> {
     }
   }
 }
+

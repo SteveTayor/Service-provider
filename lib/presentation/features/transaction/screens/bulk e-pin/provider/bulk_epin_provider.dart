@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/errors.dart';
@@ -23,6 +23,7 @@ import 'package:bundlegram/presentation/features/wallet/screen/enterpin_screen.d
 import 'package:bundlegram/presentation/features/wallet/screen/topup_failed_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 
 String normalizeAgentPhone(String? phone) {
@@ -398,3 +399,4 @@ class BulkEpinNotifier extends StateNotifier<BulkEpinState> {
     super.dispose();
   }
 }
+
