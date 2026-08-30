@@ -1,5 +1,5 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:riverpod/riverpod.dart';
 
 @immutable
 abstract class BaseAsyncNotifier<T> extends AsyncNotifier<T> {

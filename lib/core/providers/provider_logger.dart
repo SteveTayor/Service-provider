@@ -1,16 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
-class ProviderLogger extends ProviderObserver {
+base class ProviderLogger extends ProviderObserver {
   final _logger = Logger('ProviderLogger');
 
   @override
   void didUpdateProvider(
-    ProviderBase<Object?> provider,
+    ProviderObserverContext context,
     Object? previousValue,
     Object? newValue,
-    ProviderContainer container,
   ) {
+    final provider = context.provider;
+
     _logger.fine(
       '''
 {
@@ -23,10 +24,11 @@ class ProviderLogger extends ProviderObserver {
 
   @override
   void didAddProvider(
-    ProviderBase<Object?> provider,
+    ProviderObserverContext context,
     Object? value,
-    ProviderContainer container,
   ) {
+    final provider = context.provider;
+
     _logger.fine(
       '''
 {
@@ -38,9 +40,10 @@ class ProviderLogger extends ProviderObserver {
 
   @override
   void didDisposeProvider(
-    ProviderBase<Object?> provider,
-    ProviderContainer container,
+    ProviderObserverContext context,
   ) {
+    final provider = context.provider;
+
     _logger.fine(
       '''
 {
