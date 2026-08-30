@@ -99,7 +99,7 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                       onPressed: () => platform.goToWithdrawFund(context),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 16.w),
+                      padding: EdgeInsets.only(left: 8.w),
                       child: PlatformItemWidget(
                         title: 'Airtime 2 Cash',
                         iconData: Icons.currency_exchange,

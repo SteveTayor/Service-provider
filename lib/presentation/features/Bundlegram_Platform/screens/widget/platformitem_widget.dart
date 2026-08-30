@@ -13,25 +13,20 @@ class PlatformItemWidget extends StatelessWidget {
     this.iconData,
     super.key,
   }) : assert(
-          icon != null || iconData != null,
-          'Provide either icon (asset path) or iconData (fallback Material icon)',
-        );
+         icon != null || iconData != null,
+         'Provide either icon (asset path) or iconData (fallback Material icon)',
+       );
 
   final String title;
-
-  /// Existing behaviour — SVG asset path.
   final String? icon;
-
-  /// New — fallback Material icon for items that don't have a designed
-  /// asset yet. Takes precedence only when [icon]
-  /// is null, so nothing about the existing four quick actions changes.
   final IconData? iconData;
-
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     final r = context.responsive;
+    final circleSize = r.spacing(52);
+
     return GestureDetector(
       onTap: onPressed,
       child: Column(
@@ -39,8 +34,8 @@ class PlatformItemWidget extends StatelessWidget {
         children: [
           Container(
             alignment: Alignment.center,
-            width: r.spacing(52),
-            height: r.spacing(52),
+            width: circleSize,
+            height: circleSize,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: const Color(0xffDDB9B4).withOpacity(0.48),
@@ -54,10 +49,19 @@ class PlatformItemWidget extends StatelessWidget {
                   ),
           ),
           SizedBox(height: r.spacing(8)),
-          Text(
-            title,
-            style: context.textTheme.bodyMedium!.copyWith(
-              color: AppColors.white,
+          SizedBox(
+            // Give the label a bounded, predictable width instead of
+            // letting it size to its natural (unbounded) text width.
+            width: circleSize + r.spacing(20),
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: context.textTheme.bodyMedium!.copyWith(
+                color: AppColors.white,
+                fontSize: r.textSize(12),
+              ),
             ),
           ),
         ],

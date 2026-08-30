@@ -20,17 +20,18 @@ const int kOtpResendSeconds = 30;
 /// should create it inside the modal's widget tree (e.g. via a
 /// `ProviderScope(overrides: ...)` or simply by reading it fresh each time
 /// the sheet opens) so state resets naturally when the sheet is dismissed.
-final airtimeToCashProvider = StateNotifierProvider.autoDispose<
-    AirtimeToCashNotifier, AirtimeToCashState>(
-  (ref) => AirtimeToCashNotifier(
-    ref,
-    ref.read(airtimeToCashRepositoryProvider),
-  ),
-);
+final airtimeToCashProvider =
+    StateNotifierProvider.autoDispose<
+      AirtimeToCashNotifier,
+      AirtimeToCashState
+    >(
+      (ref) =>
+          AirtimeToCashNotifier(ref, ref.read(airtimeToCashRepositoryProvider)),
+    );
 
 class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
   AirtimeToCashNotifier(this._ref, this._repository)
-      : super(AirtimeToCashState.initial()) {
+    : super(AirtimeToCashState.initial()) {
     fetchNetworks();
   }
 
@@ -48,7 +49,7 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       ),
       (networks) => state = state.copyWith(
         isLoadingNetworks: false,
-        networks: [],
+        networks: networks, // was: networks: [],
       ),
     );
   }
@@ -124,8 +125,9 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       (Failure fail) {
         state = state.copyWith(
           step: AirtimeToCashStep.phoneEntry,
-          otpSendError:
-              sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
+          otpSendError: sanitizeErrorMessage(
+            userFacingMessageFromFailure(fail),
+          ),
         );
       },
       (_) {
@@ -169,8 +171,9 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       (Failure fail) {
         state = state.copyWith(
           isResendingOtp: false,
-          otpSendError:
-              sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
+          otpSendError: sanitizeErrorMessage(
+            userFacingMessageFromFailure(fail),
+          ),
         );
       },
       (_) {
@@ -303,8 +306,9 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       (Failure fail) {
         state = state.copyWith(
           step: AirtimeToCashStep.failed,
-          submissionError:
-              sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
+          submissionError: sanitizeErrorMessage(
+            userFacingMessageFromFailure(fail),
+          ),
         );
       },
       (txn) {
@@ -326,4 +330,3 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     super.dispose();
   }
 }
-

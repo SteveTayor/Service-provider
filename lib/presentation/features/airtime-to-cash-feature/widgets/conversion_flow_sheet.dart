@@ -48,10 +48,8 @@ class _ConversionFlowSheetState extends ConsumerState<ConversionFlowSheet> {
 
   Future<void> _handleConfirmingStep(NetworkConfig network) async {
     final state = ref.read(airtimeToCashProvider);
-    final amount = double.tryParse(
-          state.amountController.text.replaceAll(',', ''),
-        ) ??
-        0;
+    final amount =
+        double.tryParse(state.amountController.text.replaceAll(',', '')) ?? 0;
 
     final confirmed = await ConfirmTransactionDialog.show(
       context,
@@ -113,7 +111,8 @@ class _ConversionFlowSheetState extends ConsumerState<ConversionFlowSheet> {
               'Successfully converted: ₦${txn.amountReceived.toStringAsFixed(0)}',
               'Failed: ₦${failedAmount.toStringAsFixed(0)}',
             ],
-            message: txn.failureReason ??
+            message:
+                txn.failureReason ??
                 'Some transactions could not be completed. Please contact support if needed.',
             onPrimaryPressed: () {
               Navigator.of(context, rootNavigator: true).pop();
@@ -166,11 +165,14 @@ class _ConversionFlowSheetState extends ConsumerState<ConversionFlowSheet> {
   ) {
     if (state.isLoadingNetworks) {
       return const Center(
-          child: Padding(padding: EdgeInsets.all(24), child: AppLoader()));
+        child: Padding(padding: EdgeInsets.all(24), child: AppLoader()),
+      );
     }
     if (state.networksError != null) {
       return _ErrorRetry(
-          message: state.networksError!, onRetry: notifier.fetchNetworks);
+        message: state.networksError!,
+        onRetry: notifier.fetchNetworks,
+      );
     }
 
     switch (state.step) {
@@ -211,7 +213,10 @@ class _Header extends StatelessWidget {
       padding: r.padding(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.success, AppColors.success.withOpacity(0.85)],
+          colors: [
+            AppColors.primaryColor,
+            AppColors.primaryColor.withOpacity(0.85),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -236,8 +241,9 @@ class _Header extends StatelessWidget {
             children: [
               Text(
                 'Airtime To Cash',
-                style: context.textTheme.titleMedium
-                    ?.copyWith(color: Colors.white),
+                style: context.textTheme.titleMedium?.copyWith(
+                  color: Colors.white,
+                ),
               ),
               SizedBox(height: 6.h),
               Container(
@@ -248,8 +254,9 @@ class _Header extends StatelessWidget {
                 ),
                 child: Text(
                   'Instant',
-                  style: context.textTheme.labelSmall
-                      ?.copyWith(color: Colors.white),
+                  style: context.textTheme.labelSmall?.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
@@ -276,9 +283,11 @@ class _NetworkAndPhoneSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showPhone = state.step != AirtimeToCashStep.networkSelection;
-    final showOtp = state.step == AirtimeToCashStep.otpEntry ||
+    final showOtp =
+        state.step == AirtimeToCashStep.otpEntry ||
         state.step == AirtimeToCashStep.verifyingOtp;
-    final isCheckingAvailability = state.step == AirtimeToCashStep.phoneEntry &&
+    final isCheckingAvailability =
+        state.step == AirtimeToCashStep.phoneEntry &&
         state.selectedNetwork != null &&
         false; // reserved: flip true while an async availability check runs
 
@@ -306,14 +315,17 @@ class _NetworkAndPhoneSection extends StatelessWidget {
         // ],
         if (showPhone) ...[
           SizedBox(height: 20.h),
-          Text('Enter phone number you are sending from',
-              style: context.textTheme.bodyMedium),
+          Text(
+            'Enter phone number you are sending from',
+            style: context.textTheme.bodyMedium,
+          ),
           SizedBox(height: 8.h),
           AppTextField(
             controller: state.phoneController,
             hintText: 'Eg: 08012345678',
             keyboardType: TextInputType.phone,
-            enabled: state.step == AirtimeToCashStep.phoneEntry ||
+            enabled:
+                state.step == AirtimeToCashStep.phoneEntry ||
                 state.step == AirtimeToCashStep.sendingOtp,
             validateFunction: (_) => state.phoneError,
           ),
@@ -321,15 +333,19 @@ class _NetworkAndPhoneSection extends StatelessWidget {
             SizedBox(height: 6.h),
             Text(
               state.otpSendError!,
-              style: context.textTheme.bodySmall
-                  ?.copyWith(color: AppColors.errorText),
+              style: context.textTheme.bodySmall?.copyWith(
+                color: AppColors.errorText,
+              ),
             ),
           ],
         ],
         if (showOtp) ...[
           SizedBox(height: 20.h),
-          Text('Enter OTP',
-              style: context.textTheme.bodyMedium, textAlign: TextAlign.center),
+          Text(
+            'Enter OTP',
+            style: context.textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
           SizedBox(height: 6.h),
           Text(
             'A six-digit OTP has been sent to ${state.phoneController.text.trim()}',
@@ -348,8 +364,9 @@ class _NetworkAndPhoneSection extends StatelessWidget {
             SizedBox(height: 8.h),
             Text(
               state.otpVerifyError!,
-              style: context.textTheme.bodySmall
-                  ?.copyWith(color: AppColors.errorText),
+              style: context.textTheme.bodySmall?.copyWith(
+                color: AppColors.errorText,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -359,18 +376,26 @@ class _NetworkAndPhoneSection extends StatelessWidget {
                 ? Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.check_circle,
-                          color: AppColors.success, size: 16.sp),
+                      Icon(
+                        Icons.check_circle,
+                        color: AppColors.success,
+                        size: 16.sp,
+                      ),
                       SizedBox(width: 6.w),
-                      Text('You can now resend OTP',
-                          style: context.textTheme.bodySmall),
+                      Text(
+                        'You can now resend OTP',
+                        style: context.textTheme.bodySmall,
+                      ),
                     ],
                   )
                 : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.access_time,
-                          color: AppColors.grey80, size: 16.sp),
+                      Icon(
+                        Icons.access_time,
+                        color: AppColors.grey80,
+                        size: 16.sp,
+                      ),
                       SizedBox(width: 6.w),
                       Text(
                         'Resend OTP in ${state.otpResendCountdown} seconds',
@@ -394,8 +419,11 @@ class _NoActiveConfigSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(Icons.warning_amber_rounded,
-            color: AppColors.warning, size: 40.sp),
+        Icon(
+          Icons.warning_amber_rounded,
+          color: AppColors.warning,
+          size: 40.sp,
+        ),
         SizedBox(height: 12.h),
         Text(
           'No Active Airtime 2 Cash Config',
@@ -459,10 +487,14 @@ class _AmountSection extends StatelessWidget {
                   Text(
                     '₦${balance.amount.toStringAsFixed(2)}',
                     style: context.textTheme.titleMedium?.copyWith(
-                        color: AppColors.success, fontWeight: FontWeight.w700),
+                      color: AppColors.success,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                  Text(balance.networkLabel,
-                      style: context.textTheme.bodySmall),
+                  Text(
+                    balance.networkLabel,
+                    style: context.textTheme.bodySmall,
+                  ),
                 ],
               ),
               Icon(Icons.refresh, color: AppColors.success),
@@ -484,8 +516,9 @@ class _AmountSection extends StatelessWidget {
         Text(
           'Min: ₦${network.minAmount.toStringAsFixed(0)} | Max: '
           '₦${network.maxAmount.toStringAsFixed(0)} | Daily: ₦${network.dailyLimit.toStringAsFixed(0)}',
-          style:
-              context.textTheme.labelSmall?.copyWith(color: AppColors.grey80),
+          style: context.textTheme.labelSmall?.copyWith(
+            color: AppColors.grey80,
+          ),
         ),
         SizedBox(height: 16.h),
         Text('Amount to Receive (₦)', style: context.textTheme.bodyMedium),
@@ -503,23 +536,30 @@ class _AmountSection extends StatelessWidget {
               Text(
                 '₦${state.amountToReceive.toStringAsFixed(0)}',
                 style: context.textTheme.titleMedium?.copyWith(
-                    color: AppColors.success, fontWeight: FontWeight.w700),
+                  color: AppColors.success,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               Row(
                 children: [
-                  Text('Conversion rate: ${network.conversionRatePercent}% ',
-                      style: context.textTheme.labelSmall),
+                  Text(
+                    'Conversion rate: ${network.conversionRatePercent}% ',
+                    style: context.textTheme.labelSmall,
+                  ),
                   Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 2.h,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.success,
                       borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
                       network.name,
-                      style: context.textTheme.labelSmall
-                          ?.copyWith(color: Colors.white),
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -534,8 +574,11 @@ class _AmountSection extends StatelessWidget {
             SizedBox(width: 6.w),
             GestureDetector(
               onTap: () => AirtimeSharePinInfoDialog.show(context, [network]),
-              child:
-                  Icon(Icons.info_outline, size: 16.sp, color: AppColors.info),
+              child: Icon(
+                Icons.info_outline,
+                size: 16.sp,
+                color: AppColors.info,
+              ),
             ),
           ],
         ),
@@ -553,13 +596,17 @@ class _AmountSection extends StatelessWidget {
           onTap: notifier.goToManual,
           child: Row(
             children: [
-              Icon(Icons.error_outline,
-                  size: 12.sp, color: AppColors.errorText),
+              Icon(
+                Icons.error_outline,
+                size: 12.sp,
+                color: AppColors.errorText,
+              ),
               SizedBox(width: 4.w),
               Text(
                 'Forgot PIN? Call 300 to reset it.',
-                style: context.textTheme.labelSmall
-                    ?.copyWith(color: AppColors.errorText),
+                style: context.textTheme.labelSmall?.copyWith(
+                  color: AppColors.errorText,
+                ),
               ),
             ],
           ),
@@ -570,8 +617,11 @@ class _AmountSection extends StatelessWidget {
 }
 
 class _Footer extends StatelessWidget {
-  const _Footer(
-      {required this.state, required this.notifier, required this.onOtpVerify});
+  const _Footer({
+    required this.state,
+    required this.notifier,
+    required this.onOtpVerify,
+  });
 
   final AirtimeToCashState state;
   final AirtimeToCashNotifier notifier;
@@ -635,8 +685,9 @@ class _Footer extends StatelessWidget {
               text: 'Cancel',
               color: AppColors.greyEE,
               textStyle: TextStyle(color: AppColors.black),
-              onPressed:
-                  state.isBusy ? null : () => Navigator.of(context).maybePop(),
+              onPressed: state.isBusy
+                  ? null
+                  : () => Navigator.of(context).maybePop(),
             ),
           ),
           SizedBox(width: 12.w),
@@ -667,8 +718,11 @@ class _ErrorRetry extends StatelessWidget {
       children: [
         Icon(Icons.error_outline, color: AppColors.error, size: 32.sp),
         SizedBox(height: 8.h),
-        Text(message,
-            style: context.textTheme.bodySmall, textAlign: TextAlign.center),
+        Text(
+          message,
+          style: context.textTheme.bodySmall,
+          textAlign: TextAlign.center,
+        ),
         SizedBox(height: 12.h),
         TextButton(onPressed: onRetry, child: const Text('Try Again')),
       ],
