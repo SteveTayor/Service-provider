@@ -54,61 +54,61 @@ class MockAirtimeToCashRepository implements IAirtimeToCashRepository {
   int _txnCounter = 1;
 
   List<NetworkConfig> get _networks => [
-        NetworkConfig(
-          id: 'mtn',
-          name: 'MTN',
-          logoAsset: Assets.svgs.mtnnw,
-          isAvailable: true,
-          hasActiveConfig: true,
-          supportsInstantConversion: true,
-          conversionRatePercent: 83,
-          minAmount: 1000,
-          maxAmount: 100000,
-          dailyLimit: 100000,
-          shareCode: '*321#',
-        ),
-        NetworkConfig(
-          id: 'airtel',
-          name: 'Airtel',
-          logoAsset: Assets.svgs.airtel,
-          isAvailable: true,
-          hasActiveConfig: true,
-          supportsInstantConversion: true,
-          conversionRatePercent: 80,
-          minAmount: 1000,
-          maxAmount: 100000,
-          dailyLimit: 100000,
-          shareCode: '*432#',
-        ),
-        NetworkConfig(
-          id: 'glo',
-          name: 'Glo',
-          logoAsset: Assets.svgs.glo,
-          isAvailable: true,
-          // Simulates an unconfigured network: selectable, but the flow
-          // should show "No Active Airtime 2 Cash Config" + "Go to Manual".
-          hasActiveConfig: false,
-          supportsInstantConversion: false,
-          conversionRatePercent: 75,
-          minAmount: 1000,
-          maxAmount: 100000,
-          dailyLimit: 100000,
-          shareCode: '*131*PIN#',
-        ),
-        NetworkConfig(
-          id: '9mobile',
-          name: '9mobile',
-          logoAsset: Assets.svgs.a9mobile,
-          isAvailable: false,
-          hasActiveConfig: false,
-          supportsInstantConversion: false,
-          conversionRatePercent: 75,
-          minAmount: 1000,
-          maxAmount: 100000,
-          dailyLimit: 100000,
-          shareCode: '*223#',
-        ),
-      ];
+    NetworkConfig(
+      id: 'mtn',
+      name: 'MTN',
+      logoAsset: Assets.svgs.mtnnw,
+      isAvailable: true,
+      hasActiveConfig: true,
+      supportsInstantConversion: true,
+      conversionRatePercent: 83,
+      minAmount: 1000,
+      maxAmount: 100000,
+      dailyLimit: 100000,
+      shareCode: '*321#',
+    ),
+    NetworkConfig(
+      id: 'airtel',
+      name: 'Airtel',
+      logoAsset: Assets.svgs.airtel,
+      isAvailable: true,
+      hasActiveConfig: true,
+      supportsInstantConversion: true,
+      conversionRatePercent: 80,
+      minAmount: 1000,
+      maxAmount: 100000,
+      dailyLimit: 100000,
+      shareCode: '*432#',
+    ),
+    NetworkConfig(
+      id: 'glo',
+      name: 'Glo',
+      logoAsset: Assets.svgs.glo,
+      isAvailable: true,
+      // Simulates an unconfigured network: selectable, but the flow
+      // should show "No Active Airtime 2 Cash Config" + "Go to Manual".
+      hasActiveConfig: false,
+      supportsInstantConversion: false,
+      conversionRatePercent: 75,
+      minAmount: 1000,
+      maxAmount: 100000,
+      dailyLimit: 100000,
+      shareCode: '*131*PIN#',
+    ),
+    NetworkConfig(
+      id: '9mobile',
+      name: '9mobile',
+      logoAsset: Assets.svgs.a9mobile,
+      isAvailable: false,
+      hasActiveConfig: false,
+      supportsInstantConversion: false,
+      conversionRatePercent: 75,
+      minAmount: 1000,
+      maxAmount: 100000,
+      dailyLimit: 100000,
+      shareCode: '*223#',
+    ),
+  ];
 
   @override
   Future<Either<Failure, List<NetworkConfig>>> getNetworks() async {
@@ -157,10 +157,7 @@ class MockAirtimeToCashRepository implements IAirtimeToCashRepository {
     }
 
     return Right(
-      AirtimeBalance(
-        amount: 143.79,
-        networkLabel: '${network.name} BetaGist',
-      ),
+      AirtimeBalance(amount: 1043.79, networkLabel: '${network.name} BetaGist'),
     );
   }
 

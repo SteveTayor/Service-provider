@@ -56,8 +56,10 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                   ),
                   Text(
                     'Bundlegram',
-                    style: context.textTheme.bodyMedium!
-                        .copyWith(fontSize: 20.sp, color: AppColors.white),
+                    style: context.textTheme.bodyMedium!.copyWith(
+                      fontSize: 20.sp,
+                      color: AppColors.white,
+                    ),
                   ),
                   AppSvgIcon(
                     onTap: () => platform.goToNotification(context),
@@ -80,13 +82,17 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                       title: 'Buy data',
                       icon: Assets.svgs.mobile,
                       onPressed: () => platform.goToProduct(
-                          context, PlatformProductType.mobileData),
+                        context,
+                        PlatformProductType.mobileData,
+                      ),
                     ),
                     PlatformItemWidget(
                       title: 'Buy airtime',
                       icon: Assets.svgs.simcard2,
                       onPressed: () => platform.goToProduct(
-                          context, PlatformProductType.airtime),
+                        context,
+                        PlatformProductType.airtime,
+                      ),
                     ),
                     PlatformItemWidget(
                       title: 'Pay bills',
@@ -99,7 +105,7 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                       onPressed: () => platform.goToWithdrawFund(context),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 8.w),
+                      padding: EdgeInsets.only(left: 12.w),
                       child: PlatformItemWidget(
                         title: 'Airtime 2 Cash',
                         iconData: Icons.currency_exchange,
@@ -111,8 +117,8 @@ class PlatformQuickActionWidget extends ConsumerWidget {
               ),
             ],
           ).withContainer(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 30)),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 19),
+          ),
         ],
       ),
     );

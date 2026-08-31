@@ -48,4 +48,4 @@ final class VersionManagerProvider
   }
 }
 
-String _$versionManagerHash() => r'a4a341af404f9a1ef04f30a4a7889902dd402379';
+String _$versionManagerHash() => r'53f3c80dc49e86bd1eb7fd29e98407884172ac3c';

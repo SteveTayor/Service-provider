@@ -66,7 +66,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   bool get isInitialized => _isInitialized;
 
   GlobalProvider(super.state, this._api, this._storage, this._ref);
-//  Restore session using existing token
+  //  Restore session using existing token
   Future<void> initialize() async {
     //  never initialize twice
     if (_isInitialized || _isInitializing) return;
@@ -85,11 +85,12 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       }
 
       // Consume the flag set by VersionManager during boot.
-    // Fires exactly once per version bump â€” deleted immediately after reading.
-    final shouldInvalidate = await storage.consumeMigrationPendingInvalidation();
-    if (shouldInvalidate) {
-      _invalidateAllProductProviders();
-    }
+      // Fires exactly once per version bump â€” deleted immediately after reading.
+      final shouldInvalidate = await storage
+          .consumeMigrationPendingInvalidation();
+      if (shouldInvalidate) {
+        _invalidateAllProductProviders();
+      }
 
       // ALL CORE APIS â€“ CALLED ONCE
       await Future.wait([
@@ -108,15 +109,17 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   }
 
   void _invalidateAllProductProviders() {
-  for (final type in PlatformProductType.values) {
-    _ref.invalidate(productsProvider(type));
+    for (final type in PlatformProductType.values) {
+      _ref.invalidate(productsProvider(type));
+    }
+    _ref.invalidate(subProductsProvider);
+    _ref.invalidate(subProductsByCategoryProvider);
+    _ref.invalidate(beneficiariesProvider);
+    _ref.invalidate(minimalBeneficiariesProvider);
+    debugPrint(
+      '[GlobalProvider] Post-update: all product providers invalidated',
+    );
   }
-  _ref.invalidate(subProductsProvider);
-  _ref.invalidate(subProductsByCategoryProvider);
-  _ref.invalidate(beneficiariesProvider);
-  _ref.invalidate(minimalBeneficiariesProvider);
-  debugPrint('[GlobalProvider] Post-update: all product providers invalidated');
-}
 
   Future<void> initializePlatformDependencies(BuildContext context) async {
     try {
@@ -135,9 +138,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       // Prefetch minimal beneficiaries
       await _ref.read(minimalBeneficiariesProvider.future);
     } catch (e) {
-      context.showErrorSnackBar(
-        'Unable to fetch services. Please try again.',
-      );
+      context.showErrorSnackBar('Unable to fetch services. Please try again.');
     }
   }
 
@@ -174,20 +175,14 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
     final profileResult = await _api.getProfile(token);
 
-    return profileResult.fold(
-      (_) => false,
-      (data) {
-        state = state.copyWith(profile: AsyncData(data));
-        return true;
-      },
-    );
+    return profileResult.fold((_) => false, (data) {
+      state = state.copyWith(profile: AsyncData(data));
+      return true;
+    });
   }
 
   Future<void> initializeWalletandAccounts(BuildContext context) async {
-    await Future.wait([
-      fetchWalletBalance(context),
-      fetchProfile(context),
-    ]);
+    await Future.wait([fetchWalletBalance(context), fetchProfile(context)]);
 
     unawaited(fetchUserBanks(context));
     unawaited(fetchVirtualAccount(context));
@@ -244,7 +239,8 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     if (failure is ServerFailure ||
         (failure is AuthenticationFailure &&
             failure.properties.contains(
-                'Your session has expired or you are already logged in on another device.'))) {
+              'Your session has expired or you are already logged in on another device.',
+            ))) {
       final ctx = navigatorKey.currentContext;
       if (ctx != null) {
         ctx.go(RouteConstants.lockScreen);
@@ -258,8 +254,10 @@ class GlobalProvider extends StateNotifier<GlobalState> {
         : navigatorKey.currentContext;
 
     if (ctx == null) {
-      debugPrint('[GlobalProvider] handleFailure: no valid context, '
-          'swallowing error: ${failure.properties}');
+      debugPrint(
+        '[GlobalProvider] handleFailure: no valid context, '
+        'swallowing error: ${failure.properties}',
+      );
       return;
     }
 
@@ -302,23 +300,25 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     }
 
     final result = await _api.getWallet(token);
-    result.fold(
-      (fail) {
-        handleFailure(fail, context);
-        state =
-            state.copyWith(walletBalance: AsyncError(fail, StackTrace.current));
-      },
-      (data) => state = state.copyWith(walletBalance: AsyncData(data)),
-    );
+    result.fold((fail) {
+      handleFailure(fail, context);
+      state = state.copyWith(
+        walletBalance: AsyncError(fail, StackTrace.current),
+      );
+    }, (data) => state = state.copyWith(walletBalance: AsyncData(data)));
   }
 
   Future<void> fetchDashboardData(
-      BuildContext context, int month, int year) async {
+    BuildContext context,
+    int month,
+    int year,
+  ) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
       handleError('Authentication token missing', context);
       state = state.copyWith(
-          dashboardData: const AsyncError('No token', StackTrace.empty));
+        dashboardData: const AsyncError('No token', StackTrace.empty),
+      );
       return;
     }
 
@@ -330,13 +330,10 @@ class GlobalProvider extends StateNotifier<GlobalState> {
         DashboardDataRequest(month: month, year: year),
       );
 
-      return response.fold(
-        (fail) {
-          handleFailure(fail, context);
-          throw fail; // Automatically puts into AsyncError
-        },
-        (data) => data,
-      );
+      return response.fold((fail) {
+        handleFailure(fail, context);
+        throw fail; // Automatically puts into AsyncError
+      }, (data) => data);
     });
 
     state = state.copyWith(dashboardData: result);
@@ -349,13 +346,10 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     }
 
     final result = await _api.getAllBanks(token);
-    result.fold(
-      (fail) {
-        handleFailure(fail, context);
-        state = state.copyWith(banks: AsyncError(fail, StackTrace.current));
-      },
-      (data) => state = state.copyWith(banks: AsyncData(data)),
-    );
+    result.fold((fail) {
+      handleFailure(fail, context);
+      state = state.copyWith(banks: AsyncError(fail, StackTrace.current));
+    }, (data) => state = state.copyWith(banks: AsyncData(data)));
   }
 
   Future<void> fetchUserBanks(BuildContext context) async {
@@ -385,14 +379,12 @@ class GlobalProvider extends StateNotifier<GlobalState> {
 
     state = state.copyWith(virtualAccounts: const AsyncLoading());
     final result = await _api.getVirtualAccount(token);
-    result.fold(
-      (fail) {
-        handleFailure(fail, context);
-        state = state.copyWith(
-            virtualAccounts: AsyncError(fail, StackTrace.current));
-      },
-      (data) => state = state.copyWith(virtualAccounts: AsyncData(data)),
-    );
+    result.fold((fail) {
+      handleFailure(fail, context);
+      state = state.copyWith(
+        virtualAccounts: AsyncError(fail, StackTrace.current),
+      );
+    }, (data) => state = state.copyWith(virtualAccounts: AsyncData(data)));
   }
 
   // Future<void> fetchUsersTransactions(BuildContext context,
@@ -431,8 +423,10 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   //     },
   //   );
   // }
-  Future<void> fetchUsersTransactions(BuildContext context,
-      {bool force = false}) async {
+  Future<void> fetchUsersTransactions(
+    BuildContext context, {
+    bool force = false,
+  }) async {
     final token = await _storage.getAuthToken();
     if (token == null) return;
 
@@ -467,11 +461,13 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     // --- 1) EPIN: use cached epinTransactions if available to avoid extra network calls
     EpinTransactionRequestsResponse? epinWrapper;
     if (!force && state.epinTransactions is AsyncData) {
-      epinWrapper = (state.epinTransactions
-              as AsyncData<EpinTransactionRequestsResponse?>)
-          .value;
+      epinWrapper =
+          (state.epinTransactions
+                  as AsyncData<EpinTransactionRequestsResponse?>)
+              .value;
       debugPrint(
-          '[fetchUsersTransactions] Using cached epinTransactions with ${epinWrapper?.data?.data?.length ?? 0} items');
+        '[fetchUsersTransactions] Using cached epinTransactions with ${epinWrapper?.data?.data?.length ?? 0} items',
+      );
     } else {
       final epinResult = await _api.getEpinTransactionRequests(token);
       epinResult.fold(
@@ -479,12 +475,14 @@ class GlobalProvider extends StateNotifier<GlobalState> {
           handleFailure(fail, context);
           // keep going: we still want main transactions even if epin failed
           debugPrint(
-              '[fetchUsersTransactions] epin fetch failed: ${fail.properties}');
+            '[fetchUsersTransactions] epin fetch failed: ${fail.properties}',
+          );
         },
         (data) {
           epinWrapper = data;
           debugPrint(
-              '[fetchUsersTransactions] Fetched epin pages -> items: ${data.data?.data?.length ?? 0}');
+            '[fetchUsersTransactions] Fetched epin pages -> items: ${data.data?.data?.length ?? 0}',
+          );
         },
       );
     }
@@ -493,10 +491,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     GetAllUserTransactionResponse? mainWrapper;
     Failure? mainFailure;
     final result = await _api.getAllTransactions(token);
-    result.fold(
-      (fail) => mainFailure = fail,
-      (data) => mainWrapper = data,
-    );
+    result.fold((fail) => mainFailure = fail, (data) => mainWrapper = data);
 
     if (mainWrapper == null && epinWrapper == null) {
       final fail = mainFailure!;
@@ -513,26 +508,33 @@ class GlobalProvider extends StateNotifier<GlobalState> {
         .map((d) => d.toUserTransactions())
         .toList();
     debugPrint(
-        'MERGE_DBG: epinWrapper?.data?.data length=${epinWrapper?.data?.data?.length ?? 0}');
+      'MERGE_DBG: epinWrapper?.data?.data length=${epinWrapper?.data?.data?.length ?? 0}',
+    );
     if (epinWrapper?.data?.data != null &&
         epinWrapper!.data!.data!.isNotEmpty) {
       for (var i = 0; i < epinWrapper!.data!.data!.length && i < 5; i++) {
         final d = epinWrapper!.data!.data![i];
         debugPrint(
-            'MERGE_DBG datum[$i] -> id=${d.id}, ref=${d.reference}, createdAt=${d.createdAt}, agentPhone=${d.agentPhone}');
+          'MERGE_DBG datum[$i] -> id=${d.id}, ref=${d.reference}, createdAt=${d.createdAt}, agentPhone=${d.agentPhone}',
+        );
       }
     }
 
     debugPrint(
-        '[fetchUsersTransactions] mainList: ${mainList.length}, epinAsTx: ${epinAsTx.length}');
+      '[fetchUsersTransactions] mainList: ${mainList.length}, epinAsTx: ${epinAsTx.length}',
+    );
 
     // Log sample entries and their createdAt to help debugging
-    void _logSamples(List<UserTransactions> list, String tag,
-        [int sample = 3]) {
+    void _logSamples(
+      List<UserTransactions> list,
+      String tag, [
+      int sample = 3,
+    ]) {
       for (var i = 0; i < list.length && i < sample; i++) {
         final t = list[i];
         debugPrint(
-            '[$tag sample $i] ref=${t.transRef}, status=${t.status}, createdAt=${t.createdAt}');
+          '[$tag sample $i] ref=${t.transRef}, status=${t.status}, createdAt=${t.createdAt}',
+        );
       }
     }
 
@@ -540,13 +542,10 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     _logSamples(epinAsTx, 'EPIN');
 
     // final merged = [...mainList, ...epinAsTx];
-    final merged = await compute(
-      mergeAndSortTransactions,
-      {
-        'main': mainList,
-        'epin': epinAsTx,
-      },
-    );
+    final merged = await compute(mergeAndSortTransactions, {
+      'main': mainList,
+      'epin': epinAsTx,
+    });
 
     merged.sort((a, b) {
       final aDate = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
@@ -559,14 +558,16 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       for (var i = 0; i < epinAsTx.length && i < 5; i++) {
         final t = epinAsTx[i];
         debugPrint(
-            'MERGE_DBG epinTx[$i] -> transRef=${t.transRef}, createdAt=${t.createdAt}, amount=${t.amount}');
+          'MERGE_DBG epinTx[$i] -> transRef=${t.transRef}, createdAt=${t.createdAt}, amount=${t.amount}',
+        );
       }
     }
 
     debugPrint('[fetchUsersTransactions] merged length: ${merged.length}');
     if (merged.isNotEmpty) {
       debugPrint(
-          '[fetchUsersTransactions] newest merged createdAt: ${merged.first.createdAt}');
+        '[fetchUsersTransactions] newest merged createdAt: ${merged.first.createdAt}',
+      );
     }
 
     // --- 4) Update state (also persist epinWrapper into state.epinTransactions if we fetched it)
@@ -578,8 +579,9 @@ class GlobalProvider extends StateNotifier<GlobalState> {
           message: 'ok',
         ),
       ),
-      epinTransactions:
-          epinWrapper != null ? AsyncData(epinWrapper) : state.epinTransactions,
+      epinTransactions: epinWrapper != null
+          ? AsyncData(epinWrapper)
+          : state.epinTransactions,
       lastTransactionFetch: now,
     );
 
@@ -590,8 +592,10 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   }
 
   /// Fetch EPIN transaction requests and store in state.epinTransactions
-  Future<void> fetchEpinTransactionRequests(BuildContext context,
-      {bool force = false}) async {
+  Future<void> fetchEpinTransactionRequests(
+    BuildContext context, {
+    bool force = false,
+  }) async {
     final token = await _storage.getAuthToken();
     if (token == null) {
       return handleError('Authentication token missing', context);
@@ -622,4 +626,3 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     );
   }
 }
-
