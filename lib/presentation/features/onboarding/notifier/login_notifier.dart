@@ -103,7 +103,7 @@ class LoginProvider extends ChangeNotifier {
         platform != 'unknown';
   }
 
-// --- New helper: collect and persist device info safely (non-blocking) ---
+  // --- New helper: collect and persist device info safely (non-blocking) ---
   Future<void> _collectAndStoreDeviceInfoSafely() async {
     String macAddress = 'unknown';
     String ipAddress = '0.0.0.0';
@@ -149,7 +149,8 @@ class LoginProvider extends ChangeNotifier {
       if (locationStatus.isGranted) {
         try {
           final position = await Geolocator.getCurrentPosition(
-              desiredAccuracy: LocationAccuracy.high);
+            desiredAccuracy: LocationAccuracy.high,
+          );
           latitude = position.latitude.toString();
           longitude = position.longitude.toString();
         } catch (e) {
@@ -212,14 +213,16 @@ class LoginProvider extends ChangeNotifier {
         deviceToken = fcmToken;
       } else {
         fcmToken = await _storage.getFcmToken();
-        deviceToken =
-            await _storage.getFcmToken().then((value) => value ?? deviceToken);
+        deviceToken = await _storage.getFcmToken().then(
+          (value) => value ?? deviceToken,
+        );
       }
     } catch (e, st) {
       debugPrint('Failed to get FCM token at login: $e\n$st');
       fcmToken = await _storage.getFcmToken();
-      deviceToken =
-          await _storage.getFcmToken().then((value) => value ?? deviceToken);
+      deviceToken = await _storage.getFcmToken().then(
+        (value) => value ?? deviceToken,
+      );
     }
 
     final request = LoginRequest(
@@ -274,7 +277,8 @@ class LoginProvider extends ChangeNotifier {
           displayName: loginData.data?.payload?.username,
         );
 
-        final isSameUser = enteredIdentifier == storedEmail ||
+        final isSameUser =
+            enteredIdentifier == storedEmail ||
             enteredIdentifier == storedUsername;
         if (!isSameUser) {
           // New login â†’ clear previous cache
@@ -310,10 +314,7 @@ class LoginProvider extends ChangeNotifier {
         if (message != null &&
             message == 'Please create a username to continue') {
           context.dismissDialog();
-          context.go(
-            RouteConstants.chooseUsername,
-            extra: {'fromLogin': true},
-          );
+          context.go(RouteConstants.chooseUsername, extra: {'fromLogin': true});
           return;
         }
         passwordCtrl.clear();
@@ -354,17 +355,18 @@ class LoginProvider extends ChangeNotifier {
         final savedEmail = await _storage.getBiometricEmail();
         final savedPassword = await _storage.getBiometricPassword();
         debugPrint(
-            '[Biometric] Just saved creds â†’ email=$savedEmail, password=$savedPassword');
+          '[Biometric] Just saved creds â†’ email=$savedEmail, password=$savedPassword',
+        );
         // Fetch and cache users' transactions before routing
         // await _ref
         //     .read(globalProvider.notifier)
         //     .fetchUsersTransactions(context);
-// final profile = profileRes.fold((_) => null, (r) => r);
+        // final profile = profileRes.fold((_) => null, (r) => r);
 
-        final serverPin = profile?.data?.pin;
+        final userHasPin = profile?.data?.hasPin == true;
 
-        if (serverPin == null) {
-          // SERVER says no PIN yet â†’ enforce creation
+        if (!userHasPin) {
+          // SERVER says no PIN yet → enforce creation
           context.dismissDialog();
 
           await context.showBottomSheet(
@@ -452,7 +454,7 @@ class LoginProvider extends ChangeNotifier {
       },
       (response) async {
         if (response.success) {
-// Clear all secure storage, including device info
+          // Clear all secure storage, including device info
           await _storage.clearAll();
           _ref.read(dashboardProvider).resetIndex();
           // Navigate to login
@@ -473,4 +475,3 @@ class LoginProvider extends ChangeNotifier {
     super.dispose();
   }
 }
-

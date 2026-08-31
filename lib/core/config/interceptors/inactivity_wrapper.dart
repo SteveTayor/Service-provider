@@ -83,10 +83,22 @@ class _InactivityWrapperState extends ConsumerState<InactivityWrapper>
       final ctx = navigatorKey.currentContext;
       if (ctx == null) return;
 
-      // Read secure storage to decide whether the app had saved
-      // credentials worth locking (vs. forcing a full re-login).
       final secureStorage = ref.read(secureStorageHelperProvider);
 
+      // The only reliable signal for "is there an active session to
+      // protect" is a currently valid auth token. No token → nothing to
+      // lock or expire, so bail out entirely regardless of which screen
+      // (login, onboarding, splash, etc.) the user is currently on.
+      String? token;
+      try {
+        token = await secureStorage.getAuthToken();
+      } catch (e) {
+        token = null;
+      }
+      if (token == null) return;
+
+      // Read secure storage to decide whether the app had saved
+      // credentials worth locking (vs. forcing a full re-login).
       String? rememberedEmail;
       bool hasBiometric = false;
       try {

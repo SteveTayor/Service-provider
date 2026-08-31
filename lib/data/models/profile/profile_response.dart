@@ -34,7 +34,7 @@ abstract class Data with _$Data {
     @JsonKey(name: "gender") dynamic gender,
     @JsonKey(name: "dob") dynamic dob,
     @JsonKey(name: "bvn") dynamic bvn,
-    @JsonKey(name: "has_pin") dynamic hasPin,
+    @JsonKey(name: "has_pin") bool? hasPin,
     @JsonKey(name: "nin") dynamic nin,
     @JsonKey(name: "bank_name") dynamic bankName,
     @JsonKey(name: "account_number") dynamic accountNumber,

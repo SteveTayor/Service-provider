@@ -38,7 +38,7 @@ _Data _$DataFromJson(Map<String, dynamic> json) => _Data(
   gender: json['gender'],
   dob: json['dob'],
   bvn: json['bvn'],
-  hasPin: json['has_pin'],
+  hasPin: json['has_pin'] as bool?,
   nin: json['nin'],
   bankName: json['bank_name'],
   accountNumber: json['account_number'],

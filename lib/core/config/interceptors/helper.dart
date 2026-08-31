@@ -94,14 +94,18 @@ Future<Either<Failure, T>> handleApi<T>(Future<T> Function() call) async {
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||
         e.type == DioExceptionType.sendTimeout) {
-      return const Left(NetworkFailure(
-          ['Connection timed out. Please check your internet connection.']));
+      return const Left(
+        NetworkFailure([
+          'Connection timed out. Please check your internet connection.',
+        ]),
+      );
     }
 
     // Handle no internet (SocketException)
     if (e.type == DioExceptionType.unknown && e.error is SocketException) {
-      return const Left(NetworkFailure(
-          ['No internet connection. Please check your network.']));
+      return const Left(
+        NetworkFailure(['No internet connection. Please check your network.']),
+      );
     }
 
     // If we have a response from the server
@@ -179,18 +183,24 @@ Future<Either<Failure, T>> handleApi<T>(Future<T> Function() call) async {
         case 400:
         case 422:
           return Left(
-              ValidationFailure(errors.isNotEmpty ? errors : [message]));
+            ValidationFailure(errors.isNotEmpty ? errors : [message]),
+          );
         case 401:
           return Left(
-              AuthenticationFailure(errors.isNotEmpty ? errors : [message]));
+            AuthenticationFailure(errors.isNotEmpty ? errors : [message]),
+          );
         case 403:
-          return const Left(AuthorizationFailure(
-              ['You are not authorized to perform this action.']));
+          return const Left(
+            AuthorizationFailure([
+              'You are not authorized to perform this action.',
+            ]),
+          );
         case 404:
           return Left(NotFoundFailure([message]));
         case 429:
-          return Left(ServerFailure(
-              [message])); // Rate limit -> server failure class OK
+          return Left(
+            ServerFailure([message]),
+          ); // Rate limit -> server failure class OK
         default:
           // Treat all 5xx (including 522) as server failures
           if (statusCode != null && statusCode >= 500) {
@@ -202,11 +212,15 @@ Future<Either<Failure, T>> handleApi<T>(Future<T> Function() call) async {
     }
 
     // No response (server didn’t respond / connection issue)
-    return const Left(NetworkFailure(
-        ['Unable to reach the server. Please try again later.']));
+    return const Left(
+      NetworkFailure(['Unable to reach the server. Please try again later.']),
+    );
   } catch (e, stack) {
-    log('[API ERROR] Unknown Exception: $e',
-        name: 'handleApi', stackTrace: stack);
+    log(
+      '[API ERROR] Unknown Exception: $e',
+      name: 'handleApi',
+      stackTrace: stack,
+    );
     return Left(UnknownFailure([sanitizeErrorMessage(e.toString())]));
   }
 }
@@ -238,23 +252,3 @@ bool _isHtmlResponse(Response? resp) {
   }
   return false;
 }
-
-/// Sanitize raw error message: strip HTML tags, collapse whitespace, truncate long messages
-// String sanitizeErrorMessage(dynamic rawMessage) {
-//   if (rawMessage == null) return 'An unexpected error occurred';
-
-//   String message = rawMessage.toString();
-
-//   // Strip HTML tags
-//   message = message.replaceAll(RegExp(r'<[^>]*>'), ' ').trim();
-
-//   // Collapse whitespace
-//   message = message.replaceAll(RegExp(r'\s+'), ' ').trim();
-
-//   // Limit length to avoid giant snackbars
-//   if (message.length > 200) {
-//     message = message.substring(0, 200) + '...';
-//   }
-
-//   return message.isEmpty ? 'An unexpected error occurred' : message;
-// }

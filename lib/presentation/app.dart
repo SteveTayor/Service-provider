@@ -55,9 +55,9 @@ class _AppState extends ConsumerState<App> {
     unawaited(_checkAppVersion());
   }
 
-// Future<void> _initializeNotifications() async {
-//   await NotificationService().initialize();
-// }
+  // Future<void> _initializeNotifications() async {
+  //   await NotificationService().initialize();
+  // }
 
   Future<void> _checkAppVersion() async {
     unawaited(() async {
@@ -102,7 +102,6 @@ class _AppState extends ConsumerState<App> {
             darkTheme: AppTheme.darkTheme,
 
             // themeMode: themeNotifier.flutterThemeMode,
-
             restorationScopeId: 'app',
             debugShowCheckedModeBanner: false,
             locale: const Locale('en', 'NG'),
@@ -118,17 +117,32 @@ class _AppState extends ConsumerState<App> {
             scaffoldMessengerKey: scaffoldMessengerKey,
 
             // ---
-            builder: (context, child) {
-              // final connectivityAsync = ref.watch(connectivityProvider);
+            // builder: (context, child) {
+            //   // final connectivityAsync = ref.watch(connectivityProvider);
 
+            //   return connectivityProv.when(
+            //     data: (status) {
+            //       final isOffline = status == ConnectivityResult.none;
+            //       if (isOffline) return const NoInternetWidget();
+            //       return InactivityWrapper(child: child!);
+            //     },
+            //     loading: () => const SizedBox(), // or Splash/loading screen
+            //     error: (_, __) => const NoInternetWidget(),
+            //   );
+            // },
+            builder: (context, child) {
               return connectivityProv.when(
                 data: (status) {
                   final isOffline = status == ConnectivityResult.none;
-                  if (isOffline) return const NoInternetWidget();
-                  return InactivityWrapper(child: child!);
+                  return Stack(
+                    children: [
+                      if (child != null) InactivityWrapper(child: child),
+                      if (isOffline) const NoInternetWidget(),
+                    ],
+                  );
                 },
-                loading: () => const SizedBox(), // or Splash/loading screen
-                error: (_, __) => const NoInternetWidget(),
+                loading: () => child ?? const SizedBox(),
+                error: (_, __) => child ?? const SizedBox(),
               );
             },
           ),

@@ -282,7 +282,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
         // if (data.data?.pin == null && context.mounted) {
         //   context.go(RouteConstants.pinScreen);
         // }
-        if (data.data?.pin == null && context.mounted) {
+        if (data.data?.hasPin != true && context.mounted) {
           context.showBottomSheet(
             child: const PinSheet(),
             isDismissible: false,
