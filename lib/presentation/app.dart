@@ -9,11 +9,8 @@ import 'package:bundlegram/core/utils/themes.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/data/datasources/local/version_manager.dart';
 import 'package:bundlegram/presentation/no_internet.dart';
-import 'package:bundlegram/services/notification_services/notification_services.dart';
 import 'package:bundlegram/services/route_memory_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-// import 'package:bundlegram/presentation/routes/app_router.dart';
-// import 'package:bundlegram/presentation/features/onboarding/screens/splash_screen.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -23,8 +20,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-// class App extends ConsumerWidget {
-//   const App({super.key});
 class App extends ConsumerStatefulWidget {
   const App({super.key});
 
@@ -51,26 +46,20 @@ class _AppState extends ConsumerState<App> {
   }
 
   Future<void> _initializeDeferredServices() async {
-    unawaited(NotificationService().initialize());
     unawaited(_checkAppVersion());
   }
 
-  // Future<void> _initializeNotifications() async {
-  //   await NotificationService().initialize();
-  // }
-
   Future<void> _checkAppVersion() async {
-    unawaited(() async {
-      try {
-        const storage = FlutterSecureStorage();
-        final secureStorage = SecureStorageHelper(storage);
-        final versionManager = VersionManager(secureStorage);
+    try {
+      const storage = FlutterSecureStorage();
+      final secureStorage = SecureStorageHelper(storage);
+      final versionManager = VersionManager(secureStorage);
 
-        await versionManager.checkAndHandleAppUpdate();
-      } catch (e, st) {
-        debugPrint('Version check failed: $e\n$st');
-      }
-    }());
+      // Runs after the first frame (post-frame callback),
+      await versionManager.checkAndHandleAppUpdate();
+    } catch (e, st) {
+      debugPrint('Version check failed: $e\n$st');
+    }
   }
 
   @override
@@ -100,49 +89,34 @@ class _AppState extends ConsumerState<App> {
             themeMode: ThemeMode.system,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-
-            // themeMode: themeNotifier.flutterThemeMode,
             restorationScopeId: 'app',
             debugShowCheckedModeBanner: false,
             locale: const Locale('en', 'NG'),
-            // builder: DevicePreview.appBuilder,
-            // locale: DevicePreview.locale(context),
             supportedLocales: const [Locale('en', 'NG')],
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            // ---------- ----------
             scaffoldMessengerKey: scaffoldMessengerKey,
-
-            // ---
-            // builder: (context, child) {
-            //   // final connectivityAsync = ref.watch(connectivityProvider);
-
-            //   return connectivityProv.when(
-            //     data: (status) {
-            //       final isOffline = status == ConnectivityResult.none;
-            //       if (isOffline) return const NoInternetWidget();
-            //       return InactivityWrapper(child: child!);
-            //     },
-            //     loading: () => const SizedBox(), // or Splash/loading screen
-            //     error: (_, __) => const NoInternetWidget(),
-            //   );
-            // },
             builder: (context, child) {
+              // FIX: previously `connectivityProv.when(...)` returned
+              // either NoInternetWidget() OR InactivityWrapper(child) —
+              // mutually exclusive.
+              if (child == null) return const SizedBox();
+
               return connectivityProv.when(
                 data: (status) {
                   final isOffline = status == ConnectivityResult.none;
                   return Stack(
                     children: [
-                      if (child != null) InactivityWrapper(child: child),
+                      InactivityWrapper(child: child),
                       if (isOffline) const NoInternetWidget(),
                     ],
                   );
                 },
-                loading: () => child ?? const SizedBox(),
-                error: (_, __) => child ?? const SizedBox(),
+                loading: () => child,
+                error: (_, __) => child,
               );
             },
           ),

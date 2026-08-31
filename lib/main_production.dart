@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:bundlegram/bootstrap.dart';
 import 'package:bundlegram/core/utils/colors.dart';
-import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
-import 'package:bundlegram/data/datasources/local/version_manager.dart';
 import 'package:bundlegram/firebase_options.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/services/notification_services/notification_services.dart';
@@ -15,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 /// ------------------------------------------------------------
@@ -23,10 +20,7 @@ import 'package:overlay_support/overlay_support.dart';
 /// ------------------------------------------------------------
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // This callback runs in its own background isolate — Firebase and the
-  // notification channels created in the foreground isolate are NOT
-  // automatically available here, so both must be (re)initialized before
-  // displayPushNotification can actually post anything.
+  // This callback runs in its own background isolate
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await NotificationService().initialize();
 
@@ -56,9 +50,6 @@ Future<void> main() async {
     await NotificationService().initialize();
     await _loadEnv();
     await _configureSystemUI();
-
-    // Genuinely non-critical / explicitly designed not to block boot.
-    unawaited(_checkAppVersion());
 
     await bootstrap(
       () => ProviderScope(
@@ -106,22 +97,8 @@ Future<void> _initializeFirebase() async {
     );
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   } catch (e, st) {
-    // Most commonly a "duplicate app" error on hot restart, or a
-    // misconfigured platform Firebase file. Either way this must not take
-    // the whole app down before runZonedGuarded even gets a chance.
+    // Most commonly a "duplicate app" error on hot restart,
     debugPrint('Firebase initialize error: $e\n$st');
-  }
-}
-
-Future<void> _checkAppVersion() async {
-  try {
-    const storage = FlutterSecureStorage();
-    final secureStorage = SecureStorageHelper(storage);
-    final versionManager = VersionManager(secureStorage);
-    await versionManager.checkAndHandleAppUpdate();
-  } catch (e, st) {
-    debugPrint('Version check failed: $e\n$st');
-    // Non-fatal — never blocks app boot.
   }
 }
 
@@ -161,8 +138,6 @@ void _handleGlobalError(Object error, StackTrace? stack) {
   if (stack != null) debugPrintStack(stackTrace: stack);
 
   // TODO: send to a crash-reporting backend (e.g. Firebase Crashlytics)
-  // once that dependency is added to pubspec.yaml — currently this is
-  // console-only and nothing is captured in release builds.
 
   final navContext = navigatorKey.currentContext;
   if (navContext != null) {
