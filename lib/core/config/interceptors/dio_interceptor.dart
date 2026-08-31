@@ -7,11 +7,12 @@ import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/env.dart';
 import 'package:bundlegram/presentation/app.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bundlegram/data/datasources/remote/endpoints.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+// import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final secureStorage = ref.read(secureStorageHelperProvider);
@@ -28,9 +29,6 @@ final dioProvider = Provider<Dio>((ref) {
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) async {
-        // static AccessToken from env
-
-        // Authorization token if user is authenticated
         final userToken = await secureStorage.getAuthToken();
         if (userToken != null && userToken.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $userToken';
@@ -48,10 +46,15 @@ final dioProvider = Provider<Dio>((ref) {
         return handler.next(response);
       },
       onError: (error, handler) async {
-        print('[DIO ERROR]');
-        print('URI: ${error.requestOptions.uri}');
-        print('Error: ${error.message}');
-        print('Response: ${error.response?.data}');
+        // FIX: was ungated `print()` — dumping request/response data
+        // (including auth headers and any sensitive payload) to the
+        // system log in release builds too, not just during development.
+        if (kDebugMode) {
+          debugPrint('[DIO ERROR]');
+          debugPrint('URI: ${error.requestOptions.uri}');
+          debugPrint('Error: ${error.message}');
+          debugPrint('Response: ${error.response?.data}');
+        }
 
         final resData = error.response?.data;
         final context = navigatorKey.currentContext;
@@ -59,38 +62,27 @@ final dioProvider = Provider<Dio>((ref) {
         if (error.response?.statusCode == 401 &&
             (resData is Map &&
                 (resData['status']?.toString().toLowerCase() == 'logout' ||
-                    resData['message']
-                            ?.toString()
-                            .toLowerCase()
-                            .contains('expired') ==
+                    resData['message']?.toString().toLowerCase().contains(
+                          'expired',
+                        ) ==
                         true))) {
-          // Clear local storage
           await secureStorage.deleteAuthToken();
 
-          // if (context != null) {
-          //   final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
-
-          //   if (!currentRoute.contains(RouteConstants.lockScreen)) {
-          //     //Clear token
-          //     await secureStorage.deleteAuthToken();
-          //     // Show snackbar
-          //     context.showSuccessSnackBar(
-          //       'Session expired. Please log in again.',
-          //     );
-
-          //     // Navigate to lockscreen
-          //     unawaited(Future.microtask(() {
-          //       context.go(RouteConstants.lockScreen);
-          //     }));
-          //   }
-          // }
           if (context != null) {
-            unawaited(Future.microtask(() {
-              context.showSuccessSnackBar(
-                'Session expired. Please log in again.',
+            // FIX: restored the "already on this route" guard
+            final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
+
+            if (!currentRoute.contains(RouteConstants.lockScreen)) {
+              unawaited(
+                Future.microtask(() {
+                  // FIX: session expiry is not a success.
+                  context.showErrorSnackBar(
+                    'Session expired. Please log in again.',
+                  );
+                  context.go(RouteConstants.lockScreen);
+                }),
               );
-              context.go(RouteConstants.lockScreen);
-            }));
+            }
           }
         }
 
@@ -98,40 +90,30 @@ final dioProvider = Provider<Dio>((ref) {
         if (error.response?.statusCode == 403 ||
             (resData is Map &&
                 (resData['status']?.toString().toLowerCase() == 'banned' ||
-                    resData['message']
-                            ?.toString()
-                            .toLowerCase()
-                            .contains('banned') ==
+                    resData['message']?.toString().toLowerCase().contains(
+                          'banned',
+                        ) ==
                         true ||
-                    resData['message']
-                            ?.toString()
-                            .toLowerCase()
-                            .contains('suspended') ==
+                    resData['message']?.toString().toLowerCase().contains(
+                          'suspended',
+                        ) ==
                         true))) {
           await secureStorage.deleteAuthToken();
 
-          final context = navigatorKey.currentContext;
-          // if (context != null) {
-          //   final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
-
-          //   if (!currentRoute.contains(RouteConstants.login)) {
-          //     context.showSuccessSnackBar(
-          //       'Your account has been banned. Contact support.',
-          //     );
-          //     unawaited(
-          //       Future.microtask(() {
-          //         context.go(RouteConstants.login);
-          //       }),
-          //     );
-          //   }
-          // }
           if (context != null) {
-            unawaited(Future.microtask(() {
-              context.showSuccessSnackBar(
-                'Your account has been banned. Contact support.',
+            final currentRoute = ModalRoute.of(context)?.settings.name ?? '';
+
+            if (!currentRoute.contains(RouteConstants.login)) {
+              unawaited(
+                Future.microtask(() {
+                  // FIX: being banned/suspended is not a success either.
+                  context.showErrorSnackBar(
+                    'Your account has been banned. Contact support.',
+                  );
+                  context.go(RouteConstants.login);
+                }),
               );
-              context.go(RouteConstants.login);
-            }));
+            }
           }
         }
 
@@ -140,19 +122,18 @@ final dioProvider = Provider<Dio>((ref) {
     ),
   );
 
-  dio.interceptors.add(
-    LogInterceptor(
-      request: true,
-      requestBody: true,
-      responseHeader: true,
-      responseBody: true,
-      error: true,
-    ),
-  );
-
-  // dio.interceptors.add(
-  //   PrettyDioLogger(requestBody: true),
-  // );
+  // FIX: LogInterceptor logs full request/response bodies
+  if (kDebugMode) {
+    dio.interceptors.add(
+      LogInterceptor(
+        request: true,
+        requestBody: true,
+        responseHeader: true,
+        responseBody: true,
+        error: true,
+      ),
+    );
+  }
 
   return dio;
 });
