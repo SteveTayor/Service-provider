@@ -13,56 +13,11 @@ final helpSupportProvider = ChangeNotifierProvider<HelpSupportProvider>((ref) {
 });
 
 class HelpSupportProvider extends ChangeNotifier {
-  // Future<void> copyToClipboard(BuildContext context, String text) async {
-  //   await Clipboard.setData(ClipboardData(text: text));
-  //   context.showSuccessSnackBar('Copied to clipboard');
-  // }
 
-  // Future<void> launchEmail(BuildContext context, String email) async {
-  //   final uri = Uri(
-  //     scheme: 'mailto',
-  //     path: email,
-  //     queryParameters: {
-  //       'subject': 'CustomerSupport-Request',
-  //     },
-  //   );
-
-  //   // if (await canLaunchUrl(uri)) {
-  //   //   await launchUrl(uri, mode: LaunchMode.externalApplication);
-  //   // } else {
-  //   //   context.showErrorSnackBar('Could not open email app for $uri');
-  //   // }
-  //   try {
-  //     await launchUrl(uri, mode: LaunchMode.externalApplication);
-  //   } catch (_) {
-  //     context.showErrorSnackBar('Could not open email app');
-  //   }
-  // }
-
-  // Future<void> launchPhoneCall(BuildContext context, String phoneNumber) async {
-  //   final uri = Uri(
-  //     scheme: 'tel',
-  //     path: phoneNumber,
-  //   );
-
-  //   // if (await canLaunchUrl(uri)) {
-  //   //   await launchUrl(uri, mode: LaunchMode.externalApplication);
-  //   // } else {
-  //   //   context
-  //   //       .showErrorSnackBar('Could not initiate phone call to $phoneNumber');
-  //   // }
-  //   try {
-  //     await launchUrl(uri, mode: LaunchMode.externalApplication);
-  //   } catch (_) {
-  //     context.showErrorSnackBar('Could not initiate phone call');
-  //   }
-  // }
-
-  // Future<void> launchSocial(String url) async {
-  //   final uri = Uri.parse(url);
-  //   await _launchUri(uri, "Could not open $url");
-  // }
-  void copyToClipboard(BuildContext context, String text) {
+static const String whatsappChannelUrl =
+      'https://whatsapp.com/channel/0029Vb8s4v80Qeau72XYo23q';
+ 
+   void copyToClipboard(BuildContext context, String text) {
     FlutterClipboard.copy(text)
         .then((value) => context.showSuccessSnackBar('Copied'));
     // await Clipboard.setData(ClipboardData(text: text));
@@ -91,6 +46,10 @@ class HelpSupportProvider extends ChangeNotifier {
     final uri = Uri.parse(url);
     await _launchUri(uri, "Could not open $url");
   }
+
+   /// Opens the WhatsApp channel 
+  Future<void> openWhatsappChannel() => launchSocial(whatsappChannelUrl);
+ 
 
   // Convenience wrappers for readability
   Future<void> openTwitter() =>

@@ -14,6 +14,7 @@ import 'package:bundlegram/presentation/app.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/platform_screen_provider.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
+import 'package:bundlegram/presentation/features/account%20setup/notifier/help_and_support_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/internet-services/internet_service_screen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/transaction_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
@@ -36,31 +37,32 @@ class PlatFormData {
     Assets.svgs.bundlegramagent,
   ];
   static List<VoidCallback> advertFunction(BuildContext context) => [
-        () => context.push(RouteConstants.accountSetup),
-        () => context.push(RouteConstants.becomeagent),
-      ];
+    () => context.push(RouteConstants.accountSetup),
+    () => context.push(RouteConstants.becomeagent),
+  ];
   static final List<BillWidgetItem> billWidgets = [
     BillWidgetItem(
-        title: 'Betting',
-        builder: (context) {
-          return AppListTile(
-            assetPath: Assets.svgs.betting,
-            onPressed: () {
-              context.push(
-                RouteConstants.platformProduct,
-                extra: PlatformProductType.betting,
-              );
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const PlatformproductScreen(
-              //         serviceType: PlatformProductType.betting),
-              //   ),
-              // );
-            },
-            title: 'Betting',
-          );
-        }),
+      title: 'Betting',
+      builder: (context) {
+        return AppListTile(
+          assetPath: Assets.svgs.betting,
+          onPressed: () {
+            context.push(
+              RouteConstants.platformProduct,
+              extra: PlatformProductType.betting,
+            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const PlatformproductScreen(
+            //         serviceType: PlatformProductType.betting),
+            //   ),
+            // );
+          },
+          title: 'Betting',
+        );
+      },
+    ),
     BillWidgetItem(
       title: 'Electricity',
       builder: (context) {
@@ -94,8 +96,10 @@ class PlatFormData {
             //   ..pop()
             //   ..showCustomSnackBar("coming soon");
 
-            context.push(RouteConstants.platformProduct,
-                extra: PlatformProductType.ePinVoucher);
+            context.push(
+              RouteConstants.platformProduct,
+              extra: PlatformProductType.ePinVoucher,
+            );
             // Navigator.push(
             //   context,
             //   MaterialPageRoute(
@@ -109,73 +113,80 @@ class PlatFormData {
       },
     ),
     BillWidgetItem(
-        title: 'Education',
-        builder: (context) {
-          return AppListTile(
-            assetPath: Assets.svgs.educationSvg,
-            title: 'Education',
-            onPressed: () {
-              // context
-              //   ..pop()
-              //   ..showCustomSnackBar("coming soon");
+      title: 'Education',
+      builder: (context) {
+        return AppListTile(
+          assetPath: Assets.svgs.educationSvg,
+          title: 'Education',
+          onPressed: () {
+            // context
+            //   ..pop()
+            //   ..showCustomSnackBar("coming soon");
 
-              context.push(RouteConstants.platformProduct,
-                  extra: PlatformProductType.education);
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const PlatformproductScreen(
-              //         serviceType: PlatformProductType.education),
-              //   ),
-              // );
-            },
-          );
-        }),
+            context.push(
+              RouteConstants.platformProduct,
+              extra: PlatformProductType.education,
+            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const PlatformproductScreen(
+            //         serviceType: PlatformProductType.education),
+            //   ),
+            // );
+          },
+        );
+      },
+    ),
     BillWidgetItem(
-        title: 'Cable Tv',
-        builder: (context) {
-          return AppListTile(
-            onPressed: () {
-              context.push(RouteConstants.platformProduct,
-                  extra: PlatformProductType.cableTv);
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const PlatformproductScreen(
-              //         serviceType: PlatformProductType.cableTv),
-              //   ),
-              // );
-            },
-            assetPath: Assets.svgs.cableTv,
-            title: 'Cable Tv',
-          );
-        }),
+      title: 'Cable Tv',
+      builder: (context) {
+        return AppListTile(
+          onPressed: () {
+            context.push(
+              RouteConstants.platformProduct,
+              extra: PlatformProductType.cableTv,
+            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const PlatformproductScreen(
+            //         serviceType: PlatformProductType.cableTv),
+            //   ),
+            // );
+          },
+          assetPath: Assets.svgs.cableTv,
+          title: 'Cable Tv',
+        );
+      },
+    ),
     BillWidgetItem(
-        title: 'Internet Provider',
-        builder: (context) {
-          return AppListTile(
-            onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const PlatformproductScreen(
-              //         serviceType: PlatformProductType.internetServices),
-              //   ),
-              // );
-              // context
-              //   ..pop()
-              //   ..showCustomSnackBar("coming soon");
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (ctx) => InternetServiceProviderScreen(),
-                ),
-              );
-            },
-            assetPath: Assets.svgs.internetservice,
-            title: 'Internet Provider',
-          );
-        }),
+      title: 'Internet Provider',
+      builder: (context) {
+        return AppListTile(
+          onPressed: () {
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const PlatformproductScreen(
+            //         serviceType: PlatformProductType.internetServices),
+            //   ),
+            // );
+            // context
+            //   ..pop()
+            //   ..showCustomSnackBar("coming soon");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) => InternetServiceProviderScreen(),
+              ),
+            );
+          },
+          assetPath: Assets.svgs.internetservice,
+          title: 'Internet Provider',
+        );
+      },
+    ),
   ];
 
   static final List<Widget> serviceProviderWidget = [
@@ -239,80 +250,80 @@ class PlatFormData {
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.ibadanElectricity,
-      // imagePath: Assets.images.ibedc.path,
 
+      // imagePath: Assets.images.ibedc.path,
       title: 'Ibadan ',
       subtitle: 'IBEDC',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.enuguElectricity,
-      // imagePath: Assets.images.enuguPhcn.path,
 
+      // imagePath: Assets.images.enuguPhcn.path,
       title: 'Enugu ',
       subtitle: 'EEDC',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.ikejaElectricity,
-      // imagePath: Assets.images.ikejaPhcn.path,
 
+      // imagePath: Assets.images.ikejaPhcn.path,
       title: 'Ikeja',
       subtitle: 'Ikeja Electricity',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.kadunaElectricity,
-      // imagePath: Assets.images.kadunaPhcn.path,
 
+      // imagePath: Assets.images.kadunaPhcn.path,
       title: 'Kaduna',
       subtitle: 'KEDC',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.beninElectricityIcon,
-      // imagePath: Assets.images.phcnElectricity.path,
 
+      // imagePath: Assets.images.phcnElectricity.path,
       title: 'Benin ',
       subtitle: 'BEDC',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.josElectricityIcon,
-      // imagePath: Assets.images.ekedc.path,
 
+      // imagePath: Assets.images.ekedc.path,
       title: 'Jos',
       subtitle: 'Jos Electricity',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.yolaElectricityIcon,
-      // imagePath: Assets.images.ekedc.path,
 
+      // imagePath: Assets.images.ekedc.path,
       title: 'Yola',
       subtitle: 'YEDC',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.portharcourtElectricity,
-      // imagePath: Assets.images.ekedc.path,
 
+      // imagePath: Assets.images.ekedc.path,
       title: 'Portharcourt',
       subtitle: 'PHED',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.abujaElectricity,
-      // imagePath: Assets.images.ekedc.path,
 
+      // imagePath: Assets.images.ekedc.path,
       title: 'Abuja',
       subtitle: 'AEDC',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.kanoElectricity,
-      // imagePath: Assets.images.ekedc.path,
 
+      // imagePath: Assets.images.ekedc.path,
       title: 'Kano',
       subtitle: 'KEDCO',
     ),
@@ -341,24 +352,24 @@ class PlatFormData {
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.dstv,
-      // imagePath: Assets.images.dstv.path,
 
+      // imagePath: Assets.images.dstv.path,
       title: 'DSTV',
       subtitle: 'DSTV',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.startimes,
-      // imagePath: Assets.images.startimes.path,
 
+      // imagePath: Assets.images.startimes.path,
       title: 'Startimes',
       subtitle: 'Startimes',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.gotv,
-      // imagePath: Assets.images.gotv.path,
 
+      // imagePath: Assets.images.gotv.path,
       title: 'GOTV',
       subtitle: 'GoTV',
     ),
@@ -368,88 +379,88 @@ class PlatFormData {
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.bet9ja,
-      // imagePath: Assets.images.bet9ja.path,
 
+      // imagePath: Assets.images.bet9ja.path,
       title: 'Bet9ja',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.naijabet,
-      // imagePath: Assets.images.bet9ja.path,
 
+      // imagePath: Assets.images.bet9ja.path,
       title: 'NaijaBet',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.livescorebet,
-      // imagePath: Assets.images.bet9ja.path,
 
+      // imagePath: Assets.images.bet9ja.path,
       title: 'LivescoreBet',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.betking,
-      // imagePath: Assets.images.bet9ja.path,
 
+      // imagePath: Assets.images.bet9ja.path,
       title: 'Betking',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.a1xbet,
-      // imagePath: Assets.images.a1xbet.path,
 
+      // imagePath: Assets.images.a1xbet.path,
       title: '1xbet',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.bangbet,
-      // imagePath: Assets.images.bangbet.path,
 
+      // imagePath: Assets.images.bangbet.path,
       title: 'Bangbet',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.nairabet,
-      // imagePath: Assets.images.nairabetLogo.path,
 
+      // imagePath: Assets.images.nairabetLogo.path,
       title: 'NairaBet',
       subtitle: 'Make Deposit',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.betway,
-      // imagePath: Assets.images.betway.path,
 
+      // imagePath: Assets.images.betway.path,
       title: 'Betway',
       subtitle: 'Fund your player account',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.supabet,
-      // imagePath: Assets.images.superbet.path,
 
+      // imagePath: Assets.images.superbet.path,
       title: 'SupaBet',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.merrybet,
-      // imagePath: Assets.images.merrybet.path,
 
+      // imagePath: Assets.images.merrybet.path,
       title: 'MerryBet',
       subtitle: 'Fund wallet',
     ),
     AppListTile(
       showSubtitle: true,
       assetPath: Assets.svgs.betland,
-      // imagePath: Assets.images.betlandLogo.path,
 
+      // imagePath: Assets.images.betlandLogo.path,
       title: 'BetLand',
       subtitle: 'Fund Wallet',
     ),
@@ -478,8 +489,10 @@ class PlatFormData {
             final rootContext = navigatorKey.currentContext;
             if (rootContext == null) return;
 
-            final container =
-                ProviderScope.containerOf(rootContext, listen: false);
+            final container = ProviderScope.containerOf(
+              rootContext,
+              listen: false,
+            );
 
             container
                 .read(platformProvider)
@@ -512,8 +525,10 @@ class PlatFormData {
             final rootContext = navigatorKey.currentContext;
             if (rootContext == null) return;
 
-            final container =
-                ProviderScope.containerOf(rootContext, listen: false);
+            final container = ProviderScope.containerOf(
+              rootContext,
+              listen: false,
+            );
 
             container
                 .read(platformProvider)
@@ -530,9 +545,7 @@ class PlatFormData {
           onPressed: () {
             context
               ..pop()
-              ..showBottomSheet(
-                child: const PlatformbillsWidget(),
-              );
+              ..showBottomSheet(child: const PlatformbillsWidget());
           },
           assetPath: Assets.svgs.paybills,
           title: 'Pay bills',
@@ -542,17 +555,18 @@ class PlatFormData {
     Builder(
       builder: (context) {
         return AppListTile(
-            onPressed: () {
-              context.pop();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const TransactionScreen(),
-                ),
-              );
-            },
-            assetPath: Assets.svgs.transaction,
-            title: 'Transactions');
+          onPressed: () {
+            context.pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const TransactionScreen(),
+              ),
+            );
+          },
+          assetPath: Assets.svgs.transaction,
+          title: 'Transactions',
+        );
       },
     ),
     Builder(
@@ -568,6 +582,26 @@ class PlatFormData {
         );
       },
     ),
+    // NEW: WhatsApp Channel
+    Builder(
+      builder: (context) {
+        return AppListTile(
+          onPressed: () {
+            context.pop();
+            final rootContext = navigatorKey.currentContext;
+            if (rootContext == null) return;
+            final container = ProviderScope.containerOf(
+              rootContext,
+              listen: false,
+            );
+            container.read(helpSupportProvider).openWhatsappChannel();
+          },
+          assetPath: Assets.svgs.whatsappColorIcon,
+          title: 'WhatsApp Channel',
+        );
+      },
+    ),
+
     Builder(
       builder: (context) {
         return AppListTile(

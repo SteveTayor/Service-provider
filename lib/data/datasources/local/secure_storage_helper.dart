@@ -25,7 +25,9 @@ class SecureStorageHelper {
   static const _hasSeenPromoKey = 'has_seen_promo_modal';
   static const _lastVersionNameKey = 'last_version_name';
   static const _themeModeKey = 'app_theme_mode';
-  // ─── Migration invalidation flag ──────────────────────────────────────────
+
+  static const _hasSeenWhatsappChannelKey = 'has_seen_whatsapp_channel_modal';
+
   static const _migrationInvalidationKey = 'migration_pending_invalidation';
 
   SecureStorageHelper(this._storage);
@@ -210,6 +212,18 @@ class SecureStorageHelper {
 
   Future<void> setHasSeenPromoModal(bool value) async {
     await _storage.write(key: _hasSeenPromoKey, value: value.toString());
+  }
+
+  Future<bool> hasSeenWhatsappChannelModal() async {
+    final value = await _storage.read(key: _hasSeenWhatsappChannelKey);
+    return value == 'true';
+  }
+
+  Future<void> setHasSeenWhatsappChannelModal(bool value) async {
+    await _storage.write(
+      key: _hasSeenWhatsappChannelKey,
+      value: value.toString(),
+    );
   }
 
   Future<void> storeBiometricCredentials({

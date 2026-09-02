@@ -255,6 +255,8 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                   // ),
                 ],
               ),
+
+              25.verticalSpace,
             ],
           ).withContainer(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),

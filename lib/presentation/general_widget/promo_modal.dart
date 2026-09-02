@@ -160,9 +160,11 @@ class PromoModal extends StatelessWidget {
   }
 }
 
-// Helper function to show the modal
-void showPromoModal(BuildContext context) {
-  showDialog(
+
+/// Helper function to show the modal. Returns the dialog's Future so
+/// callers can `await` its dismissal 
+Future<void> showPromoModal(BuildContext context) {
+  return showDialog(
     context: context,
     barrierDismissible: false,
     builder: (context) => const PromoModal(),

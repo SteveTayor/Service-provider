@@ -2,6 +2,7 @@ import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platform_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/account_screen.dart';
+import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/whatsapp_chanel_modal.dart';
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/features/dashboard/screens/widget/dashboardd_update_checker.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/transaction_screen.dart';
@@ -124,35 +125,59 @@ class _DashboardState extends ConsumerState<Dashboard> {
     Future.microtask(() {
       ref.read(dashboardProvider.notifier).initialize();
     });
-    _checkAndShowPromo();
+    _checkAndShowOnboardingModals();
   }
 
-  Future<void> _checkAndShowPromo() async {
-    final storage = ref.read(secureStorageHelperProvider);
-    final hasSeenPromo = await storage.hasSeenPromoModal();
+  // Future<void> _checkAndShowPromo() async {
+  //   final storage = ref.read(secureStorageHelperProvider);
+  //   final hasSeenPromo = await storage.hasSeenPromoModal();
 
-    if (!(hasSeenPromo ?? false) && mounted) {
+  //   if (!(hasSeenPromo ?? false) && mounted) {
+  //     await Future.delayed(const Duration(milliseconds: 800));
+  //     if (mounted) {
+  //       showPromoModal(context);
+  //       await storage.setHasSeenPromoModal(true);
+  //     }
+  //   }
+  // }
+
+  /// Runs the promo modal and WhatsApp-channel modal in sequence rather
+  /// than independently
+
+  Future<void> _checkAndShowOnboardingModals() async {
+    final storage = ref.read(secureStorageHelperProvider);
+
+    final hasSeenPromo = await storage.hasSeenPromoModal();
+    if (!hasSeenPromo && mounted) {
       await Future.delayed(const Duration(milliseconds: 800));
       if (mounted) {
-        showPromoModal(context);
+        await showPromoModal(context);
         await storage.setHasSeenPromoModal(true);
+      }
+    }
+
+    final hasSeenWhatsappChannel = await storage.hasSeenWhatsappChannelModal();
+    if (!hasSeenWhatsappChannel && mounted) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (mounted) {
+        await showWhatsappChannelModal(context);
+        await storage.setHasSeenWhatsappChannelModal(true);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentIndex =
-        ref.watch(dashboardProvider.select((p) => p.currentIndex));
+    final currentIndex = ref.watch(
+      dashboardProvider.select((p) => p.currentIndex),
+    );
 
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) {
         if (didPop) return;
         if (currentIndex != 0) {
-          ref.read(dashboardProvider.notifier).onDestinationSelected(
-                0,
-              );
+          ref.read(dashboardProvider.notifier).onDestinationSelected(0);
         }
       },
       child: Scaffold(

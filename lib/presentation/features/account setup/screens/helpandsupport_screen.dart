@@ -194,6 +194,8 @@ class HelpandsupportScreen extends ConsumerWidget {
                 ],
               ),
             ),
+
+
             // const SizedBox(height: 35),
             Container(
               padding: context.symmetricPadding(24.h, 8),
@@ -201,6 +203,33 @@ class HelpandsupportScreen extends ConsumerWidget {
               child: Text(
                 'Social Media Support',
                 // textAlign: TextAlign.center,
+                style: context.textTheme.bodyMedium,
+              ),
+            ),
+
+             // NEW: WhatsApp Channel
+            buildItemRow(
+              Assets.svgs.whatsappColorIcon,
+              'WhatsApp Channel',
+              'Follow our official WhatsApp channel for news, promos, and announcements.',
+              extraWidget: GestureDetector(
+                onTap: () => provider.openWhatsappChannel(),
+                child: Text(
+                  'Follow Channel',
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    height: 3,
+                    color: AppColors.primaryColor,
+                    decorationColor: AppColors.primaryColor,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              padding: context.symmetricPadding(24.h, 8),
+              margin: EdgeInsets.only(bottom: 24.h),
+              child: Text(
+                'Social Media Support',
                 style: context.textTheme.bodyMedium,
               ),
             ),
