@@ -97,7 +97,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //   }
 // }
 
-
 // class AddBasicInformationScreen extends ConsumerWidget {
 //   final UserAction userAction;
 //   const AddBasicInformationScreen({
@@ -119,6 +118,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //       );
 //     }
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+
 class AddBasicInformationScreen extends ConsumerStatefulWidget {
   final UserAction userAction;
   const AddBasicInformationScreen({
@@ -134,7 +134,7 @@ class AddBasicInformationScreen extends ConsumerStatefulWidget {
 class _AddBasicInformationScreenState
     extends ConsumerState<AddBasicInformationScreen> {
   bool _didInitialFetch = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -175,11 +175,17 @@ class _AddBasicInformationScreenState
         ? 'Add Basic Information'
         : 'Update Account Details';
 
-    final bvnLinked = profile.bvn?.toString().isNotEmpty ?? false;
+    final bool hasGender =
+        profile.gender?.toString().trim().isNotEmpty ?? false;
 
-    final hasGender = (profile.gender?.isNotEmpty ?? false) as bool;
-    final hasAddress = (profile.address?.isNotEmpty ?? false) as bool;
-    final hasDob = (profile.dob != null) as bool;
+    final bool hasAddress =
+        profile.address?.toString().trim().isNotEmpty ?? false;
+
+    final bool hasDob = profile.dob?.toString().trim().isNotEmpty ?? false;
+
+    final bool allBasicDetailsComplete = hasGender && hasAddress && hasDob;
+
+    final canUpdate = widget.userAction.isCreate || !allBasicDetailsComplete;
 
     // Form fields data for cleaner rendering
     final formFields = [
@@ -226,22 +232,20 @@ class _AddBasicInformationScreenState
         },
       ),
       AppDropdown(
-        title: provider.gender != "" ? provider.gender : "Gender",
+        title: provider.gender.isNotEmpty ? provider.gender : 'Gender',
         options: const ['Male', 'Female'],
         selected: provider.gender,
-        onChanged: notifier.setGender,
-        isFilled: widget.userAction.isCreate
-            ? false
-            : (bvnLinked ? hasGender : false) as bool,
+        onChanged: widget.userAction.isCreate || !hasGender
+            ? notifier.setGender
+            : null,
+        isFilled: hasGender,
       ),
       AppTextField(
         label: 'Address',
         controller: notifier.address,
         hintText: 'Enter Address',
-        isFilled: widget.userAction.isCreate
-            ? false
-            : (bvnLinked ? hasAddress : false) as bool,
-        readOnly: bvnLinked,
+        isFilled: hasAddress,
+        readOnly: !widget.userAction.isCreate && hasAddress,
         backgroundColor: AppColors.greyD0.withOpacity(0.3),
         validateFunction: notifier.validateNotEmpty,
       ),
@@ -249,11 +253,13 @@ class _AddBasicInformationScreenState
         controller: notifier.dob,
         title: '',
         hintText: 'DD/MM/YYYY',
-        isFilled:
-            widget.userAction.isCreate ? false : (bvnLinked ? hasDob : false),
-        readOnly: bvnLinked,
+        isFilled: hasDob,
+        readOnly: !widget.userAction.isCreate && hasDob,
+        onTap: !widget.userAction.isCreate && hasDob
+            ? null
+            : () => notifier.pickDob(context),
         validator: notifier.validateDate,
-        onTap: () => notifier.pickDob(context),
+        // onTap: () => notifier.pickDob(context),
       ),
     ];
 
@@ -273,14 +279,9 @@ class _AddBasicInformationScreenState
                 child: Opacity(
                   opacity: widget.userAction.isCreate ? 1 : 0.9,
                   child: BundlegramButton(
-                    isEnabled: provider.loading
-                        ? false
-                        : widget.userAction.isCreate ||
-                            (!hasGender || !hasAddress || !hasDob),
-                    text: widget.userAction.isCreate
-                        ? 'Submit'
-                        : 'Update',
-                    onPressed: provider.loading
+                    isEnabled: provider.loading ? false : canUpdate,
+                    text: widget.userAction.isCreate ? 'Submit' : 'Update',
+                    onPressed: provider.loading || !canUpdate
                         ? null
                         : () async {
                             await provider.submit(context);

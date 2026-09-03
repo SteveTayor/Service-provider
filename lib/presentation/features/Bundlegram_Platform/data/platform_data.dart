@@ -583,24 +583,24 @@ class PlatFormData {
       },
     ),
     // NEW: WhatsApp Channel
-    Builder(
-      builder: (context) {
-        return AppListTile(
-          onPressed: () {
-            context.pop();
-            final rootContext = navigatorKey.currentContext;
-            if (rootContext == null) return;
-            final container = ProviderScope.containerOf(
-              rootContext,
-              listen: false,
-            );
-            container.read(helpSupportProvider).openWhatsappChannel();
-          },
-          assetPath: Assets.svgs.whatsappColorIcon,
-          title: 'WhatsApp Channel',
-        );
-      },
-    ),
+    // Builder(
+    //   builder: (context) {
+    //     return AppListTile(
+    //       onPressed: () {
+    //         context.pop();
+    //         final rootContext = navigatorKey.currentContext;
+    //         if (rootContext == null) return;
+    //         final container = ProviderScope.containerOf(
+    //           rootContext,
+    //           listen: false,
+    //         );
+    //         container.read(helpSupportProvider).openWhatsappChannel();
+    //       },
+    //       assetPath: Assets.svgs.whatsappColorIcon,
+    //       title: 'WhatsApp Channel',
+    //     );
+    //   },
+    // ),
 
     Builder(
       builder: (context) {

@@ -35,7 +35,7 @@ class RecentTransactionsNotifier
 
   RecentTransactionsNotifier(this.ref)
       : super(RecentTransactionsState.initial().copyWith(isLoading: true)) {
-    // Listen for the global fetch completingâ€¦
+    // Listen for the global fetch completing\'¦
 //     ref.listen<AsyncValue<GetAllUserTransactionResponse?>>(
 //       globalProvider.select((s) => s.usersTransactions),
 //       (prev, next) {

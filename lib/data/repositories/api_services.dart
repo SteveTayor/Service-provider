@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:bundlegram/core/config/interceptors/dio_interceptor.dart';
 import 'package:bundlegram/core/config/interceptors/helper.dart';
 import 'package:bundlegram/core/error/failures.dart';
-import 'package:bundlegram/data/datasources/remote/endpoints.dart';
 import 'package:bundlegram/data/models/auth/auth_model.dart';
 import 'package:bundlegram/data/models/auth/forgot_password/change_password_respone.dart';
 import 'package:bundlegram/data/models/auth/forgot_password/change_pin_response.dart';
@@ -54,16 +53,12 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final apiServiceProvider = Provider<ApiService>(
-  (ref) {
-    var apiDefinition = ApiDefinition(ref.read(dioProvider));
-    return ApiService(apiDefinition);
-  },
-);
-String get _sterilizer => String.fromEnvironment(
-      "STERILIZER_TOKEN",
-      defaultValue: localSterilizer,
-    );
+final apiServiceProvider = Provider<ApiService>((ref) {
+  var apiDefinition = ApiDefinition(ref.read(dioProvider));
+  return ApiService(apiDefinition);
+});
+String get _sterilizer =>
+    String.fromEnvironment("STERILIZER_TOKEN", defaultValue: localSterilizer);
 
 class ApiService {
   final ApiDefinition _api;
@@ -89,7 +84,9 @@ class ApiService {
   }
 
   Future<Either<Failure, UsernameResponse>> addUsername(
-      String token, String username) {
+    String token,
+    String username,
+  ) {
     return handleApi(() {
       final req = AddUsernameRequest(username: username);
       return _api.addUsername('Bearer $token', _sterilizer, req);
@@ -124,9 +121,7 @@ class ApiService {
     });
   }
 
-  Future<Either<Failure, BaseResponse>> sendEmailOtp(
-    String token,
-  ) {
+  Future<Either<Failure, BaseResponse>> sendEmailOtp(String token) {
     return handleApi(() {
       return _api.resendEmailVerification('Bearer $token', _sterilizer);
     });
@@ -142,14 +137,19 @@ class ApiService {
   }
 
   Future<Either<Failure, BaseResponse>> verifyEmail(
-      String token, VerifyEmailRequest req) {
+    String token,
+    VerifyEmailRequest req,
+  ) {
     return handleApi(() {
       return _api.verifyEmail('Bearer $token', _sterilizer, req);
     });
   }
 
   Future<Either<Failure, NewPasswordResponse>> newPassword(
-      String email, String password, String passwordConfirm) {
+    String email,
+    String password,
+    String passwordConfirm,
+  ) {
     return handleApi(() {
       final req = NewPasswordRequest(
         email: email,
@@ -161,16 +161,24 @@ class ApiService {
   }
 
   Future<Either<Failure, ChangePasswordResponse>> changePassword(
-      String token, String oldPassword, String newPassword) {
+    String token,
+    String oldPassword,
+    String newPassword,
+  ) {
     return handleApi(() {
       final req = ChangePasswordRequest(
-          oldPassword: oldPassword, newPassword: newPassword);
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      );
       return _api.changePassword('Bearer $token', _sterilizer, req);
     });
   }
 
   Future<Either<Failure, ChangePinResponse>> changePin(
-      String token, String oldPin, String newPin) {
+    String token,
+    String oldPin,
+    String newPin,
+  ) {
     return handleApi(() {
       final req = ChangePinRequest(oldPin: oldPin, newPin: newPin);
       return _api.changePin('Bearer $token', _sterilizer, req);
@@ -178,7 +186,9 @@ class ApiService {
   }
 
   Future<Either<Failure, ResetPinResponse>> resetPin(
-      String token, String password) {
+    String token,
+    String password,
+  ) {
     return handleApi(() {
       final req = ResetPinRequest(password: password);
       return _api.resetPin('Bearer $token', _sterilizer, req);
@@ -186,17 +196,17 @@ class ApiService {
   }
 
   Future<Either<Failure, CreatePinResponse>> createPin(
-      String token, String pin, String pinConfirmation) {
+    String token,
+    String pin,
+    String pinConfirmation,
+  ) {
     return handleApi(() {
       final req = CreatePinRequest(pin: pin, pinConfirmation: pinConfirmation);
       return _api.createPin('Bearer $token', _sterilizer, req);
     });
   }
 
-  Future<Either<Failure, BaseResponse>> verifyPin(
-    String token,
-    String pin,
-  ) {
+  Future<Either<Failure, BaseResponse>> verifyPin(String token, String pin) {
     return handleApi(() {
       final req = VerifyPinRequest(pin: pin);
       return _api.verifyPin('Bearer $token', _sterilizer, req);
@@ -208,7 +218,8 @@ class ApiService {
     DashboardDataRequest req,
   ) {
     return handleApi(
-        () => _api.getDashboardData('Bearer $token', _sterilizer, req));
+      () => _api.getDashboardData('Bearer $token', _sterilizer, req),
+    );
   }
 
   Future<Either<Failure, GetAllUserBanksResponse>> getUserBanks(String token) {
@@ -216,150 +227,146 @@ class ApiService {
   }
 
   Future<Either<Failure, AddBankResponse>> addBank(
-      String token, AddBankRequest req) {
+    String token,
+    AddBankRequest req,
+  ) {
     return handleApi(() => _api.addBank('Bearer $token', _sterilizer, req));
   }
 
   Future<Either<Failure, FetchAccountNameResponse>> fetchAccountName(
-      String token, FetchAccountNameRequest req) {
+    String token,
+    FetchAccountNameRequest req,
+  ) {
     return handleApi(
-        () => _api.fetchAccountName('Bearer $token', _sterilizer, req));
+      () => _api.fetchAccountName('Bearer $token', _sterilizer, req),
+    );
   }
 
   Future<Either<Failure, BaseResponse>> closeAccount(
-      String token, DeleteAccountRequest req) {
+    String token,
+    DeleteAccountRequest req,
+  ) {
     return handleApi(
-        () => _api.deleteAccount('Bearer $token', _sterilizer, req));
+      () => _api.deleteAccount('Bearer $token', _sterilizer, req),
+    );
   }
 
   Future<Either<Failure, DeleteBankResponse>> deleteBank(
-      String token, int bankId) {
+    String token,
+    int bankId,
+  ) {
     return handleApi(
-        () => _api.deleteBank('Bearer $token', _sterilizer, bankId));
+      () => _api.deleteBank('Bearer $token', _sterilizer, bankId),
+    );
   }
 
   Future<Either<Failure, MakeBankDefaultResponse>> makeBankDefault(
-      String token, int bankId) {
+    String token,
+    int bankId,
+  ) {
     return handleApi(
-        () => _api.makeBankDefault('Bearer $token', _sterilizer, bankId));
+      () => _api.makeBankDefault('Bearer $token', _sterilizer, bankId),
+    );
   }
 
   Future<Either<Failure, LinkBvnResponse>> linkBvn(
-      String token, LinkBvnRequest req) {
+    String token,
+    LinkBvnRequest req,
+  ) {
     return handleApi(() => _api.linkBvn('Bearer $token', _sterilizer, req));
   }
 
   Future<Either<Failure, GetVirtualAccountsResponse>> getVirtualAccount(
-      String token) {
+    String token,
+  ) {
     return handleApi(
-        () => _api.getVirtualAccount('Bearer $token', _sterilizer));
+      () => _api.getVirtualAccount('Bearer $token', _sterilizer),
+    );
   }
 
   Future<Either<Failure, GetAllProductsResponse>> getProductByService(
-      String token, String serviceId) {
-    return handleApi(() =>
-        _api.getProductByService('Bearer $token', _sterilizer, serviceId));
+    String token,
+    String serviceId,
+  ) {
+    return handleApi(
+      () => _api.getProductByService('Bearer $token', _sterilizer, serviceId),
+    );
   }
 
   Future<Either<Failure, GetAllProductsResponse>> getProductByType(
-      String token, String type) {
+    String token,
+    String type,
+  ) {
     return handleApi(
-        () => _api.getProductByType('Bearer $token', _sterilizer, type));
+      () => _api.getProductByType('Bearer $token', _sterilizer, type),
+    );
   }
 
   Future<Either<Failure, GetAllSubProductsResponse>> getSubProduct(
-      String token, int productId) {
+    String token,
+    int productId,
+  ) {
     return handleApi(
-        () => _api.getSubProduct('Bearer $token', _sterilizer, productId));
+      () => _api.getSubProduct('Bearer $token', _sterilizer, productId),
+    );
   }
 
   Future<Either<Failure, GetAllSubProductsResponse>> getSubProductByCategory(
-      String token, int productId, String category) {
-    return handleApi(() => _api.getSubProductByCategory(
-        'Bearer $token', _sterilizer, productId, category));
+    String token,
+    int productId,
+    String category,
+  ) {
+    return handleApi(
+      () => _api.getSubProductByCategory(
+        'Bearer $token',
+        _sterilizer,
+        productId,
+        category,
+      ),
+    );
   }
 
   Future<Either<Failure, GetAllUserTransactionResponse>> getTransactionsByType(
-      String token, String type) {
+    String token,
+    String type,
+  ) {
     return handleApi(
-        () => _api.getTransactionsByType('Bearer $token', _sterilizer, type));
+      () => _api.getTransactionsByType('Bearer $token', _sterilizer, type),
+    );
   }
 
   Future<Either<Failure, GetAllUserTransactionResponse>> getAllTransactions(
-      String token) {
+    String token,
+  ) {
     return handleApi(
-        () => _api.getAllTransactions('Bearer $token', _sterilizer));
+      () => _api.getAllTransactions('Bearer $token', _sterilizer),
+    );
   }
 
   Future<Either<Failure, ValidateBillResponse>> validateBill(
-      String token, ValidateBillRequest req) {
+    String token,
+    ValidateBillRequest req,
+  ) {
     return handleApi(
-        () => _api.validateBill('Bearer $token', _sterilizer, req));
+      () => _api.validateBill('Bearer $token', _sterilizer, req),
+    );
   }
 
   Future<Either<Failure, BaseResponse>> initiateBillTransaction(
-      String token, InitiateTransactionRequest req) {
+    String token,
+    InitiateTransactionRequest req,
+  ) {
     return handleApi(
-        () => _api.initiateBillTransaction('Bearer $token', _sterilizer, req));
+      () => _api.initiateBillTransaction('Bearer $token', _sterilizer, req),
+    );
   }
 
   Future<Either<Failure, BaseResponse>> initiateDataAirtimeTransaction(
-      String token, InitiateTransactionRequest req) {
-    return handleApi(() =>
-        _api.initiateDataAirtimeTransaction('Bearer $token', _sterilizer, req));
-  }
-
-  Future<Either<Failure, BaseResponse>> becomeMerchant(
-      String token, BecomeAMerchantRequest req) {
+    String token,
+    InitiateTransactionRequest req,
+  ) {
     return handleApi(
-        () => _api.becomeMerchant('Bearer $token', _sterilizer, req));
-  }
-
-  Future<Either<Failure, BaseResponse>> requestWithdraw(
-      String token, WithdrawRequest req) {
-    return handleApi(
-        () => _api.userWithdraw('Bearer $token', _sterilizer, req));
-  }
-
-  Future<Either<Failure, AllNotificationResponse>> getAllNotifications(
-      String token) {
-    return handleApi(
-        () => _api.getAllNotifications('Bearer $token', _sterilizer));
-  }
-
-  Future<Either<Failure, MarkNotificationAsReadResponse>>
-      markAllNotificationsAsRead(String token) {
-    return handleApi(
-        () => _api.markAllNotificationsAsRead('Bearer $token', _sterilizer));
-  }
-
-  Future<Either<Failure, GetAllPromoResponse>> getAllAvailablePromos(
-      String token) {
-    return handleApi(() => _api.getAllPromos('Bearer $token', _sterilizer));
-  }
-
-  Future<Either<Failure, BaseResponse>> redeemAPromo(
-      String token, RedeemAPromoRequest req) {
-    return handleApi(
-        () => _api.redeemAPromo('Bearer $token', _sterilizer, req));
-  }
-
-  Future<Either<Failure, GetAllBeneficiariesResponse>> getAllBeneficiaries(
-      String token) {
-    return handleApi(
-        () => _api.getAllBeneficiaries('Bearer $token', _sterilizer));
-  }
-
-  Future<Either<Failure, GetAllBeneficiariesResponse>> getMinimalBeneficiaries(
-      String token) {
-    return handleApi(
-        () => _api.getMinimalBeneficiaries('Bearer $token', _sterilizer));
-  }
-
-  Future<Either<Failure, EpinResponse>> purchaseEpin(
-      String token, EpinRequest req) {
-    return handleApi(
-      () => _api.initiateEpinPurchase(
+      () => _api.initiateDataAirtimeTransaction(
         'Bearer $token',
         _sterilizer,
         req,
@@ -367,8 +374,81 @@ class ApiService {
     );
   }
 
+  Future<Either<Failure, BaseResponse>> becomeMerchant(
+    String token,
+    BecomeAMerchantRequest req,
+  ) {
+    return handleApi(
+      () => _api.becomeMerchant('Bearer $token', _sterilizer, req),
+    );
+  }
+
+  Future<Either<Failure, BaseResponse>> requestWithdraw(
+    String token,
+    WithdrawRequest req,
+  ) {
+    return handleApi(
+      () => _api.userWithdraw('Bearer $token', _sterilizer, req),
+    );
+  }
+
+  Future<Either<Failure, AllNotificationResponse>> getAllNotifications(
+    String token,
+  ) {
+    return handleApi(
+      () => _api.getAllNotifications('Bearer $token', _sterilizer),
+    );
+  }
+
+  Future<Either<Failure, MarkNotificationAsReadResponse>>
+  markAllNotificationsAsRead(String token) {
+    return handleApi(
+      () => _api.markAllNotificationsAsRead('Bearer $token', _sterilizer),
+    );
+  }
+
+  Future<Either<Failure, GetAllPromoResponse>> getAllAvailablePromos(
+    String token,
+  ) {
+    return handleApi(() => _api.getAllPromos('Bearer $token', _sterilizer));
+  }
+
+  Future<Either<Failure, BaseResponse>> redeemAPromo(
+    String token,
+    RedeemAPromoRequest req,
+  ) {
+    return handleApi(
+      () => _api.redeemAPromo('Bearer $token', _sterilizer, req),
+    );
+  }
+
+  Future<Either<Failure, GetAllBeneficiariesResponse>> getAllBeneficiaries(
+    String token,
+  ) {
+    return handleApi(
+      () => _api.getAllBeneficiaries('Bearer $token', _sterilizer),
+    );
+  }
+
+  Future<Either<Failure, GetAllBeneficiariesResponse>> getMinimalBeneficiaries(
+    String token,
+  ) {
+    return handleApi(
+      () => _api.getMinimalBeneficiaries('Bearer $token', _sterilizer),
+    );
+  }
+
+  Future<Either<Failure, EpinResponse>> purchaseEpin(
+    String token,
+    EpinRequest req,
+  ) {
+    return handleApi(
+      () => _api.initiateEpinPurchase('Bearer $token', _sterilizer, req),
+    );
+  }
+
   Future<Either<Failure, epin_models.EpinTransactionRequestsResponse>>
-      getEpinTransactionRequests(String token) {
+  getEpinTransactionRequests(String token) {
     // We use handleApi to keep existing error handling behavior.
     return handleApi(() async {
       // inside handleApi block where you loop pages
@@ -386,9 +466,11 @@ class ApiService {
           );
 
           // Debug: page-level metadata
-          log('EPIN_DBG: fetched page=$page, status=${pageResp.status}, '
-              'currentPage=${pageResp.data?.currentPage}, lastPage=${pageResp.data?.lastPage}, '
-              'nextPageUrl=${pageResp.data?.nextPageUrl}');
+          log(
+            'EPIN_DBG: fetched page=$page, status=${pageResp.status}, '
+            'currentPage=${pageResp.data?.currentPage}, lastPage=${pageResp.data?.lastPage}, '
+            'nextPageUrl=${pageResp.data?.nextPageUrl}',
+          );
 
           final pageItems = pageResp.data?.data ?? [];
           log('EPIN_DBG: page=$page -> items=${pageItems.length}');
@@ -397,8 +479,10 @@ class ApiService {
             // print up to 3 sample items for inspection
             for (var i = 0; i < pageItems.length && i < 3; i++) {
               final it = pageItems[i];
-              log('EPIN_DBG sample page=$page item$i -> id=${it.id}, ref=${it.reference}, '
-                  'agentPhone=${it.agentPhone}, createdAt=${it.createdAt}');
+              log(
+                'EPIN_DBG sample page=$page item$i -> id=${it.id}, ref=${it.reference}, '
+                'agentPhone=${it.agentPhone}, createdAt=${it.createdAt}',
+              );
             }
           }
 
@@ -426,8 +510,9 @@ class ApiService {
             // try to extract page param from nextPageUrl (best effort)
             final uri = Uri.tryParse(nextPageUrl);
             final nextPageStr = uri?.queryParameters['page'];
-            final nextPage =
-                nextPageStr != null ? int.tryParse(nextPageStr) : null;
+            final nextPage = nextPageStr != null
+                ? int.tryParse(nextPageStr)
+                : null;
             if (nextPage != null && nextPage > page) {
               page = nextPage;
               continue;
@@ -460,8 +545,12 @@ class ApiService {
       );
       log('EPIN_DBG: total collected epin items = ${allData.length}');
       if (allData.isNotEmpty) {
-        log('EPIN_DBG: first collected sample -> id=${allData.first.id}, ref=${allData.first.reference}, createdAt=${allData.first.createdAt}');
-        log('EPIN_DBG: last collected sample -> id=${allData.last.id}, ref=${allData.last.reference}, createdAt=${allData.last.createdAt}');
+        log(
+          'EPIN_DBG: first collected sample -> id=${allData.first.id}, ref=${allData.first.reference}, createdAt=${allData.first.createdAt}',
+        );
+        log(
+          'EPIN_DBG: last collected sample -> id=${allData.last.id}, ref=${allData.last.reference}, createdAt=${allData.last.createdAt}',
+        );
       }
 
       return epin_models.EpinTransactionRequestsResponse(

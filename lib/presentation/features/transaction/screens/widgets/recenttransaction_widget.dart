@@ -45,7 +45,7 @@ class RecentTransactionWidget extends ConsumerWidget {
         ? state.filteredServices.sublist(0, 5)
         : state.filteredServices;
 
-    // DATA FIRST â€” prefer cached data
+    // DATA FIRST \'” prefer cached data
     if (transactions.isNotEmpty) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,

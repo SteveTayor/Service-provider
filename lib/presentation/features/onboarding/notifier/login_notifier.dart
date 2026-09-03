@@ -94,7 +94,7 @@ class LoginProvider extends ChangeNotifier {
     final ipAddress = deviceInfo['ipAddress'];
     final platform = deviceInfo['platform'];
 
-    // Make location optional â€” only require device id, ip and platform
+    // Make location optional \'” only require device id, ip and platform
     return macAddress != null &&
         macAddress != 'unknown' &&
         ipAddress != null &&
@@ -172,7 +172,7 @@ class LoginProvider extends ChangeNotifier {
         platform: platform,
       );
     } catch (e, st) {
-      // Unexpected error â€” log or report to analytics. Do NOT show user-facing error.
+      // Unexpected error \'” log or report to analytics. Do NOT show user-facing error.
       debugPrint('Unexpected error collecting device info: $e\n$st');
       // Optionally send to crash reporting service.
     }

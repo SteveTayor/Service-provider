@@ -193,8 +193,8 @@ import 'package:go_router/go_router.dart';
 // }
 final basicInfoProvider =
     ChangeNotifierProvider.family<BasicInfoProvider, UserAction>((ref, action) {
-  return BasicInfoProvider(ref, ref.read(apiServiceProvider), action);
-});
+      return BasicInfoProvider(ref, ref.read(apiServiceProvider), action);
+    });
 
 class BasicInfoProvider extends ChangeNotifier {
   final Ref _ref;
@@ -255,10 +255,19 @@ class BasicInfoProvider extends ChangeNotifier {
       _gender = profile.gender.toString();
     }
 
-    if (profile.dob != null) {
-      final dt = DateTime.tryParse(profile.dob.toString()) ?? DateTime.now();
-      _dob.text = DateFormat('dd/MM/yyyy').format(dt);
-      _selectedDate = dt;
+    final dobValue = profile.dob;
+
+    if (dobValue != null) {
+      final dobString = dobValue.toString().trim();
+
+      if (dobString.isNotEmpty) {
+        final dt = DateTime.tryParse(dobString);
+
+        if (dt != null) {
+          _dob.text = DateFormat('dd/MM/yyyy').format(dt);
+          _selectedDate = dt;
+        }
+      }
     }
 
     _hydrated = true;
@@ -287,23 +296,25 @@ class BasicInfoProvider extends ChangeNotifier {
   Future<void> pickDob(BuildContext context) async {
     final now = DateTime.now();
 
-    unawaited(context.showBottomSheet(
-      child: SizedBox(
-        height: 350,
-        child: CupertinoDatePicker(
-          backgroundColor: CupertinoColors.white,
-          mode: CupertinoDatePickerMode.date,
-          initialDateTime: _selectedDate,
-          minimumDate: DateTime(1900),
-          maximumDate: now,
-          onDateTimeChanged: (newDate) {
-            _selectedDate = newDate;
-            _dob.text = DateFormat('dd/MM/yyyy').format(newDate);
-            notifyListeners();
-          },
+    unawaited(
+      context.showBottomSheet(
+        child: SizedBox(
+          height: 350,
+          child: CupertinoDatePicker(
+            backgroundColor: CupertinoColors.white,
+            mode: CupertinoDatePickerMode.date,
+            initialDateTime: _selectedDate,
+            minimumDate: DateTime(1900),
+            maximumDate: now,
+            onDateTimeChanged: (newDate) {
+              _selectedDate = newDate;
+              _dob.text = DateFormat('dd/MM/yyyy').format(newDate);
+              notifyListeners();
+            },
+          ),
         ),
       ),
-    ));
+    );
   }
 
   // -----------------------------
@@ -320,22 +331,57 @@ class BasicInfoProvider extends ChangeNotifier {
       final iso = DateFormat('yyyy-MM-dd').format(parsed);
       final token = await _ref.read(secureStorageHelperProvider).getAuthToken();
 
-      final req = ProfileSetupRequest(
-        firstName: _firstName.text.trim(),
-        lastName: _lastName.text.trim(),
-        address: _address.text.trim(),
-        dateOfBirth: iso,
-        gender: _gender,
-        email: _email.text.trim(),
-      );
+      if (token == null || token.isEmpty) {
+        context
+          ..dismissDialog()
+          ..showErrorSnackBar('Your session has expired. Please log in again.')
+          ..go(RouteConstants.lockScreen);
+        return;
+      }
+      late final ProfileSetupRequest req;
+
+      if (userAction.isCreate) {
+        final parsed = DateFormat('dd/MM/yyyy').parse(_dob.text);
+        final iso = DateFormat('yyyy-MM-dd').format(parsed);
+
+        req = ProfileSetupRequest(
+          firstName: _firstName.text.trim(),
+          lastName: _lastName.text.trim(),
+          address: _address.text.trim(),
+          dateOfBirth: iso,
+          gender: _gender.trim(),
+          email: _email.text.trim(),
+        );
+      } else {
+        final address = _address.text.trim();
+        final gender = _gender.trim();
+        final dobText = _dob.text.trim();
+
+        final String? isoDob;
+
+        if (dobText.isNotEmpty) {
+          final parsed = DateFormat('dd/MM/yyyy').parse(dobText);
+          isoDob = DateFormat('yyyy-MM-dd').format(parsed);
+        } else {
+          isoDob = null;
+        }
+
+        req = ProfileSetupRequest(
+          address: address.isEmpty ? null : address,
+          gender: gender.isEmpty ? null : gender,
+          dateOfBirth: isoDob,
+        );
+      }
 
       final result = await _api.updateProfileInformation(token!, req);
 
       result.fold(
         (fail) {
-          context.showErrorSnackBar(
-            sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
-          );
+          context
+            ..dismissDialog()
+            ..showErrorSnackBar(
+              sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
+            );
         },
         (resp) async {
           if (resp.status == 'success') {
@@ -361,9 +407,7 @@ class BasicInfoProvider extends ChangeNotifier {
                 ..pop();
             }
           } else {
-            context.showErrorSnackBar(
-              sanitizeErrorMessage(resp.message),
-            );
+            context.showErrorSnackBar(sanitizeErrorMessage(resp.message));
           }
         },
       );
@@ -401,4 +445,3 @@ class BasicInfoProvider extends ChangeNotifier {
     super.dispose();
   }
 }
-
