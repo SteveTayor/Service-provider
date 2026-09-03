@@ -157,11 +157,7 @@ class PlatformQuickActionWidget extends ConsumerWidget {
       width: context.width,
       color: AppColors.primaryColor,
       child: Stack(
-        // No StackFit.expand here: the Column below is the sizing child
-        // (mainAxisSize.min), so it drives the Stack's height. The
-        // background image is Positioned.fill, so it just paints to
-        // whatever size the Column ends up needing — no hard-coded
-        // height, no device-dependent clipping.
+        // No StackFit.expand 
         children: [
           Positioned.fill(
             child: Image(
@@ -256,7 +252,7 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                 ],
               ),
 
-              25.verticalSpace,
+              30.verticalSpace,
             ],
           ).withContainer(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),

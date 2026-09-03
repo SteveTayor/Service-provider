@@ -32,48 +32,46 @@ class HelpandsupportScreen extends ConsumerWidget {
     }) {
       return InkWell(
         onTap: onPressed,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            AppSvgIcon(path: asset),
-            12.horizontalSpace,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: context.textTheme.bodyMedium!.copyWith(
-                      fontFamily: FontFamily.mabryProBold,
-                    ),
+        child:
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AppSvgIcon(path: asset),
+                12.horizontalSpace,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: context.textTheme.bodyMedium!.copyWith(
+                          fontFamily: FontFamily.mabryProBold,
+                        ),
+                      ),
+                      8.verticalSpace,
+                      if (label.isEmpty)
+                        const SizedBox()
+                      else
+                        Text(label, style: context.textTheme.bodySmall),
+                      extraWidget ?? const SizedBox(),
+                    ],
                   ),
-                  8.verticalSpace,
-                  if (label.isEmpty)
-                    const SizedBox()
-                  else
-                    Text(
-                      label,
-                      style: context.textTheme.bodySmall,
-                    ),
-                  extraWidget ?? const SizedBox(),
-                ],
+                ),
+              ],
+            ).withContainer(
+              border: const Border(
+                bottom: BorderSide(color: Color(0xffECECEC)),
               ),
+              padding: context.symmetricPadding(24.h, 8),
+              margin: EdgeInsets.only(bottom: 24.h),
             ),
-          ],
-        ).withContainer(
-          border: const Border(bottom: BorderSide(color: Color(0xffECECEC))),
-          padding: context.symmetricPadding(24.h, 8),
-          margin: EdgeInsets.only(bottom: 24.h),
-        ),
       );
     }
 
     return BundlegramScaffold(
       sidePadding: EdgeInsets.zero,
-      appBar: const BundlegramAppbar(
-        titleText: 'Help & Support',
-      ),
+      appBar: const BundlegramAppbar(titleText: 'Help & Support'),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
@@ -131,7 +129,9 @@ class HelpandsupportScreen extends ConsumerWidget {
                       5.horizontalSpace,
                       GestureDetector(
                         onTap: () => provider.copyToClipboard(
-                            context, 'info@bundlegram.com'),
+                          context,
+                          'info@bundlegram.com',
+                        ),
                         child: AppSvgIcon(path: Assets.svgs.copy),
                       ),
                     ],
@@ -156,7 +156,9 @@ class HelpandsupportScreen extends ConsumerWidget {
                       5.horizontalSpace,
                       GestureDetector(
                         onTap: () => provider.copyToClipboard(
-                            context, 'support@bundlegram.com'),
+                          context,
+                          'support@bundlegram.com',
+                        ),
                         child: AppSvgIcon(path: Assets.svgs.copy),
                       ),
                     ],
@@ -195,7 +197,6 @@ class HelpandsupportScreen extends ConsumerWidget {
               ),
             ),
 
-
             // const SizedBox(height: 35),
             Container(
               padding: context.symmetricPadding(24.h, 8),
@@ -207,30 +208,24 @@ class HelpandsupportScreen extends ConsumerWidget {
               ),
             ),
 
-             // NEW: WhatsApp Channel
+            // NEW: WhatsApp Channel
             buildItemRow(
               Assets.svgs.whatsappColorIcon,
               'WhatsApp Channel',
               'Follow our official WhatsApp channel for news, promos, and announcements.',
               extraWidget: GestureDetector(
                 onTap: () => provider.openWhatsappChannel(),
-                child: Text(
-                  'Follow Channel',
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    height: 3,
-                    color: AppColors.primaryColor,
-                    decorationColor: AppColors.primaryColor,
-                    decoration: TextDecoration.underline,
+                child: Flexible(
+                  child: Text(
+                    'Follow Channel',
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      height: 3,
+                      color: AppColors.primaryColor,
+                      decorationColor: AppColors.primaryColor,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
-              ),
-            ),
-            Container(
-              padding: context.symmetricPadding(24.h, 8),
-              margin: EdgeInsets.only(bottom: 24.h),
-              child: Text(
-                'Social Media Support',
-                style: context.textTheme.bodyMedium,
               ),
             ),
             // const SizedBox(height: 10),
@@ -242,34 +237,40 @@ class HelpandsupportScreen extends ConsumerWidget {
                 runSpacing: 24,
                 children: [
                   AppSvgIcon(
-                      height: 40,
-                      path: Assets.svgs.xSocialMediaLogoIcon,
-                      onTap: () => provider.openTwitter()),
+                    height: 40,
+                    path: Assets.svgs.xSocialMediaLogoIcon,
+                    onTap: () => provider.openTwitter(),
+                  ),
                   AppSvgIcon(
-                      height: 40,
-                      path: Assets.svgs.facebookRoundColorIcon,
-                      onTap: () => provider.openFacebook()),
+                    height: 40,
+                    path: Assets.svgs.facebookRoundColorIcon,
+                    onTap: () => provider.openFacebook(),
+                  ),
                   AppSvgIcon(
-                      height: 40,
-                      path: Assets.svgs.igInstagramIcon,
-                      onTap: () => provider.openInstagram()),
+                    height: 40,
+                    path: Assets.svgs.igInstagramIcon,
+                    onTap: () => provider.openInstagram(),
+                  ),
                   // AppSvgIcon(
                   //     height: 40,
                   //     path: Assets.svgs.linkedinAppIcon,
                   //     onTap: () => provider.openLinkedIn()),
                   AppSvgIcon(
-                      height: 40,
-                      path: Assets.svgs.telegramIcon,
-                      onTap: () => provider.openTelegram()),
+                    height: 40,
+                    path: Assets.svgs.telegramIcon,
+                    onTap: () => provider.openTelegram(),
+                  ),
                   AppSvgIcon(
-                      height: 40,
-                      path: Assets.svgs.tiktokColorIcon,
-                      onTap: () => provider.openTikTok()),
+                    height: 40,
+                    path: Assets.svgs.tiktokColorIcon,
+                    onTap: () => provider.openTikTok(),
+                  ),
                   AppSvgIcon(
-                      height: 40,
-                      color: null,
-                      path: Assets.svgs.whatsappColorIcon,
-                      onTap: () => provider.openWhatsapp()),
+                    height: 40,
+                    color: null,
+                    path: Assets.svgs.whatsappColorIcon,
+                    onTap: () => provider.openWhatsapp(),
+                  ),
                 ],
               ),
             ),

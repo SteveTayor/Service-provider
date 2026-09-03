@@ -47,7 +47,7 @@ class VerifyEmailProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Step 1: Send the OTP to the userâ€™s email
+  /// Step 1: Send the OTP to the user's email
   Future<bool> sendEmailOtp(BuildContext context) async {
     _sending = true;
     notifyListeners();
@@ -85,8 +85,10 @@ class VerifyEmailProvider extends ChangeNotifier {
 
           // Delay showing OTP dialog till after pop finishes
           Future.microtask(() {
-            EmailOtpDialogNotifier()
-                .showOtpInputDialog(navigatorKey.currentContext!, this);
+            EmailOtpDialogNotifier().showOtpInputDialog(
+              navigatorKey.currentContext!,
+              this,
+            );
           });
 
           // Fetch profile to ensure UI updates
@@ -176,4 +178,3 @@ class VerifyEmailProvider extends ChangeNotifier {
     super.dispose();
   }
 }
-

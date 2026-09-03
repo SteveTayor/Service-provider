@@ -128,7 +128,7 @@ class _PlatformScreenState extends ConsumerState<PlatformScreen> {
               Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // Sizes the Stack — no fixed 540.h wrapper anymore.
+                  // Sizes the Stack and removed fixed 540.h wrapper anymore.
                   const PlatformQuickActionWidget(),
                   Positioned(
                     bottom: -_statsCardOverlap.h,

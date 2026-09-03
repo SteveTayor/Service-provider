@@ -32,13 +32,15 @@ class AccountSetupProvider extends ChangeNotifier {
     if (profileAsync is AsyncData<ProfileResponse?>) {
       final p = profileAsync.value?.data!;
       emailVerified = p!.emailVerifiedAt != null;
-      basicInfo = (p.firstName?.isNotEmpty ?? false) &&
+      basicInfo =
+          (p.firstName?.isNotEmpty ?? false) &&
           (p.lastName?.isNotEmpty ?? false) &&
           p.dob != null &&
           (p.gender?.toString().isNotEmpty ?? false) &&
           (p.address?.toString().isNotEmpty ?? false);
       bvnLinked = p.bvn?.toString().isNotEmpty ?? false;
-      bankAdded = (p.bankName?.toString().isNotEmpty ?? false) &&
+      bankAdded =
+          (p.bankName?.toString().isNotEmpty ?? false) &&
           (p.accountNumber?.toString().isNotEmpty ?? false);
     }
 
@@ -60,7 +62,7 @@ class AccountSetupProvider extends ChangeNotifier {
       AccountSetupStep(
         asset: Assets.svgs.addbasicinfo,
         title: 'Add basic information',
-        label: 'Letâ€™s know more about you',
+        label: 'Let\'s know more about you',
         done: basicInfo,
         route: RouteConstants.addbasicinformation,
       ),
@@ -132,4 +134,3 @@ class AccountSetupProvider extends ChangeNotifier {
     return false;
   }
 }
-
