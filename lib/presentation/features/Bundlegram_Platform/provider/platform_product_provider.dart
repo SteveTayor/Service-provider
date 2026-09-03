@@ -87,11 +87,18 @@ const List<PlatformProductType> kValidationRequiredServices = [
 //   }
 // }
 
-final platformProductProvider = StateNotifierProvider.family<
-    PlatformProductNotifier, PlatformProductState, PlatformProductType>(
-  (ref, serviceType) =>
-      PlatformProductNotifier(ref.read(apiServiceProvider), serviceType, ref),
-);
+final platformProductProvider =
+    StateNotifierProvider.family<
+      PlatformProductNotifier,
+      PlatformProductState,
+      PlatformProductType
+    >(
+      (ref, serviceType) => PlatformProductNotifier(
+        ref.read(apiServiceProvider),
+        serviceType,
+        ref,
+      ),
+    );
 
 class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   final ApiService _apiService;
@@ -117,7 +124,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   Timer? _debounce;
 
   PlatformProductNotifier(this._apiService, this._serviceType, this._ref)
-      : super(PlatformProductState.initial());
+    : super(PlatformProductState.initial());
 
   Future<void> fetchProducts(BuildContext context) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -267,8 +274,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         _subProductsCache.containsKey(productId) &&
         _isSubProductsCacheFresh(productId)) {
       final subs = _subProductsCache[productId]!;
-      final options =
-          subs.map((e) => e.dataType).whereType<String>().toSet().toList();
+      final options = subs
+          .map((e) => e.dataType)
+          .whereType<String>()
+          .toSet()
+          .toList();
       final defaultSub = subs.isNotEmpty ? subs.first : null;
       state = state.copyWith(
         isLoading: false,
@@ -279,13 +289,13 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         amountController: _serviceType == PlatformProductType.electricity
             ? state.amountController
             : TextEditingController(),
+
         // amountController: _rehydrate(
         //   state.amountController,
         //   text: _serviceType == PlatformProductType.electricity
         //       ? state.amountController.text
         //       : '',
         // ),
-
         error: null,
       );
       return;
@@ -300,8 +310,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       _subProductsCache[productId] = subs;
       _subProductsFetchedAt[productId] = DateTime.now();
 
-      final options =
-          subs.map((e) => e.dataType).whereType<String>().toSet().toList();
+      final options = subs
+          .map((e) => e.dataType)
+          .whereType<String>()
+          .toSet()
+          .toList();
 
       SubProduct? defaultSubProduct;
       if (subs.isNotEmpty) {
@@ -317,32 +330,37 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         amountController: _serviceType == PlatformProductType.electricity
             ? state.amountController
             : TextEditingController(),
+
         // amountController: _rehydrate(
         //   state.amountController,
         //   text: _serviceType == PlatformProductType.electricity
         //       ? state.amountController.text
         //       : TextEditingController(),
         // ),
-
         error: result.status != 'success' ? result.message : null,
       );
 
       if (result.status != 'success') {
         context.showErrorSnackBar(
-            result.message ?? 'Error occurred loading services');
+          result.message ?? 'Error occurred loading services',
+        );
       }
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       // user to pull-to-refresh
-      context.showErrorSnackBar('Could not fetch services â€” pull to refresh');
+      context.showErrorSnackBar('Could not fetch services \'” pull to refresh');
     }
   }
 
   Future<void> fetchSubProductsByCategory(
-      BuildContext context, int productId, String category) async {
+    BuildContext context,
+    int productId,
+    String category,
+  ) async {
     state = state.copyWith(isLoading: true, error: null);
-    final result = await _ref
-        .read(subProductsByCategoryProvider((productId, category)).future);
+    final result = await _ref.read(
+      subProductsByCategoryProvider((productId, category)).future,
+    );
     final subs = result.data ?? [];
     // derive dropdown options from subProducts (unique dataType)
     // final options =
@@ -351,13 +369,15 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       isLoading: false,
       subProducts: subs,
       // dropdownOptions: options,
-      selectedDataType:
-          state.selectedDataType == null ? null : state.selectedDataType,
+      selectedDataType: state.selectedDataType == null
+          ? null
+          : state.selectedDataType,
       error: result.status != 'success' ? result.message : null,
     );
     if (result.status != 'success') {
       context.showErrorSnackBar(
-          result.message ?? 'Failed to load subproducts by category');
+        result.message ?? 'Failed to load subproducts by category',
+      );
     }
   }
 
@@ -442,9 +462,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   }
 
   void selectPresetAmount(int amount) {
-    state = state.copyWith(
-      selectedPresetAmount: amount,
-    );
+    state = state.copyWith(selectedPresetAmount: amount);
     state.amountController.text = amount.toString();
   }
 
@@ -472,7 +490,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       selectedSubProduct: subProduct,
       selectedPresetAmount: null,
       amountController: _serviceType == PlatformProductType.electricity
-          ? state.amountController // Retain the current user-entered amount
+          ? state
+                .amountController // Retain the current user-entered amount
           : TextEditingController(text: subProduct.subPrice ?? ''),
     );
   }
@@ -482,8 +501,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
   /// /// If allowPrefill == true, we treat this as "initial prefill from profile"
   /// and we will attempt to select a matching product and fetch subProducts
   /// so the UI (grid) can show bundles without an explicit beneficiary selection.
-  void detectAndSelectFromPhone(BuildContext ctx, String rawPhone,
-      {bool allowPrefill = false}) {
+  void detectAndSelectFromPhone(
+    BuildContext ctx,
+    String rawPhone, {
+    bool allowPrefill = false,
+  }) {
     _debounce?.cancel();
     // small debounce so we don't run detection on every keystroke
     _debounce = Timer(const Duration(milliseconds: 600), () async {
@@ -494,11 +516,13 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       try {
         final phone = rawPhone.trim();
         // normalize +234 -> 0 form for easier prefix checks
-        final normalized =
-            phone.startsWith('+234') ? '0${phone.substring(4)}' : phone;
+        final normalized = phone.startsWith('+234')
+            ? '0${phone.substring(4)}'
+            : phone;
 
         // quick validity check: we expect local 11-digit numbers for NG
-        final isValidPhone = normalized.length == 11 &&
+        final isValidPhone =
+            normalized.length == 11 &&
             RegExp(r'^0\d{10}$').hasMatch(normalized);
 
         // mark input validity in state so UI can enable/disable controls
@@ -517,7 +541,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         //   return;
         // }
 
-// if phone changed since last time, clear dependent selections to avoid mismatches
+        // if phone changed since last time, clear dependent selections to avoid mismatches
         if (_lastDetectedPhone != normalized) {
           _lastDetectedPhone = normalized;
           state = state.copyWith(
@@ -542,8 +566,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         if (matchingProduct != null &&
             matchingProduct.id == state.selectedProduct?.id) {
           debugPrint(
-              'Detected same provider (${matchingProduct.productName}), skipping reset/refetch');
-          return; // Nothing to do â€” keep existing subProducts/grid
+            'Detected same provider (${matchingProduct.productName}), skipping reset/refetch',
+          );
+          return; // Nothing to do \'” keep existing subProducts/grid
         }
 
         // fallback: brand match by extracting brand
@@ -558,16 +583,19 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         }
 
         if (matchingProduct == null) {
-          // No provider auto-found â€” clear any auto selection, keep manual selection if present
+          // No provider auto-found \'” clear any auto selection, keep manual selection if present
           debugPrint(
-              'No auto match for $detected, leaving UI for manual selection.');
+            'No auto match for $detected, leaving UI for manual selection.',
+          );
           // state = state.copyWith(error: 'Could not auto-detect provider for this number.');
           return;
         }
 
-        // Found a product â€” select + fetch subproducts (same flow as applyBeneficiary)
-        final providerIcon = normalizeAssetName(matchingProduct.productName,
-            serviceType: _serviceType);
+        // Found a product \'” select + fetch subproducts (same flow as applyBeneficiary)
+        final providerIcon = normalizeAssetName(
+          matchingProduct.productName,
+          serviceType: _serviceType,
+        );
         // selectProduct(matchingProduct, providerIcon ?? '');
         await selectProductAndLoadSubProducts(
           ctx,
@@ -579,11 +607,12 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
         // await fetchSubProducts(ctx, matchingProduct.id!, force: true);
         debugPrint(
-            'Auto-selected product ${matchingProduct.productName} for phone $normalized');
+          'Auto-selected product ${matchingProduct.productName} for phone $normalized',
+        );
       } catch (e, st) {
         debugPrint('Error in detectAndSelectFromPhone: $e');
         debugPrintStack(stackTrace: st);
-        // don't throw â€” just keep UI stable
+        // don't throw \'” just keep UI stable
       }
     });
   }
@@ -601,7 +630,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     // 1) populate phone controller
     state.firstInputController.text = b.phoneNumber ?? '';
 
-// persist beneficiary in state so UI knows it is applied
+    // persist beneficiary in state so UI knows it is applied
     setSelectedBeneficiary(b);
 
     // 2) detect/decide network (prefer backend value)
@@ -656,7 +685,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
     // await fetchSubProducts(ctx, matchingProduct.id!, force: true);
     debugPrint(
-        'applyBeneficiary: selected product ${matchingProduct.productName} (${matchingProduct.id})');
+      'applyBeneficiary: selected product ${matchingProduct.productName} (${matchingProduct.id})',
+    );
   }
 
   /// Try to detect a common network name from phone prefix (Nigerian prefixes)
@@ -681,7 +711,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       '0903',
       '0906',
       '0913',
-      '0916'
+      '0916',
     ];
     const airtelPrefixes = [
       '0802',
@@ -693,7 +723,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       '0902',
       '0904',
       '0907',
-      '0912'
+      '0912',
     ];
     const gloPrefixes = [
       '0705',
@@ -704,13 +734,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       '0905',
       '0915',
     ];
-    const nineMobilePrefixes = [
-      '0809',
-      '0817',
-      '0818',
-      '0909',
-      '0908',
-    ];
+    const nineMobilePrefixes = ['0809', '0817', '0818', '0909', '0908'];
 
     if (mtnPrefixes.any((p) => clean.startsWith(p))) return 'MTN';
     if (airtelPrefixes.any((p) => clean.startsWith(p))) return 'Airtel';
@@ -763,7 +787,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             }
 
             debugPrint(
-                "âœ… Found subProduct: ${selectedSubProduct.subName} (id: ${selectedSubProduct.id})");
+              "âœ… Found subProduct: ${selectedSubProduct.subName} (id: ${selectedSubProduct.id})",
+            );
 
             if (selectedSubProduct != null && state.selectedProduct != null) {
               selectSubProduct(selectedSubProduct);
@@ -923,7 +948,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     print('Raw input: $raw, ServiceType: $serviceType');
     if (raw == null || raw.isEmpty) {
       print(
-          'Returning fallback due to null/empty raw: ${_getFallbackAsset(serviceType ?? _serviceType)}');
+        'Returning fallback due to null/empty raw: ${_getFallbackAsset(serviceType ?? _serviceType)}',
+      );
       return _getFallbackAsset(serviceType ?? _serviceType);
     }
 
@@ -951,13 +977,15 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       case PlatformProductType.airtime:
         providers = PlatFormData.serviceProviderWidget;
         print(
-            'Providers for airtime: ${providers.map((p) => (p as AppListTile).title).toList()}');
+          'Providers for airtime: ${providers.map((p) => (p as AppListTile).title).toList()}',
+        );
         // break;
         break;
       case PlatformProductType.mobileData:
         providers = PlatFormData.serviceProviderWidget;
         print(
-            'Providers for data purchase: ${providers.map((p) => (p as AppListTile).title).toList()}');
+          'Providers for data purchase: ${providers.map((p) => (p as AppListTile).title).toList()}',
+        );
 
         break;
       case PlatformProductType.ePinVoucher:
@@ -968,7 +996,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       // return Assets.svgs.ePin; // Adjust if you have specific e-pin providers
       default:
         print(
-            'Returning fallback for unknown service type: ${_getFallbackAsset(serviceType ?? _serviceType)}');
+          'Returning fallback for unknown service type: ${_getFallbackAsset(serviceType ?? _serviceType)}',
+        );
         return _getFallbackAsset(serviceType ?? _serviceType);
     }
 
@@ -986,7 +1015,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
       },
       orElse: () {
         print(
-            'No match found, using fallback: ${_getFallbackAsset(serviceType ?? _serviceType)}');
+          'No match found, using fallback: ${_getFallbackAsset(serviceType ?? _serviceType)}',
+        );
         return AppListTile(
           title: state.selectedProduct?.productName ?? '',
           // color: getFallbackColor ,
@@ -995,7 +1025,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         );
       },
     );
-    final result = (matchingProvider as AppListTile).assetPath ??
+    final result =
+        (matchingProvider as AppListTile).assetPath ??
         matchingProvider.imagePath ??
         _getFallbackAsset(serviceType ?? _serviceType);
 
@@ -1091,8 +1122,9 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     VoidCallback? onSuccess, // Added for automatic progression
   }) {
     debugPrint(
-        'validateBill called: serviceType=${_serviceType}, number=$number, '
-        'productId=$productId, autoSubProdId=$autoSubProdId');
+      'validateBill called: serviceType=${_serviceType}, number=$number, '
+      'productId=$productId, autoSubProdId=$autoSubProdId',
+    );
 
     _debounce?.cancel();
 
@@ -1101,30 +1133,47 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         state.secondaryInputController.text.trim() != null;
     final isBillTypeWithSecondary =
         _serviceType == PlatformProductType.betting ||
-            _serviceType == PlatformProductType.cableTv ||
-            _serviceType == PlatformProductType.electricity;
-    final shouldValidate =
-        isBillTypeWithSecondary ? isSecondaryInputReady : isPrimaryInputReady;
+        _serviceType == PlatformProductType.cableTv ||
+        _serviceType == PlatformProductType.electricity;
+    final shouldValidate = isBillTypeWithSecondary
+        ? isSecondaryInputReady
+        : isPrimaryInputReady;
 
-    debugPrint('Validation checks: isPrimaryInputReady=$isPrimaryInputReady, '
-        'isSecondaryInputReady=$isSecondaryInputReady, '
-        'isBillTypeWithSecondary=$isBillTypeWithSecondary, '
-        'shouldValidate=$shouldValidate, '
-        'selectedProduct=${state.selectedProduct?.id}');
+    debugPrint(
+      'Validation checks: isPrimaryInputReady=$isPrimaryInputReady, '
+      'isSecondaryInputReady=$isSecondaryInputReady, '
+      'isBillTypeWithSecondary=$isBillTypeWithSecondary, '
+      'shouldValidate=$shouldValidate, '
+      'selectedProduct=${state.selectedProduct?.id}',
+    );
 
     if (!shouldValidate || state.selectedProduct == null) {
-      debugPrint('Validation aborted: shouldValidate=$shouldValidate, '
-          'selectedProduct=${state.selectedProduct == null ? 'null' : state.selectedProduct!.id}');
+      debugPrint(
+        'Validation aborted: shouldValidate=$shouldValidate, '
+        'selectedProduct=${state.selectedProduct == null ? 'null' : state.selectedProduct!.id}',
+      );
       context.showErrorSnackBar(
-        'Please enter a valid ${_serviceType == PlatformProductType.airtime || _serviceType == PlatformProductType.mobileData ? 'phone number' : _serviceType == PlatformProductType.betting ? 'user ID' : _serviceType == PlatformProductType.cableTv ? 'smart card number' : _serviceType == PlatformProductType.electricity ? 'meter number' : 'number'}',
+        'Please enter a valid ${_serviceType == PlatformProductType.airtime || _serviceType == PlatformProductType.mobileData
+            ? 'phone number'
+            : _serviceType == PlatformProductType.betting
+            ? 'user ID'
+            : _serviceType == PlatformProductType.cableTv
+            ? 'smart card number'
+            : _serviceType == PlatformProductType.electricity
+            ? 'meter number'
+            : 'number'}',
       );
       return;
     }
 
-    state =
-        state.copyWith(isValidating: true, billValidated: false, error: null);
+    state = state.copyWith(
+      isValidating: true,
+      billValidated: false,
+      error: null,
+    );
     debugPrint(
-        'State updated: isValidating=true, billValidated=false, error=null');
+      'State updated: isValidating=true, billValidated=false, error=null',
+    );
 
     _debounce = Timer(const Duration(milliseconds: 700), () async {
       try {
@@ -1132,21 +1181,25 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         unawaited(context.showLoadingDialog(message: 'Validating...'));
         final token = await _ref.read(authTokenProvider.future);
         debugPrint(
-            'Auth token retrieved: ${token.substring(0, 10)}...'); // Log partial token for security
+          'Auth token retrieved: ${token.substring(0, 10)}...',
+        ); // Log partial token for security
 
         final request = ValidateBillRequest(
           number: number,
           productEntityId: productId,
           serviceType: autoSubProdId,
         );
-        debugPrint('API request: number=${request.number}, '
-            'productEntityId=${request.productEntityId}, '
-            'serviceType=${request.serviceType}');
+        debugPrint(
+          'API request: number=${request.number}, '
+          'productEntityId=${request.productEntityId}, '
+          'serviceType=${request.serviceType}',
+        );
 
         final result = await _apiService.validateBill(token, request);
         debugPrint(
-            'API response: status=${result.fold((l) => 'failure', (r) => r.status)}, '
-            'message=${result.fold((l) => l.properties.join('\n'), (r) => r.message)}');
+          'API response: status=${result.fold((l) => 'failure', (r) => r.status)}, '
+          'message=${result.fold((l) => l.properties.join('\n'), (r) => r.message)}',
+        );
 
         context.dismissDialog();
 
@@ -1169,9 +1222,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               isValidated: validated,
               validatedName: response.data,
             );
-            debugPrint('Validation result: validated=$validated, '
-                'validatedName=${response.data}, '
-                'state.isValidated=${state.isValidated}');
+            debugPrint(
+              'Validation result: validated=$validated, '
+              'validatedName=${response.data}, '
+              'state.isValidated=${state.isValidated}',
+            );
 
             if (validated) {
               context.showSuccessSnackBar('Validated: ${response.data}');
@@ -1230,8 +1285,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
     // Fetch and validate wallet balance
     _ref.read(globalProvider.notifier).fetchWalletBalance(context);
-    final walletBalanceString =
-        _ref.read(globalProvider).walletBalance.value?.wallet;
+    final walletBalanceString = _ref
+        .read(globalProvider)
+        .walletBalance
+        .value
+        ?.wallet;
 
     // Parse wallet balance
     final walletBalance = double.tryParse(walletBalanceString ?? '') ?? 0.0;
@@ -1247,22 +1305,27 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     // Get and validate amount
     final amount = getTransactionAmount();
     if (amount <= 0) {
-      context
-          .showErrorSnackBar('Please enter a valid amount greater than zero');
+      context.showErrorSnackBar(
+        'Please enter a valid amount greater than zero',
+      );
       return;
     }
     if (amount > walletBalance) {
       context.showErrorSnackBar(
-          'Insufficient wallet balance ${walletBalance.toCurrency()} available');
+        'Insufficient wallet balance ${walletBalance.toCurrency()} available',
+      );
       return;
     }
-    final discountedAmount =
-        calculateDiscountedPrice(amount, state.selectedSubProduct);
+    final discountedAmount = calculateDiscountedPrice(
+      amount,
+      state.selectedSubProduct,
+    );
 
     // Update state with discounted amount
     state = state.copyWith(discountedAmount: discountedAmount);
 
-    final beneficiary = (_serviceType == PlatformProductType.mobileData ||
+    final beneficiary =
+        (_serviceType == PlatformProductType.mobileData ||
             _serviceType == PlatformProductType.airtime)
         ? state.firstInputController.text
         : state.secondaryInputController.text;
@@ -1274,11 +1337,12 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         billValidatedName: state.validatedName,
         // transactionType: state.selectedSubProduct?.subName ??
         //     state.selectedProduct?.productName,
-        transactionType: _serviceType == PlatformProductType.airtime ||
+        transactionType:
+            _serviceType == PlatformProductType.airtime ||
                 _serviceType == PlatformProductType.mobileData
             ? state.selectedProduct?.productName
             : state.selectedSubProduct?.subName ??
-                state.selectedProduct?.productName,
+                  state.selectedProduct?.productName,
         amount: amount.toCurrency(),
         discountedPrice: discountedAmount.toCurrency(),
         beneficiary: beneficiary,
@@ -1302,8 +1366,12 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     );
   }
 
-  Future<void> initiatePurchase(BuildContext context, String originalAmount,
-      String discountedAmount, String beneficiary) async {
+  Future<void> initiatePurchase(
+    BuildContext context,
+    String originalAmount,
+    String discountedAmount,
+    String beneficiary,
+  ) async {
     context.pop(); // Close the bottom sheet
     final biometricService = _ref.read(biometricServiceProvider);
 
@@ -1318,16 +1386,18 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
       if (didAuth) {
         // Get the stored PIN
-        final email =
-            await _ref.read(secureStorageHelperProvider).getRememberedEmail();
+        final email = await _ref
+            .read(secureStorageHelperProvider)
+            .getRememberedEmail();
         if (email == null) {
           debugPrint("No stored account found, please login again");
           // context.go(RouteConstants.login);
           return;
         }
 
-        final storedPin =
-            await _ref.read(secureStorageHelperProvider).getPin(email);
+        final storedPin = await _ref
+            .read(secureStorageHelperProvider)
+            .getPin(email);
         if (storedPin == null) {
           debugPrint("No stored PIN found, please set up your PIN");
           return;
@@ -1400,12 +1470,13 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
                   const TextSpan(text: 'This feature is available to all'),
                   TextSpan(
                     text: ' Bundlegram agents only.',
-                    style: context.textTheme.bodySmall!
-                        .copyWith(fontWeight: FontWeight.bold),
+                    style: context.textTheme.bodySmall!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const TextSpan(
-                      text:
-                          ' Our agents enjoy bulk E-PIN at discounted prices.'),
+                    text: ' Our agents enjoy bulk E-PIN at discounted prices.',
+                  ),
                 ],
               ),
             ),
@@ -1453,9 +1524,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
 
       // Retrieve device info from secure storage
       unawaited(
-          context.showLoadingDialog(message: 'Retrieving device info...'));
-      final deviceInfo =
-          await _ref.read(secureStorageHelperProvider).getDeviceInfo();
+        context.showLoadingDialog(message: 'Retrieving device info...'),
+      );
+      final deviceInfo = await _ref
+          .read(secureStorageHelperProvider)
+          .getDeviceInfo();
       final macAddress = deviceInfo['macAddress']!;
       final ipAddress = deviceInfo['ipAddress']!;
       final latitude = deviceInfo['latitude']!;
@@ -1473,20 +1546,23 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         ipAddress: ipAddress,
         latitude: latitude,
         longitude: longitude,
-        crAcc:
-            _serviceType == PlatformProductType.ePinVoucher ? '' : beneficiary,
+        crAcc: _serviceType == PlatformProductType.ePinVoucher
+            ? ''
+            : beneficiary,
         platform: platform,
         subProdId: state.selectedSubProduct?.id ?? 0,
         serviceId: state.selectedProduct?.serviceId ?? '',
         pin: pin,
-        name: _serviceType != PlatformProductType.airtime ||
+        name:
+            _serviceType != PlatformProductType.airtime ||
                 _serviceType != PlatformProductType.mobileData
             ? validatedName
             : null,
         appVersion: appVersion,
       );
 
-      final result = _serviceType == PlatformProductType.mobileData ||
+      final result =
+          _serviceType == PlatformProductType.mobileData ||
               _serviceType == PlatformProductType.airtime
           ? await _apiService.initiateDataAirtimeTransaction(token, request)
           : await _apiService.initiateBillTransaction(token, request);
@@ -1545,7 +1621,8 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         (response) {
           if (response.success) {
             final isMobileData = _serviceType == PlatformProductType.mobileData;
-            final dataValue = state.selectedSubProduct?.subName ??
+            final dataValue =
+                state.selectedSubProduct?.subName ??
                 state.selectedDataType ??
                 ''; // your plan name (e.g. "GloCG 200MB")
             final displayTarget = isMobileData && dataValue.isNotEmpty
@@ -1568,12 +1645,14 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               // 'transactionId': response.data ?? '',
             });
             final notifId = DateTime.now().millisecondsSinceEpoch % 100000;
-            unawaited(NotificationService().showNotification(
-              id: notifId,
-              title: 'Payment Successful',
-              body: successBody,
-              payload: notifPayload,
-            ));
+            unawaited(
+              NotificationService().showNotification(
+                id: notifId,
+                title: 'Payment Successful',
+                body: successBody,
+                payload: notifPayload,
+              ),
+            );
 
             InAppBanner.show(
               context,
@@ -1583,13 +1662,14 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             );
             final Map<String, dynamic>? respData =
                 response.data is Map<String, dynamic>
-                    ? response.data as Map<String, dynamic>
-                    : (response.data != null
-                        ? Map<String, dynamic>.from(
-                            response.data as Map<dynamic, dynamic>)
-                        : null);
+                ? response.data as Map<String, dynamic>
+                : (response.data != null
+                      ? Map<String, dynamic>.from(
+                          response.data as Map<dynamic, dynamic>,
+                        )
+                      : null);
 
-// build receipt using helper
+            // build receipt using helper
             final receipt = extractReceiptFromPurchaseResponse(
               respData,
               serviceType: _serviceType,
@@ -1627,12 +1707,14 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
               'message': userMsg,
             });
 
-            unawaited(NotificationService().showNotification(
-              id: notifId,
-              title: 'Payment Failed',
-              body: userMsg,
-              payload: notifPayload,
-            ));
+            unawaited(
+              NotificationService().showNotification(
+                id: notifId,
+                title: 'Payment Failed',
+                body: userMsg,
+                payload: notifPayload,
+              ),
+            );
             debugPrint("[This is the error message diaplayed] $userMsg");
             Navigator.pushReplacement(
               context,
@@ -1733,4 +1815,3 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     super.dispose();
   }
 }
-

@@ -51,7 +51,7 @@ List<UserTransactions> _takeTopKByDate(
     if (pq.length > k) pq.removeFirst();
   }
 
-  // Now heap has at most K items â€” pull them out and sort descending
+  // Now heap has at most K items \'” pull them out and sort descending
   final top = pq.toList()..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
   return top;
 }
@@ -85,14 +85,14 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       }
 
       // Consume the flag set by VersionManager during boot.
-      // Fires exactly once per version bump â€” deleted immediately after reading.
+      // Fires exactly once per version bump \'” deleted immediately after reading.
       final shouldInvalidate = await storage
           .consumeMigrationPendingInvalidation();
       if (shouldInvalidate) {
         _invalidateAllProductProviders();
       }
 
-      // ALL CORE APIS â€“ CALLED ONCE
+      // ALL CORE APIS \'“ CALLED ONCE
       await Future.wait([
         initializeWalletandAccounts(ctx),
         initializePlatformDependencies(ctx),

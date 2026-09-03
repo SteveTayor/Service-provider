@@ -263,7 +263,7 @@ class NotificationProvider extends ChangeNotifier {
 // Parse notification time for sorting
   DateTime _parseNotificationTime(String time) {
     if (time.startsWith('Today')) {
-      final timeParts = time.split(' â€¢ ')[1].split(':');
+      final timeParts = time.split(' \'')[1].split(':');
       final now = DateTime.now();
       return DateTime(
         now.year,
@@ -273,7 +273,7 @@ class NotificationProvider extends ChangeNotifier {
         int.parse(timeParts[1]),
       );
     }
-    final parts = time.split(' â€¢ ');
+    final parts = time.split(' \'');
     final dateParts = parts[0].split(' ');
     final timeParts = parts[1].split(':');
     final month = _getMonthNameIndex(dateParts[1]);
@@ -297,12 +297,12 @@ class NotificationProvider extends ChangeNotifier {
     if (difference.inDays > 0) {
       return '${localTime.day} '
           '${_getMonthName(localTime.month)} '
-          '${localTime.year} â€¢ '
+          '${localTime.year} \''
           '${localTime.hour.toString().padLeft(2, '0')}:'
           '${localTime.minute.toString().padLeft(2, '0')}';
     }
 
-    return 'Today â€¢ '
+    return 'Today \''
         '${localTime.hour.toString().padLeft(2, '0')}:'
         '${localTime.minute.toString().padLeft(2, '0')}';
   }

@@ -29,6 +29,7 @@ class HelpandsupportScreen extends ConsumerWidget {
       String label, {
       VoidCallback? onPressed,
       Widget? extraWidget,
+      double? width,
     }) {
       return InkWell(
         onTap: onPressed,
@@ -37,7 +38,7 @@ class HelpandsupportScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppSvgIcon(path: asset),
+                AppSvgIcon(path: asset, width: width),
                 12.horizontalSpace,
                 Expanded(
                   child: Column(
@@ -215,18 +216,17 @@ class HelpandsupportScreen extends ConsumerWidget {
               'Follow our official WhatsApp channel for news, promos, and announcements.',
               extraWidget: GestureDetector(
                 onTap: () => provider.openWhatsappChannel(),
-                child: Flexible(
-                  child: Text(
-                    'Follow Channel',
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      height: 3,
-                      color: AppColors.primaryColor,
-                      decorationColor: AppColors.primaryColor,
-                      decoration: TextDecoration.underline,
-                    ),
+                child: Text(
+                  'Follow Channel',
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    height: 3,
+                    color: AppColors.primaryColor,
+                    decorationColor: AppColors.primaryColor,
+                    decoration: TextDecoration.underline,
                   ),
                 ),
               ),
+              width: 40,
             ),
             // const SizedBox(height: 10),
             Container(

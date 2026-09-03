@@ -117,7 +117,9 @@ class PlatformProvider extends ChangeNotifier {
   }
 
   Future<bool> checkServiceAvailability(
-      BuildContext ctx, PlatformProductType type) async {
+    BuildContext ctx,
+    PlatformProductType type,
+  ) async {
     // show a small loader while we check
     ctx.showLoadingDialog(message: 'Checking service availability...');
 
@@ -197,7 +199,8 @@ class PlatformProvider extends ChangeNotifier {
       debugPrint('checkServiceAvailability error: $e\n$st');
       ctx.dismissDialog();
       ctx.showErrorSnackBar(
-          'Could not check service availability. Please try again.');
+        'Could not check service availability. Please try again.',
+      );
       return false;
     }
   }
@@ -227,8 +230,10 @@ class PlatformProvider extends ChangeNotifier {
   //   );
   // }
 
-  String _unavailableMessageFor(PlatformProductType type,
-      [String? serverMessage]) {
+  String _unavailableMessageFor(
+    PlatformProductType type, [
+    String? serverMessage,
+  ]) {
     if (serverMessage != null && serverMessage.trim().isNotEmpty) {
       return serverMessage.trim();
     }
@@ -316,7 +321,7 @@ class PlatformProvider extends ChangeNotifier {
   //       return;
   //     }
 
-  //     // All good â€” navigate to product screen (existing behaviour)
+  //     // All good \'” navigate to product screen (existing behaviour)
   //     unawaited(Navigator.push(
   //       context,
   //       MaterialPageRoute(
@@ -343,4 +348,3 @@ class PlatformProvider extends ChangeNotifier {
     context.push(RouteConstants.airtimeToCash);
   }
 }
-
