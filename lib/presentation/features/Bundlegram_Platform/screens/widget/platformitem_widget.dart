@@ -85,7 +85,7 @@ class PlatformItemWidget extends StatelessWidget {
     super.key,
   }) : assert(
          icon != null || iconData != null,
-         'Provide either icon (asset path) or iconData (fallback Material icon)',
+         '',
        );
 
   final String title;
@@ -147,11 +147,11 @@ class PlatformItemWidget extends StatelessWidget {
                 child: Text(
                   title,
                   textAlign: TextAlign.center,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodyMedium!.copyWith(
                     color: AppColors.white,
-                    fontSize: r.textSize(14),
+                    fontSize: r.textSize(13),
                   ),
                 ),
               ),

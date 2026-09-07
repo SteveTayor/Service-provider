@@ -183,7 +183,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   AppTextField(
                     hintText: 'Email address or username or phone number',
                     controller: ctrl.emailCtrl,
-                    validateFunction: Validators.emailOrUsername(),
+                    validateFunction: Validators.emailOrUsernameOrPhone(),
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.next,
                   ),

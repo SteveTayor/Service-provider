@@ -127,8 +127,7 @@ class WhatsappChannelModal extends ConsumerWidget {
                   8.horizontalSpace,
                   Expanded(
                     child: Text(
-                      'You can always find this later under ☰ Menu → '
-                      'WhatsApp Channel, or in Help & Support.',
+                      'You can always find this later in Help & Support.',
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontFamily: FontFamily.mabryPro,

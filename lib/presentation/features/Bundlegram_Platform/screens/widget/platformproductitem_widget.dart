@@ -31,7 +31,8 @@ class ProductItemGrid extends ConsumerWidget {
     final state = ref.watch(platformProductProvider(serviceType));
     final notifier = ref.read(platformProductProvider(serviceType).notifier);
 
-    final isAmountPresetGrid = serviceType == PlatformProductType.airtime ||
+    final isAmountPresetGrid =
+        serviceType == PlatformProductType.airtime ||
         serviceType == PlatformProductType.betting ||
         serviceType == PlatformProductType.electricity;
 
@@ -96,7 +97,12 @@ class ProductItemGrid extends ConsumerWidget {
     }
 
     final selectedAmount = int.tryParse(state.amountController.text);
-
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final crossAxisCount = screenWidth < 350
+        ? 2
+        : screenWidth < 600
+        ? 3
+        : 4;
     return Column(
       children: [
         24.verticalSpace,
@@ -105,10 +111,11 @@ class ProductItemGrid extends ConsumerWidget {
           physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.zero,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
+            crossAxisCount: crossAxisCount,
             mainAxisSpacing: 20.h,
             crossAxisSpacing: 10.w,
-            childAspectRatio: isAmountPresetGrid ? 1.6 : 1.4,
+            // childAspectRatio: isAmountPresetGrid ? 1.6 : 1.4,
+            mainAxisExtent: isAmountPresetGrid ? 54.h : 72.h,
           ),
           itemCount: isAmountPresetGrid ? amounts.length : validList.length,
           itemBuilder: (_, i) {
