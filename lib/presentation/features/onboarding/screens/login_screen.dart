@@ -181,7 +181,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 buttonText: prov.isLoading ? 'Loading...' : 'Sign In',
                 children: [
                   AppTextField(
-                    hintText: 'Email address or username',
+                    hintText: 'Email address or username or phone number',
                     controller: ctrl.emailCtrl,
                     validateFunction: Validators.emailOrUsername(),
                     keyboardType: TextInputType.text,

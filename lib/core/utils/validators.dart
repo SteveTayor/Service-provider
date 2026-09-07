@@ -11,7 +11,9 @@ class Validators {
     r'[a-zA-Z0-9])?)+\s*$',
   );
 
-  static final phonePattern = RegExp(r'^(\08|09|07|[7-9])\d{9}$');
+  static final phonePattern = RegExp(
+  r'^(?:0[789]\d{9}|[789]\d{9})$',
+);
 
   static Validator notEmpty() {
     return (String? value) {
@@ -203,27 +205,50 @@ class Validators {
     return matchPattern(emailPattern, 'email', text);
   }
 
-  static Validator emailOrUsername() {
-    return (String? value) {
-      if (value == null || value.trim().isEmpty) {
-        return 'This field cannot be empty.';
-      }
+  static Validator emailOrUsernameOrPhone() {
+  return (String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Email, username or phone number is required.';
+    }
 
-      final trimmed = value.trim();
+    final trimmed = value.trim();
 
-      // If it matches email pattern → accept
-      if (emailPattern.hasMatch(trimmed)) {
-        return null;
-      }
-
-      // If not an email, treat as username (must be at least 3 chars)
-      if (trimmed.length < 3) {
-        return 'Username must be at least 3 characters.';
-      }
-
+    // 1. Valid email
+    if (emailPattern.hasMatch(trimmed)) {
       return null;
-    };
-  }
+    }
+
+    // 2. Valid Nigerian phone number
+    //
+    // Supports:
+    // 08012345678
+    // 08123456789
+    // 09012345678
+    // 09123456789
+    // 07012345678
+    // 07123456789
+    //
+    // Also supports 10-digit Nigerian local format:
+    // 8012345678
+    // 9012345678
+    //
+    final normalizedPhone = trimmed.replaceAll(RegExp(r'[\s-]'), '');
+
+    if (phonePattern.hasMatch(normalizedPhone)) {
+      return null;
+    }
+
+    // 3. Username
+    //
+    // Don't over-restrict the username here because the backend
+    // is the final authority on whether the username exists.
+    if (trimmed.length >= 3) {
+      return null;
+    }
+
+    return 'Enter a valid email, username or phone number.';
+  };
+}
 
   static Validator password([int minimumLength = 8]) => multiple(
         [
