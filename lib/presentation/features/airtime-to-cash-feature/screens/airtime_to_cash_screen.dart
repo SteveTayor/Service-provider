@@ -30,9 +30,9 @@ class AirtimeToCashScreen extends ConsumerWidget {
               // Bottom padding clears the FAB so the last transaction card
               // is never hidden behind it.
               padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 104.h),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   _IntroCard(),
                   SizedBox(height: 20),
                   _RecentConversionsCard(),

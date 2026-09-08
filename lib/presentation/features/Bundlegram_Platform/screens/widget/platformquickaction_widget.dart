@@ -157,7 +157,7 @@ class PlatformQuickActionWidget extends ConsumerWidget {
       width: context.width,
       color: AppColors.primaryColor,
       child: Stack(
-        // No StackFit.expand 
+        // No StackFit.expand
         children: [
           Positioned.fill(
             child: Image(
@@ -242,13 +242,13 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                   // Uncomment to re-enable a 5th action — it becomes a
                   // 5th equal Expanded slot automatically, no other
                   // change needed:
-                  // Expanded(
-                  //   child: PlatformItemWidget(
-                  //     title: 'Airtime 2 Cash',
-                  //     iconData: Icons.currency_exchange,
-                  //     onPressed: () => platform.goToAirtimeToCash(context),
-                  //   ),
-                  // ),
+                  Expanded(
+                    child: PlatformItemWidget(
+                      title: 'Airtime 2 Cash',
+                      iconData: Icons.currency_exchange,
+                      onPressed: () => platform.goToAirtimeToCash(context),
+                    ),
+                  ),
                 ],
               ),
 
