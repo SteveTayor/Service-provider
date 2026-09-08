@@ -10,8 +10,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:uuid/uuid.dart';
 
-final notificationProvider =
-    ChangeNotifierProvider<NotificationProvider>((ref) {
+final notificationProvider = ChangeNotifierProvider<NotificationProvider>((
+  ref,
+) {
   return NotificationProvider(ref, ref.read(apiServiceProvider));
 });
 
@@ -49,7 +50,8 @@ class NotificationProvider extends ChangeNotifier {
         (failure) {
           final userMsg = userFacingMessageFromFailure(failure);
           debugPrint(
-              'fetchNotifications: API failure = $failure, userMsg = $userMsg');
+            'fetchNotifications: API failure = $failure, userMsg = $userMsg',
+          );
           context.showErrorSnackBar(userMsg ?? "Failed to fetch notifications");
         },
         (response) {
@@ -81,7 +83,8 @@ class NotificationProvider extends ChangeNotifier {
                   );
                 } catch (e, st) {
                   debugPrint(
-                      'fetchNotifications: error mapping notification ${n.id} -> $e\n$st');
+                    'fetchNotifications: error mapping notification ${n.id} -> $e\n$st',
+                  );
                   return null; // skip bad notifications
                 }
               })
@@ -89,14 +92,16 @@ class NotificationProvider extends ChangeNotifier {
               .toList();
 
           debugPrint(
-              'fetchNotifications: mapped ${apiNotifications.length} notifications');
+            'fetchNotifications: mapped ${apiNotifications.length} notifications',
+          );
           _mergeNotifications(apiNotifications);
         },
       );
     } catch (e, st) {
       debugPrint('fetchNotifications: unexpected error = $e\n$st');
-      context
-          .showErrorSnackBar('An error occurred while fetching notifications');
+      context.showErrorSnackBar(
+        'An error occurred while fetching notifications',
+      );
     } finally {
       _setLoading(false);
     }
@@ -140,12 +145,14 @@ class NotificationProvider extends ChangeNotifier {
         (failure) {
           final userMsg = userFacingMessageFromFailure(failure);
           context.showErrorSnackBar(
-              userMsg ?? "Failed to mark notifications as read");
+            userMsg ?? "Failed to mark notifications as read",
+          );
         },
         (response) {
           if (response.status == 'success') {
-            _notifications =
-                _notifications.map((n) => n.copyWith(isRead: true)).toList();
+            _notifications = _notifications
+                .map((n) => n.copyWith(isRead: true))
+                .toList();
             //  _notifications = _notifications.map((n) {
             // Only mark API notifications as read, preserve broadcast notifications
             //   if (!n.isBroadcast) {
@@ -154,10 +161,12 @@ class NotificationProvider extends ChangeNotifier {
             //   return n;
             // }).toList();
             context.showSuccessSnackBar(
-                response.message ?? 'All notifications marked as read');
+              response.message ?? 'All notifications marked as read',
+            );
           } else {
             context.showErrorSnackBar(
-                response.message ?? 'Failed to mark notifications as read');
+              response.message ?? 'Failed to mark notifications as read',
+            );
           }
         },
       );
@@ -191,7 +200,7 @@ class NotificationProvider extends ChangeNotifier {
     }
   }
 
-// Add a broadcast notification
+  // Add a broadcast notification
   void addBroadcastNotification({
     required String message,
     required String type,
@@ -260,7 +269,7 @@ class NotificationProvider extends ChangeNotifier {
     }
   }
 
-// Parse notification time for sorting
+  // Parse notification time for sorting
   DateTime _parseNotificationTime(String time) {
     if (time.startsWith('Today')) {
       final timeParts = time.split(' \'')[1].split(':');
@@ -320,7 +329,7 @@ class NotificationProvider extends ChangeNotifier {
       'Sep',
       'Oct',
       'Nov',
-      'Dec'
+      'Dec',
     ];
     return months.indexOf(month) + 1;
   }
@@ -338,7 +347,7 @@ class NotificationProvider extends ChangeNotifier {
       'Sep',
       'Oct',
       'Nov',
-      'Dec'
+      'Dec',
     ];
     return months[month - 1];
   }
