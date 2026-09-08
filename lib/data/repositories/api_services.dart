@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:bundlegram/core/config/interceptors/dio_interceptor.dart';
 import 'package:bundlegram/core/config/interceptors/helper.dart';
 import 'package:bundlegram/core/error/failures.dart';
+import 'package:bundlegram/data/models/airtime_2_cash/airtime_to_cash_api_model.dart';
 import 'package:bundlegram/data/models/auth/auth_model.dart';
 import 'package:bundlegram/data/models/auth/forgot_password/change_password_respone.dart';
 import 'package:bundlegram/data/models/auth/forgot_password/change_pin_response.dart';
@@ -558,6 +559,52 @@ class ApiService {
         data: mergedData,
       );
     });
+  }
+
+  // ─── Airtime to Cash ──────────────────────────────────────────────────
+
+  Future<Either<Failure, AirtimeNetworksResponse>> getAirtimeToCashNetworks(
+    String token,
+  ) {
+    return handleApi(
+      () => _api.getAirtimeToCashNetworks('Bearer $token', _sterilizer),
+    );
+  }
+
+  Future<Either<Failure, AirtimeGenerateOtpResponse>> generateAirtimeToCashOtp(
+    String token,
+    AirtimeGenerateOtpRequest req,
+  ) {
+    return handleApi(
+      () => _api.generateAirtimeToCashOtp('Bearer $token', _sterilizer, req),
+    );
+  }
+
+  Future<Either<Failure, AirtimeVerifyOtpResponse>> verifyAirtimeToCashOtp(
+    String token,
+    AirtimeVerifyOtpRequest req,
+  ) {
+    return handleApi(
+      () => _api.verifyAirtimeToCashOtp('Bearer $token', _sterilizer, req),
+    );
+  }
+
+  Future<Either<Failure, AirtimeCheckQuotaResponse>> checkAirtimeToCashQuota(
+    String token,
+    AirtimeCheckQuotaRequest req,
+  ) {
+    return handleApi(
+      () => _api.checkAirtimeToCashQuota('Bearer $token', _sterilizer, req),
+    );
+  }
+
+  Future<Either<Failure, AirtimeTransferResponse>> transferAirtimeToCash(
+    String token,
+    AirtimeTransferRequest req,
+  ) {
+    return handleApi(
+      () => _api.transferAirtimeToCash('Bearer $token', _sterilizer, req),
+    );
   }
 
   // other endpoint …

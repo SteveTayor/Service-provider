@@ -7,6 +7,7 @@ import 'package:bundlegram/presentation/general_widget/app_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class TransactionListWidget extends ConsumerWidget {
   const TransactionListWidget({super.key});
@@ -17,9 +18,9 @@ class TransactionListWidget extends ConsumerWidget {
     final notifier = ref.read(airtimeToCashHistoryProvider.notifier);
 
     if (state.isLoading && state.transactions.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 32),
-        child: Center(child: AppLoader()),
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 34.h),
+        child: const Center(child: AppLoader()),
       );
     }
 
@@ -29,49 +30,86 @@ class TransactionListWidget extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, color: AppColors.error, size: 28.sp),
-            SizedBox(height: 8.h),
+            Container(
+              width: 52.w,
+              height: 52.w,
+              decoration: BoxDecoration(
+                color: AppColors.error.withOpacity(0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.error_outline_rounded,
+                color: AppColors.error,
+                size: 26.sp,
+              ),
+            ),
+            SizedBox(height: 12.h),
             Text(
               state.error!,
-              style: context.textTheme.bodySmall,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: AppColors.grey80,
+                height: 1.45,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 12.h),
             TextButton(
-                onPressed: notifier.refresh, child: const Text('Try Again')),
+              onPressed: notifier.refresh,
+              child: const Text('Try Again'),
+            ),
           ],
         ),
       );
     }
 
     if (state.transactions.isEmpty) {
+      // Polished fintech empty state — custom SVG illustration (phone
+      // signal -> arrow -> cash wallet, in the brand green/neutral
+      // palette) rather than a generic Material inbox icon. No button
+      // here per spec — the "+ Convert Airtime" FAB above the screen
+      // remains the single primary action.
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: 32.h),
+        padding: EdgeInsets.fromLTRB(8.w, 20.h, 8.w, 22.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.inbox_outlined, color: AppColors.grey80, size: 32.sp),
-            SizedBox(height: 8.h),
-            Text('No transactions yet', style: context.textTheme.bodySmall),
+            SvgPicture.asset(
+              'assets/airtime_to_cash_empty.svg',
+              width: 122.w,
+              height: 92.h,
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              'No conversions yet',
+              style: context.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            SizedBox(height: 5.h),
+            Text(
+              'Your Airtime-to-Cash transactions will appear here after your first conversion.',
+              style: context.textTheme.bodySmall?.copyWith(
+                color: AppColors.grey80,
+                height: 1.45,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: notifier.refresh,
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: state.transactions.length,
-        itemBuilder: (context, index) {
-          final txn = state.transactions[index];
-          return TransactionCard(
-            transaction: txn,
-            onTap: () => TransactionDetailDialog.show(context, txn),
-          );
-        },
-      ),
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: state.transactions.length,
+      itemBuilder: (context, index) {
+        final txn = state.transactions[index];
+        return TransactionCard(
+          transaction: txn,
+          onTap: () => TransactionDetailDialog.show(context, txn),
+        );
+      },
     );
   }
 }

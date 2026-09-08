@@ -1,11 +1,8 @@
-import 'package:bundlegram/data/models/airtime_2_cash/airtime_balance.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/airtime_to_cash_transaction.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/network_config.dart';
 import 'package:flutter/material.dart';
 
-/// The discrete steps of the conversion flow. Kept as a single cohesive
-/// enum (rather than scattered `isLoading`/`isSending`/`isVerifying`
-/// booleans) so the UI can switch on one source of truth.
+/// The discrete steps of the conversion flow.
 enum AirtimeToCashStep {
   networkSelection,
   noActiveConfig,
@@ -14,10 +11,12 @@ enum AirtimeToCashStep {
   otpEntry,
   verifyingOtp,
   enteringAmount,
+  checkingQuota,
   confirming,
   submitting,
   success,
-  partialSuccess,
+  processing,
+  partial,
   failed,
 }
 
@@ -45,21 +44,21 @@ class AirtimeToCashState {
     this.otpResendCountdown = 0,
     this.canResendOtp = false,
     this.isResendingOtp = false,
-    this.airtimeBalance,
-    this.isLoadingBalance = false,
+    this.sessionId,
     this.amountError,
+    this.quotaError,
     this.pinError,
     this.submissionError,
     this.lastTransaction,
   });
 
   factory AirtimeToCashState.initial() => AirtimeToCashState(
-        step: AirtimeToCashStep.networkSelection,
-        networks: const [],
-        phoneController: TextEditingController(),
-        amountController: TextEditingController(),
-        pinController: TextEditingController(),
-      );
+    step: AirtimeToCashStep.networkSelection,
+    networks: const [],
+    phoneController: TextEditingController(),
+    amountController: TextEditingController(),
+    pinController: TextEditingController(),
+  );
 
   final AirtimeToCashStep step;
   final List<NetworkConfig> networks;
@@ -76,11 +75,15 @@ class AirtimeToCashState {
   final bool canResendOtp;
   final bool isResendingOtp;
 
-  final AirtimeBalance? airtimeBalance;
-  final bool isLoadingBalance;
+  /// Returned by the real /verify endpoint; required by /transfer. There
+  /// is no airtime-balance field — the real API doesn't expose one.
+  final String? sessionId;
 
   final TextEditingController amountController;
   final String? amountError;
+
+  /// Set when the real /check-quota call rejects the entered amount.
+  final String? quotaError;
 
   final TextEditingController pinController;
   final String? pinError;
@@ -88,9 +91,6 @@ class AirtimeToCashState {
   final String? submissionError;
   final AirtimeToCashTransaction? lastTransaction;
 
-  /// Amount to receive, computed live from [amountController] and the
-  /// selected network's conversion rate. Zero when the amount is invalid
-  /// or no network is selected.
   double get amountToReceive {
     final network = selectedNetwork;
     if (network == null) return 0;
@@ -102,6 +102,7 @@ class AirtimeToCashState {
   bool get isBusy =>
       step == AirtimeToCashStep.sendingOtp ||
       step == AirtimeToCashStep.verifyingOtp ||
+      step == AirtimeToCashStep.checkingQuota ||
       step == AirtimeToCashStep.submitting ||
       isResendingOtp;
 
@@ -117,9 +118,9 @@ class AirtimeToCashState {
     int? otpResendCountdown,
     bool? canResendOtp,
     bool? isResendingOtp,
-    Object? airtimeBalance = _unset,
-    bool? isLoadingBalance,
+    Object? sessionId = _unset,
     Object? amountError = _unset,
+    Object? quotaError = _unset,
     Object? pinError = _unset,
     Object? submissionError = _unset,
     Object? lastTransaction = _unset,
@@ -135,23 +136,26 @@ class AirtimeToCashState {
           ? this.networksError
           : networksError as String?,
       phoneController: phoneController,
-      phoneError:
-          phoneError == _unset ? this.phoneError : phoneError as String?,
-      otpSendError:
-          otpSendError == _unset ? this.otpSendError : otpSendError as String?,
+      phoneError: phoneError == _unset
+          ? this.phoneError
+          : phoneError as String?,
+      otpSendError: otpSendError == _unset
+          ? this.otpSendError
+          : otpSendError as String?,
       otpVerifyError: otpVerifyError == _unset
           ? this.otpVerifyError
           : otpVerifyError as String?,
       otpResendCountdown: otpResendCountdown ?? this.otpResendCountdown,
       canResendOtp: canResendOtp ?? this.canResendOtp,
       isResendingOtp: isResendingOtp ?? this.isResendingOtp,
-      airtimeBalance: airtimeBalance == _unset
-          ? this.airtimeBalance
-          : airtimeBalance as AirtimeBalance?,
-      isLoadingBalance: isLoadingBalance ?? this.isLoadingBalance,
+      sessionId: sessionId == _unset ? this.sessionId : sessionId as String?,
       amountController: amountController,
-      amountError:
-          amountError == _unset ? this.amountError : amountError as String?,
+      amountError: amountError == _unset
+          ? this.amountError
+          : amountError as String?,
+      quotaError: quotaError == _unset
+          ? this.quotaError
+          : quotaError as String?,
       pinController: pinController,
       pinError: pinError == _unset ? this.pinError : pinError as String?,
       submissionError: submissionError == _unset

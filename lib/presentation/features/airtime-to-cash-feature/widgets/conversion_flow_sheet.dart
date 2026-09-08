@@ -99,7 +99,7 @@ class _ConversionFlowSheetState extends ConsumerState<ConversionFlowSheet> {
             },
           );
         }
-        if (next.step == AirtimeToCashStep.partialSuccess &&
+        if (next.step == AirtimeToCashStep.partial &&
             next.lastTransaction != null) {
           final txn = next.lastTransaction!;
           final failedAmount = txn.amountSold - txn.amountReceived;
@@ -193,9 +193,11 @@ class _ConversionFlowSheetState extends ConsumerState<ConversionFlowSheet> {
       case AirtimeToCashStep.confirming:
       case AirtimeToCashStep.submitting:
       case AirtimeToCashStep.success:
-      case AirtimeToCashStep.partialSuccess:
+      case AirtimeToCashStep.partial:
       case AirtimeToCashStep.failed:
         return _AmountSection(state: state, notifier: notifier);
+      default:
+        return SizedBox.shrink();
     }
   }
 }
@@ -437,13 +439,13 @@ class _NoActiveConfigSection extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 20.h),
-        BundlegramButton(
-          text: 'Go to Manual',
-          width: double.infinity,
-          buttonStyle: null,
-          isOutline: true,
-          onPressed: notifier.goToManual,
-        ),
+        // BundlegramButton(
+        //   text: 'Go to Manual',
+        //   width: double.infinity,
+        //   buttonStyle: null,
+        //   isOutline: true,
+        //   onPressed: notifier.goToManual,
+        // ),
         SizedBox(height: 12.h),
         TextButton(
           onPressed: notifier.backToNetworkSelection,
@@ -463,7 +465,7 @@ class _AmountSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final network = state.selectedNetwork;
-    final balance = state.airtimeBalance;
+    final balance = state.amountController.text.toString();
     if (network == null || balance == null) return const SizedBox.shrink();
 
     return Column(
@@ -485,16 +487,13 @@ class _AmountSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '₦${balance.amount.toStringAsFixed(2)}',
+                    '₦$balance',
                     style: context.textTheme.titleMedium?.copyWith(
                       color: AppColors.success,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  Text(
-                    balance.networkLabel,
-                    style: context.textTheme.bodySmall,
-                  ),
+                  Text(network.name, style: context.textTheme.bodySmall),
                 ],
               ),
               Icon(Icons.refresh, color: AppColors.success),
@@ -642,12 +641,15 @@ class _Footer extends StatelessWidget {
       case AirtimeToCashStep.enteringAmount:
         return notifier.proceedToConfirm;
       case AirtimeToCashStep.confirming:
+      case AirtimeToCashStep.processing:
       case AirtimeToCashStep.submitting:
         return null;
       case AirtimeToCashStep.noActiveConfig:
       case AirtimeToCashStep.success:
-      case AirtimeToCashStep.partialSuccess:
+      case AirtimeToCashStep.partial:
       case AirtimeToCashStep.failed:
+        return null;
+      default:
         return null;
     }
   }
@@ -671,7 +673,7 @@ class _Footer extends StatelessWidget {
   Widget build(BuildContext context) {
     if (state.step == AirtimeToCashStep.noActiveConfig ||
         state.step == AirtimeToCashStep.success ||
-        state.step == AirtimeToCashStep.partialSuccess ||
+        state.step == AirtimeToCashStep.partial ||
         state.step == AirtimeToCashStep.failed) {
       return const SizedBox.shrink();
     }

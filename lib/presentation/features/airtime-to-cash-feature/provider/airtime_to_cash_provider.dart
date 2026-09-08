@@ -5,21 +5,17 @@ import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/data/airtime_to_cash_failures.dart';
 import 'package:bundlegram/data/airtime_to_cash_repository.dart';
-import 'package:bundlegram/data/mock_airtime_to_cash_repository.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/airtime_to_cash_transaction.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/network_config.dart';
+import 'package:bundlegram/data/repositories/airtime_to_cash_api_repo.dart';
 import 'package:bundlegram/presentation/features/airtime-to-cash-feature/model/airtime_to_cash_state.dart';
 import 'package:bundlegram/presentation/features/airtime-to-cash-feature/provider/airtime_to_cash_history_provider.dart';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 const int kOtpResendSeconds = 30;
 
-/// One provider instance backs one open conversion flow/sheet. The screen
-/// should create it inside the modal's widget tree (e.g. via a
-/// `ProviderScope(overrides: ...)` or simply by reading it fresh each time
-/// the sheet opens) so state resets naturally when the sheet is dismissed.
 final airtimeToCashProvider =
     StateNotifierProvider.autoDispose<
       AirtimeToCashNotifier,
@@ -43,14 +39,12 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     state = state.copyWith(isLoadingNetworks: true, networksError: null);
     final result = await _repository.getNetworks();
     result.fold(
-      (Failure fail) => state = state.copyWith(
+      (fail) => state = state.copyWith(
         isLoadingNetworks: false,
         networksError: sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
       ),
-      (networks) => state = state.copyWith(
-        isLoadingNetworks: false,
-        networks: networks, // was: networks: [],
-      ),
+      (networks) =>
+          state = state.copyWith(isLoadingNetworks: false, networks: networks),
     );
   }
 
@@ -71,11 +65,7 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     state = state.copyWith(step: AirtimeToCashStep.phoneEntry);
   }
 
-  /// Extensible hook for a future manual-conversion flow. Kept separate
-  /// from the instant flow per the feature spec.
-  void goToManual() {
-    // For the manual conversion flow.
-  }
+  void goToManual() {}
 
   void backToNetworkSelection() {
     _countdownTimer?.cancel();
@@ -85,16 +75,13 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       phoneError: null,
       otpSendError: null,
       otpVerifyError: null,
-      airtimeBalance: null,
+      sessionId: null,
     );
   }
 
   String? _validatePhone(String value) {
     final trimmed = value.trim();
     if (trimmed.isEmpty) return 'Enter the phone number you are sending from';
-    // Nigerian local-format mobile number: 11 digits starting with 0.
-    // NOTE: replace with the app's existing phone-validation utility if one
-    // is already defined elsewhere in the codebase, to avoid duplicating it.
     final isValid = RegExp(r'^0[789][01]\d{8}$').hasMatch(trimmed);
     if (!isValid) return 'Enter a valid Nigerian phone number';
     return null;
@@ -158,6 +145,8 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     });
   }
 
+  /// Dedicated resend entry point — distinct from [submitPhoneNumber] so
+  /// the UI can show a "Resending..." state
   Future<void> resendOtp() async {
     final network = state.selectedNetwork;
     if (network == null || !state.canResendOtp || state.isResendingOtp) return;
@@ -177,7 +166,7 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
         );
       },
       (_) {
-        state = state.copyWith(isResendingOtp: false);
+        state = state.copyWith(isResendingOtp: false, otpVerifyError: null);
         _startResendCountdown();
       },
     );
@@ -211,11 +200,11 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
           otpVerifyError: message,
         );
       },
-      (balance) {
+      (sessionId) {
         _countdownTimer?.cancel();
         state = state.copyWith(
           step: AirtimeToCashStep.enteringAmount,
-          airtimeBalance: balance,
+          sessionId: sessionId,
         );
       },
     );
@@ -238,13 +227,11 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     if (amount == null || amount <= 0)
       return 'Enter the amount of airtime to sell';
     if (amount < network.minAmount) {
-      return 'Minimum amount is â‚¦${network.minAmount.toStringAsFixed(0)}';
+      return 'Minimum amount is ₦${network.minAmount.toStringAsFixed(0)}';
     }
     if (amount > network.maxAmount) {
-      return 'Maximum amount is â‚¦${network.maxAmount.toStringAsFixed(0)}';
+      return 'Maximum amount is ₦${network.maxAmount.toStringAsFixed(0)}';
     }
-    final balance = state.airtimeBalance?.amount ?? 0;
-    if (amount > balance) return 'Amount exceeds your airtime balance';
     return null;
   }
 
@@ -255,13 +242,13 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
   }
 
   void onAmountChanged(String _) {
-    // amountToReceive is a computed getter on the state, so just trigger a
-    // rebuild by re-emitting the same reference with an incremented step.
     state = state.copyWith();
   }
 
-  /// Validates amount + PIN and, if valid, moves to the confirmation step.
-  void proceedToConfirm() {
+  Future<void> proceedToConfirm() async {
+    final network = state.selectedNetwork;
+    if (network == null) return;
+
     final amountError = _validateAmount(state.amountController.text);
     final pinError = _validatePin(state.pinController.text);
 
@@ -270,10 +257,33 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       return;
     }
 
+    final amount = double.tryParse(
+      state.amountController.text.replaceAll(',', ''),
+    );
+    if (amount == null) return;
+
     state = state.copyWith(
       amountError: null,
       pinError: null,
-      step: AirtimeToCashStep.confirming,
+      quotaError: null,
+      step: AirtimeToCashStep.checkingQuota,
+    );
+
+    final quotaResult = await _repository.checkQuota(
+      network: network,
+      amount: amount,
+    );
+
+    quotaResult.fold(
+      (Failure fail) {
+        state = state.copyWith(
+          step: AirtimeToCashStep.enteringAmount,
+          quotaError: sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
+        );
+      },
+      (_) {
+        state = state.copyWith(step: AirtimeToCashStep.confirming);
+      },
     );
   }
 
@@ -281,9 +291,23 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     state = state.copyWith(step: AirtimeToCashStep.enteringAmount);
   }
 
+  AirtimeToCashStep _stepForTransaction(AirtimeToCashTransaction txn) {
+    switch (txn.status) {
+      case AirtimeToCashTxnStatus.processing:
+        return AirtimeToCashStep.processing;
+      case AirtimeToCashTxnStatus.partial:
+        return AirtimeToCashStep.partial;
+      case AirtimeToCashTxnStatus.success:
+      case AirtimeToCashTxnStatus.failed:
+      case AirtimeToCashTxnStatus.pending:
+        return AirtimeToCashStep.success;
+    }
+  }
+
   Future<void> confirmAndSubmit() async {
     final network = state.selectedNetwork;
-    if (network == null) return;
+    final sessionId = state.sessionId;
+    if (network == null || sessionId == null) return;
 
     final amount = double.tryParse(
       state.amountController.text.replaceAll(',', ''),
@@ -300,6 +324,7 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       phoneNumber: state.phoneController.text.trim(),
       amount: amount,
       airtimeSharePin: state.pinController.text.trim(),
+      sessionId: sessionId,
     );
 
     result.fold(
@@ -312,12 +337,10 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
         );
       },
       (txn) {
-        final transaction = txn as AirtimeToCashTransaction?;
-        final nextStep = transaction?.status == AirtimeToCashTxnStatus.partial
-            ? AirtimeToCashStep.partialSuccess
-            : AirtimeToCashStep.success;
-        state = state.copyWith(step: nextStep, lastTransaction: transaction);
-        // Refresh the dashboard's transaction list in the background.
+        state = state.copyWith(
+          step: _stepForTransaction(txn! as AirtimeToCashTransaction),
+          lastTransaction: txn,
+        );
         unawaited(_ref.read(airtimeToCashHistoryProvider.notifier).refresh());
       },
     );

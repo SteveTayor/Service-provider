@@ -1,4 +1,5 @@
 import 'package:bundlegram/data/datasources/remote/endpoints.dart';
+import 'package:bundlegram/data/models/airtime_2_cash/airtime_to_cash_api_model.dart';
 import 'package:bundlegram/data/models/auth/auth_model.dart';
 import 'package:bundlegram/data/models/auth/forgot_password/change_password_respone.dart';
 import 'package:bundlegram/data/models/auth/forgot_password/change_pin_response.dart';
@@ -370,5 +371,41 @@ abstract class ApiDefinition {
     @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
     @Query("page") int page,
+  );
+
+  // ─── Airtime to Cash ──────────────────────────────────────────────────
+
+  @GET(Endpoints.airtimeToCashNetworks)
+  Future<AirtimeNetworksResponse> getAirtimeToCashNetworks(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+  );
+
+  @POST(Endpoints.airtimeToCashOtp)
+  Future<AirtimeGenerateOtpResponse> generateAirtimeToCashOtp(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+    @Body() AirtimeGenerateOtpRequest body,
+  );
+
+  @POST(Endpoints.airtimeToCashVerify)
+  Future<AirtimeVerifyOtpResponse> verifyAirtimeToCashOtp(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+    @Body() AirtimeVerifyOtpRequest body,
+  );
+
+  @POST(Endpoints.airtimeToCashCheckQuota)
+  Future<AirtimeCheckQuotaResponse> checkAirtimeToCashQuota(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+    @Body() AirtimeCheckQuotaRequest body,
+  );
+
+  @POST(Endpoints.airtimeToCashTransfer)
+  Future<AirtimeTransferResponse> transferAirtimeToCash(
+    @Header('AccessToken') String accessToken,
+    @Header(_authHeader) String bearer,
+    @Body() AirtimeTransferRequest body,
   );
 }
