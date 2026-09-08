@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-enum AirtimeToCashTxnStatus { success, failed, partial, pending }
+enum AirtimeToCashTxnStatus { success, failed, processing, partial, pending }
 
 extension AirtimeToCashTxnStatusX on AirtimeToCashTxnStatus {
   String get label {
@@ -9,6 +9,8 @@ extension AirtimeToCashTxnStatusX on AirtimeToCashTxnStatus {
         return 'SUCCESS';
       case AirtimeToCashTxnStatus.failed:
         return 'FAILED';
+      case AirtimeToCashTxnStatus.processing:
+        return 'PROCESSING';
       case AirtimeToCashTxnStatus.partial:
         return 'PARTIAL';
       case AirtimeToCashTxnStatus.pending:
@@ -20,11 +22,11 @@ extension AirtimeToCashTxnStatusX on AirtimeToCashTxnStatus {
 enum AirtimeToCashTxnType { instant, manual }
 
 extension AirtimeToCashTxnTypeX on AirtimeToCashTxnType {
-  String get label => this == AirtimeToCashTxnType.instant ? 'INSTANT' : 'MANUAL';
+  String get label =>
+      this == AirtimeToCashTxnType.instant ? 'INSTANT' : 'MANUAL';
 }
 
-/// A single Airtime-to-Cash conversion record, matching the fields shown
-/// in the Recent Transactions table/list and the transaction-detail dialog.
+/// A single Airtime-to-Cash conversion record.
 class AirtimeToCashTransaction extends Equatable {
   const AirtimeToCashTransaction({
     required this.id,
@@ -48,7 +50,11 @@ class AirtimeToCashTransaction extends Equatable {
   /// Airtime amount the user attempted to sell.
   final double amountSold;
 
-  /// Actual cash amount received (0 for failed transactions).
+  /// Cash amount credited (or, for [AirtimeToCashTxnStatus.partial], the
+  /// successfully-converted portion). For [AirtimeToCashTxnStatus.processing]
+  /// this is the *expected* amount, computed client-side from the
+  /// network's rate — the real transfer response has no numeric credited-
+  /// amount field, only a free-text `message` and `reference`.
   final double amountReceived;
 
   final String networkId;
@@ -61,17 +67,17 @@ class AirtimeToCashTransaction extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        reference,
-        dateTime,
-        amountSold,
-        amountReceived,
-        networkId,
-        networkName,
-        phoneNumber,
-        type,
-        status,
-        conversionRatePercent,
-        failureReason,
-      ];
+    id,
+    reference,
+    dateTime,
+    amountSold,
+    amountReceived,
+    networkId,
+    networkName,
+    phoneNumber,
+    type,
+    status,
+    conversionRatePercent,
+    failureReason,
+  ];
 }

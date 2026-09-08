@@ -1,3 +1,4 @@
+import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/network_config.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -18,31 +19,25 @@ class NetworkSelectorGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: networks.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        mainAxisSpacing: 12.w,
-        crossAxisSpacing: 12.w,
-        childAspectRatio: 0.85,
-      ),
-      itemBuilder: (context, index) {
-        final network = networks[index];
-        final isSelected = selectedNetwork?.id == network.id;
-        return _NetworkTile(
-          network: network,
-          isSelected: isSelected,
-          onTap: network.isAvailable ? () => onSelected(network) : null,
-        );
-      },
+    return Column(
+      children: [
+        for (int i = 0; i < networks.length; i++) ...[
+          _NetworkCard(
+            network: networks[i],
+            isSelected: selectedNetwork?.id == networks[i].id,
+            onTap: networks[i].isAvailable
+                ? () => onSelected(networks[i])
+                : null,
+          ),
+          if (i != networks.length - 1) SizedBox(height: 12.h),
+        ],
+      ],
     );
   }
 }
 
-class _NetworkTile extends StatelessWidget {
-  const _NetworkTile({
+class _NetworkCard extends StatelessWidget {
+  const _NetworkCard({
     required this.network,
     required this.isSelected,
     required this.onTap,
@@ -55,46 +50,80 @@ class _NetworkTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Opacity(
-      opacity: network.isAvailable ? 1 : 0.6,
-      child: GestureDetector(
+      opacity: network.isAvailable ? 1 : 0.55,
+      child: InkWell(
         onTap: onTap,
-        child: Container(
+        borderRadius: BorderRadius.circular(14.r),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           decoration: BoxDecoration(
             color: isSelected
-                ? AppColors.success.withOpacity(0.08)
+                ? AppColors.success.withOpacity(0.06)
                 : AppColors.white,
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(14.r),
             border: Border.all(
               color: isSelected ? AppColors.success : AppColors.greyEE,
               width: isSelected ? 1.5 : 1,
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Row(
             children: [
-              Padding(
-                padding: EdgeInsets.all(8.w),
+              Container(
+                width: 40.w,
+                height: 40.w,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.greyF5,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
                 child: AppSvgIcon(
                   path: network.logoAsset,
-                  width: 36.w,
-                  height: 36.w,
-                  fit: BoxFit.contain,
+                  width: 24.w,
+                  height: 24.w,
                 ),
               ),
-              if (!network.isAvailable) ...[
-                SizedBox(height: 4.h),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                  decoration: BoxDecoration(
-                    color: AppColors.warning.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(6.r),
-                  ),
-                  child: Text(
-                    'Unavailable',
-                    style: TextStyle(fontSize: 8.sp, color: AppColors.warning),
+              SizedBox(width: 14.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      network.name,
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (!network.isAvailable) ...[
+                      SizedBox(height: 2.h),
+                      Text(
+                        'Unavailable',
+                        style: context.textTheme.labelSmall?.copyWith(
+                          color: AppColors.warning,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              // Selection indicator: clear filled check when selected,
+              // neutral outline circle otherwise — no ambiguity about
+              // which network is currently chosen.
+              Container(
+                width: 22.w,
+                height: 22.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected ? AppColors.success : Colors.transparent,
+                  border: Border.all(
+                    color: isSelected ? AppColors.success : AppColors.greyD0,
+                    width: 1.5,
                   ),
                 ),
-              ],
+                child: isSelected
+                    ? const Icon(Icons.check, color: Colors.white, size: 14)
+                    : null,
+              ),
             ],
           ),
         ),

@@ -130,4 +130,13 @@ class Endpoints {
   // ================
   static const String getAllBeneficiaries = "/all-beneficiaries";
   static const String getMinimalBeneficiaries = "/beneficiary";
+
+  //============================
+  // Airtime to Cash
+  // ================
+  static const String airtimeToCashNetworks = '/airtime-to-cash/networks';
+  static const String airtimeToCashOtp = '/airtime-to-cash/otp';
+  static const String airtimeToCashVerify = '/airtime-to-cash/verify';
+  static const String airtimeToCashCheckQuota = '/airtime-to-cash/check-quota';
+  static const String airtimeToCashTransfer = '/airtime-to-cash/transfer';
 }

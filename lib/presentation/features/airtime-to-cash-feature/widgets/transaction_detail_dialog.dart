@@ -1,6 +1,7 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
+import 'package:bundlegram/core/utils/phone_mask.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/airtime_to_cash_transaction.dart';
 import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,8 @@ class TransactionDetailDialog extends StatelessWidget {
         return AppColors.success;
       case AirtimeToCashTxnStatus.failed:
         return AppColors.error;
+      case AirtimeToCashTxnStatus.processing:
+        return AppColors.warning;
       case AirtimeToCashTxnStatus.partial:
         return AppColors.warning;
       case AirtimeToCashTxnStatus.pending:
@@ -29,16 +32,24 @@ class TransactionDetailDialog extends StatelessWidget {
     }
   }
 
-  Widget _row(BuildContext context, String label, String value,
-      {Color? valueColor, bool strike = false}) {
+  Widget _row(
+    BuildContext context,
+    String label,
+    String value, {
+    Color? valueColor,
+    bool strike = false,
+  }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 6.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: context.textTheme.bodySmall
-                  ?.copyWith(color: AppColors.grey80)),
+          Text(
+            label,
+            style: context.textTheme.bodySmall?.copyWith(
+              color: AppColors.grey80,
+            ),
+          ),
           Text(
             value,
             style: context.textTheme.bodyMedium?.copyWith(
@@ -53,8 +64,9 @@ class TransactionDetailDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateLabel =
-        DateFormat('MMM d, yyyy, h:mm:ss a').format(transaction.dateTime);
+    final dateLabel = DateFormat(
+      'MMM d, yyyy, h:mm:ss a',
+    ).format(transaction.dateTime);
     final isFailed = transaction.status == AirtimeToCashTxnStatus.failed;
 
     return Padding(
@@ -65,24 +77,40 @@ class TransactionDetailDialog extends StatelessWidget {
           Text('Transaction Details', style: context.textTheme.titleMedium),
           const Divider(height: 24),
           _row(context, 'Product/Service', 'Airtime To Cash'),
-          _row(context, 'Amount',
-              '₦${transaction.amountSold.toStringAsFixed(2)}',
-              valueColor: AppColors.success),
+          _row(
+            context,
+            'Amount',
+            '₦${transaction.amountSold.toStringAsFixed(2)}',
+            valueColor: AppColors.success,
+          ),
           _row(context, 'Transaction Type', transaction.type.label),
           _row(context, 'Date & Time', dateLabel),
           _row(context, 'Reference:', transaction.reference),
-          _row(context, 'Status', transaction.status.label,
-              valueColor: _statusColor),
+          _row(
+            context,
+            'Status',
+            transaction.status.label,
+            valueColor: _statusColor,
+          ),
           const Divider(height: 24),
           Align(
             alignment: Alignment.centerLeft,
-            child: Text('Airtime To Cash Details',
-                style: context.textTheme.bodyMedium),
+            child: Text(
+              'Airtime To Cash Details',
+              style: context.textTheme.bodyMedium,
+            ),
           ),
-          _row(context, 'Phone number Number', transaction.phoneNumber),
+          _row(
+            context,
+            'Phone Number',
+            maskPhoneNumber(transaction.phoneNumber),
+          ),
           _row(context, 'Network', transaction.networkName),
-          _row(context, 'Conversion Rate',
-              '${transaction.conversionRatePercent}%'),
+          _row(
+            context,
+            'Conversion Rate',
+            '${transaction.conversionRatePercent}%',
+          ),
           _row(
             context,
             'Amount Received',
