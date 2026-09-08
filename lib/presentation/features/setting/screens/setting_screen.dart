@@ -136,7 +136,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen>
       appBar: const BundlegramAppbar(
         titleText: 'Settings',
       ),
-      body: Column(
+      body: ListView(
         children: [
           buildRowWidget(
             Assets.svgs.userProtection2StreamlineCore,

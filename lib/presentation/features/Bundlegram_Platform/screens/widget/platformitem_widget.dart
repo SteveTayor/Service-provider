@@ -83,10 +83,7 @@ class PlatformItemWidget extends StatelessWidget {
     this.icon,
     this.iconData,
     super.key,
-  }) : assert(
-         icon != null || iconData != null,
-         'Provide either icon (asset path) or iconData (fallback Material icon)',
-       );
+  }) : assert(icon != null || iconData != null, '');
 
   final String title;
   final String? icon;
@@ -135,11 +132,7 @@ class PlatformItemWidget extends StatelessWidget {
                         width: iconInset,
                         height: iconInset,
                       )
-                    : Icon(
-                        iconData,
-                        color: AppColors.white,
-                        size: iconInset,
-                      ),
+                    : Icon(iconData, color: AppColors.white, size: iconInset),
               ),
               SizedBox(height: r.spacing(8)),
               Padding(
@@ -147,11 +140,11 @@ class PlatformItemWidget extends StatelessWidget {
                 child: Text(
                   title,
                   textAlign: TextAlign.center,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodyMedium!.copyWith(
                     color: AppColors.white,
-                    fontSize: r.textSize(14),
+                    fontSize: r.textSize(13),
                   ),
                 ),
               ),

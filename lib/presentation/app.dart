@@ -12,6 +12,7 @@ import 'package:bundlegram/presentation/no_internet.dart';
 import 'package:bundlegram/services/route_memory_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -74,52 +75,60 @@ class _AppState extends ConsumerState<App> {
     final themeNotifier = ref.read(themeProvider.notifier);
     final themeState = ref.watch(themeProvider);
 
-    return ScreenUtilInit(
-      designSize: const Size(390, 800),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      ensureScreenSize: true,
-      useInheritedMediaQuery: true,
-      builder: (context, _) {
-        return GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: MaterialApp.router(
-            routerConfig: AppRouter.router,
-            themeMode: ThemeMode.system,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            restorationScopeId: 'app',
-            debugShowCheckedModeBanner: false,
-            locale: const Locale('en', 'NG'),
-            supportedLocales: const [Locale('en', 'NG')],
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            scaffoldMessengerKey: scaffoldMessengerKey,
-            builder: (context, child) {
-              // FIX: previously `connectivityProv.when(...)` returned
-              // either NoInternetWidget() OR InactivityWrapper(child) —
-              // mutually exclusive.
-              if (child == null) return const SizedBox();
+    return DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) {
+        return ScreenUtilInit(
+          designSize: const Size(390, 800),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          ensureScreenSize: true,
+          useInheritedMediaQuery: true,
+          builder: (context, _) {
+            return GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: MaterialApp.router(
+                routerConfig: AppRouter.router,
+                themeMode: ThemeMode.system,
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
 
-              return connectivityProv.when(
-                data: (status) {
-                  final isOffline = status == ConnectivityResult.none;
-                  return Stack(
-                    children: [
-                      InactivityWrapper(child: child),
-                      if (isOffline) const NoInternetWidget(),
-                    ],
+                locale: DevicePreview.locale(context),
+                restorationScopeId: 'app',
+                debugShowCheckedModeBanner: false,
+                // locale: const Locale('en', 'NG'),
+                supportedLocales: const [Locale('en', 'NG')],
+                localizationsDelegates: const [
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                scaffoldMessengerKey: scaffoldMessengerKey,
+                builder: (context, child) {
+                  // FIX: previously `connectivityProv.when(...)` returned
+                  // either NoInternetWidget() OR InactivityWrapper(child) —
+                  // mutually exclusive.
+                  if (child == null) return const SizedBox();
+                  Widget app = child;
+                  app = connectivityProv.when(
+                    data: (status) {
+                      final isOffline = status == ConnectivityResult.none;
+                      return Stack(
+                        children: [
+                          InactivityWrapper(child: child),
+                          if (isOffline) const NoInternetWidget(),
+                        ],
+                      );
+                    },
+                    loading: () => child,
+                    error: (_, __) => child,
                   );
+                  return DevicePreview.appBuilder(context, app);
                 },
-                loading: () => child,
-                error: (_, __) => child,
-              );
-            },
-          ),
+              ),
+            );
+          },
         );
       },
     );

@@ -25,6 +25,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class TransactionScreen extends ConsumerStatefulWidget {
   const TransactionScreen({super.key});
@@ -295,20 +296,33 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
     );
   }
 
-  String _formatDate(DateTime? date) {
+  // String _formatDate(DateTime? date) {
+  //   if (date == null) return 'Unknown Date';
+
+  //   final localDate = date.toLocal();
+  //   final now = DateTime.now();
+  //   final today = DateTime(now.year, now.month, now.day);
+  //   final yesterday = today.subtract(const Duration(days: 1));
+  //   final txnDate = DateTime(localDate.year, localDate.month, localDate.day);
+
+  //   if (txnDate.isAtSameMomentAs(today)) return 'Today';
+  //   if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
+
+  //   return localDate.toIso8601String();
+  // }
+    String _formatDate(DateTime? date) {
     if (date == null) return 'Unknown Date';
 
-    final localDate = date.toLocal();
+    final localDate = date.toLocal(); // <-- Always convert first
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final txnDate = DateTime(localDate.year, localDate.month, localDate.day);
 
-    if (txnDate.isAtSameMomentAs(today)) return 'Today';
-    if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
+    // if (txnDate.isAtSameMomentAs(today)) return 'Today';
+    // if (txnDate.isAtSameMomentAs(yesterday)) return 'Yesterday';
 
-    return localDate.toIso8601String();
+    return DateFormat('EEE MMM dd yyyy').format(localDate);
   }
+
 
   String _formatTime(DateTime? date) {
     if (date == null) return '--:--';

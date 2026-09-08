@@ -251,7 +251,6 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                   ),
                 ],
               ),
-
               30.verticalSpace,
             ],
           ).withContainer(

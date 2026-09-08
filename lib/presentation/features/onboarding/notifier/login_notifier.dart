@@ -196,10 +196,19 @@ class LoginProvider extends ChangeNotifier {
 
   Future<void> submit(BuildContext context) async {
     FocusScope.of(context).unfocus();
-    if (!_isValid) return;
 
-    _setError(null);
-    _setLoading(true);
+  final isFormValid = formKey.currentState?.validate() ?? false;
+
+  if (!isFormValid) {
+    _isValid = false;
+    notifyListeners();
+    return;
+  }
+
+  _isValid = true;
+
+  _setError(null);
+  _setLoading(true);
     final deviceInfo = await _storage.getDeviceInfo();
     String deviceToken = deviceInfo['macAddress'] ?? 'unknown';
 
@@ -265,6 +274,9 @@ class LoginProvider extends ChangeNotifier {
           return;
         }
 
+        final resolvedEmail = loginData.data?.payload?.email;
+final resolvedUsername = loginData.data?.payload?.username;
+
         await _storage.setAuthToken(token);
         await _storage.setPassword(passwordCtrl.text.trim());
         final userEmail = emailCtrl.text.trim();
@@ -272,14 +284,16 @@ class LoginProvider extends ChangeNotifier {
         final storedEmail = await _storage.getRememberedEmail();
         final storedUsername = await _storage.getUsername();
         await _storage.storeBiometricCredentials(
-          email: loginData.data?.payload?.email ?? enteredIdentifier,
-          password: passwordCtrl.text.trim(),
-          displayName: loginData.data?.payload?.username,
-        );
-
-        final isSameUser =
-            enteredIdentifier == storedEmail ||
-            enteredIdentifier == storedUsername;
+  email: resolvedEmail ?? enteredIdentifier,
+  password: passwordCtrl.text.trim(),
+  displayName: resolvedUsername,
+);
+final isSameUser =
+    (resolvedEmail != null && resolvedEmail == storedEmail) ||
+    (resolvedUsername != null && resolvedUsername == storedUsername);
+        // final isSameUser =
+        //     enteredIdentifier == storedEmail ||
+        //     enteredIdentifier == storedUsername;
         if (!isSameUser) {
           // New login â†’ clear previous cache
           await _storage.clearRememberedEmail();

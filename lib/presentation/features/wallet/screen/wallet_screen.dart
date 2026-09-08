@@ -70,8 +70,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final walletAsync =
-        ref.watch(globalProvider.select((g) => g.usersTransactions));
+    final walletAsync = ref.watch(
+      globalProvider.select((g) => g.usersTransactions),
+    );
 
     return BundlegramScaffold(
       appBar: BundlegramAppbar(
@@ -81,8 +82,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           onTap: () => context.push(RouteConstants.walletHistoryScreen),
           child: Text(
             'History',
-            style: context.textTheme.labelSmall!
-                .copyWith(fontWeight: FontWeight.w500),
+            style: context.textTheme.labelSmall!.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ),
@@ -94,9 +96,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             txnsResponse: txnsResponse,
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => AppErrorWidget(
           error: e,
           errorMessage: 'Unable to load wallet details',
@@ -175,11 +175,11 @@ class WalletBody extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'Wallet balance',
-                                    style:
-                                        context.textTheme.bodyMedium?.copyWith(
-                                      color: AppColors.white,
-                                      fontSize: 16.sp,
-                                    ),
+                                    style: context.textTheme.bodyMedium
+                                        ?.copyWith(
+                                          color: AppColors.white,
+                                          fontSize: 16.sp,
+                                        ),
                                   ),
                                   8.horizontalSpace,
                                   GestureDetector(
@@ -204,12 +204,13 @@ class WalletBody extends ConsumerWidget {
                                       text: 'Withdraw',
                                       textStyle: context.textTheme.bodyMedium!
                                           .copyWith(
-                                        color: AppColors.primaryColor,
-                                        fontSize: 16.sp,
-                                      ),
+                                            color: AppColors.primaryColor,
+                                            fontSize: 14.sp,
+                                          ),
                                       onPressed: () {
-                                        final profile =
-                                            ref.read(globalProvider).profile;
+                                        final profile = ref
+                                            .read(globalProvider)
+                                            .profile;
                                         final bvn = profile.value?.data?.bvn;
 
                                         if (bvn == null) {
@@ -220,7 +221,8 @@ class WalletBody extends ConsumerWidget {
                                           );
                                         } else {
                                           context.push(
-                                              RouteConstants.withdrawFund);
+                                            RouteConstants.withdrawFund,
+                                          );
                                         }
                                       },
                                     ),
@@ -242,11 +244,11 @@ class WalletBody extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'Promo rewards',
-                                    style:
-                                        context.textTheme.bodyMedium?.copyWith(
-                                      color: AppColors.white,
-                                      fontSize: 16.sp,
-                                    ),
+                                    style: context.textTheme.bodyMedium
+                                        ?.copyWith(
+                                          color: AppColors.white,
+                                          fontSize: 16.sp,
+                                        ),
                                   ),
                                   8.horizontalSpace,
                                   GestureDetector(
