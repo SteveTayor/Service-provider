@@ -24,7 +24,7 @@ class VersionManager {
       // FIX: `lastVersion == null`
       if (lastVersion == null || lastBuildNumber == null) {
         debugPrint(
-          'No previous version recorded — could be a fresh install, or an '
+          'No previous version recorded, could be a fresh install, or an '
           'update from a build that predates version tracking. Clearing '
           'stale data defensively either way.',
         );

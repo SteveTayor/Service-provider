@@ -50,18 +50,26 @@ class _AppState extends ConsumerState<App> {
     unawaited(_checkAppVersion());
   }
 
-  Future<void> _checkAppVersion() async {
-    try {
-      const storage = FlutterSecureStorage();
-      final secureStorage = SecureStorageHelper(storage);
-      final versionManager = VersionManager(secureStorage);
+  // Future<void> _checkAppVersion() async {
+  //   try {
+  //     const storage = FlutterSecureStorage();
+  //     final secureStorage = SecureStorageHelper(storage);
+  //     final versionManager = VersionManager(secureStorage);
 
-      // Runs after the first frame (post-frame callback),
-      await versionManager.checkAndHandleAppUpdate();
-    } catch (e, st) {
-      debugPrint('Version check failed: $e\n$st');
-    }
+  //     // Runs after the first frame (post-frame callback),
+  //     await versionManager.checkAndHandleAppUpdate();
+  //   } catch (e, st) {
+  //     debugPrint('Version check failed: $e\n$st');
+  //   }
+  // }
+  Future<void> _checkAppVersion() async {
+  try {
+    final versionManager = ref.read(versionManagerProvider);
+    await versionManager.checkAndHandleAppUpdate();
+  } catch (e, st) {
+    debugPrint('Version check failed: $e\n$st');
   }
+}
 
   @override
   void dispose() {

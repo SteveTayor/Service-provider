@@ -93,10 +93,14 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       }
 
       // ALL CORE APIS \'“ CALLED ONCE
-      await Future.wait([
-        initializeWalletandAccounts(ctx),
-        initializePlatformDependencies(ctx),
-      ]);
+      // await Future.wait([
+      //   initializeWalletandAccounts(ctx),
+      //   initializePlatformDependencies(ctx),
+      // ]);
+
+      await initializeCriticalData(ctx);
+
+      unawaited(initializeDeferredData(ctx));
 
       _isInitialized = true;
     } catch (e) {
@@ -106,6 +110,19 @@ class GlobalProvider extends StateNotifier<GlobalState> {
     } finally {
       _isInitializing = false;
     }
+  }
+
+  Future<void> initializeCriticalData(BuildContext context) async {
+    await Future.wait([fetchWalletBalance(context), fetchProfile(context)]);
+  }
+
+  Future<void> initializeDeferredData(BuildContext context) async {
+    await Future.wait([
+      initializePlatformDependencies(context),
+      fetchUserBanks(context),
+      fetchVirtualAccount(context),
+      fetchEpinTransactionRequests(context, force: true),
+    ]);
   }
 
   void _invalidateAllProductProviders() {
@@ -292,7 +309,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
         // if (data.data?.pin == null && context.mounted) {
         //   context.go(RouteConstants.pinScreen);
         // }
-          if (profile?.hasPin == false && context.mounted) {
+        if (profile?.hasPin == false && context.mounted) {
           context.showBottomSheet(
             child: const PinSheet(),
             isDismissible: false,
