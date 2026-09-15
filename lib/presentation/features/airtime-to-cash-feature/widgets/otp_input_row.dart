@@ -36,8 +36,7 @@ class OtpInputRowState extends State<OtpInputRow> {
   @override
   void initState() {
     super.initState();
-    _controllers =
-        List.generate(widget.length, (_) => TextEditingController());
+    _controllers = List.generate(widget.length, (_) => TextEditingController());
     _focusNodes = List.generate(widget.length, (_) => FocusNode());
   }
 
@@ -84,7 +83,9 @@ class OtpInputRowState extends State<OtpInputRow> {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = widget.hasError ? AppColors.errorText : AppColors.greyD0;
+    final borderColor = widget.hasError
+        ? AppColors.errorText
+        : AppColors.greyD0;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,7 +106,7 @@ class OtpInputRowState extends State<OtpInputRow> {
               focusNode: _focusNodes[index],
               enabled: widget.enabled,
               textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.phone,
               maxLength: 1,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),

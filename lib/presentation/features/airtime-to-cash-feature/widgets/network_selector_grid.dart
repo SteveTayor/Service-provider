@@ -59,11 +59,11 @@ class _NetworkCard extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           decoration: BoxDecoration(
             color: isSelected
-                ? AppColors.success.withOpacity(0.06)
+                ? AppColors.primaryColor.withOpacity(0.06)
                 : AppColors.white,
             borderRadius: BorderRadius.circular(14.r),
             border: Border.all(
-              color: isSelected ? AppColors.success : AppColors.greyEE,
+              color: isSelected ? AppColors.primaryColor : AppColors.greyEE,
               width: isSelected ? 1.5 : 1,
             ),
           ),
@@ -114,9 +114,13 @@ class _NetworkCard extends StatelessWidget {
                 height: 22.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isSelected ? AppColors.success : Colors.transparent,
+                  color: isSelected
+                      ? AppColors.primaryColor
+                      : Colors.transparent,
                   border: Border.all(
-                    color: isSelected ? AppColors.success : AppColors.greyD0,
+                    color: isSelected
+                        ? AppColors.primaryColor
+                        : AppColors.greyD0,
                     width: 1.5,
                   ),
                 ),

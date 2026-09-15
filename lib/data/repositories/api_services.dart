@@ -566,45 +566,35 @@ class ApiService {
   Future<Either<Failure, AirtimeNetworksResponse>> getAirtimeToCashNetworks(
     String token,
   ) {
-    return handleApi(
-      () => _api.getAirtimeToCashNetworks('Bearer $token', _sterilizer),
-    );
+    return handleApi(() => _api.getAirtimeToCashNetworks('Bearer $token'));
   }
 
   Future<Either<Failure, AirtimeGenerateOtpResponse>> generateAirtimeToCashOtp(
     String token,
     AirtimeGenerateOtpRequest req,
   ) {
-    return handleApi(
-      () => _api.generateAirtimeToCashOtp('Bearer $token', _sterilizer, req),
-    );
+    return handleApi(() => _api.generateAirtimeToCashOtp('Bearer $token', req));
   }
 
   Future<Either<Failure, AirtimeVerifyOtpResponse>> verifyAirtimeToCashOtp(
     String token,
     AirtimeVerifyOtpRequest req,
   ) {
-    return handleApi(
-      () => _api.verifyAirtimeToCashOtp('Bearer $token', _sterilizer, req),
-    );
+    return handleApi(() => _api.verifyAirtimeToCashOtp('Bearer $token', req));
   }
 
   Future<Either<Failure, AirtimeCheckQuotaResponse>> checkAirtimeToCashQuota(
     String token,
     AirtimeCheckQuotaRequest req,
   ) {
-    return handleApi(
-      () => _api.checkAirtimeToCashQuota('Bearer $token', _sterilizer, req),
-    );
+    return handleApi(() => _api.checkAirtimeToCashQuota('Bearer $token', req));
   }
 
   Future<Either<Failure, AirtimeTransferResponse>> transferAirtimeToCash(
     String token,
     AirtimeTransferRequest req,
   ) {
-    return handleApi(
-      () => _api.transferAirtimeToCash('Bearer $token', _sterilizer, req),
-    );
+    return handleApi(() => _api.transferAirtimeToCash('Bearer $token', req));
   }
 
   // other endpoint …

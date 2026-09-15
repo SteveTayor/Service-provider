@@ -245,7 +245,7 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                   Expanded(
                     child: PlatformItemWidget(
                       title: 'Airtime 2 Cash',
-                      iconData: Icons.currency_exchange,
+                      iconData: Icons.swap_horiz,
                       onPressed: () => platform.goToAirtimeToCash(context),
                     ),
                   ),

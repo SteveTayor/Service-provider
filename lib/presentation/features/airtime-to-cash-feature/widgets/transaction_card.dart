@@ -2,16 +2,36 @@ import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/phone_mask.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/airtime_to_cash_transaction.dart';
+import 'package:bundlegram/gen/assets.gen.dart';
+import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
-/// Mobile card representation of a single transaction row, matching:
-///   ₦5,000 Airtime
-///   ₦4,500 received
-///   MTN • 080••••1234
-///   Today, 10:42 AM
-///   Success
+/// Maps a transaction's network id/code to its logo asset — same codes used
+/// for network selection (MTN, AIRTEL, GLO, 9MOBILE). Returns null for any
+/// unrecognized id so the UI can fall back to a generic icon instead of
+/// throwing on a missing asset.
+String? _logoAssetFor(String networkId) {
+  switch (networkId.toUpperCase()) {
+    case 'MTN':
+      return Assets.svgs.mtnnw;
+    case 'AIRTEL':
+      return Assets.svgs.airtel;
+    case 'GLO':
+      return Assets.svgs.glo;
+    case '9MOBILE':
+      return Assets.svgs.a9mobile;
+    default:
+      return null;
+  }
+}
+
+/// Mobile card representation of a single transaction row, service-list
+/// style, matching:
+///   [LOGO]  ₦5,000 Airtime                    Success
+///           MTN • 080••••1234
+///           Today, 10:42 AM
 class TransactionCard extends StatelessWidget {
   const TransactionCard({
     super.key,
@@ -66,6 +86,7 @@ class TransactionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statusColor = _statusColor();
+    final logoAsset = _logoAssetFor(transaction.networkId);
 
     return InkWell(
       onTap: onTap,
@@ -78,82 +99,77 @@ class TransactionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(14.r),
           border: Border.all(color: AppColors.greyEE),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            // Provider logo tile — same rounded-square treatment as the
+            // network selector, so a transaction row reads as one item in
+            // a service list rather than a plain text block.
+            Container(
+              width: 44.w,
+              height: 44.w,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: AppColors.greyF5,
+                shape: BoxShape.circle,
+              ),
+              child: logoAsset != null
+                  ? ClipOval(
+                      child: AppSvgIcon(
+                        path: logoAsset,
+                        width: 26.w,
+                        height: 26.w,
+                      ),
+                    )
+                  : Icon(
+                      Icons.sim_card_outlined,
+                      size: 22.sp,
+                      color: AppColors.grey80,
+                    ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${transaction.networkName.toUpperCase()} Airtime',
+                    style: context.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 2.w),
+                  Row(
                     children: [
                       Text(
-                        '₦${transaction.amountSold.toStringAsFixed(0)} Airtime',
-                        style: context.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
+                        _statusDisplayLabel(),
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: statusColor,
                         ),
                       ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        '₦${transaction.amountReceived.toStringAsFixed(0)} received',
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: AppColors.success,
-                          fontWeight: FontWeight.w500,
+                      SizedBox(width: 8.w),
+                      Flexible(
+                        child: Text(
+                          _dateLabel(),
+                          style: context.textTheme.bodySmall?.copyWith(
+                            fontSize: 12.sp,
+                            color: AppColors.grey80,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 5.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Text(
-                    _statusDisplayLabel(),
-                    style: context.textTheme.labelSmall?.copyWith(
-                      color: statusColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-            SizedBox(height: 12.h),
-            Row(
-              children: [
-                Text(
-                  transaction.networkName,
-                  style: context.textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.grey33,
-                  ),
-                ),
-                Text(
-                  ' • ',
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: AppColors.grey80,
-                  ),
-                ),
-                Text(
-                  maskPhoneNumber(transaction.phoneNumber),
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: AppColors.grey80,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 4.h),
+
             Text(
-              _dateLabel(),
+              '₦${transaction.amountSold.toStringAsFixed(0)}',
               style: context.textTheme.labelSmall?.copyWith(
-                color: AppColors.grey80,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

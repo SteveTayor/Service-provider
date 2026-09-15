@@ -135,9 +135,16 @@ class WalletBody extends ConsumerWidget {
         try {
           await Future.wait([
             ref.read(globalProvider.notifier).fetchWalletBalance(context),
-            ref.read(globalProvider.notifier).fetchUsersTransactions(context),
+
+            ref
+                .read(globalProvider.notifier)
+                .fetchUsersTransactions(context, force: true),
           ]);
-          ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
+          // await Future.wait([
+          //   ref.read(globalProvider.notifier).fetchWalletBalance(context),
+          //   ref.read(globalProvider.notifier).fetchUsersTransactions(context),
+          // ]);
+          // ref.read(walletServiceHistoryProvider('wallet').notifier).refresh();
           // unawaited(
           //     ref.read(dashboardProvider.notifier).initDashboard(context));
         } finally {

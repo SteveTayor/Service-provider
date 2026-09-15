@@ -84,37 +84,41 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
             context.showBottomSheet(
               child: TransactionFilterWidget(
                 useResponsive: true,
-                onApply: ({
-                  required String sortBy,
-                  required String amountBy,
-                  required Set<String> statusSet,
-                  required Set<String> typeSet,
-                }) {
-                  _sortBy = sortBy;
-                  _amountBy = amountBy;
-                  _statusSet
-                    ..clear()
-                    ..addAll(statusSet);
-                  _typeSet
-                    ..clear()
-                    ..addAll(typeSet);
+                onApply:
+                    ({
+                      required String sortBy,
+                      required String amountBy,
+                      required Set<String> statusSet,
+                      required Set<String> typeSet,
+                    }) {
+                      _sortBy = sortBy;
+                      _amountBy = amountBy;
+                      _statusSet
+                        ..clear()
+                        ..addAll(statusSet);
+                      _typeSet
+                        ..clear()
+                        ..addAll(typeSet);
 
-                  ref.read(transactionHistoryProvider.notifier).applyFilters(
-                        typeSet: _typeSet,
-                        statusSet: _statusSet,
-                        sortBy: _sortBy,
-                        amountBy: _amountBy,
-                      );
+                      ref
+                          .read(transactionHistoryProvider.notifier)
+                          .applyFilters(
+                            typeSet: _typeSet,
+                            statusSet: _statusSet,
+                            sortBy: _sortBy,
+                            amountBy: _amountBy,
+                          );
 
-                  context.pop();
-                },
+                      context.pop();
+                    },
               ),
             );
           },
           child: Text(
             'Filter',
-            style: context.textTheme.labelSmall!
-                .copyWith(fontWeight: FontWeight.w500),
+            style: context.textTheme.labelSmall!.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ),
@@ -127,9 +131,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
             onShowTransactionDetails: _showTransactionDetails,
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => AppErrorWidget(
           error: e,
           errorMessage: 'Unable to load transactions',
@@ -156,7 +158,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         type: txn.transType,
         amount: txn.deductAmount.toCurrency(),
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         network: txn.subProduct?.product?.productName,
@@ -172,7 +175,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         type: txn.transType,
         amount: txn.deductAmount.toCurrency(),
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         network: txn.subProduct?.product?.productName,
@@ -191,7 +195,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         userBalance: txn.balanceAfter?.toCurrency(),
@@ -207,7 +212,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         paymentMethod: txn.paymentType ?? '',
@@ -222,7 +228,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         type: txn.transType,
         amount: txn.amount.toCurrency(),
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         smartCardNumber: txn.crAcc,
@@ -233,8 +240,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
       final unitsStr = txn.unit == null
           ? null
           : (txn.unit! % 1 == 0
-              ? txn.unit!.toInt().toString()
-              : txn.unit!.toString());
+                ? txn.unit!.toInt().toString()
+                : txn.unit!.toString());
 
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
@@ -243,7 +250,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         type: txn.transType,
         amount: txn.amount.toCurrency(),
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         meterNumber: txn.crAcc,
@@ -256,8 +264,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
       final qtyStr = txn.unit == null
           ? null
           : (txn.unit! % 1 == 0
-              ? txn.unit!.toInt().toString()
-              : txn.unit!.toString());
+                ? txn.unit!.toInt().toString()
+                : txn.unit!.toString());
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
@@ -269,7 +277,8 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         phoneNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         quantity: qtyStr,
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         balanceBefore: txn.balanceBefore?.toCurrency(),
@@ -310,7 +319,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
 
   //   return localDate.toIso8601String();
   // }
-    String _formatDate(DateTime? date) {
+  String _formatDate(DateTime? date) {
     if (date == null) return 'Unknown Date';
 
     final localDate = date.toLocal(); // <-- Always convert first
@@ -322,7 +331,6 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
 
     return DateFormat('EEE MMM dd yyyy').format(localDate);
   }
-
 
   String _formatTime(DateTime? date) {
     if (date == null) return '--:--';
@@ -376,7 +384,11 @@ class TransactionBody extends ConsumerWidget {
         await ref
             .read(globalProvider.notifier)
             .fetchUsersTransactions(context, force: true);
-        ref.read(transactionHistoryProvider.notifier).refresh();
+
+        // await ref
+        //     .read(globalProvider.notifier)
+        //     .fetchUsersTransactions(context, force: true);
+        // ref.read(transactionHistoryProvider.notifier).refresh();
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,24 +404,14 @@ class TransactionBody extends ConsumerWidget {
               },
             ),
           ),
-          SizedBox(
-            height: useResponsive ? r.spacing(20) : 20.h,
-          ),
-          Expanded(
-            child: _buildTransactionList(
-              context,
-              ref,
-            ),
-          ),
+          SizedBox(height: useResponsive ? r.spacing(20) : 20.h),
+          Expanded(child: _buildTransactionList(context, ref)),
         ],
       ),
     );
   }
 
-  Widget _buildTransactionList(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
+  Widget _buildTransactionList(BuildContext context, WidgetRef ref) {
     final r = context.responsive;
     final allTxns = ref.watch(transactionHistoryProvider).filteredServices;
 
@@ -432,9 +434,7 @@ class TransactionBody extends ConsumerWidget {
           bottom: useResponsive ? r.spacing(12) : 12,
           top: useResponsive ? r.spacing(10) : 10,
         ),
-      ).withContainer(
-        height: useResponsive ? r.spacing(25) : 25,
-      ),
+      ).withContainer(height: useResponsive ? r.spacing(25) : 25),
       itemBuilder: (ctx, index) {
         if (index == allTxns.length) {
           final state = ref.watch(transactionHistoryProvider);
@@ -455,10 +455,7 @@ class TransactionBody extends ConsumerWidget {
         final txn = allTxns[index];
         return InkWell(
           onTap: () => onShowTransactionDetails(txn),
-          child: ServiceListItem(
-            transaction: txn,
-            useResponsive: true,
-          ),
+          child: ServiceListItem(transaction: txn, useResponsive: true),
         );
       },
     );

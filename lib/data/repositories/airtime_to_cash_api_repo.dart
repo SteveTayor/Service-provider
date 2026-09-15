@@ -1,6 +1,7 @@
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/data/airtime_to_cash_repository.dart';
 import 'package:bundlegram/data/datasources/local/secure_storage_helper.dart';
+import 'package:bundlegram/data/mock_airtime_to_cash_repository.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/airtime_to_cash_api_model.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/airtime_to_cash_transaction.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/network_config.dart';
@@ -10,10 +11,11 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final airtimeToCashRepositoryProvider = Provider<IAirtimeToCashRepository>(
-  (ref) => ApiAirtimeToCashRepository(
-    ref.read(apiServiceProvider),
-    ref.read(secureStorageHelperProvider),
-  ),
+  (ref) => MockAirtimeToCashRepository(),
+  // ApiAirtimeToCashRepository(
+  //   ref.read(apiServiceProvider),
+  //   ref.read(secureStorageHelperProvider),
+  // ),
 );
 
 class _NetworkDisplayConfig {

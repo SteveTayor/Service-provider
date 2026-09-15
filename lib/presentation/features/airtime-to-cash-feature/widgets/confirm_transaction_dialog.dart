@@ -127,7 +127,7 @@ class ConfirmTransactionDialog extends StatelessWidget {
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
             decoration: BoxDecoration(
-              color: AppColors.success.withOpacity(0.08),
+              color: AppColors.primaryColor.withOpacity(0.08),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Row(
@@ -137,7 +137,7 @@ class ConfirmTransactionDialog extends StatelessWidget {
                 Text(
                   '₦${amountToReceive.toStringAsFixed(0)}',
                   style: context.textTheme.titleLarge?.copyWith(
-                    color: AppColors.success,
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -148,17 +148,18 @@ class ConfirmTransactionDialog extends StatelessWidget {
           BundlegramButton(
             text: 'Confirm Conversion',
             width: double.infinity,
-            onPressed: () =>
-                Navigator.of(context, rootNavigator: true).pop(true),
+            onPressed: () {
+              Navigator.of(context, rootNavigator: true).pop(true);
+            },
           ),
           SizedBox(height: 8.h),
           TextButton(
             onPressed: () =>
                 Navigator.of(context, rootNavigator: true).pop(false),
             child: Text(
-              'Go Back',
+              '< Go Back',
               style: context.textTheme.bodyMedium?.copyWith(
-                color: AppColors.grey8E,
+                color: AppColors.grey33,
               ),
             ),
           ),

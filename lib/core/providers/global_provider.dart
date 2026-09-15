@@ -278,11 +278,21 @@ class GlobalProvider extends StateNotifier<GlobalState> {
         state = state.copyWith(profile: AsyncError(fail, StackTrace.current));
       },
       (data) {
+        final profile = data.data;
+
+        debugPrint(
+          '[PIN DEBUG] '
+          'status=${data.status}, '
+          'user=${profile?.email}, '
+          'hasPin=${profile?.hasPin}, '
+          'rawPin=${profile?.pin}',
+        );
+
         state = state.copyWith(profile: AsyncData(data));
         // if (data.data?.pin == null && context.mounted) {
         //   context.go(RouteConstants.pinScreen);
         // }
-        if (data.data?.hasPin != true && context.mounted) {
+          if (profile?.hasPin == false && context.mounted) {
           context.showBottomSheet(
             child: const PinSheet(),
             isDismissible: false,

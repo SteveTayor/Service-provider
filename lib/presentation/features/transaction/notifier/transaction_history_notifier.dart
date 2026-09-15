@@ -11,13 +11,13 @@ class TransactionHistoryNotifier
     extends StateNotifier<RecentTransactionsState> {
   final Ref ref;
   static const int _batchSize = 20;
-// full list from global provider
+  // full list from global provider
   List<UserTransactions> _originalTransactions = [];
   // When filters/search are active we keep the full filtered set here,
   List<UserTransactions> _currentFilteredFull = [];
 
   TransactionHistoryNotifier(this.ref)
-      : super(RecentTransactionsState.initial()) {
+    : super(RecentTransactionsState.initial()) {
     ref.listen<AsyncValue<GetAllUserTransactionResponse?>>(
       globalProvider.select((s) => s.usersTransactions),
       (prev, next) {
@@ -37,7 +37,7 @@ class TransactionHistoryNotifier
     String? searchQuery,
   }) {
     // Start from the original master list
-    var temp = _originalTransactions;
+    var temp = [..._originalTransactions];
 
     // Apply search first (if provided)
     if (searchQuery != null && searchQuery.trim().isNotEmpty) {
@@ -53,16 +53,20 @@ class TransactionHistoryNotifier
     // Apply type filter
     if (typeSet != null && typeSet.isNotEmpty) {
       temp = temp
-          .where((txn) => typeSet.contains(
-              txn.subProduct?.product?.type?.toLowerCase() ?? 'unknown'))
+          .where(
+            (txn) => typeSet.contains(
+              txn.subProduct?.product?.type?.toLowerCase() ?? 'unknown',
+            ),
+          )
           .toList();
     }
 
     // Apply status filter
     if (statusSet != null && statusSet.isNotEmpty) {
       temp = temp
-          .where((txn) =>
-              statusSet.contains(txn.status?.toLowerCase() ?? 'unknown'))
+          .where(
+            (txn) => statusSet.contains(txn.status?.toLowerCase() ?? 'unknown'),
+          )
           .toList();
     }
 
@@ -112,8 +116,10 @@ class TransactionHistoryNotifier
     state = state.copyWith(isLoadingMore: true);
 
     final current = state.filteredServices.length;
-    final nextBatch =
-        _currentFilteredFull.skip(current).take(_batchSize).toList();
+    final nextBatch = _currentFilteredFull
+        .skip(current)
+        .take(_batchSize)
+        .toList();
 
     final updated = [...state.filteredServices, ...nextBatch];
     final hasMore = updated.length < _currentFilteredFull.length;
@@ -136,13 +142,17 @@ class TransactionHistoryNotifier
     loadServices();
   }
 
-  void search(String query) {
-    if (query.isEmpty) {
-      _applyFiltersAndReset();
-      return;
-    }
+  // void search(String query) {
+  //   if (query.isEmpty) {
+  //     _applyFiltersAndReset();
+  //     return;
+  //   }
 
-    _applyFiltersAndReset();
+  //   _applyFiltersAndReset();
+  // }
+
+  void search(String query) {
+    _applyFiltersAndReset(searchQuery: query);
   }
 
   void applyFilters({
@@ -160,4 +170,3 @@ class TransactionHistoryNotifier
     );
   }
 }
-

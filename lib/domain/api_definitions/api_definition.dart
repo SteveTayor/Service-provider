@@ -377,34 +377,34 @@ abstract class ApiDefinition {
 
   @GET(Endpoints.airtimeToCashNetworks)
   Future<AirtimeNetworksResponse> getAirtimeToCashNetworks(
-    @Header('AccessToken') String accessToken,
+    // @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
   );
 
   @POST(Endpoints.airtimeToCashOtp)
   Future<AirtimeGenerateOtpResponse> generateAirtimeToCashOtp(
-    @Header('AccessToken') String accessToken,
+    // @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
     @Body() AirtimeGenerateOtpRequest body,
   );
 
   @POST(Endpoints.airtimeToCashVerify)
   Future<AirtimeVerifyOtpResponse> verifyAirtimeToCashOtp(
-    @Header('AccessToken') String accessToken,
+    // @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
     @Body() AirtimeVerifyOtpRequest body,
   );
 
   @POST(Endpoints.airtimeToCashCheckQuota)
   Future<AirtimeCheckQuotaResponse> checkAirtimeToCashQuota(
-    @Header('AccessToken') String accessToken,
+    // @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
     @Body() AirtimeCheckQuotaRequest body,
   );
 
   @POST(Endpoints.airtimeToCashTransfer)
   Future<AirtimeTransferResponse> transferAirtimeToCash(
-    @Header('AccessToken') String accessToken,
+    // @Header('AccessToken') String accessToken,
     @Header(_authHeader) String bearer,
     @Body() AirtimeTransferRequest body,
   );

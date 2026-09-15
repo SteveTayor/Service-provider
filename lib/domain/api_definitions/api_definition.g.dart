@@ -1682,15 +1682,11 @@ class _ApiDefinition implements ApiDefinition {
 
   @override
   Future<AirtimeNetworksResponse> getAirtimeToCashNetworks(
-    String accessToken,
     String bearer,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{
-      r'AccessToken': accessToken,
-      r'Authorization': bearer,
-    };
+    final _headers = <String, dynamic>{r'Authorization': bearer};
     _headers.removeWhere((k, v) => v == null);
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<AirtimeNetworksResponse>(
@@ -1716,16 +1712,12 @@ class _ApiDefinition implements ApiDefinition {
 
   @override
   Future<AirtimeGenerateOtpResponse> generateAirtimeToCashOtp(
-    String accessToken,
     String bearer,
     AirtimeGenerateOtpRequest body,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{
-      r'AccessToken': accessToken,
-      r'Authorization': bearer,
-    };
+    final _headers = <String, dynamic>{r'Authorization': bearer};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(body.toJson());
@@ -1752,16 +1744,12 @@ class _ApiDefinition implements ApiDefinition {
 
   @override
   Future<AirtimeVerifyOtpResponse> verifyAirtimeToCashOtp(
-    String accessToken,
     String bearer,
     AirtimeVerifyOtpRequest body,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{
-      r'AccessToken': accessToken,
-      r'Authorization': bearer,
-    };
+    final _headers = <String, dynamic>{r'Authorization': bearer};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(body.toJson());
@@ -1788,16 +1776,12 @@ class _ApiDefinition implements ApiDefinition {
 
   @override
   Future<AirtimeCheckQuotaResponse> checkAirtimeToCashQuota(
-    String accessToken,
     String bearer,
     AirtimeCheckQuotaRequest body,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{
-      r'AccessToken': accessToken,
-      r'Authorization': bearer,
-    };
+    final _headers = <String, dynamic>{r'Authorization': bearer};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(body.toJson());
@@ -1824,16 +1808,12 @@ class _ApiDefinition implements ApiDefinition {
 
   @override
   Future<AirtimeTransferResponse> transferAirtimeToCash(
-    String accessToken,
     String bearer,
     AirtimeTransferRequest body,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{
-      r'AccessToken': accessToken,
-      r'Authorization': bearer,
-    };
+    final _headers = <String, dynamic>{r'Authorization': bearer};
     _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(body.toJson());

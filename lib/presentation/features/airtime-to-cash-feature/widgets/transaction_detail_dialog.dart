@@ -100,6 +100,7 @@ class TransactionDetailDialog extends StatelessWidget {
               style: context.textTheme.bodyMedium,
             ),
           ),
+          SizedBox(height: 6.w),
           _row(
             context,
             'Phone Number',
