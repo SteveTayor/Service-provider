@@ -1960,7 +1960,7 @@ $AirtimeSessionDataCopyWith<$Res>? get data {
 /// @nodoc
 mixin _$AirtimeSessionData {
 
-@JsonKey(name: "sessionId") String? get sessionId;
+@JsonKey(name: "sessionId") String? get sessionId;@JsonKey(name: "networkName") String? get networkName;@JsonKey(name: "phoneNumber") String? get phoneNumber;@JsonKey(name: "airtimeBalance") String? get airtimeBalance;@JsonKey(name: "tariff") String? get tariff;@JsonKey(name: "type") String? get type;
 /// Create a copy of AirtimeSessionData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1973,16 +1973,16 @@ $AirtimeSessionDataCopyWith<AirtimeSessionData> get copyWith => _$AirtimeSession
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AirtimeSessionData&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AirtimeSessionData&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&(identical(other.networkName, networkName) || other.networkName == networkName)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.airtimeBalance, airtimeBalance) || other.airtimeBalance == airtimeBalance)&&(identical(other.tariff, tariff) || other.tariff == tariff)&&(identical(other.type, type) || other.type == type));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,sessionId);
+int get hashCode => Object.hash(runtimeType,sessionId,networkName,phoneNumber,airtimeBalance,tariff,type);
 
 @override
 String toString() {
-  return 'AirtimeSessionData(sessionId: $sessionId)';
+  return 'AirtimeSessionData(sessionId: $sessionId, networkName: $networkName, phoneNumber: $phoneNumber, airtimeBalance: $airtimeBalance, tariff: $tariff, type: $type)';
 }
 
 
@@ -1993,7 +1993,7 @@ abstract mixin class $AirtimeSessionDataCopyWith<$Res>  {
   factory $AirtimeSessionDataCopyWith(AirtimeSessionData value, $Res Function(AirtimeSessionData) _then) = _$AirtimeSessionDataCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "sessionId") String? sessionId
+@JsonKey(name: "sessionId") String? sessionId,@JsonKey(name: "networkName") String? networkName,@JsonKey(name: "phoneNumber") String? phoneNumber,@JsonKey(name: "airtimeBalance") String? airtimeBalance,@JsonKey(name: "tariff") String? tariff,@JsonKey(name: "type") String? type
 });
 
 
@@ -2010,9 +2010,14 @@ class _$AirtimeSessionDataCopyWithImpl<$Res>
 
 /// Create a copy of AirtimeSessionData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? sessionId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? sessionId = freezed,Object? networkName = freezed,Object? phoneNumber = freezed,Object? airtimeBalance = freezed,Object? tariff = freezed,Object? type = freezed,}) {
   return _then(_self.copyWith(
 sessionId: freezed == sessionId ? _self.sessionId : sessionId // ignore: cast_nullable_to_non_nullable
+as String?,networkName: freezed == networkName ? _self.networkName : networkName // ignore: cast_nullable_to_non_nullable
+as String?,phoneNumber: freezed == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
+as String?,airtimeBalance: freezed == airtimeBalance ? _self.airtimeBalance : airtimeBalance // ignore: cast_nullable_to_non_nullable
+as String?,tariff: freezed == tariff ? _self.tariff : tariff // ignore: cast_nullable_to_non_nullable
+as String?,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -2098,10 +2103,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "sessionId")  String? sessionId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "sessionId")  String? sessionId, @JsonKey(name: "networkName")  String? networkName, @JsonKey(name: "phoneNumber")  String? phoneNumber, @JsonKey(name: "airtimeBalance")  String? airtimeBalance, @JsonKey(name: "tariff")  String? tariff, @JsonKey(name: "type")  String? type)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AirtimeSessionData() when $default != null:
-return $default(_that.sessionId);case _:
+return $default(_that.sessionId,_that.networkName,_that.phoneNumber,_that.airtimeBalance,_that.tariff,_that.type);case _:
   return orElse();
 
 }
@@ -2119,10 +2124,10 @@ return $default(_that.sessionId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "sessionId")  String? sessionId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "sessionId")  String? sessionId, @JsonKey(name: "networkName")  String? networkName, @JsonKey(name: "phoneNumber")  String? phoneNumber, @JsonKey(name: "airtimeBalance")  String? airtimeBalance, @JsonKey(name: "tariff")  String? tariff, @JsonKey(name: "type")  String? type)  $default,) {final _that = this;
 switch (_that) {
 case _AirtimeSessionData():
-return $default(_that.sessionId);case _:
+return $default(_that.sessionId,_that.networkName,_that.phoneNumber,_that.airtimeBalance,_that.tariff,_that.type);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -2139,10 +2144,10 @@ return $default(_that.sessionId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "sessionId")  String? sessionId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "sessionId")  String? sessionId, @JsonKey(name: "networkName")  String? networkName, @JsonKey(name: "phoneNumber")  String? phoneNumber, @JsonKey(name: "airtimeBalance")  String? airtimeBalance, @JsonKey(name: "tariff")  String? tariff, @JsonKey(name: "type")  String? type)?  $default,) {final _that = this;
 switch (_that) {
 case _AirtimeSessionData() when $default != null:
-return $default(_that.sessionId);case _:
+return $default(_that.sessionId,_that.networkName,_that.phoneNumber,_that.airtimeBalance,_that.tariff,_that.type);case _:
   return null;
 
 }
@@ -2153,11 +2158,16 @@ return $default(_that.sessionId);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _AirtimeSessionData implements AirtimeSessionData {
-  const _AirtimeSessionData({@JsonKey(name: "sessionId") this.sessionId});
+class _AirtimeSessionData extends AirtimeSessionData {
+  const _AirtimeSessionData({@JsonKey(name: "sessionId") this.sessionId, @JsonKey(name: "networkName") this.networkName, @JsonKey(name: "phoneNumber") this.phoneNumber, @JsonKey(name: "airtimeBalance") this.airtimeBalance, @JsonKey(name: "tariff") this.tariff, @JsonKey(name: "type") this.type}): super._();
   factory _AirtimeSessionData.fromJson(Map<String, dynamic> json) => _$AirtimeSessionDataFromJson(json);
 
 @override@JsonKey(name: "sessionId") final  String? sessionId;
+@override@JsonKey(name: "networkName") final  String? networkName;
+@override@JsonKey(name: "phoneNumber") final  String? phoneNumber;
+@override@JsonKey(name: "airtimeBalance") final  String? airtimeBalance;
+@override@JsonKey(name: "tariff") final  String? tariff;
+@override@JsonKey(name: "type") final  String? type;
 
 /// Create a copy of AirtimeSessionData
 /// with the given fields replaced by the non-null parameter values.
@@ -2172,16 +2182,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AirtimeSessionData&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AirtimeSessionData&&(identical(other.sessionId, sessionId) || other.sessionId == sessionId)&&(identical(other.networkName, networkName) || other.networkName == networkName)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.airtimeBalance, airtimeBalance) || other.airtimeBalance == airtimeBalance)&&(identical(other.tariff, tariff) || other.tariff == tariff)&&(identical(other.type, type) || other.type == type));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,sessionId);
+int get hashCode => Object.hash(runtimeType,sessionId,networkName,phoneNumber,airtimeBalance,tariff,type);
 
 @override
 String toString() {
-  return 'AirtimeSessionData(sessionId: $sessionId)';
+  return 'AirtimeSessionData(sessionId: $sessionId, networkName: $networkName, phoneNumber: $phoneNumber, airtimeBalance: $airtimeBalance, tariff: $tariff, type: $type)';
 }
 
 
@@ -2192,7 +2202,7 @@ abstract mixin class _$AirtimeSessionDataCopyWith<$Res> implements $AirtimeSessi
   factory _$AirtimeSessionDataCopyWith(_AirtimeSessionData value, $Res Function(_AirtimeSessionData) _then) = __$AirtimeSessionDataCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "sessionId") String? sessionId
+@JsonKey(name: "sessionId") String? sessionId,@JsonKey(name: "networkName") String? networkName,@JsonKey(name: "phoneNumber") String? phoneNumber,@JsonKey(name: "airtimeBalance") String? airtimeBalance,@JsonKey(name: "tariff") String? tariff,@JsonKey(name: "type") String? type
 });
 
 
@@ -2209,9 +2219,14 @@ class __$AirtimeSessionDataCopyWithImpl<$Res>
 
 /// Create a copy of AirtimeSessionData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? sessionId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? sessionId = freezed,Object? networkName = freezed,Object? phoneNumber = freezed,Object? airtimeBalance = freezed,Object? tariff = freezed,Object? type = freezed,}) {
   return _then(_AirtimeSessionData(
 sessionId: freezed == sessionId ? _self.sessionId : sessionId // ignore: cast_nullable_to_non_nullable
+as String?,networkName: freezed == networkName ? _self.networkName : networkName // ignore: cast_nullable_to_non_nullable
+as String?,phoneNumber: freezed == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
+as String?,airtimeBalance: freezed == airtimeBalance ? _self.airtimeBalance : airtimeBalance // ignore: cast_nullable_to_non_nullable
+as String?,tariff: freezed == tariff ? _self.tariff : tariff // ignore: cast_nullable_to_non_nullable
+as String?,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

@@ -23,14 +23,14 @@ class ConfirmTransactionDialog extends StatelessWidget {
   final double amountToSell;
   final double amountToReceive;
 
-  static Future<Future<dynamic>> show(
+  static Future<bool?> show(
     BuildContext context, {
     required NetworkConfig network,
     required String phoneNumber,
     required double amountToSell,
     required double amountToReceive,
   }) async {
-    return context.showPopUp(
+    return context.showPopUp<bool>(
       ConfirmTransactionDialog(
         network: network,
         phoneNumber: phoneNumber,

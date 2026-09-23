@@ -48,6 +48,7 @@ int _stageFor(AirtimeToCashStep step) {
     case AirtimeToCashStep.noActiveConfig:
     case AirtimeToCashStep.phoneEntry:
     case AirtimeToCashStep.sendingOtp:
+    case AirtimeToCashStep.balanceTooLow:
       return 1;
     case AirtimeToCashStep.otpEntry:
     case AirtimeToCashStep.verifyingOtp:
@@ -284,6 +285,8 @@ class _ConversionFlowSheetState extends ConsumerState<ConversionFlowSheet> {
         );
       case AirtimeToCashStep.noActiveConfig:
         return _NoActiveConfigSection(notifier: notifier);
+      case AirtimeToCashStep.balanceTooLow:
+        return _BalanceTooLowSection(state: state, notifier: notifier);
       case AirtimeToCashStep.enteringAmount:
       case AirtimeToCashStep.checkingQuota:
       case AirtimeToCashStep.confirming:
@@ -658,9 +661,6 @@ class _AmountSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Deliberate deviation from the design brief: no "Available
-        // Airtime" balance card — the real backend has no balance-check
-        // endpoint. If one is added later, it goes here, directly above
         // "How much do you want to convert?".
         Text(
           'How much do you want to convert?',
@@ -685,6 +685,7 @@ class _AmountSection extends StatelessWidget {
           'Daily ₦${network.dailyLimit.toStringAsFixed(0)}',
           style: context.textTheme.labelSmall?.copyWith(
             color: AppColors.grey80,
+            fontSize: 10.sp,
           ),
         ),
         if (state.quotaError != null) ...[
@@ -743,10 +744,37 @@ class _AmountSection extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 4.h),
-              Text(
-                'Conversion rate: ${network.conversionRatePercent}%',
-                style: context.textTheme.labelSmall?.copyWith(
-                  color: AppColors.grey80,
+              // Text(
+              //   'Conversion rate: ${network.conversionRatePercent}%',
+              //   style: context.textTheme.labelSmall?.copyWith(
+              //     color: AppColors.grey80,
+              //   ),
+              // ),
+              Text.rich(
+                TextSpan(
+                  style: context.textTheme.labelSmall?.copyWith(
+                    color: AppColors.grey80,
+                  ),
+                  children: [
+                    TextSpan(text: 'Conversion rate: '),
+                    TextSpan(
+                      text: '${network.conversionRatePercent}%',
+                      style: const TextStyle(
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (state.tariffPlan != null) ...[
+                      const TextSpan(text: ' • '),
+                      TextSpan(
+                        text: state.tariffPlan!,
+                        style: const TextStyle(
+                          color: AppColors.grey33,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ],
@@ -785,6 +813,7 @@ class _AmountSection extends StatelessWidget {
             'Forgot PIN? Call 300 to reset it.',
             style: context.textTheme.labelSmall?.copyWith(
               color: AppColors.errorText,
+              fontSize: 10.sp,
             ),
           ),
         ),
@@ -828,6 +857,8 @@ class _Footer extends StatelessWidget {
       case AirtimeToCashStep.partial:
       case AirtimeToCashStep.failed:
         return null;
+      default:
+        return null;
     }
   }
 
@@ -851,6 +882,7 @@ class _Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.step == AirtimeToCashStep.noActiveConfig ||
+        state.step == AirtimeToCashStep.balanceTooLow ||
         state.step == AirtimeToCashStep.success ||
         state.step == AirtimeToCashStep.processing ||
         state.step == AirtimeToCashStep.partial ||
@@ -912,6 +944,46 @@ class _ErrorRetry extends StatelessWidget {
         ),
         SizedBox(height: 12.h),
         TextButton(onPressed: onRetry, child: const Text('Try Again')),
+      ],
+    );
+  }
+}
+
+class _BalanceTooLowSection extends StatelessWidget {
+  const _BalanceTooLowSection({required this.state, required this.notifier});
+
+  final AirtimeToCashState state;
+  final AirtimeToCashNotifier notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    final network = state.selectedNetwork;
+    return Column(
+      children: [
+        Icon(
+          Icons.warning_amber_rounded,
+          color: AppColors.warning,
+          size: 40.sp,
+        ),
+        SizedBox(height: 12.h),
+        Text(
+          'Balance Too Low',
+          style: context.textTheme.titleMedium,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 8.h),
+        Text(
+          'Your airtime balance (₦${state.airtimeBalance?.toStringAsFixed(2) ?? '0.00'}) '
+          'is below the ₦${network?.minAmount.toStringAsFixed(0) ?? '-'} minimum for '
+          '${network?.name ?? 'this network'}.',
+          style: context.textTheme.bodySmall,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 20.h),
+        TextButton(
+          onPressed: notifier.backToNetworkSelection,
+          child: const Text('Choose a different network'),
+        ),
       ],
     );
   }

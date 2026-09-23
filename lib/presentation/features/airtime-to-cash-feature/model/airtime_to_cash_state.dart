@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 enum AirtimeToCashStep {
   networkSelection,
   noActiveConfig,
+  balanceTooLow,
   phoneEntry,
   sendingOtp,
   otpEntry,
@@ -35,6 +36,8 @@ class AirtimeToCashState {
     required this.phoneController,
     required this.amountController,
     required this.pinController,
+    this.airtimeBalance,
+    this.tariffPlan,
     this.selectedNetwork,
     this.isLoadingNetworks = false,
     this.networksError,
@@ -79,8 +82,10 @@ class AirtimeToCashState {
   /// is no airtime-balance field — the real API doesn't expose one.
   final String? sessionId;
 
+  final double? airtimeBalance;
   final TextEditingController amountController;
   final String? amountError;
+  final String? tariffPlan;
 
   /// Set when the real /check-quota call rejects the entered amount.
   final String? quotaError;
@@ -114,6 +119,8 @@ class AirtimeToCashState {
     Object? networksError = _unset,
     Object? phoneError = _unset,
     Object? otpSendError = _unset,
+    Object? airtimeBalance = _unset,
+    Object? tariffPlan = _unset,
     Object? otpVerifyError = _unset,
     int? otpResendCountdown,
     bool? canResendOtp,
@@ -164,6 +171,12 @@ class AirtimeToCashState {
       lastTransaction: lastTransaction == _unset
           ? this.lastTransaction
           : lastTransaction as AirtimeToCashTransaction?,
+      airtimeBalance: airtimeBalance == _unset
+          ? this.airtimeBalance
+          : airtimeBalance as double?,
+      tariffPlan: tariffPlan == _unset
+          ? this.tariffPlan
+          : tariffPlan as String?,
     );
   }
 

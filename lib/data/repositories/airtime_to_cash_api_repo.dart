@@ -11,11 +11,11 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final airtimeToCashRepositoryProvider = Provider<IAirtimeToCashRepository>(
-  (ref) => MockAirtimeToCashRepository(),
-  // ApiAirtimeToCashRepository(
-  //   ref.read(apiServiceProvider),
-  //   ref.read(secureStorageHelperProvider),
-  // ),
+  (ref) => ApiAirtimeToCashRepository(
+    ref.read(apiServiceProvider),
+    ref.read(secureStorageHelperProvider),
+  ),
+  // MockAirtimeToCashRepository(),
 );
 
 class _NetworkDisplayConfig {
@@ -37,30 +37,30 @@ class _NetworkDisplayConfig {
 final Map<String, _NetworkDisplayConfig> _networkDisplayConfigs = {
   'MTN': _NetworkDisplayConfig(
     logoAsset: Assets.svgs.mtnnw,
-    minAmount: 1000,
-    maxAmount: 100000,
-    dailyLimit: 100000,
+    minAmount: 500,
+    maxAmount: 5000,
+    dailyLimit: 5000,
     shareCode: '*321#',
   ),
   'AIRTEL': _NetworkDisplayConfig(
     logoAsset: Assets.svgs.airtel,
-    minAmount: 1000,
-    maxAmount: 100000,
-    dailyLimit: 100000,
+    minAmount: 500,
+    maxAmount: 5000,
+    dailyLimit: 5000,
     shareCode: '*432#',
   ),
   'GLO': _NetworkDisplayConfig(
     logoAsset: Assets.svgs.glo,
-    minAmount: 1000,
-    maxAmount: 100000,
-    dailyLimit: 100000,
+    minAmount: 500,
+    maxAmount: 5000,
+    dailyLimit: 5000,
     shareCode: '*131*PIN#',
   ),
   '9MOBILE': _NetworkDisplayConfig(
     logoAsset: Assets.svgs.a9mobile,
-    minAmount: 1000,
-    maxAmount: 100000,
-    dailyLimit: 100000,
+    minAmount: 500,
+    maxAmount: 5000,
+    dailyLimit: 5000,
     shareCode: '*223#',
   ),
 };
@@ -107,9 +107,9 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
             hasActiveConfig: true,
             supportsInstantConversion: true,
             conversionRatePercent: dto.rate ?? dto.userPercentage ?? 0,
-            minAmount: display?.minAmount ?? 1000,
-            maxAmount: display?.maxAmount ?? 100000,
-            dailyLimit: display?.dailyLimit ?? 100000,
+            minAmount: display?.minAmount ?? 500,
+            maxAmount: display?.maxAmount ?? 5000,
+            dailyLimit: display?.dailyLimit ?? 5000,
             shareCode: display?.shareCode ?? '',
           );
         }).toList();
@@ -134,7 +134,7 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
   }
 
   @override
-  Future<Either<Failure, String>> verifyOtp({
+  Future<Either<Failure, AirtimeOtpVerification>> verifyOtp({
     required NetworkConfig network,
     required String phoneNumber,
     required String otp,
@@ -156,7 +156,13 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
             UnknownFailure(['OTP verified but no session was returned.']),
           );
         }
-        return Right(sessionId);
+        return Right(
+          AirtimeOtpVerification(
+            sessionId: sessionId,
+            airtimeBalance: response.data?.airtimeBalanceValue,
+            tariff: response.data?.tariff,
+          ),
+        );
       });
     });
   }

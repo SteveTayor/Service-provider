@@ -483,7 +483,7 @@ class GlobalProvider extends StateNotifier<GlobalState> {
       return;
     }
 
-    state = state.copyWith(usersTransactions: const AsyncLoading());
+    // state = state.copyWith(usersTransactions: const AsyncLoading());
 
     // --- 1) EPIN: use cached epinTransactions if available to avoid extra network calls
     EpinTransactionRequestsResponse? epinWrapper;

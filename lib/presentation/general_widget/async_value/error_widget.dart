@@ -15,8 +15,9 @@ class ErrorMessageSanitizer {
     String message = error.toString();
 
     // Handle custom NetworkFailure(...) or similar errors
-    final networkFailureMatch =
-        RegExp(r'NetworkFailure\((.*?)\)').firstMatch(message);
+    final networkFailureMatch = RegExp(
+      r'NetworkFailure\((.*?)\)',
+    ).firstMatch(message);
     if (networkFailureMatch != null) {
       return 'Network failure, please try again later.';
     }
@@ -50,7 +51,7 @@ class ErrorMessageSanitizer {
 
     // Handle format exceptions
     if (message.contains('FormatException')) {
-      return 'Something went twrong.';
+      return 'Something went wrong.';
     }
 
     // Clean up common Flutter/Dart error prefixes
@@ -75,8 +76,9 @@ class ErrorMessageSanitizer {
   }
 
   static bool _isNetworkError(String message) {
-    return _commonNetworkErrors
-        .any((error) => message.toLowerCase().contains(error.toLowerCase()));
+    return _commonNetworkErrors.any(
+      (error) => message.toLowerCase().contains(error.toLowerCase()),
+    );
   }
 
   static bool _isTechnicalError(String message) {
@@ -85,9 +87,10 @@ class ErrorMessageSanitizer {
       'undefined',
       'RangeError',
       'TypeError',
-      'stack trace'
+      'stack trace',
     ];
-    return technicalTerms
-        .any((term) => message.toLowerCase().contains(term.toLowerCase()));
+    return technicalTerms.any(
+      (term) => message.toLowerCase().contains(term.toLowerCase()),
+    );
   }
 }

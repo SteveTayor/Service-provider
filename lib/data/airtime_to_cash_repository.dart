@@ -5,15 +5,13 @@ import 'package:dartz/dartz.dart';
 
 ///Airtime-to-Cash data layer.
 ///
-///   - There is no balance-check endpoint, so this interface has no
-///
 ///   - [verifyOtp] returns a `sessionId` (String), the
 ///      /verify endpoint's only payload is `{sessionId}`. That
 ///     sessionId must be threaded through to [convert].
 ///   - [checkQuota] is a required step before [convert]
 ///     /check-quota endpoint needs the amount, so this can only
 ///     run once the user has entered how much they want to sell
-///
+
 abstract class IAirtimeToCashRepository {
   /// Returns the list of networks with their live conversion rates.
   Future<Either<Failure, List<NetworkConfig>>> getNetworks();
@@ -26,7 +24,7 @@ abstract class IAirtimeToCashRepository {
 
   /// Verifies a submitted [otp] for [phoneNumber].
   /// On success, returns the `sessionId` required by [convert].
-  Future<Either<Failure, String>> verifyOtp({
+  Future<Either<Failure, AirtimeOtpVerification>> verifyOtp({
     required NetworkConfig network,
     required String phoneNumber,
     required String otp,
@@ -55,4 +53,20 @@ abstract class IAirtimeToCashRepository {
   Future<Either<Failure, List<AirtimeToCashTransaction>>> getTransactions({
     String? query,
   });
+}
+
+/// Result of a successful /verify call: the session id required by
+/// [convert], plus whatever the endpoint additionally reports about the
+/// airtime being converted (balance, tariff) — both optional since not
+/// every network's /verify response includes them.
+class AirtimeOtpVerification {
+  const AirtimeOtpVerification({
+    required this.sessionId,
+    this.airtimeBalance,
+    this.tariff,
+  });
+
+  final String sessionId;
+  final double? airtimeBalance;
+  final String? tariff;
 }

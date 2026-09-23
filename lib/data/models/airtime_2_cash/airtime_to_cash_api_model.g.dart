@@ -115,10 +115,24 @@ Map<String, dynamic> _$AirtimeVerifyOtpResponseToJson(
 };
 
 _AirtimeSessionData _$AirtimeSessionDataFromJson(Map<String, dynamic> json) =>
-    _AirtimeSessionData(sessionId: json['sessionId'] as String?);
+    _AirtimeSessionData(
+      sessionId: json['sessionId'] as String?,
+      networkName: json['networkName'] as String?,
+      phoneNumber: json['phoneNumber'] as String?,
+      airtimeBalance: json['airtimeBalance'] as String?,
+      tariff: json['tariff'] as String?,
+      type: json['type'] as String?,
+    );
 
 Map<String, dynamic> _$AirtimeSessionDataToJson(_AirtimeSessionData instance) =>
-    <String, dynamic>{'sessionId': instance.sessionId};
+    <String, dynamic>{
+      'sessionId': instance.sessionId,
+      'networkName': instance.networkName,
+      'phoneNumber': instance.phoneNumber,
+      'airtimeBalance': instance.airtimeBalance,
+      'tariff': instance.tariff,
+      'type': instance.type,
+    };
 
 _AirtimeCheckQuotaRequest _$AirtimeCheckQuotaRequestFromJson(
   Map<String, dynamic> json,

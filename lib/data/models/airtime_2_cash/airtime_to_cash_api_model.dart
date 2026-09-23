@@ -99,12 +99,26 @@ abstract class AirtimeVerifyOtpResponse with _$AirtimeVerifyOtpResponse {
 
 @freezed
 abstract class AirtimeSessionData with _$AirtimeSessionData {
+  const AirtimeSessionData._(); // needed for the getter below
+
   const factory AirtimeSessionData({
     @JsonKey(name: "sessionId") String? sessionId,
+    @JsonKey(name: "networkName") String? networkName,
+    @JsonKey(name: "phoneNumber") String? phoneNumber,
+    @JsonKey(name: "airtimeBalance") String? airtimeBalance,
+    @JsonKey(name: "tariff") String? tariff,
+    @JsonKey(name: "type") String? type,
   }) = _AirtimeSessionData;
 
   factory AirtimeSessionData.fromJson(Map<String, dynamic> json) =>
       _$AirtimeSessionDataFromJson(json);
+
+  ///Null if missing/unparseable.
+  double? get airtimeBalanceValue {
+    final raw = airtimeBalance;
+    if (raw == null) return null;
+    return double.tryParse(raw.replaceAll(RegExp(r'[^0-9.]'), ''));
+  }
 }
 
 // ─── POST /airtime-to-cash/check-quota ──────────────────────────────────────

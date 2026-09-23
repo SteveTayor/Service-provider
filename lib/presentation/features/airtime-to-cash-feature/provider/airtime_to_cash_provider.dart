@@ -103,25 +103,34 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       step: AirtimeToCashStep.sendingOtp,
     );
 
-    final result = await _repository.sendOtp(
-      network: network,
-      phoneNumber: state.phoneController.text.trim(),
-    );
+    try {
+      final result = await _repository.sendOtp(
+        network: network,
+        phoneNumber: state.phoneController.text.trim(),
+      );
 
-    result.fold(
-      (Failure fail) {
-        state = state.copyWith(
-          step: AirtimeToCashStep.phoneEntry,
-          otpSendError: sanitizeErrorMessage(
-            userFacingMessageFromFailure(fail),
-          ),
-        );
-      },
-      (_) {
-        state = state.copyWith(step: AirtimeToCashStep.otpEntry);
-        _startResendCountdown();
-      },
-    );
+      result.fold(
+        (Failure fail) {
+          state = state.copyWith(
+            step: AirtimeToCashStep.phoneEntry,
+            otpSendError: sanitizeErrorMessage(
+              userFacingMessageFromFailure(fail),
+            ),
+          );
+        },
+        (_) {
+          state = state.copyWith(step: AirtimeToCashStep.otpEntry);
+          _startResendCountdown();
+        },
+      );
+    } catch (e, st) {
+      debugPrint('submitPhoneNumber failed: $e\n$st');
+      state = state.copyWith(
+        step: AirtimeToCashStep.phoneEntry,
+        otpSendError:
+            'Something went wrong while sending the OTP. Please try again.',
+      );
+    }
   }
 
   void _startResendCountdown() {
@@ -152,24 +161,33 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     if (network == null || !state.canResendOtp || state.isResendingOtp) return;
 
     state = state.copyWith(isResendingOtp: true, otpSendError: null);
-    final result = await _repository.sendOtp(
-      network: network,
-      phoneNumber: state.phoneController.text.trim(),
-    );
-    result.fold(
-      (Failure fail) {
-        state = state.copyWith(
-          isResendingOtp: false,
-          otpSendError: sanitizeErrorMessage(
-            userFacingMessageFromFailure(fail),
-          ),
-        );
-      },
-      (_) {
-        state = state.copyWith(isResendingOtp: false, otpVerifyError: null);
-        _startResendCountdown();
-      },
-    );
+    try {
+      final result = await _repository.sendOtp(
+        network: network,
+        phoneNumber: state.phoneController.text.trim(),
+      );
+      result.fold(
+        (Failure fail) {
+          state = state.copyWith(
+            isResendingOtp: false,
+            otpSendError: sanitizeErrorMessage(
+              userFacingMessageFromFailure(fail),
+            ),
+          );
+        },
+        (_) {
+          state = state.copyWith(isResendingOtp: false, otpVerifyError: null);
+          _startResendCountdown();
+        },
+      );
+    } catch (e, st) {
+      debugPrint('resendOtp failed: $e\n$st');
+      state = state.copyWith(
+        isResendingOtp: false,
+        otpSendError:
+            'Something went wrong while resending the OTP. Please try again.',
+      );
+    }
   }
 
   Future<void> verifyOtp(String otp) async {
@@ -186,28 +204,59 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       otpVerifyError: null,
     );
 
-    final result = await _repository.verifyOtp(
-      network: network,
-      phoneNumber: state.phoneController.text.trim(),
-      otp: otp,
-    );
+    try {
+      final result = await _repository.verifyOtp(
+        network: network,
+        phoneNumber: state.phoneController.text.trim(),
+        otp: otp,
+      );
 
-    result.fold(
-      (Failure fail) {
-        final message = _messageForOtpFailure(fail);
-        state = state.copyWith(
-          step: AirtimeToCashStep.otpEntry,
-          otpVerifyError: message,
-        );
-      },
-      (sessionId) {
-        _countdownTimer?.cancel();
-        state = state.copyWith(
-          step: AirtimeToCashStep.enteringAmount,
-          sessionId: sessionId,
-        );
-      },
-    );
+      result.fold(
+        (Failure fail) {
+          final message = _messageForOtpFailure(fail);
+          state = state.copyWith(
+            step: AirtimeToCashStep.otpEntry,
+            otpVerifyError: message,
+          );
+        },
+        (verification) {
+          _countdownTimer?.cancel();
+          final balance = verification.airtimeBalance;
+
+          if (balance != null && balance < network.minAmount) {
+            state = state.copyWith(
+              step: AirtimeToCashStep.balanceTooLow,
+              sessionId: verification.sessionId,
+              airtimeBalance: balance,
+              tariffPlan: verification.tariff,
+            );
+            return;
+          }
+
+          state = state.copyWith(
+            step: AirtimeToCashStep.enteringAmount,
+            sessionId: verification.sessionId,
+            airtimeBalance: balance,
+            tariffPlan: verification.tariff,
+          );
+
+          if (balance != null) {
+            final prefill = balance > network.maxAmount
+                ? network.maxAmount
+                : balance;
+            state.amountController.text = prefill.toStringAsFixed(0);
+            onAmountChanged(state.amountController.text);
+          }
+        },
+      );
+    } catch (e, st) {
+      debugPrint('verifyOtp failed: $e\n$st');
+      state = state.copyWith(
+        step: AirtimeToCashStep.otpEntry,
+        otpVerifyError:
+            'Something went wrong verifying the code. Please try again.',
+      );
+    }
   }
 
   String _messageForOtpFailure(Failure fail) {
@@ -226,6 +275,11 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     final amount = double.tryParse(value.replaceAll(',', ''));
     if (amount == null || amount <= 0)
       return 'Enter the amount of airtime to sell';
+
+    final balance = state.airtimeBalance;
+    if (balance != null && amount > balance) {
+      return 'Amount exceeds your available airtime balance (₦${balance.toStringAsFixed(2)})';
+    }
     if (amount < network.minAmount) {
       return 'Minimum amount is ₦${network.minAmount.toStringAsFixed(0)}';
     }
@@ -269,22 +323,33 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       step: AirtimeToCashStep.checkingQuota,
     );
 
-    final quotaResult = await _repository.checkQuota(
-      network: network,
-      amount: amount,
-    );
+    try {
+      final quotaResult = await _repository.checkQuota(
+        network: network,
+        amount: amount,
+      );
 
-    quotaResult.fold(
-      (Failure fail) {
-        state = state.copyWith(
-          step: AirtimeToCashStep.enteringAmount,
-          quotaError: sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
-        );
-      },
-      (_) {
-        state = state.copyWith(step: AirtimeToCashStep.confirming);
-      },
-    );
+      quotaResult.fold(
+        (Failure fail) {
+          state = state.copyWith(
+            step: AirtimeToCashStep.enteringAmount,
+            quotaError: sanitizeErrorMessage(
+              userFacingMessageFromFailure(fail),
+            ),
+          );
+        },
+        (_) {
+          state = state.copyWith(step: AirtimeToCashStep.confirming);
+        },
+      );
+    } catch (e, st) {
+      debugPrint('proceedToConfirm failed: $e\n$st');
+      state = state.copyWith(
+        step: AirtimeToCashStep.enteringAmount,
+        quotaError:
+            'Something went wrong checking availability. Please try again.',
+      );
+    }
   }
 
   void backToAmountEntry() {
@@ -319,31 +384,40 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       submissionError: null,
     );
 
-    final result = await _repository.convert(
-      network: network,
-      phoneNumber: state.phoneController.text.trim(),
-      amount: amount,
-      airtimeSharePin: state.pinController.text.trim(),
-      sessionId: sessionId,
-    );
+    try {
+      final result = await _repository.convert(
+        network: network,
+        phoneNumber: state.phoneController.text.trim(),
+        amount: amount,
+        airtimeSharePin: state.pinController.text.trim(),
+        sessionId: sessionId,
+      );
 
-    result.fold(
-      (Failure fail) {
-        state = state.copyWith(
-          step: AirtimeToCashStep.failed,
-          submissionError: sanitizeErrorMessage(
-            userFacingMessageFromFailure(fail),
-          ),
-        );
-      },
-      (txn) {
-        state = state.copyWith(
-          step: _stepForTransaction(txn! as AirtimeToCashTransaction),
-          lastTransaction: txn,
-        );
-        unawaited(_ref.read(airtimeToCashHistoryProvider.notifier).refresh());
-      },
-    );
+      result.fold(
+        (Failure fail) {
+          state = state.copyWith(
+            step: AirtimeToCashStep.failed,
+            submissionError: sanitizeErrorMessage(
+              userFacingMessageFromFailure(fail),
+            ),
+          );
+        },
+        (txn) {
+          state = state.copyWith(
+            step: _stepForTransaction(txn),
+            lastTransaction: txn,
+          );
+          unawaited(_ref.read(airtimeToCashHistoryProvider.notifier).refresh());
+        },
+      );
+    } catch (e, st) {
+      debugPrint('confirmAndSubmit failed: $e\n$st');
+      state = state.copyWith(
+        step: AirtimeToCashStep.failed,
+        submissionError:
+            'Something went wrong while submitting. Please try again.',
+      );
+    }
   }
 
   @override

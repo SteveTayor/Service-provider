@@ -62,55 +62,33 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     );
 
     // Wrapper animations
-    _wrapperScale = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _wrapperController,
-      curve: Curves.elasticOut,
-    ));
+    _wrapperScale = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _wrapperController, curve: Curves.elasticOut),
+    );
 
-    _wrapperOpacity = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _wrapperController,
-      curve: Curves.easeIn,
-    ));
+    _wrapperOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _wrapperController, curve: Curves.easeIn),
+    );
 
     // Logo animations
-    _logoScale = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _logoController,
-      curve: Curves.bounceOut,
-    ));
+    _logoScale = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.bounceOut),
+    );
 
     _logoOpacity = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _logoController,
-      curve: Curves.easeIn,
-    ));
+    ).animate(CurvedAnimation(parent: _logoController, curve: Curves.easeIn));
 
     // Ribbon animations
-    _ribbonRotation = Tween<double>(
-      begin: 0.0,
-      end: 2.0,
-    ).animate(CurvedAnimation(
-      parent: _ribbonController,
-      curve: Curves.easeInOut,
-    ));
+    _ribbonRotation = Tween<double>(begin: 0.0, end: 2.0).animate(
+      CurvedAnimation(parent: _ribbonController, curve: Curves.easeInOut),
+    );
 
-    _ribbonSlide = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0.0, -2.0),
-    ).animate(CurvedAnimation(
-      parent: _ribbonController,
-      curve: Curves.easeInOut,
-    ));
+    _ribbonSlide =
+        Tween<Offset>(begin: Offset.zero, end: const Offset(0.0, -2.0)).animate(
+          CurvedAnimation(parent: _ribbonController, curve: Curves.easeInOut),
+        );
   }
 
   Future<void> _initializeApp() async {

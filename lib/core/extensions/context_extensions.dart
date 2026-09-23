@@ -11,14 +11,14 @@ extension BuildContextExt on BuildContext {
       EdgeInsets.only(bottom: MediaQuery.of(this).viewInsets.bottom);
   EdgeInsetsGeometry symmetricPadding(double horizontal, double vertical) =>
       EdgeInsets.symmetric(horizontal: horizontal.w, vertical: vertical.h);
-  Future<dynamic> showPopUp(
+  Future<T?> showPopUp<T>(
     Widget child, {
     bool? isDismissable,
     double? horizontalPadding,
     double? size,
     Color? color,
   }) async {
-    return showDialog(
+    return showDialog<T>(
       context: this,
       barrierDismissible: isDismissable ?? false,
       builder: (context) {
@@ -33,8 +33,9 @@ extension BuildContextExt on BuildContext {
             children: [
               Dialog(
                 backgroundColor: color ?? AppColors.background,
-                insetPadding:
-                    EdgeInsets.symmetric(horizontal: horizontalPadding ?? 29),
+                insetPadding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding ?? 29,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(17),
                 ),
@@ -56,64 +57,56 @@ extension BuildContextExt on BuildContext {
     );
   }
 
-  Future<T?> showBottomSheet<T>(
-          {required Widget child,
-          Color? color,
-          bool? showIcon,
-          bool? isDismissible,
-          bool? showDragHandle}) =>
-      showModalBottomSheet(
-        showDragHandle: showDragHandle ?? false,
-        isScrollControlled: true,
-        isDismissible: isDismissible ?? false,
-        context: this,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(24.r),
+  Future<T?> showBottomSheet<T>({
+    required Widget child,
+    Color? color,
+    bool? showIcon,
+    bool? isDismissible,
+    bool? showDragHandle,
+  }) => showModalBottomSheet(
+    showDragHandle: showDragHandle ?? false,
+    isScrollControlled: true,
+    isDismissible: isDismissible ?? false,
+    context: this,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+    ),
+    builder: (context) {
+      return BackdropFilter(
+        filter: ColorFilter.mode(
+          Colors.black.withValues(alpha: 0.2),
+          BlendMode.srcOver,
+        ),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: color ?? AppColors.background,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Visibility(
+                  visible: showIcon ?? true,
+                  child: Center(
+                    child: Container(
+                      width: 48.w,
+                      height: 4.h,
+                      margin: EdgeInsets.only(top: 16.h, bottom: 24.h),
+                      color: AppColors.greyDE,
+                    ),
+                  ),
+                ),
+                Flexible(child: SingleChildScrollView(child: child)),
+              ],
+            ),
           ),
         ),
-        builder: (context) {
-          return BackdropFilter(
-            filter: ColorFilter.mode(
-              Colors.black.withValues(alpha: 0.2),
-              BlendMode.srcOver,
-            ),
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: color ?? AppColors.background,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Visibility(
-                      visible: showIcon ?? true,
-                      child: Center(
-                        child: Container(
-                          width: 48.w,
-                          height: 4.h,
-                          margin: EdgeInsets.only(top: 16.h, bottom: 24.h),
-                          color: AppColors.greyDE,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      child: SingleChildScrollView(
-                        child: child,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
       );
+    },
+  );
 }
