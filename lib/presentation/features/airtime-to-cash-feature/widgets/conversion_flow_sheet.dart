@@ -495,6 +495,7 @@ class _OtpSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final maskedPhone = maskPhoneNumber(state.phoneController.text.trim());
+  final otpLength = state.selectedNetwork?.otpLength ?? 6;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -502,12 +503,13 @@ class _OtpSection extends StatelessWidget {
         Text('Verify your phone number', style: context.textTheme.titleSmall),
         SizedBox(height: 6.h),
         Text(
-          "We've sent a 6-digit verification code to $maskedPhone",
+          "We've sent a  $otpLength-digit verification code to $maskedPhone",
           style: context.textTheme.bodySmall?.copyWith(color: AppColors.grey80),
         ),
         SizedBox(height: 28.h),
         OtpInputRow(
           key: otpKey,
+          length: otpLength,
           enabled: state.step != AirtimeToCashStep.verifyingOtp,
           hasError: state.otpVerifyError != null,
           onChanged: onOtpChanged,

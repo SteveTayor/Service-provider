@@ -63,13 +63,13 @@ class _AppState extends ConsumerState<App> {
   //   }
   // }
   Future<void> _checkAppVersion() async {
-  try {
-    final versionManager = ref.read(versionManagerProvider);
-    await versionManager.checkAndHandleAppUpdate();
-  } catch (e, st) {
-    debugPrint('Version check failed: $e\n$st');
+    try {
+      final versionManager = ref.read(versionManagerProvider);
+      await versionManager.checkAndHandleAppUpdate();
+    } catch (e, st) {
+      debugPrint('Version check failed: $e\n$st');
+    }
   }
-}
 
   @override
   void dispose() {
@@ -83,62 +83,64 @@ class _AppState extends ConsumerState<App> {
     final themeNotifier = ref.read(themeProvider.notifier);
     final themeState = ref.watch(themeProvider);
 
-    return DevicePreview(
-      enabled: !kReleaseMode,
-      builder: (context) {
-        return ScreenUtilInit(
-          designSize: const Size(390, 800),
-          minTextAdapt: true,
-          splitScreenMode: true,
-          ensureScreenSize: true,
-          useInheritedMediaQuery: true,
-          builder: (context, _) {
-            return GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () => FocusScope.of(context).unfocus(),
-              child: MaterialApp.router(
-                routerConfig: AppRouter.router,
-                themeMode: ThemeMode.system,
-                theme: AppTheme.lightTheme,
-                darkTheme: AppTheme.darkTheme,
+    return ToastificationWrapper(
+      child: DevicePreview(
+        enabled: !kReleaseMode,
+        builder: (context) {
+          return ScreenUtilInit(
+            designSize: const Size(390, 800),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            ensureScreenSize: true,
+            useInheritedMediaQuery: true,
+            builder: (context, _) {
+              return GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: MaterialApp.router(
+                  routerConfig: AppRouter.router,
+                  themeMode: ThemeMode.system,
+                  theme: AppTheme.lightTheme,
+                  darkTheme: AppTheme.darkTheme,
 
-                locale: DevicePreview.locale(context),
-                restorationScopeId: 'app',
-                debugShowCheckedModeBanner: false,
-                // locale: const Locale('en', 'NG'),
-                supportedLocales: const [Locale('en', 'NG')],
-                localizationsDelegates: const [
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                scaffoldMessengerKey: scaffoldMessengerKey,
-                builder: (context, child) {
-                  // FIX: previously `connectivityProv.when(...)` returned
-                  // either NoInternetWidget() OR InactivityWrapper(child) —
-                  // mutually exclusive.
-                  if (child == null) return const SizedBox();
-                  Widget app = child;
-                  app = connectivityProv.when(
-                    data: (status) {
-                      final isOffline = status == ConnectivityResult.none;
-                      return Stack(
-                        children: [
-                          InactivityWrapper(child: child),
-                          if (isOffline) const NoInternetWidget(),
-                        ],
-                      );
-                    },
-                    loading: () => child,
-                    error: (_, __) => child,
-                  );
-                  return DevicePreview.appBuilder(context, app);
-                },
-              ),
-            );
-          },
-        );
-      },
+                  locale: DevicePreview.locale(context),
+                  restorationScopeId: 'app',
+                  debugShowCheckedModeBanner: false,
+                  // locale: const Locale('en', 'NG'),
+                  supportedLocales: const [Locale('en', 'NG')],
+                  localizationsDelegates: const [
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  scaffoldMessengerKey: scaffoldMessengerKey,
+                  builder: (context, child) {
+                    // FIX: previously `connectivityProv.when(...)` returned
+                    // either NoInternetWidget() OR InactivityWrapper(child) —
+                    // mutually exclusive.
+                    if (child == null) return const SizedBox();
+                    Widget app = child;
+                    app = connectivityProv.when(
+                      data: (status) {
+                        final isOffline = status == ConnectivityResult.none;
+                        return Stack(
+                          children: [
+                            InactivityWrapper(child: child),
+                            if (isOffline) const NoInternetWidget(),
+                          ],
+                        );
+                      },
+                      loading: () => child,
+                      error: (_, __) => child,
+                    );
+                    return DevicePreview.appBuilder(context, app);
+                  },
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

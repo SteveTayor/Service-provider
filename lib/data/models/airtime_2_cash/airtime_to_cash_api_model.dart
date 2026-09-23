@@ -27,7 +27,28 @@ abstract class AirtimeNetworkDto with _$AirtimeNetworkDto {
     // The rate already resolved server-side for the calling user's role
     // (matches user_percentage in every sample seen) — use this directly
     // rather than re-deriving agent-vs-user client-side.
-    @JsonKey(name: "rate") int? rate,
+    @JsonKey(name: "rate") double? rate,
+
+    @JsonKey(name: 'provider')
+    String? provider,
+
+    @JsonKey(name: 'status')
+    String? status,
+
+    @JsonKey(name: 'is_active')
+    bool? isActive,
+
+    @JsonKey(name: 'deduction_percent')
+    num? deductionPercent,
+
+    @JsonKey(name: 'percent')
+    num? percent,
+
+    @JsonKey(name: 'min_amount')
+    int? minAmount,
+
+    @JsonKey(name: 'max_amount')
+    int? maxAmount,
   }) = _AirtimeNetworkDto;
 
   factory AirtimeNetworkDto.fromJson(Map<String, dynamic> json) =>

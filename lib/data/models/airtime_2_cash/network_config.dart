@@ -20,6 +20,7 @@ class NetworkConfig extends Equatable {
     required this.maxAmount,
     required this.dailyLimit,
     required this.shareCode,
+     this.otpLength = 6,
   });
 
   /// Stable identifier, e.g. 'mtn', 'airtel', 'glo', '9mobile'.
@@ -51,6 +52,7 @@ class NetworkConfig extends Equatable {
   /// The USSD/dial code used to set or reset the airtime share PIN,
   /// shown in the "What is Airtime Share PIN?" info dialog.
   final String shareCode;
+  final int otpLength;
 
   /// Whether the user can proceed with the instant flow for this network.
   bool get canUseInstantFlow =>
@@ -74,6 +76,7 @@ class NetworkConfig extends Equatable {
       maxAmount: maxAmount,
       dailyLimit: dailyLimit,
       shareCode: shareCode,
+      otpLength: otpLength,
     );
   }
 
@@ -90,5 +93,6 @@ class NetworkConfig extends Equatable {
         maxAmount,
         dailyLimit,
         shareCode,
+           otpLength,
       ];
 }

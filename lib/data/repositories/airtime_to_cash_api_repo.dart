@@ -25,6 +25,7 @@ class _NetworkDisplayConfig {
     required this.maxAmount,
     required this.dailyLimit,
     required this.shareCode,
+    this.otpLength = 6,
   });
 
   final String logoAsset;
@@ -32,6 +33,7 @@ class _NetworkDisplayConfig {
   final double maxAmount;
   final double dailyLimit;
   final String shareCode;
+  final int otpLength;
 }
 
 final Map<String, _NetworkDisplayConfig> _networkDisplayConfigs = {
@@ -41,6 +43,7 @@ final Map<String, _NetworkDisplayConfig> _networkDisplayConfigs = {
     maxAmount: 5000,
     dailyLimit: 5000,
     shareCode: '*321#',
+    otpLength: 6,
   ),
   'AIRTEL': _NetworkDisplayConfig(
     logoAsset: Assets.svgs.airtel,
@@ -48,6 +51,7 @@ final Map<String, _NetworkDisplayConfig> _networkDisplayConfigs = {
     maxAmount: 5000,
     dailyLimit: 5000,
     shareCode: '*432#',
+    otpLength: 4,
   ),
   'GLO': _NetworkDisplayConfig(
     logoAsset: Assets.svgs.glo,
@@ -55,6 +59,7 @@ final Map<String, _NetworkDisplayConfig> _networkDisplayConfigs = {
     maxAmount: 5000,
     dailyLimit: 5000,
     shareCode: '*131*PIN#',
+    //  otpLength: 6,
   ),
   '9MOBILE': _NetworkDisplayConfig(
     logoAsset: Assets.svgs.a9mobile,
@@ -62,6 +67,7 @@ final Map<String, _NetworkDisplayConfig> _networkDisplayConfigs = {
     maxAmount: 5000,
     dailyLimit: 5000,
     shareCode: '*223#',
+    //  otpLength: 6,
   ),
 };
 
@@ -106,11 +112,12 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
             isAvailable: true,
             hasActiveConfig: true,
             supportsInstantConversion: true,
-            conversionRatePercent: dto.rate ?? dto.userPercentage ?? 0,
+            conversionRatePercent: dto.rate ?? dto.percent ?? 0,
             minAmount: display?.minAmount ?? 500,
             maxAmount: display?.maxAmount ?? 5000,
             dailyLimit: display?.dailyLimit ?? 5000,
             shareCode: display?.shareCode ?? '',
+            otpLength: display?.otpLength ?? 6,
           );
         }).toList();
         return Right(networks);

@@ -194,10 +194,12 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     final network = state.selectedNetwork;
     if (network == null) return;
 
-    if (otp.length != 6) {
-      state = state.copyWith(otpVerifyError: 'Enter the 6-digit code');
-      return;
-    }
+    if (otp.length != network.otpLength) {
+    state = state.copyWith(
+      otpVerifyError: 'Enter the ${network.otpLength}-digit code',
+    );
+    return;
+  }
 
     state = state.copyWith(
       step: AirtimeToCashStep.verifyingOtp,
