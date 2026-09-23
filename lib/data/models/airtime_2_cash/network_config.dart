@@ -43,7 +43,7 @@ class NetworkConfig extends Equatable {
   final bool supportsInstantConversion;
 
   /// Conversion rate as a whole-number percentage, e.g. 83 for 83%.
-  final int conversionRatePercent;
+  final double  conversionRatePercent;
 
   final double minAmount;
   final double maxAmount;

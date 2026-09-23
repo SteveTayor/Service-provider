@@ -185,12 +185,12 @@ class _FlowPill extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 9.h, horizontal: 6.w),
         decoration: BoxDecoration(
           color: highlighted
-              ? AppColors.success.withOpacity(0.08)
+              ? AppColors.primaryColor.withOpacity(0.08)
               : AppColors.white,
           borderRadius: BorderRadius.circular(10.r),
           border: Border.all(
             color: highlighted
-                ? AppColors.success.withOpacity(0.8)
+                ? AppColors.primaryColor.withOpacity(0.8)
                 : AppColors.greyEE,
           ),
         ),

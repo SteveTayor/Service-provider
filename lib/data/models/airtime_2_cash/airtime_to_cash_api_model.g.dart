@@ -30,7 +30,14 @@ _AirtimeNetworkDto _$AirtimeNetworkDtoFromJson(Map<String, dynamic> json) =>
       code: json['code'] as String?,
       userPercentage: (json['user_percentage'] as num?)?.toInt(),
       agentPercentage: (json['agent_percentage'] as num?)?.toInt(),
-      rate: (json['rate'] as num?)?.toInt(),
+      rate: (json['rate'] as num?)?.toDouble(),
+      provider: json['provider'] as String?,
+      status: json['status'] as String?,
+      isActive: json['is_active'] as bool?,
+      deductionPercent: json['deduction_percent'] as num?,
+      percent: json['percent'] as num?,
+      minAmount: (json['min_amount'] as num?)?.toInt(),
+      maxAmount: (json['max_amount'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$AirtimeNetworkDtoToJson(_AirtimeNetworkDto instance) =>
@@ -40,6 +47,13 @@ Map<String, dynamic> _$AirtimeNetworkDtoToJson(_AirtimeNetworkDto instance) =>
       'user_percentage': instance.userPercentage,
       'agent_percentage': instance.agentPercentage,
       'rate': instance.rate,
+      'provider': instance.provider,
+      'status': instance.status,
+      'is_active': instance.isActive,
+      'deduction_percent': instance.deductionPercent,
+      'percent': instance.percent,
+      'min_amount': instance.minAmount,
+      'max_amount': instance.maxAmount,
     };
 
 _AirtimeGenerateOtpRequest _$AirtimeGenerateOtpRequestFromJson(

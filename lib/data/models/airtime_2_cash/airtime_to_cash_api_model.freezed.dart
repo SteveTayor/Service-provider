@@ -295,7 +295,7 @@ mixin _$AirtimeNetworkDto {
 @JsonKey(name: "name") String? get name;@JsonKey(name: "code") String? get code;@JsonKey(name: "user_percentage") int? get userPercentage;@JsonKey(name: "agent_percentage") int? get agentPercentage;// The rate already resolved server-side for the calling user's role
 // (matches user_percentage in every sample seen) — use this directly
 // rather than re-deriving agent-vs-user client-side.
-@JsonKey(name: "rate") int? get rate;
+@JsonKey(name: "rate") double? get rate;@JsonKey(name: 'provider') String? get provider;@JsonKey(name: 'status') String? get status;@JsonKey(name: 'is_active') bool? get isActive;@JsonKey(name: 'deduction_percent') num? get deductionPercent;@JsonKey(name: 'percent') num? get percent;@JsonKey(name: 'min_amount') int? get minAmount;@JsonKey(name: 'max_amount') int? get maxAmount;
 /// Create a copy of AirtimeNetworkDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -308,16 +308,16 @@ $AirtimeNetworkDtoCopyWith<AirtimeNetworkDto> get copyWith => _$AirtimeNetworkDt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AirtimeNetworkDto&&(identical(other.name, name) || other.name == name)&&(identical(other.code, code) || other.code == code)&&(identical(other.userPercentage, userPercentage) || other.userPercentage == userPercentage)&&(identical(other.agentPercentage, agentPercentage) || other.agentPercentage == agentPercentage)&&(identical(other.rate, rate) || other.rate == rate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AirtimeNetworkDto&&(identical(other.name, name) || other.name == name)&&(identical(other.code, code) || other.code == code)&&(identical(other.userPercentage, userPercentage) || other.userPercentage == userPercentage)&&(identical(other.agentPercentage, agentPercentage) || other.agentPercentage == agentPercentage)&&(identical(other.rate, rate) || other.rate == rate)&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.status, status) || other.status == status)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.deductionPercent, deductionPercent) || other.deductionPercent == deductionPercent)&&(identical(other.percent, percent) || other.percent == percent)&&(identical(other.minAmount, minAmount) || other.minAmount == minAmount)&&(identical(other.maxAmount, maxAmount) || other.maxAmount == maxAmount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,code,userPercentage,agentPercentage,rate);
+int get hashCode => Object.hash(runtimeType,name,code,userPercentage,agentPercentage,rate,provider,status,isActive,deductionPercent,percent,minAmount,maxAmount);
 
 @override
 String toString() {
-  return 'AirtimeNetworkDto(name: $name, code: $code, userPercentage: $userPercentage, agentPercentage: $agentPercentage, rate: $rate)';
+  return 'AirtimeNetworkDto(name: $name, code: $code, userPercentage: $userPercentage, agentPercentage: $agentPercentage, rate: $rate, provider: $provider, status: $status, isActive: $isActive, deductionPercent: $deductionPercent, percent: $percent, minAmount: $minAmount, maxAmount: $maxAmount)';
 }
 
 
@@ -328,7 +328,7 @@ abstract mixin class $AirtimeNetworkDtoCopyWith<$Res>  {
   factory $AirtimeNetworkDtoCopyWith(AirtimeNetworkDto value, $Res Function(AirtimeNetworkDto) _then) = _$AirtimeNetworkDtoCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "name") String? name,@JsonKey(name: "code") String? code,@JsonKey(name: "user_percentage") int? userPercentage,@JsonKey(name: "agent_percentage") int? agentPercentage,@JsonKey(name: "rate") int? rate
+@JsonKey(name: "name") String? name,@JsonKey(name: "code") String? code,@JsonKey(name: "user_percentage") int? userPercentage,@JsonKey(name: "agent_percentage") int? agentPercentage,@JsonKey(name: "rate") double? rate,@JsonKey(name: 'provider') String? provider,@JsonKey(name: 'status') String? status,@JsonKey(name: 'is_active') bool? isActive,@JsonKey(name: 'deduction_percent') num? deductionPercent,@JsonKey(name: 'percent') num? percent,@JsonKey(name: 'min_amount') int? minAmount,@JsonKey(name: 'max_amount') int? maxAmount
 });
 
 
@@ -345,13 +345,20 @@ class _$AirtimeNetworkDtoCopyWithImpl<$Res>
 
 /// Create a copy of AirtimeNetworkDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,Object? code = freezed,Object? userPercentage = freezed,Object? agentPercentage = freezed,Object? rate = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,Object? code = freezed,Object? userPercentage = freezed,Object? agentPercentage = freezed,Object? rate = freezed,Object? provider = freezed,Object? status = freezed,Object? isActive = freezed,Object? deductionPercent = freezed,Object? percent = freezed,Object? minAmount = freezed,Object? maxAmount = freezed,}) {
   return _then(_self.copyWith(
 name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String?,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String?,userPercentage: freezed == userPercentage ? _self.userPercentage : userPercentage // ignore: cast_nullable_to_non_nullable
 as int?,agentPercentage: freezed == agentPercentage ? _self.agentPercentage : agentPercentage // ignore: cast_nullable_to_non_nullable
 as int?,rate: freezed == rate ? _self.rate : rate // ignore: cast_nullable_to_non_nullable
+as double?,provider: freezed == provider ? _self.provider : provider // ignore: cast_nullable_to_non_nullable
+as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String?,isActive: freezed == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool?,deductionPercent: freezed == deductionPercent ? _self.deductionPercent : deductionPercent // ignore: cast_nullable_to_non_nullable
+as num?,percent: freezed == percent ? _self.percent : percent // ignore: cast_nullable_to_non_nullable
+as num?,minAmount: freezed == minAmount ? _self.minAmount : minAmount // ignore: cast_nullable_to_non_nullable
+as int?,maxAmount: freezed == maxAmount ? _self.maxAmount : maxAmount // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }
@@ -437,10 +444,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "name")  String? name, @JsonKey(name: "code")  String? code, @JsonKey(name: "user_percentage")  int? userPercentage, @JsonKey(name: "agent_percentage")  int? agentPercentage, @JsonKey(name: "rate")  int? rate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "name")  String? name, @JsonKey(name: "code")  String? code, @JsonKey(name: "user_percentage")  int? userPercentage, @JsonKey(name: "agent_percentage")  int? agentPercentage, @JsonKey(name: "rate")  double? rate, @JsonKey(name: 'provider')  String? provider, @JsonKey(name: 'status')  String? status, @JsonKey(name: 'is_active')  bool? isActive, @JsonKey(name: 'deduction_percent')  num? deductionPercent, @JsonKey(name: 'percent')  num? percent, @JsonKey(name: 'min_amount')  int? minAmount, @JsonKey(name: 'max_amount')  int? maxAmount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AirtimeNetworkDto() when $default != null:
-return $default(_that.name,_that.code,_that.userPercentage,_that.agentPercentage,_that.rate);case _:
+return $default(_that.name,_that.code,_that.userPercentage,_that.agentPercentage,_that.rate,_that.provider,_that.status,_that.isActive,_that.deductionPercent,_that.percent,_that.minAmount,_that.maxAmount);case _:
   return orElse();
 
 }
@@ -458,10 +465,10 @@ return $default(_that.name,_that.code,_that.userPercentage,_that.agentPercentage
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "name")  String? name, @JsonKey(name: "code")  String? code, @JsonKey(name: "user_percentage")  int? userPercentage, @JsonKey(name: "agent_percentage")  int? agentPercentage, @JsonKey(name: "rate")  int? rate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "name")  String? name, @JsonKey(name: "code")  String? code, @JsonKey(name: "user_percentage")  int? userPercentage, @JsonKey(name: "agent_percentage")  int? agentPercentage, @JsonKey(name: "rate")  double? rate, @JsonKey(name: 'provider')  String? provider, @JsonKey(name: 'status')  String? status, @JsonKey(name: 'is_active')  bool? isActive, @JsonKey(name: 'deduction_percent')  num? deductionPercent, @JsonKey(name: 'percent')  num? percent, @JsonKey(name: 'min_amount')  int? minAmount, @JsonKey(name: 'max_amount')  int? maxAmount)  $default,) {final _that = this;
 switch (_that) {
 case _AirtimeNetworkDto():
-return $default(_that.name,_that.code,_that.userPercentage,_that.agentPercentage,_that.rate);case _:
+return $default(_that.name,_that.code,_that.userPercentage,_that.agentPercentage,_that.rate,_that.provider,_that.status,_that.isActive,_that.deductionPercent,_that.percent,_that.minAmount,_that.maxAmount);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -478,10 +485,10 @@ return $default(_that.name,_that.code,_that.userPercentage,_that.agentPercentage
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "name")  String? name, @JsonKey(name: "code")  String? code, @JsonKey(name: "user_percentage")  int? userPercentage, @JsonKey(name: "agent_percentage")  int? agentPercentage, @JsonKey(name: "rate")  int? rate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "name")  String? name, @JsonKey(name: "code")  String? code, @JsonKey(name: "user_percentage")  int? userPercentage, @JsonKey(name: "agent_percentage")  int? agentPercentage, @JsonKey(name: "rate")  double? rate, @JsonKey(name: 'provider')  String? provider, @JsonKey(name: 'status')  String? status, @JsonKey(name: 'is_active')  bool? isActive, @JsonKey(name: 'deduction_percent')  num? deductionPercent, @JsonKey(name: 'percent')  num? percent, @JsonKey(name: 'min_amount')  int? minAmount, @JsonKey(name: 'max_amount')  int? maxAmount)?  $default,) {final _that = this;
 switch (_that) {
 case _AirtimeNetworkDto() when $default != null:
-return $default(_that.name,_that.code,_that.userPercentage,_that.agentPercentage,_that.rate);case _:
+return $default(_that.name,_that.code,_that.userPercentage,_that.agentPercentage,_that.rate,_that.provider,_that.status,_that.isActive,_that.deductionPercent,_that.percent,_that.minAmount,_that.maxAmount);case _:
   return null;
 
 }
@@ -493,7 +500,7 @@ return $default(_that.name,_that.code,_that.userPercentage,_that.agentPercentage
 @JsonSerializable()
 
 class _AirtimeNetworkDto implements AirtimeNetworkDto {
-  const _AirtimeNetworkDto({@JsonKey(name: "name") this.name, @JsonKey(name: "code") this.code, @JsonKey(name: "user_percentage") this.userPercentage, @JsonKey(name: "agent_percentage") this.agentPercentage, @JsonKey(name: "rate") this.rate});
+  const _AirtimeNetworkDto({@JsonKey(name: "name") this.name, @JsonKey(name: "code") this.code, @JsonKey(name: "user_percentage") this.userPercentage, @JsonKey(name: "agent_percentage") this.agentPercentage, @JsonKey(name: "rate") this.rate, @JsonKey(name: 'provider') this.provider, @JsonKey(name: 'status') this.status, @JsonKey(name: 'is_active') this.isActive, @JsonKey(name: 'deduction_percent') this.deductionPercent, @JsonKey(name: 'percent') this.percent, @JsonKey(name: 'min_amount') this.minAmount, @JsonKey(name: 'max_amount') this.maxAmount});
   factory _AirtimeNetworkDto.fromJson(Map<String, dynamic> json) => _$AirtimeNetworkDtoFromJson(json);
 
 @override@JsonKey(name: "name") final  String? name;
@@ -503,7 +510,14 @@ class _AirtimeNetworkDto implements AirtimeNetworkDto {
 // The rate already resolved server-side for the calling user's role
 // (matches user_percentage in every sample seen) — use this directly
 // rather than re-deriving agent-vs-user client-side.
-@override@JsonKey(name: "rate") final  int? rate;
+@override@JsonKey(name: "rate") final  double? rate;
+@override@JsonKey(name: 'provider') final  String? provider;
+@override@JsonKey(name: 'status') final  String? status;
+@override@JsonKey(name: 'is_active') final  bool? isActive;
+@override@JsonKey(name: 'deduction_percent') final  num? deductionPercent;
+@override@JsonKey(name: 'percent') final  num? percent;
+@override@JsonKey(name: 'min_amount') final  int? minAmount;
+@override@JsonKey(name: 'max_amount') final  int? maxAmount;
 
 /// Create a copy of AirtimeNetworkDto
 /// with the given fields replaced by the non-null parameter values.
@@ -518,16 +532,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AirtimeNetworkDto&&(identical(other.name, name) || other.name == name)&&(identical(other.code, code) || other.code == code)&&(identical(other.userPercentage, userPercentage) || other.userPercentage == userPercentage)&&(identical(other.agentPercentage, agentPercentage) || other.agentPercentage == agentPercentage)&&(identical(other.rate, rate) || other.rate == rate));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AirtimeNetworkDto&&(identical(other.name, name) || other.name == name)&&(identical(other.code, code) || other.code == code)&&(identical(other.userPercentage, userPercentage) || other.userPercentage == userPercentage)&&(identical(other.agentPercentage, agentPercentage) || other.agentPercentage == agentPercentage)&&(identical(other.rate, rate) || other.rate == rate)&&(identical(other.provider, provider) || other.provider == provider)&&(identical(other.status, status) || other.status == status)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.deductionPercent, deductionPercent) || other.deductionPercent == deductionPercent)&&(identical(other.percent, percent) || other.percent == percent)&&(identical(other.minAmount, minAmount) || other.minAmount == minAmount)&&(identical(other.maxAmount, maxAmount) || other.maxAmount == maxAmount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,code,userPercentage,agentPercentage,rate);
+int get hashCode => Object.hash(runtimeType,name,code,userPercentage,agentPercentage,rate,provider,status,isActive,deductionPercent,percent,minAmount,maxAmount);
 
 @override
 String toString() {
-  return 'AirtimeNetworkDto(name: $name, code: $code, userPercentage: $userPercentage, agentPercentage: $agentPercentage, rate: $rate)';
+  return 'AirtimeNetworkDto(name: $name, code: $code, userPercentage: $userPercentage, agentPercentage: $agentPercentage, rate: $rate, provider: $provider, status: $status, isActive: $isActive, deductionPercent: $deductionPercent, percent: $percent, minAmount: $minAmount, maxAmount: $maxAmount)';
 }
 
 
@@ -538,7 +552,7 @@ abstract mixin class _$AirtimeNetworkDtoCopyWith<$Res> implements $AirtimeNetwor
   factory _$AirtimeNetworkDtoCopyWith(_AirtimeNetworkDto value, $Res Function(_AirtimeNetworkDto) _then) = __$AirtimeNetworkDtoCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "name") String? name,@JsonKey(name: "code") String? code,@JsonKey(name: "user_percentage") int? userPercentage,@JsonKey(name: "agent_percentage") int? agentPercentage,@JsonKey(name: "rate") int? rate
+@JsonKey(name: "name") String? name,@JsonKey(name: "code") String? code,@JsonKey(name: "user_percentage") int? userPercentage,@JsonKey(name: "agent_percentage") int? agentPercentage,@JsonKey(name: "rate") double? rate,@JsonKey(name: 'provider') String? provider,@JsonKey(name: 'status') String? status,@JsonKey(name: 'is_active') bool? isActive,@JsonKey(name: 'deduction_percent') num? deductionPercent,@JsonKey(name: 'percent') num? percent,@JsonKey(name: 'min_amount') int? minAmount,@JsonKey(name: 'max_amount') int? maxAmount
 });
 
 
@@ -555,13 +569,20 @@ class __$AirtimeNetworkDtoCopyWithImpl<$Res>
 
 /// Create a copy of AirtimeNetworkDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,Object? code = freezed,Object? userPercentage = freezed,Object? agentPercentage = freezed,Object? rate = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,Object? code = freezed,Object? userPercentage = freezed,Object? agentPercentage = freezed,Object? rate = freezed,Object? provider = freezed,Object? status = freezed,Object? isActive = freezed,Object? deductionPercent = freezed,Object? percent = freezed,Object? minAmount = freezed,Object? maxAmount = freezed,}) {
   return _then(_AirtimeNetworkDto(
 name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String?,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String?,userPercentage: freezed == userPercentage ? _self.userPercentage : userPercentage // ignore: cast_nullable_to_non_nullable
 as int?,agentPercentage: freezed == agentPercentage ? _self.agentPercentage : agentPercentage // ignore: cast_nullable_to_non_nullable
 as int?,rate: freezed == rate ? _self.rate : rate // ignore: cast_nullable_to_non_nullable
+as double?,provider: freezed == provider ? _self.provider : provider // ignore: cast_nullable_to_non_nullable
+as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String?,isActive: freezed == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool?,deductionPercent: freezed == deductionPercent ? _self.deductionPercent : deductionPercent // ignore: cast_nullable_to_non_nullable
+as num?,percent: freezed == percent ? _self.percent : percent // ignore: cast_nullable_to_non_nullable
+as num?,minAmount: freezed == minAmount ? _self.minAmount : minAmount // ignore: cast_nullable_to_non_nullable
+as int?,maxAmount: freezed == maxAmount ? _self.maxAmount : maxAmount // ignore: cast_nullable_to_non_nullable
 as int?,
   ));
 }

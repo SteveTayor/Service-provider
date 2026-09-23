@@ -112,7 +112,7 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
             isAvailable: true,
             hasActiveConfig: true,
             supportsInstantConversion: true,
-            conversionRatePercent: dto.rate ?? dto.percent ?? 0,
+            conversionRatePercent: dto.rate ?? 80,
             minAmount: display?.minAmount ?? 500,
             maxAmount: display?.maxAmount ?? 5000,
             dailyLimit: display?.dailyLimit ?? 5000,
@@ -233,7 +233,8 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
         // `message`/`reference`. amountReceived is computed from the
         // network's rate; the authoritative confirmation text is
         // response.message, which the UI should prefer to display.
-        final computedReceived = amount * network.conversionRatePercent / 100;
+        final computedReceived = amount * network.conversionRatePercent ;
+        // / 100;
 
         return Right(
           AirtimeToCashTransaction(
@@ -249,7 +250,7 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
             phoneNumber: phoneNumber,
             type: AirtimeToCashTxnType.instant,
             status: status,
-            conversionRatePercent: network.conversionRatePercent,
+            conversionRatePercent:(network.conversionRatePercent * 100).round(),
             failureReason: response.message,
           ),
         );

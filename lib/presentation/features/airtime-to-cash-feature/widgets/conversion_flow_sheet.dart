@@ -495,7 +495,7 @@ class _OtpSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final maskedPhone = maskPhoneNumber(state.phoneController.text.trim());
-  final otpLength = state.selectedNetwork?.otpLength ?? 6;
+    final otpLength = state.selectedNetwork?.otpLength ?? 6;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -772,9 +772,9 @@ class _AmountSection extends StatelessWidget {
                     color: AppColors.grey80,
                   ),
                   children: [
-                    TextSpan(text: 'Conversion rate: '),
+                    const TextSpan(text: 'Conversion rate: '),
                     TextSpan(
-                      text: '${network.conversionRatePercent}%',
+                      text: '${network.conversionRatePercent * 100}%',
                       style: const TextStyle(
                         color: AppColors.primaryColor,
                         fontWeight: FontWeight.w700,

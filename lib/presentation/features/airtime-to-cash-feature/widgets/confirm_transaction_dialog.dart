@@ -121,7 +121,11 @@ class ConfirmTransactionDialog extends StatelessWidget {
             'Airtime to sell',
             '₦${amountToSell.toStringAsFixed(0)}',
           ),
-          _row(context, 'Conversion rate', '${network.conversionRatePercent}%'),
+          _row(
+            context,
+            'Conversion rate',
+            '${(network.conversionRatePercent * 100).round()}%',
+          ),
           SizedBox(height: 8.h),
           Container(
             width: double.infinity,
