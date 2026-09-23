@@ -150,6 +150,19 @@ class _ConversionFlowSheetState extends ConsumerState<ConversionFlowSheet> {
         return;
       }
 
+      if (next.step == AirtimeToCashStep.balanceTooLow &&
+          next.selectedNetwork != null) {
+        BalanceTooLowDialog.show(
+          context,
+          network: next.selectedNetwork!,
+          balance: next.airtimeBalance,
+        ).then((_) {
+          if (!mounted) return;
+          notifier.backToNetworkSelection();
+        });
+        return;
+      }
+
       if (next.step == AirtimeToCashStep.processing &&
           next.lastTransaction != null) {
         final txn = next.lastTransaction!;
@@ -286,7 +299,7 @@ class _ConversionFlowSheetState extends ConsumerState<ConversionFlowSheet> {
       case AirtimeToCashStep.noActiveConfig:
         return _NoActiveConfigSection(notifier: notifier);
       case AirtimeToCashStep.balanceTooLow:
-        return _BalanceTooLowSection(state: state, notifier: notifier);
+        return const SizedBox.shrink();
       case AirtimeToCashStep.enteringAmount:
       case AirtimeToCashStep.checkingQuota:
       case AirtimeToCashStep.confirming:
@@ -949,42 +962,42 @@ class _ErrorRetry extends StatelessWidget {
   }
 }
 
-class _BalanceTooLowSection extends StatelessWidget {
-  const _BalanceTooLowSection({required this.state, required this.notifier});
+// class _BalanceTooLowSection extends StatelessWidget {
+//   const _BalanceTooLowSection({required this.state, required this.notifier});
 
-  final AirtimeToCashState state;
-  final AirtimeToCashNotifier notifier;
+//   final AirtimeToCashState state;
+//   final AirtimeToCashNotifier notifier;
 
-  @override
-  Widget build(BuildContext context) {
-    final network = state.selectedNetwork;
-    return Column(
-      children: [
-        Icon(
-          Icons.warning_amber_rounded,
-          color: AppColors.warning,
-          size: 40.sp,
-        ),
-        SizedBox(height: 12.h),
-        Text(
-          'Balance Too Low',
-          style: context.textTheme.titleMedium,
-          textAlign: TextAlign.center,
-        ),
-        SizedBox(height: 8.h),
-        Text(
-          'Your airtime balance (₦${state.airtimeBalance?.toStringAsFixed(2) ?? '0.00'}) '
-          'is below the ₦${network?.minAmount.toStringAsFixed(0) ?? '-'} minimum for '
-          '${network?.name ?? 'this network'}.',
-          style: context.textTheme.bodySmall,
-          textAlign: TextAlign.center,
-        ),
-        SizedBox(height: 20.h),
-        TextButton(
-          onPressed: notifier.backToNetworkSelection,
-          child: const Text('Choose a different network'),
-        ),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     final network = state.selectedNetwork;
+//     return Column(
+//       children: [
+//         Icon(
+//           Icons.warning_amber_rounded,
+//           color: AppColors.warning,
+//           size: 40.sp,
+//         ),
+//         SizedBox(height: 12.h),
+//         Text(
+//           'Balance Too Low',
+//           style: context.textTheme.titleMedium,
+//           textAlign: TextAlign.center,
+//         ),
+//         SizedBox(height: 8.h),
+//         Text(
+//           'Your airtime balance (₦${state.airtimeBalance?.toStringAsFixed(2) ?? '0.00'}) '
+//           'is below the ₦${network?.minAmount.toStringAsFixed(0) ?? '-'} minimum for '
+//           '${network?.name ?? 'this network'}.',
+//           style: context.textTheme.bodySmall,
+//           textAlign: TextAlign.center,
+//         ),
+//         SizedBox(height: 20.h),
+//         TextButton(
+//           onPressed: notifier.backToNetworkSelection,
+//           child: const Text('Choose a different network'),
+//         ),
+//       ],
+//     );
+//   }
+// }
