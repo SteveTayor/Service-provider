@@ -21,6 +21,8 @@ class NetworkConfig extends Equatable {
     required this.dailyLimit,
     required this.shareCode,
      this.otpLength = 6,
+        this.provider,
+    this.rawStatus,
   });
 
   /// Stable identifier, e.g. 'mtn', 'airtel', 'glo', '9mobile'.
@@ -54,6 +56,16 @@ class NetworkConfig extends Equatable {
   final String shareCode;
   final int otpLength;
 
+  /// Passed through from the API's `provider` field. Not currently used
+  /// in any logic — meaning unconfirmed with backend.
+  final String? provider;
+
+  /// Passed through from the API's `status` field, kept alongside the
+  /// bool `is_active`-derived hasActiveConfig in case they diverge and
+  /// this needs surfacing later (e.g. support/debug tooling).
+  final String? rawStatus;
+
+
   /// Whether the user can proceed with the instant flow for this network.
   bool get canUseInstantFlow =>
       isAvailable && hasActiveConfig && supportsInstantConversion;
@@ -77,6 +89,8 @@ class NetworkConfig extends Equatable {
       dailyLimit: dailyLimit,
       shareCode: shareCode,
       otpLength: otpLength,
+        provider: provider,
+      rawStatus: rawStatus,
     );
   }
 
@@ -94,5 +108,7 @@ class NetworkConfig extends Equatable {
         dailyLimit,
         shareCode,
            otpLength,
+        provider,
+        rawStatus,
       ];
 }

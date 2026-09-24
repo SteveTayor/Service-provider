@@ -29,21 +29,40 @@ class AirtimeToCashScreen extends ConsumerWidget {
             child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
+                // Intro
                 SliverPadding(
                   padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 0),
                   sliver: const SliverToBoxAdapter(child: _IntroCard()),
                 ),
-                const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+                SliverToBoxAdapter(child: SizedBox(height: 20.h)),
+
+                // Recent conversions title
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: 8.w),
                   sliver: const SliverToBoxAdapter(
                     child: _RecentConversionsTopCard(),
                   ),
                 ),
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _SearchHeaderDelegate(),
+
+                // Search
+                // SliverPadding(
+                //   padding: EdgeInsets.symmetric(
+                //     horizontal: 8.w,
+                //   ),
+                //   sliver: const SliverToBoxAdapter(
+                //     child: _SearchHeader(),
+                //   ),
+                // ),
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  sliver: SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _SearchHeaderDelegate(),
+                  ),
                 ),
+
+                // Transactions
                 SliverPadding(
                   padding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 104.h),
                   sliver: const SliverToBoxAdapter(
@@ -53,6 +72,8 @@ class AirtimeToCashScreen extends ConsumerWidget {
               ],
             ),
           ),
+
+          // Floating action button
           Positioned(
             right: 16.w,
             bottom: 20.h,
@@ -70,9 +91,7 @@ class AirtimeToCashScreen extends ConsumerWidget {
   }
 }
 
-/// Top slice of the "Recent Conversions" card — title only, scrolls away
-/// normally. No bottom border/radius: it visually joins the pinned search
-/// header directly beneath it.
+/// Title section of the recent conversions card.
 class _RecentConversionsTopCard extends StatelessWidget {
   const _RecentConversionsTopCard();
 
@@ -92,36 +111,65 @@ class _RecentConversionsTopCard extends StatelessWidget {
       ),
       child: Text(
         'Recent Conversions',
-        style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+        style: context.textTheme.titleSmall?.copyWith(
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
 }
 
-/// Pinned search bar. Same width/side-borders as the rest of the card so
-/// the seam is invisible; sticks to the top of the scroll view once it
-/// reaches it, with everything below scrolling underneath it.
+/// Static search section.
+///
+/// It is deliberately a normal SliverToBoxAdapter rather than
+/// a SliverPersistentHeader. The entire screen already has one
+/// CustomScrollView, so there is no need to make the search field
+/// another special scrolling viewport.
+///
 class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
-  double get minExtent => 64;
-  @override
-  double get maxExtent => 64;
+  double get minExtent => 64.h;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  double get maxExtent => 64.h;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
-      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 8.h),
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(8.w, 2.h, 8.w, 2.h),
       decoration: BoxDecoration(
         color: AppColors.white,
+
+        // Keep the same side/bottom borders as the surrounding
+        // Recent Conversions card so the sections visually connect.
         border: Border(
           left: BorderSide(color: AppColors.greyEE),
           right: BorderSide(color: AppColors.greyEE),
           bottom: BorderSide(color: AppColors.greyEE),
         ),
+
+        // Once the header becomes pinned and content is moving
+        // underneath it, add a very subtle shadow so the separation
+        // is visually clear.
+        boxShadow: overlapsContent
+            ? [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
       ),
       child: Consumer(
         builder: (context, ref, _) {
           final notifier = ref.read(airtimeToCashHistoryProvider.notifier);
+
           return AppTextField(
             decoration: const InputDecoration().search(),
             onChange: notifier.onSearchChanged,
@@ -131,12 +179,53 @@ class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
     );
   }
 
+  // Nothing inside this delegate changes as a result of scrolling,
+  // so Flutter does not need to rebuild it during normal scrolling.
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => false;
+  bool shouldRebuild(covariant _SearchHeaderDelegate oldDelegate) {
+    return false;
+  }
 }
 
-/// Bottom slice — the transaction list, closes off the card's rounded
-/// bottom corners and side/bottom borders.
+// class _SearchHeader extends ConsumerWidget {
+//   const _SearchHeader();
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final notifier =
+//         ref.read(airtimeToCashHistoryProvider.notifier);
+
+//     return Container(
+//       width: double.infinity,
+//       padding: EdgeInsets.fromLTRB(
+//         8.w,
+//         2.h,
+//         8.w,
+//         2.h,
+//       ),
+//       decoration: const BoxDecoration(
+//         color: AppColors.white,
+//         border: Border(
+//           left: BorderSide(
+//             color: AppColors.greyEE,
+//           ),
+//           right: BorderSide(
+//             color: AppColors.greyEE,
+//           ),
+//           bottom: BorderSide(
+//             color: AppColors.greyEE,
+//           ),
+//         ),
+//       ),
+//       child: AppTextField(
+//         decoration: const InputDecoration().search(),
+//         onChange: notifier.onSearchChanged,
+//       ),
+//     );
+//   }
+// }
+
+/// Bottom section containing the transaction content.
 class _RecentConversionsBottomCard extends StatelessWidget {
   const _RecentConversionsBottomCard();
 
@@ -183,7 +272,11 @@ class _IntroCardState extends State<_IntroCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InkWell(
-            onTap: () => setState(() => _expanded = !_expanded),
+            onTap: () {
+              setState(() {
+                _expanded = !_expanded;
+              });
+            },
             child: Row(
               children: [
                 Expanded(
@@ -207,6 +300,7 @@ class _IntroCardState extends State<_IntroCard> {
               ],
             ),
           ),
+
           AnimatedCrossFade(
             firstChild: const SizedBox(width: double.infinity, height: 0),
             secondChild: Padding(
@@ -244,7 +338,7 @@ class _IntroCardState extends State<_IntroCard> {
                   ),
                   SizedBox(height: 14.h),
                   Text(
-                    '   Fast processing • Secure • Transparent rates',
+                    '    Fast processing • Secure • Transparent rates',
                     textAlign: TextAlign.center,
                     style: context.textTheme.labelSmall?.copyWith(
                       color: AppColors.primaryColor.withOpacity(.8),
@@ -275,7 +369,7 @@ class _FlowPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 9.h, horizontal: 6.w),
+        padding: EdgeInsets.symmetric(vertical: 7.h, horizontal: 6.w),
         decoration: BoxDecoration(
           color: highlighted
               ? AppColors.primaryColor.withOpacity(0.08)
@@ -291,6 +385,7 @@ class _FlowPill extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
           style: context.textTheme.labelSmall?.copyWith(
+            fontSize: 9.sp,
             color: highlighted ? AppColors.success : AppColors.black,
             fontWeight: FontWeight.w600,
           ),
@@ -311,64 +406,6 @@ class _FlowArrow extends StatelessWidget {
         Icons.arrow_forward_rounded,
         size: 12.sp,
         color: AppColors.grey80,
-      ),
-    );
-  }
-}
-
-class _RecentConversionsCard extends StatelessWidget {
-  const _RecentConversionsCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 10.h),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: AppColors.greyEE),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Recent Conversions',
-                  style: context.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              // TODO(airtime-to-cash): wire this to a dedicated full-history
-              // screen/route once one exists. Left disabled rather than
-              // navigating nowhere.
-              // TextButton(
-              //   onPressed: null,
-              //   style: TextButton.styleFrom(
-              //     padding: EdgeInsets.zero,
-              //     minimumSize: Size.zero,
-              //     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              //   ),
-              //   child: const Text('See all'),
-              // ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          Consumer(
-            builder: (context, ref, _) {
-              final notifier = ref.read(airtimeToCashHistoryProvider.notifier);
-              return AppTextField(
-                decoration: const InputDecoration().search(),
-                onChange: notifier.onSearchChanged,
-              );
-            },
-          ),
-          SizedBox(height: 14.h),
-          const TransactionListWidget(),
-        ],
       ),
     );
   }

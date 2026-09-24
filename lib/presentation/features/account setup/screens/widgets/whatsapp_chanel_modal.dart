@@ -49,7 +49,7 @@ class WhatsappChannelModal extends ConsumerWidget {
             Text(
               'Join Our WhatsApp Channel! 📢',
               style: TextStyle(
-                fontSize: 22.sp,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.w700,
                 fontFamily: FontFamily.mabryPro,
                 color: AppColors.black,
@@ -62,7 +62,7 @@ class WhatsappChannelModal extends ConsumerWidget {
               'Get instant updates on new features, promos, and important '
               'announcements.',
               style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w400,
                 fontFamily: FontFamily.mabryPro,
                 color: AppColors.grey8E,
@@ -75,13 +75,13 @@ class WhatsappChannelModal extends ConsumerWidget {
             BundlegramButton(
               text: 'Follow Channel',
               width: double.infinity,
-              height: 48.h,
+              height: 40.h,
               leading: null,
               textStyle: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w500,
                 fontFamily: FontFamily.mabryPro,
-                fontSize: 16.sp,
+                fontSize: 14.sp,
               ),
               onPressed: () {
                 provider.openWhatsappChannel();
@@ -97,7 +97,7 @@ class WhatsappChannelModal extends ConsumerWidget {
               child: Text(
                 'Maybe Later',
                 style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 13.sp,
                   fontWeight: FontWeight.w500,
                   fontFamily: FontFamily.mabryPro,
                   color: AppColors.grey8E,
@@ -122,7 +122,7 @@ class WhatsappChannelModal extends ConsumerWidget {
                   Icon(
                     Icons.info_outline,
                     size: 16.sp,
-                    color: AppColors.grey8E,
+                    color: AppColors.info,
                   ),
                   8.horizontalSpace,
                   Expanded(

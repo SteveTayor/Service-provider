@@ -48,7 +48,7 @@ class PromoModal extends StatelessWidget {
             Text(
               'Special Offer! 🎉',
               style: TextStyle(
-                fontSize: 22.sp,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.w700,
                 fontFamily: FontFamily.mabryPro,
                 color: AppColors.black,
@@ -61,7 +61,7 @@ class PromoModal extends StatelessWidget {
             Text(
               'Buy airtime and data and enjoy 5 - 10% discount on every transaction.',
               style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w400,
                 fontFamily: FontFamily.mabryPro,
                 color: AppColors.grey8E,
@@ -146,7 +146,7 @@ class PromoModal extends StatelessWidget {
               child: Text(
                 'Maybe Later',
                 style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 13.sp,
                   fontWeight: FontWeight.w500,
                   fontFamily: FontFamily.mabryPro,
                   color: AppColors.grey8E,

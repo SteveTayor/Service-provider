@@ -124,7 +124,7 @@ class ConfirmTransactionDialog extends StatelessWidget {
           _row(
             context,
             'Conversion rate',
-            '${(network.conversionRatePercent * 100).round()}%',
+            '${network.conversionRatePercent.round()}%',
           ),
           SizedBox(height: 8.h),
           Container(

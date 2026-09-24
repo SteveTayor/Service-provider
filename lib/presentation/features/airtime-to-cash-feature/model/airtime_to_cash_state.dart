@@ -101,8 +101,7 @@ class AirtimeToCashState {
     if (network == null) return 0;
     final amount = double.tryParse(amountController.text.replaceAll(',', ''));
     if (amount == null || amount <= 0) return 0;
-    return amount * network.conversionRatePercent;
-    //  / 100;
+    return amount * network.conversionRatePercent  / 100;
   }
 
   bool get isBusy =>

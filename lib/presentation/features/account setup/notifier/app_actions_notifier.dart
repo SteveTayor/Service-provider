@@ -26,7 +26,7 @@ final appActionsProvider = Provider<AppActionsNotifier>((ref) {
 
 class AppActionsNotifier {
   static const String _androidPackageName = 'com.verygoodcore.bundlegram';
-  static const String _iosAppId = '123456789'; // <-- Replace with real iOS ID
+  static const String _iosAppId = '123456789'; // 
   static const String _appShareMessage =
       'Check out Bundlegram - the best app for getting your cheap airtime and data bundles! Download it now:';
 
@@ -76,34 +76,24 @@ class AppActionsNotifier {
     }
   }
 
-  /// Check for updates silently (for dashboard - no UI unless update available)
-  Future<void> checkForUpdateSilently(BuildContext context) async {
-    try {
-      final updateInfo = await checkForUpdateInfo();
-      if (updateInfo != null && updateInfo['hasUpdate'] == true) {
-        _showUpdateDialog(
-          context,
-          updateInfo['currentVersion']! as String,
-          updateInfo['latestVersion']! as String,
-        );
-      }
-    } catch (_) {
-      // Fail silently for background checks
-    }
-  }
-
-  /// Get update info without UI (returns map with update status)
-  Future<Map<String, dynamic>?> checkForUpdateInfo() async {
-    try {
+/// Get update info without UI (returns map with update status).
+/// Android: uses the official Play Core Update Availability API — no
+/// scraping, since the Play Store page no longer exposes a parseable
+/// "Current Version" string.
+Future<Map<String, dynamic>?> checkForUpdateInfo() async {
+  try {
+    if (Platform.isAndroid) {
+      final updateInfo = await InAppUpdate.checkForUpdate();
+      final hasUpdate =
+          updateInfo.updateAvailability == UpdateAvailability.updateAvailable;
+      return {
+        'hasUpdate': hasUpdate,
+        if (hasUpdate) 'androidUpdateInfo': updateInfo,
+      };
+    } else if (Platform.isIOS) {
       final packageInfo = await PackageInfo.fromPlatform();
       final currentVersion = packageInfo.version;
-      String? latestVersion;
-
-      if (Platform.isAndroid) {
-        latestVersion = await _getLatestAndroidVersion();
-      } else if (Platform.isIOS) {
-        latestVersion = await _getLatestIOSVersion();
-      }
+      final latestVersion = await _getLatestIOSVersion();
 
       if (latestVersion != null &&
           _isUpdateAvailable(currentVersion, latestVersion)) {
@@ -113,12 +103,36 @@ class AppActionsNotifier {
           'latestVersion': latestVersion,
         };
       }
-
       return {'hasUpdate': false};
-    } catch (_) {
-      return null;
     }
+    return {'hasUpdate': false};
+  } catch (e, st) {
+    debugPrint('checkForUpdateInfo failed: $e\n$st');
+    return null;
   }
+}
+
+/// Check for updates silently (for dashboard - no UI unless update available)
+Future<void> checkForUpdateSilently(BuildContext context) async {
+  try {
+    final updateInfo = await checkForUpdateInfo();
+    if (updateInfo == null || updateInfo['hasUpdate'] != true) return;
+    if (!context.mounted) return;
+
+    if (Platform.isAndroid) {
+      final androidInfo = updateInfo['androidUpdateInfo'] as AppUpdateInfo;
+      _showInAppUpdateDialog(context, androidInfo);
+    } else {
+      _showUpdateDialog(
+        context,
+        updateInfo['currentVersion']! as String,
+        updateInfo['latestVersion']! as String,
+      );
+    }
+  } catch (e, st) {
+    debugPrint('checkForUpdateSilently failed: $e\n$st');
+  }
+}
 
   /// Android In-App Update using Google Play Core API
   Future<void> _checkAndroidInAppUpdate(BuildContext context) async {

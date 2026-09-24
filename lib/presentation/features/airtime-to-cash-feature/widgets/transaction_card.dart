@@ -153,7 +153,7 @@ class TransactionCard extends StatelessWidget {
                         child: Text(
                           _dateLabel(),
                           style: context.textTheme.bodySmall?.copyWith(
-                            fontSize: 12.sp,
+                            fontSize: 10.sp,
                             color: AppColors.grey80,
                           ),
                           overflow: TextOverflow.ellipsis,

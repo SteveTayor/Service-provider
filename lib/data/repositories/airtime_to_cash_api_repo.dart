@@ -36,6 +36,11 @@ class _NetworkDisplayConfig {
   final int otpLength;
 }
 
+double _normalizeRatePercent(double? rawRate) {
+  final rate = rawRate ?? 80;
+  return rate <= 1 ? rate * 100 : rate;
+}
+
 final Map<String, _NetworkDisplayConfig> _networkDisplayConfigs = {
   'MTN': _NetworkDisplayConfig(
     logoAsset: Assets.svgs.mtnnw,
@@ -98,6 +103,9 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
           final code = (dto.code ?? '').toUpperCase();
           final display = _networkDisplayConfigs[code];
 
+          final statusActive = dto.status == null || dto.status == '1';
+          final hasActiveConfig = (dto.isActive ?? true) && statusActive;
+
           return NetworkConfig(
             // Stored uppercase to match exactly what the API expects back
             // in request bodies (`"network": "MTN"`), avoiding a
@@ -105,19 +113,21 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
             id: code,
             name: dto.name ?? code,
             logoAsset: display?.logoAsset ?? Assets.svgs.simcard2,
-            // The  /networks response has no availability flags — it
-            // appears to simply omit unsupported networks rather than
-            // include-and-flag them. Every network returned here is
-            // therefore treated as available.
+
             isAvailable: true,
-            hasActiveConfig: true,
+            hasActiveConfig: hasActiveConfig,
             supportsInstantConversion: true,
-            conversionRatePercent: (dto.rate ?? 0.8) * 100,
-            minAmount: display?.minAmount ?? 500,
-            maxAmount: display?.maxAmount ?? 5000,
-            dailyLimit: display?.dailyLimit ?? 5000,
+            conversionRatePercent: _normalizeRatePercent(dto.rate),
+            minAmount: (dto.minAmount ?? display?.minAmount.toInt() ?? 500)
+                .toDouble(),
+            maxAmount: (dto.maxAmount ?? display?.maxAmount.toInt() ?? 5000)
+                .toDouble(),
+            dailyLimit: (dto.maxAmount ?? display?.dailyLimit.toInt() ?? 5000)
+                .toDouble(),
             shareCode: display?.shareCode ?? '',
             otpLength: display?.otpLength ?? 6,
+            provider: dto.provider,
+            rawStatus: dto.status,
           );
         }).toList();
         return Right(networks);

@@ -10,23 +10,42 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class TransactionListWidget extends ConsumerWidget {
-  const TransactionListWidget({super.key});
+  const TransactionListWidget({
+    super.key,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(airtimeToCashHistoryProvider);
-    final notifier = ref.read(airtimeToCashHistoryProvider.notifier);
+  Widget build(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    final state = ref.watch(
+      airtimeToCashHistoryProvider,
+    );
 
+    final notifier = ref.read(
+      airtimeToCashHistoryProvider.notifier,
+    );
+
+    // Initial loading
     if (state.isLoading && state.transactions.isEmpty) {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: 34.h),
-        child: const Center(child: AppLoader()),
+        padding: EdgeInsets.symmetric(
+          vertical: 34.h,
+        ),
+        child: const Center(
+          child: AppLoader(),
+        ),
       );
     }
 
-    if (state.error != null && state.transactions.isEmpty) {
+    // Error
+    if (state.error != null &&
+        state.transactions.isEmpty) {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: 18.h),
+        padding: EdgeInsets.symmetric(
+          vertical: 18.h,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -55,21 +74,24 @@ class TransactionListWidget extends ConsumerWidget {
             SizedBox(height: 12.h),
             TextButton(
               onPressed: notifier.refresh,
-              child: const Text('Try Again'),
+              child: const Text(
+                'Try Again',
+              ),
             ),
           ],
         ),
       );
     }
 
+    // Empty state
     if (state.transactions.isEmpty) {
-      // Polished fintech empty state — custom SVG illustration (phone
-      // signal -> arrow -> cash wallet, in the brand green/neutral
-      // palette) rather than a generic Material inbox icon. No button
-      // here per spec — the "+ Convert Airtime" FAB above the screen
-      // remains the single primary action.
       return Padding(
-        padding: EdgeInsets.fromLTRB(8.w, 20.h, 8.w, 22.h),
+        padding: EdgeInsets.fromLTRB(
+          8.w,
+          20.h,
+          8.w,
+          22.h,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -99,17 +121,20 @@ class TransactionListWidget extends ConsumerWidget {
       );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: state.transactions.length,
-      itemBuilder: (context, index) {
-        final txn = state.transactions[index];
-        return TransactionCard(
-          transaction: txn,
-          onTap: () => TransactionDetailDialog.show(context, txn),
-        );
-      },
+    // IMPORTANT:
+    // Do not use ListView here because this widget already lives
+    // inside the screen's CustomScrollView.
+    return Column(
+      children: [
+        for (final txn in state.transactions)
+          TransactionCard(
+            transaction: txn,
+            onTap: () => TransactionDetailDialog.show(
+              context,
+              txn,
+            ),
+          ),
+      ],
     );
   }
 }

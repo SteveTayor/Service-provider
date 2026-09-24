@@ -88,7 +88,7 @@ class OtpInputRowState extends State<OtpInputRow> {
         : AppColors.greyD0;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: List.generate(widget.length, (index) {
         return SizedBox(
           width: 40.w,
