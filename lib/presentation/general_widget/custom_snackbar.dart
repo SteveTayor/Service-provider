@@ -247,7 +247,7 @@ class CustomSnackBar {
           message,
           style: TextStyle(
             color: textColor,
-            fontSize: 12.sp,
+            fontSize: 10.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -255,11 +255,11 @@ class CustomSnackBar {
         backgroundColor: bgColor,
         autoCloseDuration: duration,
         alignment: Alignment.bottomCenter,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
+            blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
@@ -287,7 +287,7 @@ class CustomSnackBar {
       icon: Icon(
         Icons.info_outline,
         color: AppColors.white,
-        size: 24.sp,
+        size: 18.sp,
       ),
       duration: duration,
       type: ToastificationType.info,
@@ -307,7 +307,7 @@ class CustomSnackBar {
       icon: Icon(
         Icons.error,
         color: AppColors.white,
-        size: 24.sp,
+        size: 18.sp,
       ),
       duration: duration,
       type: ToastificationType.error,
@@ -327,8 +327,8 @@ class CustomSnackBar {
       textColor: AppColors.white,
       icon: Image.asset(
         'assets/images/logo.png',
-        width: 30.w,
-        height: 30.h,
+        width: 25.w,
+        height: 25.h,
       ),
       duration: duration,
       type: ToastificationType.success,
@@ -348,7 +348,7 @@ class CustomSnackBar {
       icon: Icon(
         Icons.warning_amber_rounded,
         color: AppColors.white,
-        size: 24.sp,
+        size: 18.sp,
       ),
       duration: duration,
       type: ToastificationType.warning,

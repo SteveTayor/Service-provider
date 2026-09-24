@@ -3,6 +3,7 @@ import 'package:bundlegram/core/config/interceptors/dio_interceptor.dart';
 import 'package:bundlegram/core/config/interceptors/helper.dart';
 import 'package:bundlegram/core/error/failures.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/airtime_to_cash_api_model.dart';
+import 'package:bundlegram/data/models/airtime_2_cash/airtime_to_cash_transaction_history.dart';
 import 'package:bundlegram/data/models/auth/auth_model.dart';
 import 'package:bundlegram/data/models/auth/forgot_password/change_password_respone.dart';
 import 'package:bundlegram/data/models/auth/forgot_password/change_pin_response.dart';
@@ -595,6 +596,11 @@ class ApiService {
     AirtimeTransferRequest req,
   ) {
     return handleApi(() => _api.transferAirtimeToCash('Bearer $token', req));
+  }
+
+  Future<Either<Failure, AirtimeTransactionHistoryResponse>>
+  getAirtimeToCashTransactions(String token, ) {
+    return handleApi(() => _api.getAirtimeToCashTransactions('Bearer $token'));
   }
 
   // other endpoint …

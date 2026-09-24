@@ -112,7 +112,7 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
             isAvailable: true,
             hasActiveConfig: true,
             supportsInstantConversion: true,
-            conversionRatePercent: dto.rate ?? 80,
+            conversionRatePercent: (dto.rate ?? 0.8) * 100,
             minAmount: display?.minAmount ?? 500,
             maxAmount: display?.maxAmount ?? 5000,
             dailyLimit: display?.dailyLimit ?? 5000,
@@ -233,8 +233,7 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
         // `message`/`reference`. amountReceived is computed from the
         // network's rate; the authoritative confirmation text is
         // response.message, which the UI should prefer to display.
-        final computedReceived = amount * network.conversionRatePercent ;
-        // / 100;
+        final computedReceived = amount * network.conversionRatePercent / 100;
 
         return Right(
           AirtimeToCashTransaction(
@@ -250,7 +249,7 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
             phoneNumber: phoneNumber,
             type: AirtimeToCashTxnType.instant,
             status: status,
-            conversionRatePercent:(network.conversionRatePercent * 100).round(),
+            conversionRatePercent: network.conversionRatePercent.round(),
             failureReason: response.message,
           ),
         );
@@ -262,7 +261,67 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
   Future<Either<Failure, List<AirtimeToCashTransaction>>> getTransactions({
     String? query,
   }) async {
-    // TODO(airtime-to-cash)
-    return const Right([]);
+    final tokenResult = await _requireToken();
+    return tokenResult.fold(Left.new, (token) async {
+      final result = await _api.getAirtimeToCashTransactions(token);
+      return result.fold(Left.new, (response) {
+        var dtos = response.data ?? [];
+
+        // filtering
+        // Matches network name
+        // or phone number.
+        final q = query?.trim().toLowerCase();
+        if (q != null && q.isNotEmpty) {
+          dtos = dtos.where((dto) {
+            final network = (dto.subProduct?.subName ?? '').toLowerCase();
+            final phone = (dto.trxFrom ?? dto.crAcc ?? '').toLowerCase();
+            return network.contains(q) || phone.contains(q);
+          }).toList();
+        }
+
+        final txns = dtos.map((dto) {
+          final autoId = (dto.subProduct?.autoSubProdId ?? '').toUpperCase();
+          final ratePercent =
+              int.tryParse(dto.subProduct?.userPercent ?? '') ?? 80;
+
+          return AirtimeToCashTransaction(
+            id: dto.id?.toString() ?? dto.transRef ?? '',
+            reference: dto.transRef ?? '',
+            dateTime: dto.dateTimeValue,
+            amountSold: dto.amountValue,
+            // History has no separate credited-amount field — computed
+            // from the rate, same limitation as convert()'s response.
+            amountReceived: dto.amountValue * ratePercent / 100,
+            networkId: autoId,
+            networkName:
+                dto.subProduct?.subName?.replaceAll(' Airtime to Cash', '') ??
+                autoId,
+            phoneNumber: dto.trxFrom ?? dto.crAcc ?? '',
+            type: AirtimeToCashTxnType.instant,
+            status: _statusFromString(dto.status),
+            conversionRatePercent: ratePercent,
+            failureReason: dto.status?.toLowerCase() == 'failed'
+                ? 'Conversion failed'
+                : null,
+          );
+        }).toList();
+        return Right(txns);
+      });
+    });
+  }
+
+  AirtimeToCashTxnStatus _statusFromString(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'success':
+        return AirtimeToCashTxnStatus.success;
+      case 'failed':
+        return AirtimeToCashTxnStatus.failed;
+      case 'processing':
+        return AirtimeToCashTxnStatus.processing;
+      case 'partial':
+        return AirtimeToCashTxnStatus.partial;
+      default:
+        return AirtimeToCashTxnStatus.pending;
+    }
   }
 }

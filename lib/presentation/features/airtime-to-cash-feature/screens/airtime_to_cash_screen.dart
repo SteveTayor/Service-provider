@@ -26,19 +26,31 @@ class AirtimeToCashScreen extends ConsumerWidget {
         children: [
           RefreshIndicator(
             onRefresh: historyNotifier.refresh,
-            child: SingleChildScrollView(
+            child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              // Bottom padding clears the FAB so the last transaction card
-              // is never hidden behind it.
-              padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 104.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  _IntroCard(),
-                  SizedBox(height: 20),
-                  _RecentConversionsCard(),
-                ],
-              ),
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 0),
+                  sliver: const SliverToBoxAdapter(child: _IntroCard()),
+                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
+                  sliver: const SliverToBoxAdapter(
+                    child: _RecentConversionsTopCard(),
+                  ),
+                ),
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _SearchHeaderDelegate(),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 104.h),
+                  sliver: const SliverToBoxAdapter(
+                    child: _RecentConversionsBottomCard(),
+                  ),
+                ),
+              ],
             ),
           ),
           Positioned(
@@ -58,14 +70,95 @@ class AirtimeToCashScreen extends ConsumerWidget {
   }
 }
 
-/// Compact informative section — deliberately not a big button-heavy
-/// card. The "New Conversion" call to action now lives entirely in the FAB.
-///
-/// Collapsible: the title row is always visible, but the explanatory copy
-/// and flow diagram can be tucked away by the user so the card doesn't
-/// permanently eat vertical space above the transaction list. Starts
-/// expanded (so first-time users see the explanation) and collapses to a
-/// single compact row afterwards.
+/// Top slice of the "Recent Conversions" card — title only, scrolls away
+/// normally. No bottom border/radius: it visually joins the pinned search
+/// header directly beneath it.
+class _RecentConversionsTopCard extends StatelessWidget {
+  const _RecentConversionsTopCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 12.h),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(8.r)),
+        border: Border(
+          top: BorderSide(color: AppColors.greyEE),
+          left: BorderSide(color: AppColors.greyEE),
+          right: BorderSide(color: AppColors.greyEE),
+        ),
+      ),
+      child: Text(
+        'Recent Conversions',
+        style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+}
+
+/// Pinned search bar. Same width/side-borders as the rest of the card so
+/// the seam is invisible; sticks to the top of the scroll view once it
+/// reaches it, with everything below scrolling underneath it.
+class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
+  @override
+  double get minExtent => 64;
+  @override
+  double get maxExtent => 64;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 8.h),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        border: Border(
+          left: BorderSide(color: AppColors.greyEE),
+          right: BorderSide(color: AppColors.greyEE),
+          bottom: BorderSide(color: AppColors.greyEE),
+        ),
+      ),
+      child: Consumer(
+        builder: (context, ref, _) {
+          final notifier = ref.read(airtimeToCashHistoryProvider.notifier);
+          return AppTextField(
+            decoration: const InputDecoration().search(),
+            onChange: notifier.onSearchChanged,
+          );
+        },
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => false;
+}
+
+/// Bottom slice — the transaction list, closes off the card's rounded
+/// bottom corners and side/bottom borders.
+class _RecentConversionsBottomCard extends StatelessWidget {
+  const _RecentConversionsBottomCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 10.h),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(8.r)),
+        border: Border(
+          left: BorderSide(color: AppColors.greyEE),
+          right: BorderSide(color: AppColors.greyEE),
+          bottom: BorderSide(color: AppColors.greyEE),
+        ),
+      ),
+      child: const TransactionListWidget(),
+    );
+  }
+}
+
 class _IntroCard extends StatefulWidget {
   const _IntroCard();
 

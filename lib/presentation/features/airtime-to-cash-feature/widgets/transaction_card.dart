@@ -92,8 +92,8 @@ class TransactionCard extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(14.r),
       child: Container(
-        padding: EdgeInsets.all(16.w),
-        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.all(10.w),
+        margin: EdgeInsets.only(bottom: 8.h),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(14.r),

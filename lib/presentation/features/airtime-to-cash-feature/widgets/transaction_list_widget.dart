@@ -26,7 +26,7 @@ class TransactionListWidget extends ConsumerWidget {
 
     if (state.error != null && state.transactions.isEmpty) {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: 24.h),
+        padding: EdgeInsets.symmetric(vertical: 18.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

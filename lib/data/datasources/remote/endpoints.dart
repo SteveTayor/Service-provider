@@ -139,4 +139,5 @@ class Endpoints {
   static const String airtimeToCashVerify = '/airtime-to-cash/verify';
   static const String airtimeToCashCheckQuota = '/airtime-to-cash/check-quota';
   static const String airtimeToCashTransfer = '/airtime-to-cash/transfer';
+  static const String airtimeToCashTransactions = '/userTransactions/airtime_to_cash';
 }

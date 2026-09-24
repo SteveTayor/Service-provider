@@ -772,13 +772,19 @@ class _AmountSection extends StatelessWidget {
                     color: AppColors.grey80,
                   ),
                   children: [
-                    const TextSpan(text: 'Conversion rate: '),
+                    const TextSpan(text: 'Payout: '),
                     TextSpan(
-                      text: '${network.conversionRatePercent * 100}%',
+                      text:
+                          '${network.conversionRatePercent.toStringAsFixed(0)}%',
                       style: const TextStyle(
                         color: AppColors.primaryColor,
                         fontWeight: FontWeight.w700,
                       ),
+                    ),
+                    TextSpan(
+                      text:
+                          ' (${(100 - network.conversionRatePercent).toStringAsFixed(0)}% fee deducted)',
+                      style: const TextStyle(color: AppColors.grey33),
                     ),
                     if (state.tariffPlan != null) ...[
                       const TextSpan(text: ' • '),

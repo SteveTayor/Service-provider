@@ -110,7 +110,7 @@ class TransactionDetailDialog extends StatelessWidget {
           _row(
             context,
             'Conversion Rate',
-            '${transaction.conversionRatePercent * 100}%',
+            '${transaction.conversionRatePercent}%',
           ),
           _row(
             context,
