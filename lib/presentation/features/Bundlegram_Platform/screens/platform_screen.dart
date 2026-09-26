@@ -121,7 +121,7 @@ class _PlatformScreenState extends ConsumerState<PlatformScreen> {
           child: Column(
             children: [
               const PlatformQuickActionWidget(),
-              20.verticalSpace,
+              10.verticalSpace,
               const PlatformNoticeWidget(),
 
               // Stack(

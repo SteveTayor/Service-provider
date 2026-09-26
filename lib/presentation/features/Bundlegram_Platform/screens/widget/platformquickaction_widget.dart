@@ -204,6 +204,7 @@ class PlatformQuickActionWidget extends ConsumerWidget {
               // them and shrink to fit when there are more, with no
               // overflow either way.
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: PlatformItemWidget(
@@ -242,7 +243,7 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                   ),
                 ],
               ),
-              30.verticalSpace,
+              25.verticalSpace,
             ],
           ).withContainer(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
