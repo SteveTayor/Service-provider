@@ -15,6 +15,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/provider/pl
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformbills_widget.dart';
 import 'package:bundlegram/presentation/features/account%20setup/notifier/help_and_support_provider.dart';
+import 'package:bundlegram/presentation/features/airtime-to-cash-feature/screens/airtime_to_cash_screen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/internet-services/internet_service_screen.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/transaction_screen.dart';
 import 'package:bundlegram/presentation/general_widget/app_listtile.dart';
@@ -482,6 +483,46 @@ class PlatFormData {
       builder: (context) {
         return AppListTile(
           onPressed: () {
+            context.pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AirtimeToCashScreen(),
+              ),
+            );
+          },
+          // FLAG: no confirmed dedicated SVG asset for this — using a
+          // Material icon as a stand-in. Swap for the real asset when available.
+          iconData: Icons.swap_horiz,
+          title: 'Airtime to Cash',
+        );
+      },
+    ),
+
+    Builder(
+      builder: (context) {
+        return AppListTile(
+          onPressed: () {
+            context.pop();
+            final rootContext = navigatorKey.currentContext;
+            if (rootContext == null) return;
+            final container = ProviderScope.containerOf(
+              rootContext,
+              listen: false,
+            );
+            container
+                .read(platformProvider)
+                .openStatisticsBottomSheet(rootContext);
+          },
+          assetPath: Assets.svgs.viewstat,
+          title: 'View Statistics',
+        );
+      },
+    ),
+    Builder(
+      builder: (context) {
+        return AppListTile(
+          onPressed: () {
             // 1️⃣ Close drawer
             context.pop();
 
@@ -557,6 +598,24 @@ class PlatFormData {
         return AppListTile(
           onPressed: () {
             context.pop();
+            final rootContext = navigatorKey.currentContext;
+            if (rootContext == null) return;
+            final container = ProviderScope.containerOf(
+              rootContext,
+              listen: false,
+            );
+            container.read(platformProvider).goToWithdrawFund(rootContext);
+          },
+          assetPath: Assets.svgs.walletMoneyPaymentFinanceWallet,
+          title: 'Withdraw',
+        );
+      },
+    ),
+    Builder(
+      builder: (context) {
+        return AppListTile(
+          onPressed: () {
+            context.pop();
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -582,6 +641,7 @@ class PlatFormData {
         );
       },
     ),
+
     // NEW: WhatsApp Channel
     // Builder(
     //   builder: (context) {
@@ -601,7 +661,6 @@ class PlatFormData {
     //     );
     //   },
     // ),
-
     Builder(
       builder: (context) {
         return AppListTile(

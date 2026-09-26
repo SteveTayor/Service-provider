@@ -81,15 +81,10 @@
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
-import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformquickaction_widget.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformdrawer_widget.dart';
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/widget/platformnotice_widget.dart';
-import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/recenttransaction_widget.dart';
-import 'package:bundlegram/presentation/features/transaction/screens/widgets/viewstatistics_widget.dart';
-import 'package:bundlegram/presentation/general_widget/app_scaffold.dart';
-import 'package:bundlegram/presentation/general_widget/app_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -125,24 +120,28 @@ class _PlatformScreenState extends ConsumerState<PlatformScreen> {
               const AlwaysScrollableScrollPhysics(), // Ensures pull-to-refresh works
           child: Column(
             children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  // Sizes the Stack and removed fixed 540.h wrapper anymore.
-                  const PlatformQuickActionWidget(),
-                  Positioned(
-                    bottom: -_statsCardOverlap.h,
-                    left: 16,
-                    right: 16,
-                    child: const ViewStatisticsWidget(),
-                  ),
-                ],
-              ),
-              // Reserve space equal to the overlap so the stats card
-              // doesn't sit on top of the notice widget below it.
-              SizedBox(height: _statsCardOverlap.h + 20.h),
+              const PlatformQuickActionWidget(),
+              20.verticalSpace,
               const PlatformNoticeWidget(),
-              40.verticalSpace,
+
+              // Stack(
+              //   clipBehavior: Clip.none,
+              //   children: [
+              //     // Sizes the Stack and removed fixed 540.h wrapper anymore.
+              //     const PlatformQuickActionWidget(),
+              //     Positioned(
+              //       bottom: -_statsCardOverlap.h,
+              //       left: 16,
+              //       right: 16,
+              //       child: const ViewStatisticsWidget(),
+              //     ),
+              //   ],
+              // ),
+              // // Reserve space equal to the overlap so the stats card
+              // // doesn't sit on top of the notice widget below it.
+              // SizedBox(height: _statsCardOverlap.h + 20.h),
+              // const PlatformNoticeWidget(),
+              35.verticalSpace,
               Padding(
                 padding: context.symmetricPadding(20, 0),
                 child: RecentTransactionWidget(

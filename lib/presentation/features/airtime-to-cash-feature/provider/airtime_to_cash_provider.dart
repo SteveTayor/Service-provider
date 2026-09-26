@@ -13,6 +13,7 @@ import 'package:bundlegram/presentation/features/airtime-to-cash-feature/provide
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const int kOtpResendSeconds = 30;
 
@@ -66,19 +67,16 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
   }
 
   Future<void> goToManual() async {
-  final Uri phoneUri = Uri(
-    scheme: 'tel',
-    path: '300',
-  );
+    final Uri phoneUri = Uri(scheme: 'tel', path: '300');
 
-  try {
-    if (await canLaunchUrl(phoneUri)) {
-      await launchUrl(phoneUri);
+    try {
+      if (await canLaunchUrl(phoneUri)) {
+        await launchUrl(phoneUri);
+      }
+    } catch (e) {
+      debugPrint('Unable to open phone dialer: $e');
     }
-  } catch (e) {
-    debugPrint('Unable to open phone dialer: $e');
   }
-}
 
   void backToNetworkSelection() {
     _countdownTimer?.cancel();
@@ -207,12 +205,12 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     final network = state.selectedNetwork;
     if (network == null) return;
 
-    if (otp.length != network.otpLength) {
-    state = state.copyWith(
-      otpVerifyError: 'Enter the ${network.otpLength}-digit code',
-    );
-    return;
-  }
+    if (otp.trim().length < 4) {
+      state = state.copyWith(
+        otpVerifyError: 'Enter the code sent to your phone',
+      );
+      return;
+    }
 
     state = state.copyWith(
       step: AirtimeToCashStep.verifyingOtp,

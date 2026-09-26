@@ -20,6 +20,7 @@ import 'package:bundlegram/presentation/general_widget/app_button.dart';
 import 'package:bundlegram/presentation/general_widget/app_loader.dart';
 import 'package:bundlegram/presentation/general_widget/app_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -78,19 +79,36 @@ class ConversionFlowSheet extends ConsumerStatefulWidget {
 }
 
 class _ConversionFlowSheetState extends ConsumerState<ConversionFlowSheet> {
-  final _otpKey = GlobalKey<OtpInputRowState>();
-  String _otpValue = '';
+  // final _otpKey = GlobalKey<OtpInputRowState>();
+  // String _otpValue = '';
+
+  // Future<void> _handleResendOtp() async {
+  //   final notifier = ref.read(airtimeToCashProvider.notifier);
+  //   await notifier.resendOtp();
+  //   if (!mounted) return;
+  //   final state = ref.read(airtimeToCashProvider);
+  //   // Only clear/refocus on success — don't wipe a possibly-still-valid
+  //   // OTP entry out from under the user if the resend request failed.
+  //   if (state.otpSendError == null) {
+  //     _otpKey.currentState?.clear();
+  //     setState(() => _otpValue = '');
+  //   }
+  // }
+  final _otpController = TextEditingController();
+
+  @override
+  void dispose() {
+    _otpController.dispose();
+    super.dispose();
+  }
 
   Future<void> _handleResendOtp() async {
     final notifier = ref.read(airtimeToCashProvider.notifier);
     await notifier.resendOtp();
     if (!mounted) return;
     final state = ref.read(airtimeToCashProvider);
-    // Only clear/refocus on success — don't wipe a possibly-still-valid
-    // OTP entry out from under the user if the resend request failed.
     if (state.otpSendError == null) {
-      _otpKey.currentState?.clear();
-      setState(() => _otpValue = '');
+      _otpController.clear();
     }
   }
 
@@ -258,7 +276,7 @@ class _ConversionFlowSheetState extends ConsumerState<ConversionFlowSheet> {
             _Footer(
               state: state,
               notifier: notifier,
-              onOtpVerify: () => notifier.verifyOtp(_otpValue),
+              onOtpVerify: () => notifier.verifyOtp(_otpController.text.trim()),
             ),
           ],
         ),
@@ -293,8 +311,7 @@ class _ConversionFlowSheetState extends ConsumerState<ConversionFlowSheet> {
         return _OtpSection(
           state: state,
           notifier: notifier,
-          otpKey: _otpKey,
-          onOtpChanged: (v) => setState(() => _otpValue = v),
+          otpController: _otpController,
           onResend: _handleResendOtp,
         );
       case AirtimeToCashStep.noActiveConfig:
@@ -477,25 +494,72 @@ class _NetworkAndPhoneSection extends StatelessWidget {
   }
 }
 
+// class _OtpSection extends StatelessWidget {
+//   const _OtpSection({
+//     required this.state,
+//     required this.notifier,
+//     required this.otpKey,
+//     required this.onOtpChanged,
+//     required this.onResend,
+//   });
+
+//   final AirtimeToCashState state;
+//   final AirtimeToCashNotifier notifier;
+//   final GlobalKey<OtpInputRowState> otpKey;
+//   final ValueChanged<String> onOtpChanged;
+//   final VoidCallback onResend;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final maskedPhone = maskPhoneNumber(state.phoneController.text.trim());
+//     final otpLength = state.selectedNetwork?.otpLength ?? 6;
+
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text('Verify your phone number', style: context.textTheme.titleSmall),
+//         SizedBox(height: 6.h),
+//         Text(
+//           "We've sent a  $otpLength-digit verification code to $maskedPhone",
+//           style: context.textTheme.bodySmall?.copyWith(color: AppColors.grey80),
+//         ),
+//         SizedBox(height: 28.h),
+//         OtpInputRow(
+//           key: otpKey,
+//           length: otpLength,
+//           enabled: state.step != AirtimeToCashStep.verifyingOtp,
+//           hasError: state.otpVerifyError != null,
+//           onChanged: onOtpChanged,
+//           onCompleted: notifier.verifyOtp,
+//         ),
+//         if (state.otpVerifyError != null) ...[
+//           SizedBox(height: 10.h),
+//           Center(
+//             child: Text(
+//               state.otpVerifyError!,
+//               style: context.textTheme.bodySmall?.copyWith(
+//                 color: AppColors.errorText,
+//               ),
+//               textAlign: TextAlign.center,
+//             ),
+//           ),
+//         ],
 class _OtpSection extends StatelessWidget {
   const _OtpSection({
     required this.state,
     required this.notifier,
-    required this.otpKey,
-    required this.onOtpChanged,
+    required this.otpController,
     required this.onResend,
   });
 
   final AirtimeToCashState state;
   final AirtimeToCashNotifier notifier;
-  final GlobalKey<OtpInputRowState> otpKey;
-  final ValueChanged<String> onOtpChanged;
+  final TextEditingController otpController;
   final VoidCallback onResend;
 
   @override
   Widget build(BuildContext context) {
     final maskedPhone = maskPhoneNumber(state.phoneController.text.trim());
-    final otpLength = state.selectedNetwork?.otpLength ?? 6;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -503,30 +567,18 @@ class _OtpSection extends StatelessWidget {
         Text('Verify your phone number', style: context.textTheme.titleSmall),
         SizedBox(height: 6.h),
         Text(
-          "We've sent a  $otpLength-digit verification code to $maskedPhone",
+          "We've sent a verification code to $maskedPhone",
           style: context.textTheme.bodySmall?.copyWith(color: AppColors.grey80),
         ),
-        SizedBox(height: 28.h),
-        OtpInputRow(
-          key: otpKey,
-          length: otpLength,
+        SizedBox(height: 20.h),
+        AppTextField(
+          controller: otpController,
+          hintText: 'Enter OTP',
+          keyboardType: TextInputType.number,
           enabled: state.step != AirtimeToCashStep.verifyingOtp,
-          hasError: state.otpVerifyError != null,
-          onChanged: onOtpChanged,
-          onCompleted: notifier.verifyOtp,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          validateFunction: (_) => state.otpVerifyError,
         ),
-        if (state.otpVerifyError != null) ...[
-          SizedBox(height: 10.h),
-          Center(
-            child: Text(
-              state.otpVerifyError!,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: AppColors.errorText,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
         SizedBox(height: 24.h),
         Center(
           child: Column(

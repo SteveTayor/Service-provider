@@ -44,24 +44,18 @@ class _PlatFormDrawerState extends ConsumerState<PlatFormDrawer>
 
   @override
   Widget build(BuildContext context) {
-    final profileAsync = ref.watch(
-      globalProvider.select((g) => g.profile),
-    );
+    final profileAsync = ref.watch(globalProvider.select((g) => g.profile));
 
     return profileAsync.when(
       data: (_) {
         // Let DrawerBody watch the provider directly
-        return DrawerBody(
-          animationController: _animationController,
-        );
+        return DrawerBody(animationController: _animationController);
       },
       loading: () => Material(
         color: AppColors.background,
         child: SizedBox(
           width: 220.w,
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: const Center(child: CircularProgressIndicator()),
         ),
       ),
       error: (e, st) => Material(
@@ -100,10 +94,7 @@ class _PlatFormDrawerState extends ConsumerState<PlatFormDrawer>
 class DrawerBody extends ConsumerStatefulWidget {
   final AnimationController animationController;
 
-  const DrawerBody({
-    super.key,
-    required this.animationController,
-  });
+  const DrawerBody({super.key, required this.animationController});
 
   @override
   ConsumerState<DrawerBody> createState() => _DrawerBodyState();
@@ -122,15 +113,16 @@ class _DrawerBodyState extends ConsumerState<DrawerBody> {
       final start = delay;
       final end = (delay + 0.6).clamp(0.0, 1.0);
 
-      final slideAnim = Tween<Offset>(
-        begin: Offset(-0.1, 1.2 + (i * 0.1)),
-        end: Offset.zero,
-      ).animate(
-        CurvedAnimation(
-          parent: widget.animationController,
-          curve: Interval(start, end, curve: Curves.easeOut),
-        ),
-      );
+      final slideAnim =
+          Tween<Offset>(
+            begin: Offset(-0.1, 1.2 + (i * 0.1)),
+            end: Offset.zero,
+          ).animate(
+            CurvedAnimation(
+              parent: widget.animationController,
+              curve: Interval(start, end, curve: Curves.easeOut),
+            ),
+          );
 
       final fadeAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
@@ -175,7 +167,7 @@ class _DrawerBodyState extends ConsumerState<DrawerBody> {
         .asMap()
         .entries
         .where((entry) {
-          if (isAgent && entry.key == 5) return false;
+          if (isAgent && entry.key == 8) return false;
           return true;
         })
         .map((entry) => entry.value)
@@ -210,18 +202,13 @@ class _DrawerBodyState extends ConsumerState<DrawerBody> {
 
             // Drawer items
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return _buildAnimatedListItem(drawerItems[index], index);
-                },
-                childCount: drawerItems.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                return _buildAnimatedListItem(drawerItems[index], index);
+              }, childCount: drawerItems.length),
             ),
 
             // Bottom spacing
-            SliverToBoxAdapter(
-              child: 60.verticalSpace,
-            ),
+            SliverToBoxAdapter(child: 60.verticalSpace),
           ],
         ),
       ),
@@ -402,7 +389,10 @@ class _DrawerHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
       height: maxExtentHeight,
       padding: EdgeInsets.only(left: 20.w, bottom: 16.h),
@@ -420,7 +410,8 @@ class _DrawerHeaderDelegate extends SliverPersistentHeaderDelegate {
                   profileProv?.bankName != null &&
                   profileProv?.accountNumber != null)
                 AppSvgIcon(
-                    path: Assets.svgs.warrantyBadgeHighlightStreamlineFlex),
+                  path: Assets.svgs.warrantyBadgeHighlightStreamlineFlex,
+                ),
             ],
           ),
           12.verticalSpace,
