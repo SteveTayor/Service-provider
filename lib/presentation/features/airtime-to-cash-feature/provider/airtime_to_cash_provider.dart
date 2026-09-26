@@ -65,7 +65,20 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     state = state.copyWith(step: AirtimeToCashStep.phoneEntry);
   }
 
-  void goToManual() {}
+  Future<void> goToManual() async {
+  final Uri phoneUri = Uri(
+    scheme: 'tel',
+    path: '300',
+  );
+
+  try {
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    }
+  } catch (e) {
+    debugPrint('Unable to open phone dialer: $e');
+  }
+}
 
   void backToNetworkSelection() {
     _countdownTimer?.cancel();

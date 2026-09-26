@@ -24,21 +24,23 @@ class ServiceListItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef _ref) {
+    /// TODO: check for "Airtime_to_cash" and change to "Airtime to Cash" as transaction type
     final r = context.responsive;
     final title = transaction.transType == "fund_wallet"
         ? "Top-up"
         : transaction.transType == "withdrawal"
-            ? transaction.transType
-            : transaction.subProduct?.subName?.capitalizeFullname ?? 'Unknown';
+        ? transaction.transType
+        : transaction.subProduct?.subName?.capitalizeFullname ?? 'Unknown';
     final type = transaction.transType == "fund_wallet"
         ? "Top-up"
         : transaction.transType == "withdrawal"
-            ? transaction.transType
-            : transaction.subProduct?.product?.productName?.toLowerCase() ??
-                'unknown';
+        ? transaction.transType
+        : transaction.subProduct?.product?.productName?.toLowerCase() ??
+              'unknown';
     final status = transaction.status?.capitalizeFirst ?? 'Unknown';
     final date = _formatDate(transaction.createdAt);
-    final amount = (transaction.transType == "fund_wallet" ||
+    final amount =
+        (transaction.transType == "fund_wallet" ||
             transaction.transType == "withdrawal")
         ? transaction.amount.toCurrency()
         : transaction.deductAmount.toCurrency();
@@ -56,9 +58,7 @@ class ServiceListItem extends ConsumerWidget {
           ),
           child: _getServiceIcon(type),
         ),
-        SizedBox(
-          width: useResponsive ? r.spacing(12) : 12.w,
-        ),
+        SizedBox(width: useResponsive ? r.spacing(12) : 12.w),
 
         // Transaction details
         Expanded(

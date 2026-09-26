@@ -822,7 +822,7 @@ class _AmountSection extends StatelessWidget {
         SizedBox(height: 12.h),
         AppTextField(
           controller: state.pinController,
-          hintText: 'Enter your Airtime Share PIN',
+          hintText: 'Enter your 4-digits Airtime Share PIN',
           obscureText: true,
           keyboardType: TextInputType.number,
           enabled: fieldsEnabled,
