@@ -166,11 +166,8 @@ import 'package:go_router/go_router.dart';
 
 class ChoosebillerWidget extends ConsumerWidget {
   final PlatformProductType serviceType;
-  final void Function(
-    String? imagePath,
-    String name,
-    int productId,
-  ) onProviderSelected;
+  final void Function(String? imagePath, String name, int productId)
+  onProviderSelected;
 
   const ChoosebillerWidget({
     super.key,
@@ -183,7 +180,8 @@ class ChoosebillerWidget extends ConsumerWidget {
     final state = ref.watch(platformProductProvider(serviceType));
     final productsAsync = ref.watch(productsProvider(serviceType));
     final notifier = ref.read(
-        platformProductProvider(serviceType).notifier); // Define notifier here
+      platformProductProvider(serviceType).notifier,
+    ); // Define notifier here
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -206,16 +204,19 @@ class ChoosebillerWidget extends ConsumerWidget {
             loading: () => const AppLoader(),
             error: (err, _) => Text(
               'Failed to load providers',
-              style:
-                  context.textTheme.bodySmall!.copyWith(color: AppColors.error),
+              style: context.textTheme.bodySmall!.copyWith(
+                color: AppColors.error,
+              ),
             ),
             data: (resp) {
               if (serviceType == PlatformProductType.betting ||
                   serviceType == PlatformProductType.ePinVoucher) {
                 final products = resp.data ?? [];
                 if (products.isEmpty) {
-                  return Text('No providers available',
-                      style: context.textTheme.bodySmall);
+                  return Text(
+                    'No providers available',
+                    style: context.textTheme.bodySmall,
+                  );
                 }
 
                 // Only fetch subproducts for the first product (assuming betting only uses one)
@@ -223,19 +224,25 @@ class ChoosebillerWidget extends ConsumerWidget {
 
                 if (productId == null) {
                   print('Error: First product ID is null');
-                  return Text('Invalid product ID',
-                      style: context.textTheme.bodySmall!
-                          .copyWith(color: AppColors.error));
+                  return Text(
+                    'Invalid product ID',
+                    style: context.textTheme.bodySmall!.copyWith(
+                      color: AppColors.error,
+                    ),
+                  );
                 }
-                final subProductsAsync =
-                    ref.watch(subProductsProvider(productId));
+                final subProductsAsync = ref.watch(
+                  subProductsProvider(productId),
+                );
 
                 return subProductsAsync.when(
                   data: (subResp) {
                     final items = subResp.data ?? [];
                     if (items.isEmpty) {
-                      return Text('No providers available',
-                          style: context.textTheme.bodySmall);
+                      return Text(
+                        'No providers available',
+                        style: context.textTheme.bodySmall,
+                      );
                     }
 
                     return SizedBox(
@@ -250,13 +257,16 @@ class ChoosebillerWidget extends ConsumerWidget {
                           final name = item.subName ?? '';
                           final imagePath = ref
                               .read(
-                                  platformProductProvider(serviceType).notifier)
-                              .normalizeAssetName(name,
-                                  serviceType: serviceType);
+                                platformProductProvider(serviceType).notifier,
+                              )
+                              .normalizeAssetName(
+                                name,
+                                serviceType: serviceType,
+                              );
                           // Check if imagePath contains '.svg'
                           final isSvg =
                               imagePath?.toLowerCase().contains('.svg') ??
-                                  false;
+                              false;
 
                           return AppListTile(
                             assetPath: isSvg
@@ -271,81 +281,92 @@ class ChoosebillerWidget extends ConsumerWidget {
                             showSubtitle: true,
                             onPressed: () {
                               debugPrint(
-                                  '[BETTING] onPressed -> tapped "$name"');
+                                '[BETTING] onPressed -> tapped "$name"',
+                              );
 
                               final notifier = ref.read(
-                                  platformProductProvider(serviceType)
-                                      .notifier);
+                                platformProductProvider(serviceType).notifier,
+                              );
 
-                              final products = ref
+                              final products =
+                                  ref
                                       .read(productsProvider(serviceType))
                                       .value
                                       ?.data ??
                                   [];
                               debugPrint(
-                                  '[BETTING] Products length = ${products.length}');
+                                '[BETTING] Products length = ${products.length}',
+                              );
 
-                              final product =
-                                  products.isNotEmpty ? products.first : null;
+                              final product = products.isNotEmpty
+                                  ? products.first
+                                  : null;
 
                               if (product == null) {
                                 debugPrint(
-                                    '[BETTING] ❌ product is null, not continuing');
+                                  '[BETTING] ❌ product is null, not continuing',
+                                );
                                 return;
                               }
 
                               debugPrint(
-                                  '[BETTING] ✅ selecting productId=${product.id} name=${product.productName}');
+                                '[BETTING] ✅ selecting productId=${product.id} name=${product.productName}',
+                              );
                               notifier
                                 ..selectProduct(product, imagePath ?? '')
                                 ..selectSubProduct(item);
 
                               debugPrint(
-                                  '[BETTING] calling onProviderSelected...');
+                                '[BETTING] calling onProviderSelected...',
+                              );
                               // onProviderSelected(imagePath, name, product.id!);
                               // pass the subproduct id for betting
                               try {
                                 onProviderSelected(
-                                    imagePath, name, product.id!);
+                                  imagePath,
+                                  name,
+                                  product.id!,
+                                );
                               } catch (e, st) {
                                 debugPrint(
-                                    '[BETTING] onProviderSelected threw: $e');
+                                  '[BETTING] onProviderSelected threw: $e',
+                                );
                                 debugPrintStack(stackTrace: st);
                               }
 
                               debugPrint('[BETTING] calling Navigator.pop...');
                               Navigator.of(context).pop();
                               debugPrint('[BETTING] ✅ pop called');
-//                               final notifier = ref.read(
-//                                   platformProductProvider(serviceType)
-//                                       .notifier);
+                              //                               final notifier = ref.read(
+                              //                                   platformProductProvider(serviceType)
+                              //                                       .notifier);
 
-// // Manually select the first product (since betting has only one product)
-//                               final products = ref
-//                                       .read(productsProvider(serviceType))
-//                                       .value
-//                                       ?.data ??
-//                                   [];
-//                               final product =
-//                                   products.isNotEmpty ? products.first : null;
+                              // // Manually select the first product (since betting has only one product)
+                              //                               final products = ref
+                              //                                       .read(productsProvider(serviceType))
+                              //                                       .value
+                              //                                       ?.data ??
+                              //                                   [];
+                              //                               final product =
+                              //                                   products.isNotEmpty ? products.first : null;
 
-//                               if (product != null) {
-//                                 notifier
-//                                   ..selectProduct(
-//                                     product,
-//                                     imagePath ?? '',
-//                                   )
-//                                   ..selectSubProduct(
-//                                     item,
-//                                   ); // ← this is what was missing
+                              //                               if (product != null) {
+                              //                                 notifier
+                              //                                   ..selectProduct(
+                              //                                     product,
+                              //                                     imagePath ?? '',
+                              //                                   )
+                              //                                   ..selectSubProduct(
+                              //                                     item,
+                              //                                   ); // ← this is what was missing
 
-//                                 onProviderSelected(
-//                                   imagePath,
-//                                   name,
-//                                   product.id!,
-//                                 );
+                              //                                 onProviderSelected(
+                              //                                   imagePath,
+                              //                                   name,
+                              //                                   product.id!,
+                              //                                 );
 
-//                                 Navigator.of(context).pop();
+                              //                                 Navigator.of(context).pop();
                               // }
                             },
                             title: name,
@@ -355,9 +376,12 @@ class ChoosebillerWidget extends ConsumerWidget {
                     );
                   },
                   loading: () => const AppLoader(),
-                  error: (_, __) => Text('Failed to load providers',
-                      style: context.textTheme.bodySmall!
-                          .copyWith(color: AppColors.error)),
+                  error: (_, __) => Text(
+                    'Failed to load providers',
+                    style: context.textTheme.bodySmall!.copyWith(
+                      color: AppColors.error,
+                    ),
+                  ),
                 );
               }
 
@@ -367,8 +391,11 @@ class ChoosebillerWidget extends ConsumerWidget {
                     .where((p) => p.status == '1')
                     .toList(); // Define products here
                 return FutureBuilder<List<Product>>(
-                  future:
-                      _filterProductsWithSubproducts(ref, products, notifier),
+                  future: _filterProductsWithSubproducts(
+                    ref,
+                    products,
+                    notifier,
+                  ),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const AppLoader();
@@ -376,8 +403,9 @@ class ChoosebillerWidget extends ConsumerWidget {
                     if (snapshot.hasError) {
                       return Text(
                         'Error loading providers',
-                        style: context.textTheme.bodySmall!
-                            .copyWith(color: AppColors.error),
+                        style: context.textTheme.bodySmall!.copyWith(
+                          color: AppColors.error,
+                        ),
                       );
                     }
                     final filteredProducts = snapshot.data ?? [];
@@ -397,11 +425,13 @@ class ChoosebillerWidget extends ConsumerWidget {
                         itemBuilder: (_, index) {
                           final item = filteredProducts[index];
                           final name = item.productName ?? '';
-                          final imagePath = notifier.normalizeAssetName(name,
-                              serviceType: serviceType);
+                          final imagePath = notifier.normalizeAssetName(
+                            name,
+                            serviceType: serviceType,
+                          );
                           final isSvg =
                               imagePath?.toLowerCase().contains('.svg') ??
-                                  false;
+                              false;
 
                           return AppListTile(
                             assetPath: isSvg ? imagePath : null,
@@ -421,12 +451,62 @@ class ChoosebillerWidget extends ConsumerWidget {
               }
 
               // For all others
-              final items =
-                  (resp.data ?? []).where((p) => p.status == '1').toList();
+              // final items =
+              //     (resp.data ?? []).where((p) => p.status == '1').toList();
 
+              // if (items.isEmpty) {
+              //   return Text('No providers available',
+              //       style: context.textTheme.bodySmall);
+              // }
+
+              // return SizedBox(
+              //   height: (serviceType == PlatformProductType.electricity)
+              //       ? 450.h
+              //       : null,
+              //   child: ListView.separated(
+              //     shrinkWrap: true,
+              //     itemCount: items.length,
+              //     separatorBuilder: (_, __) => 24.verticalSpace,
+              //     itemBuilder: (_, index) {
+              //       final item = items[index];
+              //       final name = item.productName ?? '';
+              //       debugPrint(
+              //         '[ELECTRICITY] product name is $name,',
+              //       );
+
+              //       final imagePath = ref
+              //           .read(platformProductProvider(serviceType).notifier)
+              //           .normalizeAssetName(name, serviceType: serviceType);
+              //       debugPrint('[ELECTRICITY] image selected is $imagePath, ');
+
+              //       // Check if imagePath contains '.svg'
+              //       final isSvg =
+              //           imagePath?.toLowerCase().contains('.svg') ?? false;
+
+              //       return AppListTile(
+              //         assetPath: isSvg
+              //             ? imagePath
+              //             : null, // Use imagePath as assetPath for SVGs
+              //         imagePath: isSvg
+              //             ? null
+              //             : imagePath, // Use imagePath for non-SVGs
+
+              //         subtitle: item.productName ?? item.productDescription,
+              //         onPressed: () {
+              //           onProviderSelected(imagePath, name, item.id!);
+              //           Navigator.of(context).pop();
+              //         },
+              //         title: name,
+              //       );
+              //     },
+              //   ),
+              // );
+              final items = resp.data ?? [];
               if (items.isEmpty) {
-                return Text('No providers available',
-                    style: context.textTheme.bodySmall);
+                return Text(
+                  'No providers available',
+                  style: context.textTheme.bodySmall,
+                );
               }
 
               return SizedBox(
@@ -439,34 +519,28 @@ class ChoosebillerWidget extends ConsumerWidget {
                   separatorBuilder: (_, __) => 24.verticalSpace,
                   itemBuilder: (_, index) {
                     final item = items[index];
+                    final isActive = item.status == null || item.status == '1';
                     final name = item.productName ?? '';
-                    debugPrint(
-                      '[ELECTRICITY] product name is $name,',
-                    );
-
                     final imagePath = ref
                         .read(platformProductProvider(serviceType).notifier)
                         .normalizeAssetName(name, serviceType: serviceType);
-                    debugPrint('[ELECTRICITY] image selected is $imagePath, ');
-
-                    // Check if imagePath contains '.svg'
                     final isSvg =
                         imagePath?.toLowerCase().contains('.svg') ?? false;
 
-                    return AppListTile(
-                      assetPath: isSvg
-                          ? imagePath
-                          : null, // Use imagePath as assetPath for SVGs
-                      imagePath: isSvg
-                          ? null
-                          : imagePath, // Use imagePath for non-SVGs
-
-                      subtitle: item.productName ?? item.productDescription,
-                      onPressed: () {
-                        onProviderSelected(imagePath, name, item.id!);
-                        Navigator.of(context).pop();
-                      },
-                      title: name,
+                    return Opacity(
+                      opacity: isActive ? 1 : 0.4,
+                      child: AppListTile(
+                        assetPath: isSvg ? imagePath : null,
+                        imagePath: isSvg ? null : imagePath,
+                        subtitle: item.productName ?? item.productDescription,
+                        onPressed: isActive
+                            ? () {
+                                onProviderSelected(imagePath, name, item.id!);
+                                Navigator.of(context).pop();
+                              }
+                            : null,
+                        title: name,
+                      ),
                     );
                   },
                 ),
