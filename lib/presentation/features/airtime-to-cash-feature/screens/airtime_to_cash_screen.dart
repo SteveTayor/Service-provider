@@ -3,6 +3,7 @@ import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/presentation/features/airtime-to-cash-feature/provider/airtime_to_cash_history_provider.dart';
+import 'package:bundlegram/presentation/features/airtime-to-cash-feature/screens/airtime_to_cash_history_screen.dart';
 import 'package:bundlegram/presentation/features/airtime-to-cash-feature/widgets/conversion_flow_sheet.dart';
 import 'package:bundlegram/presentation/features/airtime-to-cash-feature/widgets/transaction_list_widget.dart';
 import 'package:bundlegram/presentation/general_widget/app_bar.dart';
@@ -21,7 +22,25 @@ class AirtimeToCashScreen extends ConsumerWidget {
 
     return BundlegramScaffold(
       sidePadding: EdgeInsets.zero,
-      appBar: const BundlegramAppbar(titleText: 'Airtime to Cash'),
+      appBar: BundlegramAppbar(
+        titleText: 'Airtime to Cash',
+        trailing: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AirtimeToCashHistoryScreen(),
+              ),
+            );
+          },
+          child: Text(
+            'History',
+            style: context.textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           RefreshIndicator(
@@ -103,7 +122,7 @@ class _RecentConversionsTopCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(8.r)),
-        border: Border(
+        border: const Border(
           top: BorderSide(color: AppColors.greyEE),
           left: BorderSide(color: AppColors.greyEE),
           right: BorderSide(color: AppColors.greyEE),
@@ -147,7 +166,7 @@ class _SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
 
         // Keep the same side/bottom borders as the surrounding
         // Recent Conversions card so the sections visually connect.
-        border: Border(
+        border: const Border(
           left: BorderSide(color: AppColors.greyEE),
           right: BorderSide(color: AppColors.greyEE),
           bottom: BorderSide(color: AppColors.greyEE),
@@ -237,13 +256,13 @@ class _RecentConversionsBottomCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(8.r)),
-        border: Border(
+        border: const Border(
           left: BorderSide(color: AppColors.greyEE),
           right: BorderSide(color: AppColors.greyEE),
           bottom: BorderSide(color: AppColors.greyEE),
         ),
       ),
-      child: const TransactionListWidget(),
+      child: const TransactionListWidget(limit: 5),
     );
   }
 }

@@ -124,7 +124,8 @@ class _PlatformPhoneNumberFormWidgetState
 
     // === PREFILL ONLY (show phone early during loading/shimmer) ===
     final profile = ref.read(globalProvider).profile.value?.data;
-    final isPhoneBased = widget.serviceType == PlatformProductType.airtime ||
+    final isPhoneBased =
+        widget.serviceType == PlatformProductType.airtime ||
         widget.serviceType == PlatformProductType.mobileData;
 
     if (isPhoneBased &&
@@ -157,9 +158,7 @@ class _PlatformPhoneNumberFormWidgetState
       final subProducts = ref.read(provider).subProducts;
 
       final matches = subProducts
-          .where(
-            (e) => e.subName?.toLowerCase().contains(type) ?? false,
-          )
+          .where((e) => e.subName?.toLowerCase().contains(type) ?? false)
           .toList();
 
       final subProduct = matches.isNotEmpty ? matches.first : null;
@@ -186,16 +185,18 @@ class _PlatformPhoneNumberFormWidgetState
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(platformProductProvider(widget.serviceType));
-    final notifier =
-        ref.read(platformProductProvider(widget.serviceType).notifier);
+    final notifier = ref.read(
+      platformProductProvider(widget.serviceType).notifier,
+    );
 
-    final allowsFreeText = widget.serviceType == PlatformProductType.airtime ||
+    final allowsFreeText =
+        widget.serviceType == PlatformProductType.airtime ||
         widget.serviceType == PlatformProductType.mobileData;
 
     // Only show beneficiaries for airtime & mobile data
     final showBeneficiaries =
         widget.serviceType == PlatformProductType.airtime ||
-            widget.serviceType == PlatformProductType.mobileData;
+        widget.serviceType == PlatformProductType.mobileData;
     // ref.listen<PlatformProductState>(
     //   platformProductProvider(widget.serviceType),
     //   (prev, next) {
@@ -222,7 +223,8 @@ class _PlatformPhoneNumberFormWidgetState
     //   },
     // );
     debugPrint(
-        '[PLATFORM PHONE FORM] Building form widget with phone controller: $_phoneController');
+      '[PLATFORM PHONE FORM] Building form widget with phone controller: $_phoneController',
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -231,19 +233,22 @@ class _PlatformPhoneNumberFormWidgetState
           hintText: allowsFreeText
               ? 'Enter phone number'
               : state.selectedSubProduct != null
-                  ? state.selectedSubProduct?.subName
-                  : state.selectedProduct?.productName ?? 'Select biller',
+              ? state.selectedSubProduct?.subName
+              : state.selectedProduct?.productName ?? 'Select biller',
           readOnly: !allowsFreeText,
           controller: state.firstInputController,
-          hintStyle: TextStyle(color: Colors.black),
+          hintStyle: const TextStyle(color: Colors.black),
           keyboardType: TextInputType.number,
           inputFormatters: [
-            LengthLimitingTextInputFormatter(11,
-                maxLengthEnforcement: MaxLengthEnforcement.enforced),
+            LengthLimitingTextInputFormatter(
+              11,
+              maxLengthEnforcement: MaxLengthEnforcement.enforced,
+            ),
             FilteringTextInputFormatter.digitsOnly,
           ],
-          onTap:
-              allowsFreeText ? null : () => notifier.showBillerPicker(context),
+          onTap: allowsFreeText
+              ? null
+              : () => notifier.showBillerPicker(context),
           prefixIcon: GestureDetector(
             onTap: () => notifier.showBillerPicker(context),
             child: Row(
@@ -277,10 +282,10 @@ class _PlatformPhoneNumberFormWidgetState
             hintText: widget.serviceType == PlatformProductType.betting
                 ? 'Enter User ID'
                 : widget.serviceType == PlatformProductType.cableTv
-                    ? 'Enter Smart Card Number'
-                    : widget.serviceType == PlatformProductType.electricity
-                        ? 'Enter Meter Number'
-                        : 'Enter account number', // For internet services
+                ? 'Enter Smart Card Number'
+                : widget.serviceType == PlatformProductType.electricity
+                ? 'Enter Meter Number'
+                : 'Enter account number', // For internet services
             controller: state.secondaryInputController,
             keyboardType: TextInputType.number,
             validateFunction: (val) {
@@ -306,13 +311,16 @@ class _PlatformPhoneNumberFormWidgetState
             indicatorSize: TabBarIndicatorSize.tab,
             labelColor: AppColors.primaryColor,
             labelStyle: context.textTheme.bodySmall,
-            unselectedLabelStyle: TextStyle(
+            unselectedLabelStyle: const TextStyle(
               fontWeight: FontWeight.w400,
               fontSize: 14,
               color: AppColors.grey2F,
             ),
             dividerColor: Colors.transparent,
-            tabs: const [Tab(text: 'Prepaid'), Tab(text: 'Postpaid')],
+            tabs: const [
+              Tab(text: 'Prepaid'),
+              Tab(text: 'Postpaid'),
+            ],
           ),
         ],
 
@@ -337,8 +345,9 @@ class _PlatformPhoneNumberFormWidgetState
             options: state.subProducts.map((e) => e.subName!).toList(),
             selected: state.selectedSubProduct?.subName,
             onChanged: (val) {
-              final selected =
-                  state.subProducts.firstWhere((e) => e.subName == val);
+              final selected = state.subProducts.firstWhere(
+                (e) => e.subName == val,
+              );
               notifier.selectSubProduct(selected);
             },
           ),
@@ -377,16 +386,15 @@ class _PlatformPhoneNumberFormWidgetState
           radius: 15,
           backgroundColor: AppColors.white,
           child: ClipOval(
-            child: AppSvgIcon(
-              path: assetName,
-              fit: BoxFit.cover,
-            ),
+            child: AppSvgIcon(path: assetName, fit: BoxFit.cover),
           ),
         );
       }
-      return Image.asset(assetName,
-          width: 24,
-          errorBuilder: (_, __, ___) => const Icon(Icons.broken_image));
+      return Image.asset(
+        assetName,
+        width: 24,
+        errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+      );
     }
 
     if (rawPath != null && rawPath.startsWith('http')) {

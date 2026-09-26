@@ -13,8 +13,9 @@ class AppListTile extends StatelessWidget {
     this.onPressed,
     this.titleColor,
     this.imagePath,
+    this.iconData,
     this.showSubtitle = false,
-    this.isSelected = false, // New parameter for selection state
+    this.isSelected = false,
     this.color,
     super.key,
   });
@@ -26,8 +27,9 @@ class AppListTile extends StatelessWidget {
   final String? subtitle;
   final bool showSubtitle;
   final String? imagePath;
+  final IconData? iconData;
   final Color? color;
-  final bool isSelected; // Tracks if this tile is selected
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +41,10 @@ class AppListTile extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment:
-              CrossAxisAlignment.center, // Changed from .end to .center
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment
-                  .center, // Added this for inner row alignment
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (imagePath != null)
                   Image.asset(
@@ -52,26 +52,36 @@ class AppListTile extends StatelessWidget {
                     width: 40,
                     height: 40,
                     fit: BoxFit.fill,
-                  ),
-                if (assetPath != null)
+                  )
+                else if (assetPath != null)
                   AppSvgIcon(
                     useCircleAvatar: true,
                     path: assetPath!,
                     width: 40,
                     height: 40,
-                    color: color ?? null,
+                    color: color,
                     fit: BoxFit.scaleDown,
+                  )
+                else if (iconData != null)
+                  Container(
+                    width: 40,
+                    height: 40,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                      color: AppColors.greyF5,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      iconData,
+                      size: 20,
+                      color: color ?? AppColors.grey33,
+                    ),
                   ),
                 16.horizontalSpace,
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  // mainAxisAlignment:
-                  //     MainAxisAlignment.center, // Changed from .end to .center
                   children: [
-                    if (!showSubtitle)
-                      SizedBox(
-                        height: 4,
-                      ),
+                    if (!showSubtitle) const SizedBox(height: 4),
                     Text(
                       title,
                       style: context.textTheme.bodyMedium!.copyWith(
@@ -85,7 +95,6 @@ class AppListTile extends StatelessWidget {
                           subtitle!,
                           style: context.textTheme.bodySmall!.copyWith(
                             color: titleColor ?? AppColors.subtitleColor,
-                            // fontSize: 14,
                           ),
                         ),
                       ),
@@ -96,10 +105,7 @@ class AppListTile extends StatelessWidget {
             if (trailingAsset == null)
               const SizedBox()
             else
-              AppSvgIcon(
-                path: trailingAsset!,
-                fit: BoxFit.scaleDown,
-              ),
+              AppSvgIcon(path: trailingAsset!, fit: BoxFit.scaleDown),
           ],
         ),
       ),

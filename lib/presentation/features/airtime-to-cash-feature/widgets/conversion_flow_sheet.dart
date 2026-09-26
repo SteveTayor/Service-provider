@@ -473,6 +473,10 @@ class _NetworkAndPhoneSection extends StatelessWidget {
             controller: state.phoneController,
             hintText: '08012345678',
             keyboardType: TextInputType.phone,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(11),
+            ],
             enabled:
                 state.step == AirtimeToCashStep.phoneEntry ||
                 state.step == AirtimeToCashStep.sendingOtp,
@@ -735,6 +739,8 @@ class _AmountSection extends StatelessWidget {
           style: context.textTheme.titleSmall,
         ),
         SizedBox(height: 12.h),
+        _AmountPresetGrid(network: network, state: state, notifier: notifier),
+        SizedBox(height: 12.h),
         AppTextField(
           controller: state.amountController,
           hintText: '₦5,000',
@@ -874,9 +880,13 @@ class _AmountSection extends StatelessWidget {
         SizedBox(height: 12.h),
         AppTextField(
           controller: state.pinController,
-          hintText: 'Enter your 4-digits Airtime Share PIN',
+          hintText: 'Enter your Airtime Share PIN',
           obscureText: true,
           keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            LengthLimitingTextInputFormatter(4),
+          ],
           enabled: fieldsEnabled,
           validateFunction: (_) => state.pinError,
         ),
@@ -994,6 +1004,74 @@ class _Footer extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+List<int> _presetAmounts(NetworkConfig network) {
+  final min = network.minAmount.round();
+  final max = network.maxAmount.round();
+  if (min >= max) return [min];
+  final list = <int>[for (var v = min; v <= max; v += 1000) v];
+  if (list.last != max) list.add(max);
+  return list;
+}
+
+class _AmountPresetGrid extends StatelessWidget {
+  const _AmountPresetGrid({
+    required this.network,
+    required this.state,
+    required this.notifier,
+  });
+
+  final NetworkConfig network;
+  final AirtimeToCashState state;
+  final AirtimeToCashNotifier notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    final amounts = _presetAmounts(network);
+    final selected = int.tryParse(
+      state.amountController.text.replaceAll(RegExp(r'[^0-9]'), ''),
+    );
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 10.h,
+        crossAxisSpacing: 10.w,
+        mainAxisExtent: 44.h,
+      ),
+      itemCount: amounts.length,
+      itemBuilder: (_, i) {
+        final amount = amounts[i];
+        final isSelected = selected == amount;
+        return GestureDetector(
+          onTap: () => notifier.selectPresetAmount(amount),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xffEEF3FF),
+              border: Border.all(
+                color: isSelected
+                    ? AppColors.primaryColor
+                    : AppColors.grey83.withOpacity(0.2),
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '₦$amount',
+              style: context.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: isSelected ? AppColors.primaryColor : AppColors.grey83,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

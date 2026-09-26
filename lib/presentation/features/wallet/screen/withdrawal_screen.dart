@@ -109,7 +109,8 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
         provider.selectedBank != null &&
         provider.amountController.text.isNotEmpty) {
       debugPrint(
-          '[WithdrawalScreen] Resume: state already hydrated, skipping fetch');
+        '[WithdrawalScreen] Resume: state already hydrated, skipping fetch',
+      );
       return;
     }
 
@@ -189,23 +190,17 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen>
 
   @override
   Widget build(BuildContext context) {
-    final profileAsync = ref.watch(
-      globalProvider.select((g) => g.profile),
-    );
+    final profileAsync = ref.watch(globalProvider.select((g) => g.profile));
 
     return BundlegramScaffold(
       useResponsive: true,
       resizeToAvoidBottomInset: true,
-      appBar: const BundlegramAppbar(
-        titleText: 'Withdraw from wallet',
-      ),
+      appBar: const BundlegramAppbar(titleText: 'Withdraw from wallet'),
       body: profileAsync.when(
         data: (_) {
           return const WithdrawalBody();
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, st) => AppErrorWidget(
           error: e,
           errorMessage: 'Unable to load profile details',
@@ -237,12 +232,7 @@ class WithdrawalBody extends ConsumerWidget {
         transactionFee: '100.0',
         onPay: () {
           context.pop(); // Close the preview
-          _handleWithdrawal(
-            context,
-            ref,
-            provider,
-            profileProv,
-          );
+          _handleWithdrawal(context, ref, provider, profileProv);
         },
       ),
     );
@@ -269,15 +259,17 @@ class WithdrawalBody extends ConsumerWidget {
       );
 
       if (didAuth) {
-        final email =
-            await ref.read(secureStorageHelperProvider).getRememberedEmail();
+        final email = await ref
+            .read(secureStorageHelperProvider)
+            .getRememberedEmail();
         if (email == null) {
           debugPrint("No login email found, please login again");
           return;
         }
 
-        final storedPin =
-            await ref.read(secureStorageHelperProvider).getPin(email);
+        final storedPin = await ref
+            .read(secureStorageHelperProvider)
+            .getPin(email);
         if (storedPin == null) {
           debugPrint("No stored PIN found, please set up your PIN");
           return;
@@ -316,8 +308,9 @@ class WithdrawalBody extends ConsumerWidget {
                 'amount': provider.amountController.text,
               });
 
-              final notifId =
-                  DateTime.now().millisecondsSinceEpoch.remainder(100000);
+              final notifId = DateTime.now().millisecondsSinceEpoch.remainder(
+                100000,
+              );
 
               unawaited(
                 NotificationService().showNotification(
@@ -365,20 +358,17 @@ class WithdrawalBody extends ConsumerWidget {
     String withdrawalServiceCharge = "100.0";
     // Rebuild on text change
 
-    ref.listen<WithdrawalProvider>(
-      withdrawalProvider,
-      (previous, next) {
-        if (previous?.amountController != next.amountController) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Future.microtask(() {
-              if (context.mounted) {
-                // Trigger sync if needed
-              }
-            });
+    ref.listen<WithdrawalProvider>(withdrawalProvider, (previous, next) {
+      if (previous?.amountController != next.amountController) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Future.microtask(() {
+            if (context.mounted) {
+              // Trigger sync if needed
+            }
           });
-        }
-      },
-    );
+        });
+      }
+    });
 
     // Calculate if button should be enabled
     final isAmountValid = _isAmountValid(provider.amountController.text);
@@ -396,12 +386,14 @@ class WithdrawalBody extends ConsumerWidget {
             },
             child: ListView(
               padding: EdgeInsets.symmetric(
-                  horizontal: r.spacing(16), vertical: r.spacing(16)),
+                horizontal: r.spacing(16),
+                vertical: r.spacing(16),
+              ),
               children: [
                 AppDropdown(
                   selected: provider.selectedBank != null
                       ? 'Account ${provider.userBanks.indexOf(provider.selectedBank!) + 1} - '
-                          '${provider.selectedBank!.accountName ?? ''}'
+                            '${provider.selectedBank!.accountName ?? ''}'
                       : null,
                   title: provider.selectedBank != null
                       ? 'Account ${provider.userBanks.indexOf(provider.selectedBank!) + 1}'
@@ -417,44 +409,45 @@ class WithdrawalBody extends ConsumerWidget {
                   onChanged: (value) {
                     if (value == null) return;
 
-                    final index = int.parse(value
-                            .split(' - ')[0]
-                            .replaceFirst('Account ', '')) -
+                    final index =
+                        int.parse(
+                          value.split(' - ')[0].replaceFirst('Account ', ''),
+                        ) -
                         1;
 
                     provider.setSelectedBank(provider.userBanks[index]);
                   },
                 ),
                 SizedBox(height: r.spacing(24)),
-                Text(
-                  provider.selectedBank?.bankName ?? '',
-                ).withContainer(
+                Text(provider.selectedBank?.bankName ?? '').withContainer(
                   width: context.width,
                   color: AppColors.greyD0.withOpacity(0.3),
-                  padding:
-                      context.symmetricPadding(r.spacing(16), r.spacing(12)),
+                  padding: context.symmetricPadding(
+                    r.spacing(16),
+                    r.spacing(12),
+                  ),
                   borderRadius: BorderRadius.circular(r.radiusSize(8)),
                   border: Border.all(color: AppColors.greyD0),
                 ),
                 SizedBox(height: r.spacing(24)),
-                Text(
-                  provider.selectedBank?.accountNumber ?? '',
-                ).withContainer(
+                Text(provider.selectedBank?.accountNumber ?? '').withContainer(
                   width: context.width,
                   color: AppColors.greyD0.withOpacity(0.3),
-                  padding:
-                      context.symmetricPadding(r.spacing(16), r.spacing(12)),
+                  padding: context.symmetricPadding(
+                    r.spacing(16),
+                    r.spacing(12),
+                  ),
                   borderRadius: BorderRadius.circular(r.radiusSize(8)),
                   border: Border.all(color: AppColors.greyD0),
                 ),
                 SizedBox(height: r.spacing(24)),
-                Text(
-                  provider.selectedBank?.accountName ?? '',
-                ).withContainer(
+                Text(provider.selectedBank?.accountName ?? '').withContainer(
                   width: context.width,
                   color: AppColors.greyD0.withOpacity(0.3),
-                  padding:
-                      context.symmetricPadding(r.spacing(16), r.spacing(12)),
+                  padding: context.symmetricPadding(
+                    r.spacing(16),
+                    r.spacing(12),
+                  ),
                   borderRadius: BorderRadius.circular(r.radiusSize(8)),
                   border: Border.all(color: AppColors.greyD0),
                 ),
@@ -464,7 +457,7 @@ class WithdrawalBody extends ConsumerWidget {
                   controller: provider.amountController,
                   inputFormatters: [CurrencyTextInputFormatter()],
                   keyboardType: TextInputType.number,
-                  readOnly: profileProv?.bvn == null ? true : false,
+                  readOnly: profileProv?.bvn == null,
                   validateFunction: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Amount is required';
@@ -491,10 +484,7 @@ class WithdrawalBody extends ConsumerWidget {
                       ),
                     ),
                     SizedBox(width: 6.w),
-                    Text(
-                      'Wallet balance',
-                      style: context.textTheme.bodyMedium,
-                    ),
+                    Text('Wallet balance', style: context.textTheme.bodyMedium),
                     const Spacer(),
                     Text(
                       provider.formattedBalance,
@@ -548,7 +538,8 @@ class WithdrawalBody extends ConsumerWidget {
                             ),
                             children: [
                               const TextSpan(
-                                  text: 'Note: A service charge of '),
+                                text: 'Note: A service charge of ',
+                              ),
                               TextSpan(
                                 text: withdrawalServiceCharge.toCurrency(),
                                 style: const TextStyle(
@@ -557,7 +548,8 @@ class WithdrawalBody extends ConsumerWidget {
                                 ),
                               ),
                               const TextSpan(
-                                  text: ' applies to each withdrawal.'),
+                                text: ' applies to each withdrawal.',
+                              ),
                             ],
                           ),
                         ),
@@ -604,10 +596,9 @@ class WithdrawalBody extends ConsumerWidget {
                 ValueListenableBuilder<TextEditingValue>(
                   valueListenable: provider.amountController,
                   builder: (_, value, __) {
-                    final isAmountValid = _isAmountValid(
-                      value.text,
-                    );
-                    final isButtonEnabled = provider.selectedBank != null &&
+                    final isAmountValid = _isAmountValid(value.text);
+                    final isButtonEnabled =
+                        provider.selectedBank != null &&
                         isAmountValid &&
                         !provider.isSubmitting;
 
@@ -615,11 +606,11 @@ class WithdrawalBody extends ConsumerWidget {
                       isEnabled: isButtonEnabled,
                       onPressed: isButtonEnabled
                           ? () => _showWithdrawalPreview(
-                                context,
-                                ref,
-                                provider,
-                                profileProv,
-                              )
+                              context,
+                              ref,
+                              provider,
+                              profileProv,
+                            )
                           : null,
                       text: 'Continue',
                       isLoading: provider.isSubmitting,

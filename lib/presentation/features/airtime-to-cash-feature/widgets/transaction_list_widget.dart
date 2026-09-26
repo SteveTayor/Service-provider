@@ -10,42 +10,28 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class TransactionListWidget extends ConsumerWidget {
-  const TransactionListWidget({
-    super.key,
-  });
+  const TransactionListWidget({super.key, this.limit});
+  final int? limit;
 
   @override
-  Widget build(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
-    final state = ref.watch(
-      airtimeToCashHistoryProvider,
-    );
-
-    final notifier = ref.read(
-      airtimeToCashHistoryProvider.notifier,
-    );
-
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(airtimeToCashHistoryProvider);
+    final notifier = ref.read(airtimeToCashHistoryProvider.notifier);
+    final transactions = limit != null
+        ? state.transactions.take(limit!).toList()
+        : state.transactions;
     // Initial loading
-    if (state.isLoading && state.transactions.isEmpty) {
+    if (state.isLoading && transactions.isEmpty) {
       return Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 34.h,
-        ),
-        child: const Center(
-          child: AppLoader(),
-        ),
+        padding: EdgeInsets.symmetric(vertical: 34.h),
+        child: const Center(child: AppLoader()),
       );
     }
 
     // Error
-    if (state.error != null &&
-        state.transactions.isEmpty) {
+    if (state.error != null && transactions.isEmpty) {
       return Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 18.h,
-        ),
+        padding: EdgeInsets.symmetric(vertical: 18.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -74,9 +60,7 @@ class TransactionListWidget extends ConsumerWidget {
             SizedBox(height: 12.h),
             TextButton(
               onPressed: notifier.refresh,
-              child: const Text(
-                'Try Again',
-              ),
+              child: const Text('Try Again'),
             ),
           ],
         ),
@@ -84,14 +68,9 @@ class TransactionListWidget extends ConsumerWidget {
     }
 
     // Empty state
-    if (state.transactions.isEmpty) {
+    if (transactions.isEmpty) {
       return Padding(
-        padding: EdgeInsets.fromLTRB(
-          8.w,
-          20.h,
-          8.w,
-          22.h,
-        ),
+        padding: EdgeInsets.fromLTRB(8.w, 20.h, 8.w, 22.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -126,13 +105,10 @@ class TransactionListWidget extends ConsumerWidget {
     // inside the screen's CustomScrollView.
     return Column(
       children: [
-        for (final txn in state.transactions)
+        for (final txn in transactions)
           TransactionCard(
             transaction: txn,
-            onTap: () => TransactionDetailDialog.show(
-              context,
-              txn,
-            ),
+            onTap: () => TransactionDetailDialog.show(context, txn),
           ),
       ],
     );

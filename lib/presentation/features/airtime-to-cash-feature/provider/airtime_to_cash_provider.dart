@@ -16,6 +16,12 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const int kOtpResendSeconds = 30;
+const _networkDisplayOrder = ['MTN', 'AIRTEL', 'GLO', '9MOBILE'];
+
+int _networkSortIndex(NetworkConfig n) {
+  final idx = _networkDisplayOrder.indexOf(n.id);
+  return idx == -1 ? _networkDisplayOrder.length : idx;
+}
 
 final airtimeToCashProvider =
     StateNotifierProvider.autoDispose<
@@ -44,9 +50,18 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
         isLoadingNetworks: false,
         networksError: sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
       ),
-      (networks) =>
-          state = state.copyWith(isLoadingNetworks: false, networks: networks),
+      (networks) {
+        final sorted = [
+          ...networks,
+        ]..sort((a, b) => _networkSortIndex(a).compareTo(_networkSortIndex(b)));
+        state = state.copyWith(isLoadingNetworks: false, networks: sorted);
+      },
     );
+  }
+
+  void selectPresetAmount(int amount) {
+    state.amountController.text = amount.toString();
+    onAmountChanged(state.amountController.text);
   }
 
   void selectNetwork(NetworkConfig network) {
