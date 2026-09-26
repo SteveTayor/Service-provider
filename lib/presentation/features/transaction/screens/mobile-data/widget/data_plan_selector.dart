@@ -56,6 +56,7 @@ class _DataPlanSelectorState extends ConsumerState<DataPlanSelector> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        15.verticalSpace,
         Text(
           'SELECT DATA PLAN',
           style: context.textTheme.bodySmall?.copyWith(color: AppColors.grey80),
@@ -75,7 +76,9 @@ class _DataPlanSelectorState extends ConsumerState<DataPlanSelector> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  state.selectedSubProduct?.subName ?? 'Choose a data plan...',
+                  state.selectedSubProduct?.displayName ??
+                      'Choose a data plan...',
+                  overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodySmall?.copyWith(
                     color: state.selectedSubProduct == null
                         ? AppColors.grey8E
@@ -104,6 +107,7 @@ class _DataPlanSelectorState extends ConsumerState<DataPlanSelector> {
             constraints: BoxConstraints(maxHeight: 280.h),
             child: ListView.separated(
               shrinkWrap: true,
+              padding: EdgeInsets.only(bottom: 25.h),
               itemCount: filtered.length,
               separatorBuilder: (_, __) =>
                   const Divider(height: 1, color: AppColors.greyEE),
@@ -184,6 +188,33 @@ class _DataPlanSelectorState extends ConsumerState<DataPlanSelector> {
                   },
                 );
               },
+            ),
+          ),
+        ],
+        if (state.selectedSubProduct != null &&
+            state.selectedSubProduct!.subPrice != null &&
+            state.selectedSubProduct!.subPrice!.isNotEmpty) ...[
+          24.verticalSpace,
+          Container(
+            width: context.width,
+            padding: context.symmetricPadding(20, 12),
+            decoration: BoxDecoration(
+              color: AppColors.greyD0.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.greyD0),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Amount', style: context.textTheme.bodySmall),
+                8.verticalSpace,
+                Text(
+                  '₦${state.amountController.text.trim()}',
+                  style: context.textTheme.bodySmall!.copyWith(
+                    color: AppColors.grey19,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

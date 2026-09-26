@@ -588,7 +588,7 @@ class PlatFormData {
                 .read(platformProvider)
                 .openStatisticsBottomSheet(rootContext);
           },
-          assetPath: Assets.svgs.viewstat,
+          assetPath: Assets.svgs.overview,
           title: 'View Stats',
         );
       },
@@ -607,6 +607,7 @@ class PlatFormData {
             container.read(platformProvider).goToWithdrawFund(rootContext);
           },
           assetPath: Assets.svgs.walletMoneyPaymentFinanceWallet,
+          color: AppColors.black,
           title: 'Withdraw',
         );
       },

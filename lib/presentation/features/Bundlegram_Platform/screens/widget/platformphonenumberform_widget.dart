@@ -327,14 +327,35 @@ class _PlatformPhoneNumberFormWidgetState
         // Dropdown for dataType (mobile data) or sub_name (cable TV)
         if (state.dropdownOptions.isNotEmpty) ...[
           24.verticalSpace,
-          AppDropdown(
-            title: state.selectedDataType ?? widget.dropdownHint!,
-            options: state.dropdownOptions,
-            selected: state.selectedDataType,
-            onChanged: (val) {
-              notifier.selectDataType(val!);
-            },
-          ),
+          if (widget.serviceType == PlatformProductType.mobileData) ...[
+            // Text(
+            //   'PLAN TYPE',
+            //   style: context.textTheme.labelSmall?.copyWith(
+            //     color: AppColors.grey80,
+            //   ),
+            // ),
+            // 8.verticalSpace,
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: [
+                for (final option in state.dropdownOptions)
+                  _PlanTypeToggle(
+                    label: option.toUpperCase(),
+                    isSelected: state.selectedDataType == option,
+                    onTap: () => notifier.selectDataType(option),
+                  ),
+              ],
+            ),
+          ] else
+            AppDropdown(
+              title: state.selectedDataType ?? widget.dropdownHint!,
+              options: state.dropdownOptions,
+              selected: state.selectedDataType,
+              onChanged: (val) {
+                notifier.selectDataType(val!);
+              },
+            ),
         ] else if (state.subProducts.isNotEmpty &&
             widget.serviceType != PlatformProductType.electricity &&
             widget.serviceType != PlatformProductType.airtime &&
@@ -412,4 +433,40 @@ String formatPhone(String? phone) {
   if (phone == null) return '';
   if (phone.startsWith('+234')) return phone.replaceFirst('+234', '0');
   return phone;
+}
+
+class _PlanTypeToggle extends StatelessWidget {
+  const _PlanTypeToggle({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primaryColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: isSelected ? AppColors.primaryColor : AppColors.greyD0,
+          ),
+        ),
+        child: Text(
+          label,
+          style: context.textTheme.labelSmall?.copyWith(
+            color: isSelected ? AppColors.white : AppColors.grey80,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
 }
