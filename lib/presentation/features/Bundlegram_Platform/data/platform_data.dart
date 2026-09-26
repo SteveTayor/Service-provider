@@ -504,29 +504,7 @@ class PlatFormData {
         return AppListTile(
           onPressed: () {
             context.pop();
-            final rootContext = navigatorKey.currentContext;
-            if (rootContext == null) return;
-            final container = ProviderScope.containerOf(
-              rootContext,
-              listen: false,
-            );
-            container
-                .read(platformProvider)
-                .openStatisticsBottomSheet(rootContext);
-          },
-          assetPath: Assets.svgs.viewstat,
-          title: 'View Statistics',
-        );
-      },
-    ),
-    Builder(
-      builder: (context) {
-        return AppListTile(
-          onPressed: () {
-            // 1️⃣ Close drawer
-            context.pop();
 
-            // 2️⃣ Use ROOT context, not drawer context
             final rootContext = navigatorKey.currentContext;
             if (rootContext == null) return;
 
@@ -540,7 +518,9 @@ class PlatFormData {
                 .goToProduct(rootContext, PlatformProductType.mobileData);
           },
           color: AppColors.black,
-          assetPath: Assets.svgs.mobile,
+          // assetPath: Assets.svgs.mobil
+          iconData: Icons.wifi,
+
           title: 'Buy data',
         );
       },
@@ -590,6 +570,26 @@ class PlatFormData {
           },
           assetPath: Assets.svgs.paybills,
           title: 'Pay bills',
+        );
+      },
+    ),
+    Builder(
+      builder: (context) {
+        return AppListTile(
+          onPressed: () {
+            context.pop();
+            final rootContext = navigatorKey.currentContext;
+            if (rootContext == null) return;
+            final container = ProviderScope.containerOf(
+              rootContext,
+              listen: false,
+            );
+            container
+                .read(platformProvider)
+                .openStatisticsBottomSheet(rootContext);
+          },
+          assetPath: Assets.svgs.viewstat,
+          title: 'View Stats',
         );
       },
     ),

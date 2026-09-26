@@ -109,6 +109,14 @@ class _DataPlanSelectorState extends ConsumerState<DataPlanSelector> {
                   const Divider(height: 1, color: AppColors.greyEE),
               itemBuilder: (_, i) {
                 final item = filtered[i];
+                final originalPrice = double.tryParse(item.subPrice ?? '') ?? 0;
+                final discountPercent =
+                    double.tryParse(item.userPercent ?? '') ?? 0;
+                final hasDiscount = discountPercent > 0 && originalPrice > 0;
+                final discountedPrice = hasDiscount
+                    ? originalPrice - (originalPrice * discountPercent / 100)
+                    : originalPrice;
+
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(
@@ -117,20 +125,58 @@ class _DataPlanSelectorState extends ConsumerState<DataPlanSelector> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  subtitle: Text(
-                    item.duration ?? '',
-                    style: context.textTheme.labelSmall?.copyWith(
-                      color: AppColors.grey80,
-                    ),
+                  subtitle: Row(
+                    children: [
+                      Text(
+                        item.duration ?? '',
+                        style: context.textTheme.labelSmall?.copyWith(
+                          color: AppColors.grey80,
+                        ),
+                      ),
+                      if (hasDiscount) ...[
+                        8.horizontalSpace,
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6.w,
+                            vertical: 2.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.success.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Text(
+                            '${discountPercent.toStringAsFixed(discountPercent.truncateToDouble() == discountPercent ? 0 : 1)}% OFF',
+                            style: context.textTheme.labelSmall?.copyWith(
+                              color: AppColors.success,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 9.sp,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
-
-                  // "% OFF" badge (e.g. "₦895.50" / "₦900.00" / "0.5% OFF").
-                  trailing: Text(
-                    '₦${item.subPrice ?? ''}',
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: AppColors.primaryColor,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  trailing: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '₦${discountedPrice.toStringAsFixed(2)}',
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      if (hasDiscount)
+                        Text(
+                          '₦${originalPrice.toStringAsFixed(2)}',
+                          style: context.textTheme.labelSmall?.copyWith(
+                            color: AppColors.grey80,
+                            decoration: TextDecoration.lineThrough,
+                            fontSize: 10.sp,
+                          ),
+                        ),
+                    ],
                   ),
                   onTap: () {
                     notifier.selectSubProduct(item);

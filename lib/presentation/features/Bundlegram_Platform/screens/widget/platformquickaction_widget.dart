@@ -215,7 +215,8 @@ class PlatformQuickActionWidget extends ConsumerWidget {
                   Expanded(
                     child: PlatformItemWidget(
                       title: 'Buy data',
-                      icon: Assets.svgs.mobile,
+                      // icon: Assets.svgs.mobile,
+                      iconData: Icons.wifi,
                       onPressed: () => platform.goToProduct(
                         context,
                         PlatformProductType.mobileData,
