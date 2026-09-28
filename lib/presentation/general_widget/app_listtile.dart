@@ -19,6 +19,7 @@ class AppListTile extends StatelessWidget {
     this.color,
     super.key,
   });
+
   final String? assetPath;
   final String? trailingAsset;
   final Color? titleColor;
@@ -38,7 +39,7 @@ class AppListTile extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primaryColor.withOpacity(0.06)
@@ -50,72 +51,80 @@ class AppListTile extends StatelessWidget {
           ),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (imagePath != null)
-                  Image.asset(
-                    imagePath!,
-                    width: 40,
-                    height: 40,
-                    fit: BoxFit.fill,
-                  )
-                else if (assetPath != null)
-                  AppSvgIcon(
-                    useCircleAvatar: true,
-                    path: assetPath!,
-                    width: 40,
-                    height: 40,
-                    color: color,
-                    fit: BoxFit.scaleDown,
-                  )
-                else if (iconData != null)
-                  Container(
-                    width: 40,
-                    height: 40,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: AppColors.greyF5,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      iconData,
-                      size: 20,
-                      color: color ?? AppColors.grey33,
+            // Leading icon
+            if (imagePath != null)
+              Image.asset(
+                imagePath!,
+                width: 40.w,
+                height: 40.w,
+                fit: BoxFit.fill,
+              )
+            else if (assetPath != null)
+              AppSvgIcon(
+                useCircleAvatar: true,
+                path: assetPath!,
+                width: 40.w,
+                height: 40.w,
+                color: color,
+                fit: BoxFit.scaleDown,
+              )
+            else if (iconData != null)
+              Container(
+                width: 40.w,
+                height: 40.w,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  // color: AppColors.greyF5,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  iconData,
+                  size: 20.sp,
+                  color: color ?? AppColors.grey33,
+                ),
+              ),
+
+            16.horizontalSpace,
+
+            // Text content
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                    style: context.textTheme.bodyMedium!.copyWith(
+                      color: titleColor ?? AppColors.black,
                     ),
                   ),
-                16.horizontalSpace,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (!showSubtitle) const SizedBox(height: 4),
-                    Text(
-                      title,
-                      style: context.textTheme.bodyMedium!.copyWith(
-                        color: titleColor ?? AppColors.black,
-                      ),
-                    ),
-                    if (showSubtitle)
-                      Padding(
-                        padding: EdgeInsets.only(top: 4.h),
-                        child: Text(
-                          subtitle!,
-                          style: context.textTheme.bodySmall!.copyWith(
-                            color: titleColor ?? AppColors.subtitleColor,
-                          ),
+
+                  if (showSubtitle && subtitle != null)
+                    Padding(
+                      padding: EdgeInsets.only(top: 4.h),
+                      child: Text(
+                        subtitle!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.bodySmall!.copyWith(
+                          color: titleColor ?? AppColors.subtitleColor,
                         ),
                       ),
-                  ],
-                ),
-              ],
+                    ),
+                ],
+              ),
             ),
-            if (trailingAsset == null)
-              const SizedBox()
-            else
+
+            // Trailing icon
+            if (trailingAsset != null) ...[
+              8.horizontalSpace,
               AppSvgIcon(path: trailingAsset!, fit: BoxFit.scaleDown),
+            ],
           ],
         ),
       ),

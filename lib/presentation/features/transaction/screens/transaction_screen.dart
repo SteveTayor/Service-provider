@@ -8,6 +8,7 @@ import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/providers/service_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/core/utils/network_detector.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/widgets/emptytransaction_widget.dart';
@@ -150,19 +151,42 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
     TransactionReceiptData data;
     final transTypeLower = (txn.transType ?? '').toLowerCase();
 
-    if (transTypeLower.contains('airtime')) {
+    final networkCode = resolveNetworkCode(txn);
+    final displayAmount = resolveAmount(txn);
+
+    if (transTypeLower == 'airtime_to_cash') {
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: txn.transType,
-        amount: txn.amount.toCurrency(),
+        amount: displayAmount,
         status: txn.status ?? 'Unknown',
         description:
-            txn.subProduct?.autoSubProdId ??
-            txn.subProduct?.product?.autoProdId ??
+            txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
             '',
-        network: txn.subProduct?.product?.productName,
+        network: networkCode,
+        phoneNumber:
+            txn.trxFrom ??
+            txn.crAcc ??
+            _getDefaultAccountNumber(txn.transType ?? ''),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
+      );
+    } else if (transTypeLower.contains('airtime')) {
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: txn.transType,
+        amount: displayAmount,
+        status: txn.status ?? 'Unknown',
+        description:
+            txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+        network: networkCode,
         phoneNumber: txn.crAcc,
         userBalance: txn.balanceAfter?.toCurrency(),
         balanceBefore: txn.balanceBefore?.toCurrency(),
@@ -173,13 +197,13 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: txn.transType,
-        amount: txn.amount.toCurrency(),
+        amount: displayAmount,
         status: txn.status ?? 'Unknown',
         description:
             txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
-        network: txn.subProduct?.product?.productName,
+        network: networkCode,
         dataBundle: txn.subProduct?.subName,
         phoneNumber: txn.crAcc,
         userBalance: txn.balanceAfter?.toCurrency(),
@@ -191,7 +215,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: txn.transType,
-        amount: txn.amount.toCurrency(),
+        amount: displayAmount,
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
@@ -208,7 +232,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: txn.transType,
-        amount: txn.amount.toCurrency(),
+        amount: displayAmount,
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
@@ -226,7 +250,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: txn.transType,
-        amount: txn.amount.toCurrency(),
+        amount: displayAmount,
         status: txn.status ?? 'Unknown',
         description:
             txn.subProduct?.subName ??
@@ -248,7 +272,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: txn.transType,
-        amount: txn.amount.toCurrency(),
+        amount: displayAmount,
         status: txn.status ?? 'Unknown',
         description:
             txn.subProduct?.subName ??
@@ -271,9 +295,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: txn.transType ?? 'N/A',
-        amount: txn.transType != 'fund_wallet' && txn.transType != 'withdrawal'
-            ? txn.amount.toCurrency()
-            : txn.amount.toCurrency(),
+        amount: displayAmount,
         phoneNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         quantity: qtyStr,
         status: txn.status ?? 'Unknown',

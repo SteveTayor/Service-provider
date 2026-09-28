@@ -55,7 +55,7 @@ final Map<String, _NetworkDisplayConfig> _networkDisplayConfigs = {
     minAmount: 500,
     maxAmount: 5000,
     dailyLimit: 5000,
-    shareCode: '*432#',
+    shareCode: '*321#',
     otpLength: 4,
   ),
   'GLO': _NetworkDisplayConfig(

@@ -6,6 +6,7 @@ import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/core/utils/network_detector.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/data/models/transaction_receipt/transaction_receipt_model.dart';
 import 'package:bundlegram/presentation/features/transaction/notifier/recent_transaction_state.dart';
@@ -24,15 +25,19 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class RecentTransactionWidget extends ConsumerWidget {
-  final StateNotifierProvider<StateNotifier<RecentTransactionsState>,
-      RecentTransactionsState> transactionProvider;
+  final StateNotifierProvider<
+    StateNotifier<RecentTransactionsState>,
+    RecentTransactionsState
+  >
+  transactionProvider;
   final Widget? spacing;
   final String? title;
-  const RecentTransactionWidget(this.spacing,
-      {required this.transactionProvider,
-      this.title = 'Recent Transactions',
-      Key? key})
-      : super(key: key);
+  const RecentTransactionWidget(
+    this.spacing, {
+    required this.transactionProvider,
+    this.title = 'Recent Transactions',
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,8 +57,9 @@ class RecentTransactionWidget extends ConsumerWidget {
         children: [
           Text(
             title!,
-            style: context.textTheme.titleSmall!
-                .copyWith(fontSize: r.textSize(18)),
+            style: context.textTheme.titleSmall!.copyWith(
+              fontSize: r.textSize(18),
+            ),
           ),
           spacing ?? 20.verticalSpace,
           _buildRecentTransactionsList(
@@ -113,10 +119,7 @@ class RecentTransactionWidget extends ConsumerWidget {
             HapticFeedback.lightImpact();
             _showTransactionDetails(context, transaction);
           },
-          child: ServiceListItem(
-            useResponsive: true,
-            transaction: transaction,
-          ),
+          child: ServiceListItem(useResponsive: true, transaction: transaction),
         );
       },
     );
@@ -126,19 +129,42 @@ class RecentTransactionWidget extends ConsumerWidget {
     TransactionReceiptData data;
     final transTypeLower = (txn.transType ?? '').toLowerCase();
 
-    if (transTypeLower.contains('airtime')) {
+    final networkCode = resolveNetworkCode(txn);
+    final displayAmount = resolveAmount(txn);
+    if (transTypeLower == 'airtime_to_cash') {
+      data = TransactionReceiptData(
+        transactionId: txn.transRef ?? 'BNG-${txn.id}',
+        date: _formatDate(txn.createdAt),
+        time: _formatTime(txn.createdAt),
+        type: getTransactionType(txn),
+        amount: displayAmount,
+        status: txn.status ?? 'Unknown',
+        description:
+            txn.subProduct?.subName ??
+            txn.subProduct?.product?.productName ??
+            '',
+        network: networkCode,
+        phoneNumber:
+            txn.trxFrom ??
+            txn.crAcc ??
+            _getDefaultAccountNumber(txn.transType ?? ''),
+        balanceBefore: txn.balanceBefore?.toCurrency(),
+        userBalance: txn.balanceAfter?.toCurrency(),
+      );
+    } else if (transTypeLower.contains('airtime')) {
       // Handle airtime transaction
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
-        amount: txn.deductAmount.toCurrency(),
+        amount: displayAmount,
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
-        network: txn.subProduct?.product?.productName,
+        network: networkCode,
         phoneNumber: txn.crAcc,
         balanceBefore: txn.balanceBefore?.toCurrency(),
         userBalance: txn.balanceAfter?.toCurrency(),
@@ -150,12 +176,13 @@ class RecentTransactionWidget extends ConsumerWidget {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
-        amount: txn.deductAmount.toCurrency(),
+        amount: displayAmount,
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
-        network: txn.subProduct?.product?.productName,
+        network: networkCode,
         dataBundle: txn.subProduct?.subName,
         phoneNumber: txn.crAcc,
         balanceBefore: txn.balanceBefore?.toCurrency(),
@@ -168,11 +195,12 @@ class RecentTransactionWidget extends ConsumerWidget {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
-        amount: txn.amount.toCurrency(),
+        amount: displayAmount,
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         userBalance: txn.balanceAfter?.toCurrency(),
@@ -185,11 +213,12 @@ class RecentTransactionWidget extends ConsumerWidget {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
-        amount: txn.amount.toCurrency(),
+        amount: displayAmount,
         accountNumber:
             txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         paymentMethod: txn.paymentType ?? '',
@@ -203,11 +232,12 @@ class RecentTransactionWidget extends ConsumerWidget {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
-        amount: txn.amount.toCurrency(),
+        amount: displayAmount,
         // accountNumber:
         //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         smartCardNumber: txn.crAcc,
@@ -219,19 +249,20 @@ class RecentTransactionWidget extends ConsumerWidget {
       final unitsStr = txn.unit == null
           ? null
           : (txn.unit! % 1 == 0
-              ? txn.unit!.toInt().toString()
-              : txn.unit!.toString());
+                ? txn.unit!.toInt().toString()
+                : txn.unit!.toString());
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn),
 
-        amount: txn.amount.toCurrency(),
+        amount: displayAmount,
         // accountNumber:
         //     txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
 
@@ -245,21 +276,27 @@ class RecentTransactionWidget extends ConsumerWidget {
       final qtyStr = txn.unit == null
           ? null
           : (txn.unit! % 1 == 0
-              ? txn.unit!.toInt().toString()
-              : txn.unit!.toString());
+                ? txn.unit!.toInt().toString()
+                : txn.unit!.toString());
       // Default case for other transaction types
       data = TransactionReceiptData(
         transactionId: txn.transRef ?? 'BNG-${txn.id}',
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: getTransactionType(txn) ?? 'N/A',
-        amount: txn.transType != 'fund_wallet' && txn.transType != 'withdrawal'
-            ? txn.deductAmount.toCurrency()
-            : txn.amount.toCurrency(),
-        phoneNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
+        amount: displayAmount,
+        // txn.transType != 'fund_wallet' && txn.transType != 'withdrawal'
+        //     ? txn.deductAmount.toCurrency()
+        //     : txn.amount.toCurrency(),
+        phoneNumber: txn.transType?.toLowerCase() == 'airtime_to_cash'
+            ? (txn.trxFrom ??
+                  txn.crAcc ??
+                  _getDefaultAccountNumber(txn.transType ?? ''))
+            : (txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? '')),
         quantity: qtyStr,
         status: txn.status ?? 'Unknown',
-        description: txn.subProduct?.subName ??
+        description:
+            txn.subProduct?.subName ??
             txn.subProduct?.product?.productName ??
             '',
         balanceBefore: txn.balanceBefore?.toCurrency(),
@@ -417,4 +454,3 @@ class RecentTransactionWidget extends ConsumerWidget {
     );
   }
 }
-

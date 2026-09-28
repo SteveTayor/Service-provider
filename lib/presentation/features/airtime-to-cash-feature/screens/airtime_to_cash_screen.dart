@@ -543,7 +543,9 @@ class _AirtimeToCashScreenState extends ConsumerState<AirtimeToCashScreen> {
           _otpOpen = true;
           _otpController.clear();
           unawaited(
-            context.showPopUp(AirtimeOtpDialog(controller: _otpController)),
+            context.showBottomSheet(
+              child: AirtimeOtpDialog(controller: _otpController),
+            ),
           );
         }
         break;
@@ -563,7 +565,9 @@ class _AirtimeToCashScreenState extends ConsumerState<AirtimeToCashScreen> {
       case AirtimeToCashStep.pinEntry:
         if (!_pinOpen) {
           _pinOpen = true;
-          unawaited(context.showPopUp(const AirtimeSharePinDialog()));
+          unawaited(
+            context.showBottomSheet(child: const AirtimeSharePinDialog()),
+          );
         }
         break;
 
@@ -701,7 +705,7 @@ class _AirtimeToCashScreenState extends ConsumerState<AirtimeToCashScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(airtimeToCashProvider);
     final notifier = ref.read(airtimeToCashProvider.notifier);
-    final historyNotifier = ref.read(airtimeToCashHistoryProvider.notifier);
+    // final historyNotifier = ref.read(airtimeToCashHistoryProvider.notifier);
 
     ref
       ..listen<AirtimeToCashState>(airtimeToCashProvider, (previous, next) {
@@ -740,7 +744,7 @@ class _AirtimeToCashScreenState extends ConsumerState<AirtimeToCashScreen> {
       body: RefreshIndicator(
         onRefresh: () async {
           await notifier.fetchNetworks();
-          await historyNotifier.refresh();
+          // await historyNotifier.refresh();
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),

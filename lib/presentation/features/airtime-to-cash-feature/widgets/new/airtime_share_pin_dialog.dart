@@ -22,79 +22,85 @@ class AirtimeSharePinDialog extends ConsumerWidget {
       canPop: false,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text('Airtime Share PIN', style: context.textTheme.titleMedium),
-                SizedBox(width: 6.w),
-                if (network != null)
-                  GestureDetector(
-                    onTap: () =>
-                        AirtimeSharePinInfoDialog.show(context, [network]),
-                    child: Icon(
-                      Icons.info_outline,
-                      size: 16.sp,
-                      color: AppColors.info,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Airtime Share PIN',
+                    style: context.textTheme.titleMedium,
+                  ),
+                  SizedBox(width: 6.w),
+                  if (network != null)
+                    GestureDetector(
+                      onTap: () =>
+                          AirtimeSharePinInfoDialog.show(context, [network]),
+                      child: Icon(
+                        Icons.info_outline,
+                        size: 16.sp,
+                        color: AppColors.info,
+                      ),
+                    ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              AppTextField(
+                controller: state.pinController,
+                hintText: 'Enter your Airtime Share PIN',
+                obscureText: true,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(4),
+                ],
+              ),
+              if (state.pinError != null) ...[
+                SizedBox(height: 8.h),
+                Text(
+                  state.pinError!,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: AppColors.errorText,
+                  ),
+                ),
+              ],
+              SizedBox(height: 8.h),
+              GestureDetector(
+                onTap: notifier.goToManual,
+                child: Text(
+                  'Forgot PIN? Call 300 to reset it.',
+                  style: context.textTheme.labelSmall?.copyWith(
+                    color: AppColors.errorText,
+                    fontSize: 10.sp,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: BundlegramButton(
+                      text: 'Cancel',
+                      color: AppColors.greyEE,
+                      textStyle: const TextStyle(color: AppColors.black),
+                      onPressed: notifier.cancelFlow,
                     ),
                   ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-            AppTextField(
-              controller: state.pinController,
-              hintText: 'Enter your Airtime Share PIN',
-              obscureText: true,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(4),
-              ],
-            ),
-            if (state.pinError != null) ...[
-              SizedBox(height: 8.h),
-              Text(
-                state.pinError!,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: AppColors.errorText,
-                ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    flex: 2,
+                    child: BundlegramButton(
+                      text: 'Continue',
+                      onPressed: notifier.submitPin,
+                    ),
+                  ),
+                ],
               ),
+              36.verticalSpace,
             ],
-            SizedBox(height: 8.h),
-            GestureDetector(
-              onTap: notifier.goToManual,
-              child: Text(
-                'Forgot PIN? Call 300 to reset it.',
-                style: context.textTheme.labelSmall?.copyWith(
-                  color: AppColors.errorText,
-                  fontSize: 10.sp,
-                ),
-              ),
-            ),
-            SizedBox(height: 20.h),
-            Row(
-              children: [
-                Expanded(
-                  child: BundlegramButton(
-                    text: 'Cancel',
-                    color: AppColors.greyEE,
-                    textStyle: const TextStyle(color: AppColors.black),
-                    onPressed: notifier.cancelFlow,
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  flex: 2,
-                  child: BundlegramButton(
-                    text: 'Continue',
-                    onPressed: notifier.submitPin,
-                  ),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );

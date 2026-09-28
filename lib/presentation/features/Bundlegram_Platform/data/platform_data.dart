@@ -219,7 +219,7 @@ class PlatFormData {
       // assetPath: Assets.svgs.a9mobile,
       imagePath: Assets.images.t2Logo.path,
       title: '9mobile',
-      subtitle: '@9mobileng',
+      subtitle: '@T2mobileng',
     ),
   ];
 

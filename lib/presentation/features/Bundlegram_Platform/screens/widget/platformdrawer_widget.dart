@@ -137,22 +137,18 @@ class _DrawerBodyState extends ConsumerState<DrawerBody> {
   }
 
   Widget _buildAnimatedListItem(Widget item, int index) {
+    final child = item.withContainer(
+      padding: EdgeInsets.zero,
+      margin: EdgeInsets.symmetric(horizontal: 13.w, vertical: 5.h),
+    );
+
     if (_slideAnimations.length <= index || _fadeAnimations.length <= index) {
-      return item.withContainer(
-        padding: context.symmetricPadding(0, 10.h),
-        margin: context.symmetricPadding(20.w, 8.h),
-      );
+      return child;
     }
 
     return SlideTransition(
       position: _slideAnimations[index],
-      child: FadeTransition(
-        opacity: _fadeAnimations[index],
-        child: item.withContainer(
-          padding: context.symmetricPadding(0, 10.h),
-          margin: context.symmetricPadding(20.w, 8.h),
-        ),
-      ),
+      child: FadeTransition(opacity: _fadeAnimations[index], child: child),
     );
   }
 

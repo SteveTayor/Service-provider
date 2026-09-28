@@ -4,6 +4,7 @@ import 'package:bundlegram/core/extensions/string_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
+import 'package:bundlegram/core/utils/network_detector.dart';
 import 'package:bundlegram/data/models/transaction/user_transactions_response.dart';
 import 'package:bundlegram/gen/assets.gen.dart';
 import 'package:bundlegram/presentation/general_widget/app_svg.dart';
@@ -39,11 +40,14 @@ class ServiceListItem extends ConsumerWidget {
               'unknown';
     final status = transaction.status?.capitalizeFirst ?? 'Unknown';
     final date = _formatDate(transaction.createdAt);
-    final amount =
-        (transaction.transType == "fund_wallet" ||
-            transaction.transType == "withdrawal")
-        ? transaction.amount.toCurrency()
-        : transaction.deductAmount.toCurrency();
+    // final amount =
+    //     (transaction.transType == "fund_wallet" ||
+    //         transaction.transType == "withdrawal")
+    //     ? transaction.amount.toCurrency()
+    //     : transaction.deductAmount.toCurrency();
+
+    // final networkCode = _resolveNetworkCode(transaction);
+    final amount = resolveAmount(transaction);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,

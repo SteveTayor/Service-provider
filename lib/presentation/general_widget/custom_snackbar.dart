@@ -229,33 +229,57 @@ class CustomSnackBar {
     Duration duration = const Duration(seconds: 3),
     ToastificationType type = ToastificationType.info,
   }) {
-    // Guard: never try to show a toast on a detached/unmounted context
     if (!context.mounted) {
       debugPrint(
-          '[CustomSnackBar] Context not mounted, dropping toast: $message');
+        '[CustomSnackBar] Context not mounted, dropping toast: $message',
+      );
       return;
     }
 
     try {
+      final screenWidth = MediaQuery.sizeOf(context).width;
+
       toastification.show(
-        dismissDirection: DismissDirection.down,
-        padding: EdgeInsets.symmetric(horizontal: 8.w),
         context: context,
+
+        // Keep the toast centered at the bottom.
+        alignment: Alignment.bottomCenter,
+
+        // Actually constrain the toast width.
+        sizeConstraints: BoxConstraints(
+          minWidth: 0,
+          maxWidth: screenWidth * 0.86,
+        ),
+
+        dismissDirection: DismissDirection.down,
+
         type: type,
         style: ToastificationStyle.flat,
+
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+
+        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+
         title: Text(
           message,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: textColor,
             fontSize: 10.sp,
             fontWeight: FontWeight.w500,
+            height: 1.25,
           ),
         ),
+
         icon: icon,
+
         backgroundColor: bgColor,
+
         autoCloseDuration: duration,
-        alignment: Alignment.bottomCenter,
+
         borderRadius: BorderRadius.circular(14.r),
+
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -263,14 +287,16 @@ class CustomSnackBar {
             offset: const Offset(0, 2),
           ),
         ],
+
         showProgressBar: false,
         closeButtonShowType: CloseButtonShowType.none,
         pauseOnHover: false,
       );
     } catch (e) {
-      // Catch the null overlay crash — log, never rethrow
-      debugPrint('[CustomSnackBar] Toast failed (overlay not ready?): $e\n'
-          'Message was: $message');
+      debugPrint(
+        '[CustomSnackBar] Toast failed (overlay not ready?): $e\n'
+        'Message was: $message',
+      );
     }
   }
 
@@ -284,11 +310,7 @@ class CustomSnackBar {
       message,
       bgColor: AppColors.primaryColor,
       textColor: AppColors.white,
-      icon: Icon(
-        Icons.info_outline,
-        color: AppColors.white,
-        size: 18.sp,
-      ),
+      icon: Icon(Icons.info_outline, color: AppColors.white, size: 18.sp),
       duration: duration,
       type: ToastificationType.info,
     );
@@ -304,11 +326,7 @@ class CustomSnackBar {
       message,
       bgColor: AppColors.errorText,
       textColor: AppColors.white,
-      icon: Icon(
-        Icons.error,
-        color: AppColors.white,
-        size: 18.sp,
-      ),
+      icon: Icon(Icons.error, color: AppColors.white, size: 18.sp),
       duration: duration,
       type: ToastificationType.error,
     );
@@ -325,11 +343,7 @@ class CustomSnackBar {
       message,
       bgColor: AppColors.primaryColor,
       textColor: AppColors.white,
-      icon: Image.asset(
-        'assets/images/logo.png',
-        width: 25.w,
-        height: 25.h,
-      ),
+      icon: Image.asset('assets/images/logo.png', width: 25.w, height: 25.h),
       duration: duration,
       type: ToastificationType.success,
     );

@@ -739,7 +739,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     if (mtnPrefixes.any((p) => clean.startsWith(p))) return 'MTN';
     if (airtelPrefixes.any((p) => clean.startsWith(p))) return 'Airtel';
     if (gloPrefixes.any((p) => clean.startsWith(p))) return 'Glo';
-    if (nineMobilePrefixes.any((p) => clean.startsWith(p))) return '9mobile';
+    if (nineMobilePrefixes.any((p) => clean.startsWith(p))) return 'T2';
 
     // fallback: try to use last 3 digits or first 3
     if (clean.length >= 3) return clean.substring(0, 3);
@@ -937,8 +937,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
     if (lower.contains("glo")) return "glo";
     if (lower.contains("airtel")) return "airtel";
-    if (lower.contains("9mobile") || lower.contains("etisalat"))
-      return "9mobile";
+    if (lower.contains("9mobile") || lower.contains("etisalat")) return "t2";
     // print('Brand: ${name.split(" ").first.toLowerCase()}');
     return name.split(" ").first.toLowerCase();
   }

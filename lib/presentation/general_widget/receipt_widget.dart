@@ -92,7 +92,10 @@ class VisualReceiptCard extends ConsumerWidget {
                 children: [
                   if (data.type?.toLowerCase() != 'electricity') ...[
                     _buildDetailRow(
-                        context, 'Transaction type', getTransactionType()),
+                      context,
+                      'Transaction type',
+                      getTransactionType(),
+                    ),
                   ] else ...[
                     _buildDetailRow(context, 'Transaction type', data.type!),
                   ],
@@ -115,7 +118,10 @@ class VisualReceiptCard extends ConsumerWidget {
                   ],
                   14.verticalSpace,
                   _buildDetailRow(
-                      context, 'Transaction ID', data.transactionId!),
+                    context,
+                    'Transaction ID',
+                    data.transactionId!,
+                  ),
                   14.verticalSpace,
                   _buildDetailRow(context, 'Date', data.date!),
                   14.verticalSpace,
@@ -147,9 +153,7 @@ class VisualReceiptCard extends ConsumerWidget {
             logoWidget: Image(
               image: Assets.images.bBundlegram.provider(),
               fit: BoxFit.contain,
-            ).withContainer(
-              height: 39.h,
-            ),
+            ).withContainer(height: 39.h),
           ),
           14.verticalSpace,
         ],
@@ -175,6 +179,8 @@ class VisualReceiptCard extends ConsumerWidget {
         return 'Withdrawal';
       case 'betting':
         return 'Betting';
+      case 'airtime_to_cash':
+        return 'Airtime to Cash';
       default:
         return data.type!.capiTalizeFirstLast;
     }
@@ -339,8 +345,9 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper>
     _isSharing = true;
 
     try {
-      final boundary = _boundaryKey.currentContext?.findRenderObject()
-          as RenderRepaintBoundary?;
+      final boundary =
+          _boundaryKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary?;
 
       if (boundary == null) {
         _showError("Unable to capture receipt: boundary not ready.");
@@ -350,10 +357,12 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper>
 
       // ─── CONVERT TO PNG BYTES ─────────────────────────────────────────────
       context.showLoadingDialog(message: 'Downloading ...');
-      final ui.Image image =
-          await boundary.toImage(pixelRatio: 2); // use 2.0 for stability
-      final ByteData? byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
+      final ui.Image image = await boundary.toImage(
+        pixelRatio: 2,
+      ); // use 2.0 for stability
+      final ByteData? byteData = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
 
       if (byteData == null) {
         context.dismissDialog();
@@ -389,7 +398,9 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper>
         // Some platforms / share targets may throw — fallback to saving.
         debugPrint('Share threw an exception: $e');
         result = ShareResult(
-            ShareResultStatus.unavailable.name, ShareResultStatus.dismissed);
+          ShareResultStatus.unavailable.name,
+          ShareResultStatus.dismissed,
+        );
       }
 
       context.dismissDialog();
@@ -399,8 +410,9 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper>
       if (result.status == ShareResultStatus.success) {
         debugPrint("Share successful");
         if (mounted) {
-          context
-              .showSuccessSnackBar('Transaction receipt shared successfully');
+          context.showSuccessSnackBar(
+            'Transaction receipt shared successfully',
+          );
           // context.pop(); // close after success
         }
         shouldPopOnce = true;
@@ -429,8 +441,10 @@ class _ReceiptShareWrapperState extends State<ReceiptShareWrapper>
   }
 
   // /// Saves the receipt image to the gallery using `image_gallery_saver_plus`.
-  Future<void> _saveToGallery(Uint8List pngBytes,
-      {bool shouldPop = true}) async {
+  Future<void> _saveToGallery(
+    Uint8List pngBytes, {
+    bool shouldPop = true,
+  }) async {
     try {
       final result = await saver.ImageGallerySaverPlus.saveImage(
         pngBytes,

@@ -14,12 +14,14 @@ class AirtimeToCashHistoryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.read(airtimeToCashHistoryProvider.notifier);
+    ref.watch(airtimeToCashHistoryProvider);
 
     return BundlegramScaffold(
       appBar: const BundlegramAppbar(titleText: 'Airtime to Cash History'),
       body: RefreshIndicator(
-        onRefresh: notifier.refresh,
+        onRefresh: () {
+          return ref.read(airtimeToCashHistoryProvider.notifier).refresh();
+        },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.all(16.w),
@@ -28,7 +30,11 @@ class AirtimeToCashHistoryScreen extends ConsumerWidget {
             children: [
               AppTextField(
                 decoration: const InputDecoration().search(),
-                onChange: notifier.onSearchChanged,
+                onChange: (value) {
+                  ref
+                      .read(airtimeToCashHistoryProvider.notifier)
+                      .onSearchChanged(value);
+                },
               ),
               16.verticalSpace,
               const TransactionListWidget(),

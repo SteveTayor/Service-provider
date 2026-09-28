@@ -106,7 +106,7 @@ class PlatformItemWidget extends StatelessWidget {
         // Circle scales with the slot it's given: bigger slot (fewer
         // items) -> bigger circle; smaller slot (more items) -> smaller
         // circle, clamped to a usable range so it never gets silly.
-        final circleSize = (maxWidth * 0.62).clamp(
+        final circleSize = (maxWidth * 0.53).clamp(
           r.spacing(44),
           r.spacing(64),
         );

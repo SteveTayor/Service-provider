@@ -57,21 +57,45 @@ class AirtimeToCashHistoryNotifier
   Timer? _searchDebounce;
 
   Future<void> refresh() async {
+    if (!mounted) return;
+
     state = state.copyWith(isLoading: true, clearError: true);
-    final result = await _repository.getTransactions(query: state.query);
+
+    final query = state.query;
+
+    final result = await _repository.getTransactions(query: query);
+
+    if (!mounted) return;
+
     result.fold(
-      (fail) => state = state.copyWith(
-        isLoading: false,
-        error: sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
-      ),
-      (txns) => state = state.copyWith(isLoading: false, transactions: txns),
+      (fail) {
+        if (!mounted) return;
+
+        state = state.copyWith(
+          isLoading: false,
+          error: sanitizeErrorMessage(userFacingMessageFromFailure(fail)),
+        );
+      },
+      (txns) {
+        if (!mounted) return;
+
+        state = state.copyWith(isLoading: false, transactions: txns);
+      },
     );
   }
 
   void onSearchChanged(String value) {
+    if (!mounted) return;
+
     state = state.copyWith(query: value);
+
     _searchDebounce?.cancel();
-    _searchDebounce = Timer(const Duration(milliseconds: 400), refresh);
+
+    _searchDebounce = Timer(const Duration(milliseconds: 400), () {
+      if (mounted) {
+        refresh();
+      }
+    });
   }
 
   @override

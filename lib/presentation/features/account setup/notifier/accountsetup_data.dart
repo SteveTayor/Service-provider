@@ -20,7 +20,7 @@ class HelpCenterFAQData {
     FAQItem(
       question: 'Can I buy airtime on Bundlegram?',
       answer:
-          'Yes. Buy Airtel, Glo, MTN and 9Mobile airtime at discounted prices using Bundlegram and make calls every day.',
+          'Yes. Buy Airtel, Glo, MTN and T2Mobile(formally 9mobile) airtime at discounted prices using Bundlegram and make calls every day.',
     ),
     FAQItem(
       question: 'Can I pay all my bills on Bundlegram?',
