@@ -46,6 +46,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/Shapes.png
   AssetGenImage get shapes => const AssetGenImage('assets/images/Shapes.png');
 
+  /// File path: assets/images/T2_logo.png
+  AssetGenImage get t2Logo => const AssetGenImage('assets/images/T2_logo.png');
+
   /// File path: assets/images/account_setup.png
   AssetGenImage get accountSetup =>
       const AssetGenImage('assets/images/account_setup.png');
@@ -173,6 +176,7 @@ class $AssetsImagesGen {
     growth,
     nairabetLogo,
     shapes,
+    t2Logo,
     accountSetup,
     airtel,
     appstore,
@@ -342,9 +346,6 @@ class $AssetsSvgsGen {
 
   /// File path: assets/svgs/a1xbet.svg
   String get a1xbet => 'assets/svgs/a1xbet.svg';
-
-  /// File path: assets/svgs/a9mobile.svg
-  String get a9mobile => 'assets/svgs/a9mobile.svg';
 
   /// File path: assets/svgs/abuja_electricity.svg
   String get abujaElectricity => 'assets/svgs/abuja_electricity.svg';
@@ -748,7 +749,6 @@ class $AssetsSvgsGen {
     vpnConnectionStreamlineCore,
     warrantyBadgeHighlightStreamlineFlex,
     a1xbet,
-    a9mobile,
     abujaElectricity,
     account,
     accountsetup,

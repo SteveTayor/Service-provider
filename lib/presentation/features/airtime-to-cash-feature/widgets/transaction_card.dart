@@ -21,7 +21,7 @@ String? _logoAssetFor(String networkId) {
     case 'GLO':
       return Assets.svgs.glo;
     case '9MOBILE':
-      return Assets.svgs.a9mobile;
+      return Assets.images.t2Logo.path;
     default:
       return null;
   }

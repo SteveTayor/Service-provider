@@ -216,8 +216,8 @@ class PlatFormData {
     ),
     AppListTile(
       showSubtitle: true,
-      assetPath: Assets.svgs.a9mobile,
-      // imagePath: Assets.images.a9mobile.path,
+      // assetPath: Assets.svgs.a9mobile,
+      imagePath: Assets.images.t2Logo.path,
       title: '9mobile',
       subtitle: '@9mobileng',
     ),

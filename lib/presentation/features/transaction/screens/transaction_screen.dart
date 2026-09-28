@@ -156,11 +156,11 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: txn.transType,
-        amount: txn.deductAmount.toCurrency(),
+        amount: txn.amount.toCurrency(),
         status: txn.status ?? 'Unknown',
         description:
-            txn.subProduct?.subName ??
-            txn.subProduct?.product?.productName ??
+            txn.subProduct?.autoSubProdId ??
+            txn.subProduct?.product?.autoProdId ??
             '',
         network: txn.subProduct?.product?.productName,
         phoneNumber: txn.crAcc,
@@ -173,7 +173,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         date: _formatDate(txn.createdAt),
         time: _formatTime(txn.createdAt),
         type: txn.transType,
-        amount: txn.deductAmount.toCurrency(),
+        amount: txn.amount.toCurrency(),
         status: txn.status ?? 'Unknown',
         description:
             txn.subProduct?.subName ??
@@ -272,7 +272,7 @@ class _TransactionScreenState extends ConsumerState<TransactionScreen> {
         time: _formatTime(txn.createdAt),
         type: txn.transType ?? 'N/A',
         amount: txn.transType != 'fund_wallet' && txn.transType != 'withdrawal'
-            ? txn.deductAmount.toCurrency()
+            ? txn.amount.toCurrency()
             : txn.amount.toCurrency(),
         phoneNumber: txn.crAcc ?? _getDefaultAccountNumber(txn.transType ?? ''),
         quantity: qtyStr,

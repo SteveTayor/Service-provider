@@ -3,16 +3,32 @@ import 'package:bundlegram/data/models/airtime_2_cash/network_config.dart';
 import 'package:flutter/material.dart';
 
 /// The discrete steps of the conversion flow.
+// enum AirtimeToCashStep {
+//   networkSelection,
+//   noActiveConfig,
+//   balanceTooLow,
+//   phoneEntry,
+//   sendingOtp,
+//   otpEntry,
+//   verifyingOtp,
+//   enteringAmount,
+//   checkingQuota,
+//   confirming,
+//   submitting,
+//   success,
+//   processing,
+//   partial,
+//   failed,
+// }
+
 enum AirtimeToCashStep {
-  networkSelection,
-  noActiveConfig,
-  balanceTooLow,
-  phoneEntry,
+  form,
   sendingOtp,
   otpEntry,
   verifyingOtp,
-  enteringAmount,
+  balanceTooLow,
   checkingQuota,
+  pinEntry,
   confirming,
   submitting,
   success,
@@ -56,7 +72,7 @@ class AirtimeToCashState {
   });
 
   factory AirtimeToCashState.initial() => AirtimeToCashState(
-    step: AirtimeToCashStep.networkSelection,
+    step: AirtimeToCashStep.form,
     networks: const [],
     phoneController: TextEditingController(),
     amountController: TextEditingController(),
@@ -101,7 +117,7 @@ class AirtimeToCashState {
     if (network == null) return 0;
     final amount = double.tryParse(amountController.text.replaceAll(',', ''));
     if (amount == null || amount <= 0) return 0;
-    return amount * network.conversionRatePercent  / 100;
+    return amount * network.conversionRatePercent / 100;
   }
 
   bool get isBusy =>

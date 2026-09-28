@@ -42,10 +42,7 @@ class AppSvgIcon extends StatelessWidget {
         fit: fit,
         colorFilter: color == null
             ? null
-            : ColorFilter.mode(
-                color!,
-                BlendMode.srcIn,
-              ),
+            : ColorFilter.mode(color!, BlendMode.srcIn),
       );
     } else {
       iconWidget = Image.asset(
@@ -61,9 +58,7 @@ class AppSvgIcon extends StatelessWidget {
       finalWidget = Container(
         width: iconSize,
         height: iconSize,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-        ),
+        decoration: const BoxDecoration(shape: BoxShape.circle),
         clipBehavior: Clip.hardEdge,
         child: iconWidget,
       );
@@ -71,10 +66,7 @@ class AppSvgIcon extends StatelessWidget {
       finalWidget = iconWidget;
     }
 
-    return GestureDetector(
-      onTap: onTap,
-      child: finalWidget,
-    );
+    return GestureDetector(onTap: onTap, child: finalWidget);
   }
 }
 // class AppSvgIcon extends StatelessWidget {

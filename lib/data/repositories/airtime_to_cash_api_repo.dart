@@ -67,7 +67,7 @@ final Map<String, _NetworkDisplayConfig> _networkDisplayConfigs = {
     //  otpLength: 6,
   ),
   '9MOBILE': _NetworkDisplayConfig(
-    logoAsset: Assets.svgs.a9mobile,
+    logoAsset: Assets.images.t2Logo.path,
     minAmount: 500,
     maxAmount: 5000,
     dailyLimit: 5000,
@@ -253,7 +253,7 @@ class ApiAirtimeToCashRepository implements IAirtimeToCashRepository {
             reference: data?.reference ?? '',
             dateTime: DateTime.now(),
             amountSold: amount,
-            amountReceived: computedReceived,
+            amountReceived: amount,
             networkId: network.id,
             networkName: network.name,
             phoneNumber: phoneNumber,

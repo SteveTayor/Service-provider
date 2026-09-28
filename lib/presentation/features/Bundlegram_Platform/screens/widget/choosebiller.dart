@@ -164,6 +164,32 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:go_router/go_router.dart';
 
+/// Same order as the Airtime to Cash biller picker.
+int _billerRank(String name) {
+  final n = name.toLowerCase();
+  if (n.contains('mtn')) return 0;
+  if (n.contains('airtel')) return 1;
+  if (n.contains('glo')) return 2;
+  if (n.contains('9mobile') || n.contains('T2')) return 3;
+  return 4;
+}
+
+/// Only network billers (airtime / data) are reordered.
+List<Product> _orderBillers(List<Product> items, PlatformProductType type) {
+  if (type != PlatformProductType.airtime &&
+      type != PlatformProductType.mobileData) {
+    return items;
+  }
+  final indexed = items.asMap().entries.toList()
+    ..sort((a, b) {
+      final r = _billerRank(
+        a.value.productName ?? '',
+      ).compareTo(_billerRank(b.value.productName ?? ''));
+      return r != 0 ? r : a.key.compareTo(b.key);
+    });
+  return indexed.map((e) => e.value).toList();
+}
+
 class ChoosebillerWidget extends ConsumerWidget {
   final PlatformProductType serviceType;
   final void Function(String? imagePath, String name, int productId)
@@ -251,7 +277,7 @@ class ChoosebillerWidget extends ConsumerWidget {
                         shrinkWrap: true,
                         physics: AlwaysScrollableScrollPhysics(),
                         itemCount: items.length,
-                        separatorBuilder: (_, __) => 36.verticalSpace,
+                        separatorBuilder: (_, __) => 12.verticalSpace,
                         itemBuilder: (_, index) {
                           final item = items[index];
                           final name = item.subName ?? '';
@@ -279,6 +305,7 @@ class ChoosebillerWidget extends ConsumerWidget {
                                 ? item.planId.toString()
                                 : item.subName,
                             showSubtitle: true,
+                            isSelected: state.selectedSubProduct?.id == item.id,
                             onPressed: () {
                               debugPrint(
                                 '[BETTING] onPressed -> tapped "$name"',
@@ -421,7 +448,7 @@ class ChoosebillerWidget extends ConsumerWidget {
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemCount: filteredProducts.length,
-                        separatorBuilder: (_, __) => 24.verticalSpace,
+                        separatorBuilder: (_, __) => 12.verticalSpace,
                         itemBuilder: (_, index) {
                           final item = filteredProducts[index];
                           final name = item.productName ?? '';
@@ -441,6 +468,7 @@ class ChoosebillerWidget extends ConsumerWidget {
                               onProviderSelected(imagePath, name, item.id!);
                               Navigator.of(context).pop();
                             },
+                            isSelected: state.selectedSubProduct?.id == item.id,
                             title: name,
                           );
                         },
@@ -501,7 +529,9 @@ class ChoosebillerWidget extends ConsumerWidget {
               //     },
               //   ),
               // );
-              final items = resp.data ?? [];
+              // For all others
+              final items = _orderBillers(resp.data ?? [], serviceType);
+
               if (items.isEmpty) {
                 return Text(
                   'No providers available',
@@ -516,11 +546,13 @@ class ChoosebillerWidget extends ConsumerWidget {
                 child: ListView.separated(
                   shrinkWrap: true,
                   itemCount: items.length,
-                  separatorBuilder: (_, __) => 24.verticalSpace,
+                  separatorBuilder: (_, __) => 12.verticalSpace,
                   itemBuilder: (_, index) {
                     final item = items[index];
                     final isActive = item.status == null || item.status == '1';
+                    final isSelected = state.selectedProduct?.id == item.id;
                     final name = item.productName ?? '';
+
                     final imagePath = ref
                         .read(platformProductProvider(serviceType).notifier)
                         .normalizeAssetName(name, serviceType: serviceType);
@@ -532,7 +564,11 @@ class ChoosebillerWidget extends ConsumerWidget {
                       child: AppListTile(
                         assetPath: isSvg ? imagePath : null,
                         imagePath: isSvg ? null : imagePath,
-                        subtitle: item.productName ?? item.productDescription,
+                        subtitle: isActive
+                            ? (item.productName ?? item.productDescription)
+                            : 'Currently unavailable',
+                        showSubtitle: true,
+                        isSelected: isActive && isSelected,
                         onPressed: isActive
                             ? () {
                                 onProviderSelected(imagePath, name, item.id!);

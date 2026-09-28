@@ -115,7 +115,7 @@ class TransactionDetailDialog extends StatelessWidget {
           _row(
             context,
             'Amount Received',
-            '₦${transaction.amountReceived.toStringAsFixed(2)}',
+            '₦${transaction.amountSold.toStringAsFixed(2)}',
             strike: isFailed,
           ),
           SizedBox(height: 16.h),

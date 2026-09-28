@@ -56,9 +56,7 @@ class TransactionReceiptWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.vertical(
-              top: Radius.circular(
-                useResponsive ? r.radiusSize(16) : 16.r,
-              ),
+              top: Radius.circular(useResponsive ? r.radiusSize(16) : 16.r),
             ),
           ),
           child: Column(
@@ -108,9 +106,7 @@ class TransactionReceiptWidget extends StatelessWidget {
           GestureDetector(
             onTap: onClose ?? () => Navigator.of(context).pop(),
             child: Padding(
-              padding: EdgeInsets.all(
-                useResponsive ? r.spacing(4) : 4.w,
-              ),
+              padding: EdgeInsets.all(useResponsive ? r.spacing(4) : 4.w),
               child: AppSvgIcon(path: Assets.svgs.close),
             ),
           ),
@@ -289,10 +285,10 @@ class TransactionReceiptWidget extends StatelessWidget {
           label: data.type?.toLowerCase() == 'betting'
               ? 'Betting ID'
               : (data.type?.toLowerCase() == 'top-up' ||
-                      data.type?.toLowerCase() == 'fund_wallet' ||
-                      data.type?.toLowerCase() == 'withdrawal')
-                  ? "Beneficiary"
-                  : "Account",
+                    data.type?.toLowerCase() == 'fund_wallet' ||
+                    data.type?.toLowerCase() == 'withdrawal')
+              ? "Beneficiary"
+              : "Account",
           value: data.accountNumber!,
           useResponsive: useResponsive,
         ),
@@ -358,6 +354,8 @@ class TransactionReceiptWidget extends StatelessWidget {
         return 'Withdrawal';
       case 'betting':
         return 'Betting';
+      case 'airtime_to_Cash':
+        return 'Airtime to cash';
       default:
         return data.type!.capiTalizeFirstLast;
     }
@@ -427,7 +425,8 @@ class _TransactionDetailItem extends StatelessWidget {
               Flexible(
                 child: Text(
                   value.replaceAll("_", " "),
-                  style: valueStyle ??
+                  style:
+                      valueStyle ??
                       (useResponsive
                           ? TextStyle(
                               fontWeight: FontWeight.w600,
@@ -447,8 +446,9 @@ class _TransactionDetailItem extends StatelessWidget {
                   onTap: () {
                     HapticFeedback.lightImpact();
                     Clipboard.setData(ClipboardData(text: value));
-                    navigatorKey.currentState!.context
-                        .showSuccessSnackBar("Copied to clipboard");
+                    navigatorKey.currentState!.context.showSuccessSnackBar(
+                      "Copied to clipboard",
+                    );
                   },
                   child: AppSvgIcon(path: Assets.svgs.copy),
                 ),
