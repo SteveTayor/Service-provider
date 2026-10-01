@@ -150,6 +150,7 @@
 
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
+import 'package:bundlegram/core/utils/biller_names.dart';
 import 'package:bundlegram/core/utils/enums.dart';
 import 'package:bundlegram/core/utils/platform_provider_enums.dart';
 import 'package:bundlegram/data/models/products/get_all_products_response.dart';
@@ -162,7 +163,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:bundlegram/core/utils/colors.dart';
-import 'package:go_router/go_router.dart';
 
 /// Same order as the Airtime to Cash biller picker.
 int _billerRank(String name) {
@@ -170,7 +170,7 @@ int _billerRank(String name) {
   if (n.contains('mtn')) return 0;
   if (n.contains('airtel')) return 1;
   if (n.contains('glo')) return 2;
-  if (n.contains('9mobile') || n.contains('T2')) return 3;
+  if (isNineMobile(name)) return 3;
   return 4;
 }
 
@@ -565,7 +565,9 @@ class ChoosebillerWidget extends ConsumerWidget {
                         assetPath: isSvg ? imagePath : null,
                         imagePath: isSvg ? null : imagePath,
                         subtitle: isActive
-                            ? (item.productName ?? item.productDescription)
+                            ? displayBillerName(
+                                item.productName ?? item.productDescription,
+                              )
                             : 'Currently unavailable',
                         showSubtitle: true,
                         isSelected: isActive && isSelected,
@@ -575,7 +577,7 @@ class ChoosebillerWidget extends ConsumerWidget {
                                 Navigator.of(context).pop();
                               }
                             : null,
-                        title: name,
+                        title: displayBillerName(name),
                       ),
                     );
                   },

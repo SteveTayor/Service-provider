@@ -454,6 +454,7 @@ import 'dart:async';
 import 'package:bundlegram/core/extensions/context_extensions.dart';
 import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
+import 'package:bundlegram/core/router/route_constants.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_input_formatter.dart';
 import 'package:bundlegram/data/models/airtime_2_cash/network_config.dart';
@@ -481,6 +482,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class AirtimeToCashScreen extends ConsumerStatefulWidget {
   const AirtimeToCashScreen({super.key});
@@ -589,6 +591,9 @@ class _AirtimeToCashScreenState extends ConsumerState<AirtimeToCashScreen> {
           onPrimaryPressed: () {
             _popDialog();
             notifier.resetAfterResult();
+
+            // Navigate to home/dashboard.
+            context.go(RouteConstants.dashboard);
           },
         );
         break;
@@ -630,6 +635,9 @@ class _AirtimeToCashScreenState extends ConsumerState<AirtimeToCashScreen> {
           onPrimaryPressed: () {
             _popDialog();
             notifier.resetAfterResult();
+
+            // Navigate to your actual home/dashboard route here.
+            context.go(RouteConstants.dashboard);
           },
         );
         break;
@@ -678,8 +686,8 @@ class _AirtimeToCashScreenState extends ConsumerState<AirtimeToCashScreen> {
     );
     if (!mounted) return;
 
-    if (confirmed == true) {
-      unawaited(notifier.confirmAndSubmit());
+    if (confirmed ?? false) {
+      unawaited(notifier.confirmAndSubmit(context));
     } else if (confirmed == false) {
       notifier.backToPinEntry(); // back arrow
     } else {

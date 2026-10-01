@@ -218,7 +218,7 @@ class PlatFormData {
       showSubtitle: true,
       // assetPath: Assets.svgs.a9mobile,
       imagePath: Assets.images.t2Logo.path,
-      title: '9mobile',
+      title: 'T2',
       subtitle: '@T2mobileng',
     ),
   ];
@@ -573,26 +573,7 @@ class PlatFormData {
         );
       },
     ),
-    Builder(
-      builder: (context) {
-        return AppListTile(
-          onPressed: () {
-            context.pop();
-            final rootContext = navigatorKey.currentContext;
-            if (rootContext == null) return;
-            final container = ProviderScope.containerOf(
-              rootContext,
-              listen: false,
-            );
-            container
-                .read(platformProvider)
-                .openStatisticsBottomSheet(rootContext);
-          },
-          assetPath: Assets.svgs.overview,
-          title: 'View Stats',
-        );
-      },
-    ),
+
     Builder(
       builder: (context) {
         return AppListTile(
@@ -662,6 +643,26 @@ class PlatFormData {
     //     );
     //   },
     // ),
+    Builder(
+      builder: (context) {
+        return AppListTile(
+          onPressed: () {
+            context.pop();
+            final rootContext = navigatorKey.currentContext;
+            if (rootContext == null) return;
+            final container = ProviderScope.containerOf(
+              rootContext,
+              listen: false,
+            );
+            container
+                .read(platformProvider)
+                .openStatisticsBottomSheet(rootContext);
+          },
+          assetPath: Assets.svgs.overview,
+          title: 'View Stats',
+        );
+      },
+    ),
     Builder(
       builder: (context) {
         return AppListTile(

@@ -13,6 +13,7 @@ import 'package:bundlegram/core/extensions/texttheme_extensions.dart';
 import 'package:bundlegram/core/extensions/widget_extensions.dart';
 import 'package:bundlegram/core/providers/global_provider.dart';
 import 'package:bundlegram/core/router/route_constants.dart';
+import 'package:bundlegram/core/utils/biller_names.dart';
 import 'package:bundlegram/core/utils/colors.dart';
 import 'package:bundlegram/core/utils/currency_formatter/currency_formatter.dart';
 import 'package:bundlegram/core/utils/enums.dart';
@@ -937,8 +938,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     }
     if (lower.contains("glo")) return "glo";
     if (lower.contains("airtel")) return "airtel";
-    if (lower.contains("9mobile") || lower.contains("etisalat")) return "t2";
-    // print('Brand: ${name.split(" ").first.toLowerCase()}');
+    if (isNineMobile(name)) return "9mobile";
     return name.split(" ").first.toLowerCase();
   }
 
@@ -1339,9 +1339,11 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         transactionType:
             _serviceType == PlatformProductType.airtime ||
                 _serviceType == PlatformProductType.mobileData
-            ? state.selectedProduct?.productName
-            : state.selectedSubProduct?.subName ??
-                  state.selectedProduct?.productName,
+            ? displayBillerName(state.selectedProduct?.productName)
+            : displayBillerName(
+                state.selectedSubProduct?.subName ??
+                    state.selectedProduct?.productName,
+              ),
         amount: amount.toCurrency(),
         discountedPrice: discountedAmount.toCurrency(),
         beneficiary: beneficiary,

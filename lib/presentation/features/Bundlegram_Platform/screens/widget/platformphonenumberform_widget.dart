@@ -328,13 +328,13 @@ class _PlatformPhoneNumberFormWidgetState
         if (state.dropdownOptions.isNotEmpty) ...[
           24.verticalSpace,
           if (widget.serviceType == PlatformProductType.mobileData) ...[
-            // Text(
-            //   'PLAN TYPE',
-            //   style: context.textTheme.labelSmall?.copyWith(
-            //     color: AppColors.grey80,
-            //   ),
-            // ),
-            // 8.verticalSpace,
+            Text(
+              'PLAN TYPE',
+              style: context.textTheme.labelSmall?.copyWith(
+                color: AppColors.grey80,
+              ),
+            ),
+            8.verticalSpace,
             Wrap(
               spacing: 8.w,
               runSpacing: 8.h,

@@ -460,6 +460,7 @@ import 'dart:async';
 import 'package:bundlegram/core/error/error_sanitixed_users.dart';
 import 'package:bundlegram/core/error/errors.dart';
 import 'package:bundlegram/core/error/failures.dart';
+import 'package:bundlegram/core/extensions/dialog_extensions.dart';
 import 'package:bundlegram/core/utils/network_detector.dart';
 import 'package:bundlegram/data/airtime_to_cash_failures.dart';
 import 'package:bundlegram/data/airtime_to_cash_repository.dart';
@@ -469,6 +470,7 @@ import 'package:bundlegram/data/repositories/airtime_to_cash_api_repo.dart';
 import 'package:bundlegram/presentation/features/airtime-to-cash-feature/model/airtime_to_cash_state.dart';
 import 'package:bundlegram/presentation/features/airtime-to-cash-feature/provider/airtime_to_cash_history_provider.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -905,16 +907,22 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
     switch (txn.status) {
       case AirtimeToCashTxnStatus.processing:
         return AirtimeToCashStep.processing;
+
+      case AirtimeToCashTxnStatus.pending:
+        return AirtimeToCashStep.processing;
+
       case AirtimeToCashTxnStatus.partial:
         return AirtimeToCashStep.partial;
+
       case AirtimeToCashTxnStatus.success:
-      case AirtimeToCashTxnStatus.failed:
-      case AirtimeToCashTxnStatus.pending:
         return AirtimeToCashStep.success;
+
+      case AirtimeToCashTxnStatus.failed:
+        return AirtimeToCashStep.failed;
     }
   }
 
-  Future<void> confirmAndSubmit() async {
+  Future<void> confirmAndSubmit(BuildContext context) async {
     final network = state.selectedNetwork;
     final sessionId = state.sessionId;
     if (network == null || sessionId == null) return;
@@ -928,6 +936,7 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
       step: AirtimeToCashStep.submitting,
       submissionError: null,
     );
+    unawaited(context.showLoadingDialog(message: 'Processing transfer...'));
 
     try {
       final result = await _repository.convert(
@@ -938,6 +947,7 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
         sessionId: sessionId,
       );
 
+      context.dismissDialog();
       result.fold(
         (Failure fail) {
           state = state.copyWith(
@@ -952,7 +962,11 @@ class AirtimeToCashNotifier extends StateNotifier<AirtimeToCashState> {
             step: _stepForTransaction(txn),
             lastTransaction: txn,
           );
-          unawaited(_ref.read(airtimeToCashHistoryProvider.notifier).refresh());
+          try {
+            _ref.invalidate(airtimeToCashHistoryProvider);
+          } catch (e, st) {
+            debugPrint('history invalidate failed: $e\n$st');
+          }
         },
       );
     } catch (e, st) {
