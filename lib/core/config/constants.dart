@@ -7,10 +7,10 @@ class AppConstants {
   static const String appName = 'Bundlegram';
 
   /// App version
-  static const String appVersion = '1.3.1';
+  static const String appVersion = '2.0.0';
 
   /// App build number
-  static const String appBuildNumber = '28';
+  static const String appBuildNumber = '29';
 
   /// Default animation duration
   static const Duration defaultAnimationDuration = Duration(milliseconds: 300);
@@ -53,9 +53,7 @@ class AppConstants {
   static final RegExp emailRegex = RegExp(
     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
   );
-  static final RegExp phoneRegex = RegExp(
-    r'^\+?[1-9]\d{1,14}$',
-  );
+  static final RegExp phoneRegex = RegExp(r'^\+?[1-9]\d{1,14}$');
   static final RegExp passwordRegex = RegExp(
     r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$',
   );
