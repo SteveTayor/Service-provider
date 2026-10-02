@@ -197,18 +197,18 @@ class LoginProvider extends ChangeNotifier {
   Future<void> submit(BuildContext context) async {
     FocusScope.of(context).unfocus();
 
-  final isFormValid = formKey.currentState?.validate() ?? false;
+    final isFormValid = formKey.currentState?.validate() ?? false;
 
-  if (!isFormValid) {
-    _isValid = false;
-    notifyListeners();
-    return;
-  }
+    if (!isFormValid) {
+      _isValid = false;
+      notifyListeners();
+      return;
+    }
 
-  _isValid = true;
+    _isValid = true;
 
-  _setError(null);
-  _setLoading(true);
+    _setError(null);
+    _setLoading(true);
     final deviceInfo = await _storage.getDeviceInfo();
     String deviceToken = deviceInfo['macAddress'] ?? 'unknown';
 
@@ -275,7 +275,7 @@ class LoginProvider extends ChangeNotifier {
         }
 
         final resolvedEmail = loginData.data?.payload?.email;
-final resolvedUsername = loginData.data?.payload?.username;
+        final resolvedUsername = loginData.data?.payload?.username;
 
         await _storage.setAuthToken(token);
         await _storage.setPassword(passwordCtrl.text.trim());
@@ -284,18 +284,18 @@ final resolvedUsername = loginData.data?.payload?.username;
         final storedEmail = await _storage.getRememberedEmail();
         final storedUsername = await _storage.getUsername();
         await _storage.storeBiometricCredentials(
-  email: resolvedEmail ?? enteredIdentifier,
-  password: passwordCtrl.text.trim(),
-  displayName: resolvedUsername,
-);
-final isSameUser =
-    (resolvedEmail != null && resolvedEmail == storedEmail) ||
-    (resolvedUsername != null && resolvedUsername == storedUsername);
+          email: resolvedEmail ?? enteredIdentifier,
+          password: passwordCtrl.text.trim(),
+          displayName: resolvedUsername,
+        );
+        final isSameUser =
+            (resolvedEmail != null && resolvedEmail == storedEmail) ||
+            (resolvedUsername != null && resolvedUsername == storedUsername);
         // final isSameUser =
         //     enteredIdentifier == storedEmail ||
         //     enteredIdentifier == storedUsername;
         if (!isSameUser) {
-          // New login â†’ clear previous cache
+          // New login †’ clear previous cache
           await _storage.clearRememberedEmail();
           await _storage.clearUsername();
           // Also clear old PIN to avoid mismatch
@@ -369,7 +369,7 @@ final isSameUser =
         final savedEmail = await _storage.getBiometricEmail();
         final savedPassword = await _storage.getBiometricPassword();
         debugPrint(
-          '[Biometric] Just saved creds â†’ email=$savedEmail, password=$savedPassword',
+          '[Biometric] Just saved creds †’ email=$savedEmail, password=$savedPassword',
         );
         // Fetch and cache users' transactions before routing
         // await _ref

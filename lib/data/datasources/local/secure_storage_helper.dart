@@ -29,7 +29,9 @@ class SecureStorageHelper {
   static const _hasSeenWhatsappChannelKey = 'has_seen_whatsapp_channel_modal';
 
   static const _migrationInvalidationKey = 'migration_pending_invalidation';
-
+  
+static const _hasSeenAirtimeToCashAnnouncementKey =
+    'has_seen_airtime_to_cash_announcement';
   SecureStorageHelper(this._storage);
 
   Future<void> setMigrationPendingInvalidation(bool value) async {
@@ -48,6 +50,21 @@ class SecureStorageHelper {
     }
     return false;
   }
+
+
+Future<bool> hasSeenAirtimeToCashAnnouncement() async {
+  final value = await _storage.read(
+    key: _hasSeenAirtimeToCashAnnouncementKey,
+  );
+  return value == 'true';
+}
+
+Future<void> setHasSeenAirtimeToCashAnnouncement(bool value) async {
+  await _storage.write(
+    key: _hasSeenAirtimeToCashAnnouncementKey,
+    value: value.toString(),
+  );
+}
 
   /// Returns all key-value pairs currently in secure storage.
   /// Used by VersionManager to selectively delete stale keys.

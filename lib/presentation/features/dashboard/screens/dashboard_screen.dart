@@ -3,6 +3,7 @@ import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/pla
 import 'package:bundlegram/presentation/features/Bundlegram_Platform/screens/platformproduct_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/account_screen.dart';
 import 'package:bundlegram/presentation/features/account%20setup/screens/widgets/whatsapp_chanel_modal.dart';
+import 'package:bundlegram/presentation/features/airtime-to-cash-feature/widgets/new/announcement_sheet.dart';
 import 'package:bundlegram/presentation/features/dashboard/provider/dashboard_provider.dart';
 import 'package:bundlegram/presentation/features/dashboard/screens/widget/dashboardd_update_checker.dart';
 import 'package:bundlegram/presentation/features/transaction/screens/transaction_screen.dart';
@@ -141,9 +142,6 @@ class _DashboardState extends ConsumerState<Dashboard> {
   //   }
   // }
 
-  /// Runs the promo modal and WhatsApp-channel modal in sequence rather
-  /// than independently
-
   Future<void> _checkAndShowOnboardingModals() async {
     final storage = ref.read(secureStorageHelperProvider);
 
@@ -162,6 +160,17 @@ class _DashboardState extends ConsumerState<Dashboard> {
       if (mounted) {
         await showWhatsappChannelModal(context);
         await storage.setHasSeenWhatsappChannelModal(true);
+        // await storage.setHasSeenAirtimeToCashAnnouncement(false);
+      }
+    }
+
+    final hasSeenAirtimeToCashAnnouncement = await storage
+        .hasSeenAirtimeToCashAnnouncement();
+    if (!hasSeenAirtimeToCashAnnouncement && mounted) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (mounted) {
+        await showAirtimeToCashAnnouncementSheet(context);
+        await storage.setHasSeenAirtimeToCashAnnouncement(true);
       }
     }
   }

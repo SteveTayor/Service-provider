@@ -16,13 +16,13 @@ import 'package:go_router/go_router.dart';
 
 final changePasswordProvider = ChangeNotifierProvider.autoDispose
     .family<ChangePasswordController, String>((ref, email) {
-  return ChangePasswordController(
-    ref,
-    ref.read(apiServiceProvider),
-    ref.read(secureStorageHelperProvider),
-    email,
-  );
-});
+      return ChangePasswordController(
+        ref,
+        ref.read(apiServiceProvider),
+        ref.read(secureStorageHelperProvider),
+        email,
+      );
+    });
 
 class ChangePasswordController extends ChangeNotifier {
   ChangePasswordController(this._ref, this._api, this._storage, this.email) {
@@ -47,15 +47,16 @@ class ChangePasswordController extends ChangeNotifier {
   bool showNewPassword = true;
   bool showConfirmPassword = true;
 
-  // âœ… Add getter to determine if new password fields should be enabled
+  // œ… Add getter to determine if new password fields should be enabled
   bool get enableNewPasswordFields =>
       currentPasswordController.text.trim().length >= 6;
 
   void validateForm() {
     final formIsValid = formKey.currentState?.validate() ?? false;
 
-    // âœ… Only enable submit button when form is valid AND all required fields have input
-    isFormValid = formIsValid &&
+    // œ… Only enable submit button when form is valid AND all required fields have input
+    isFormValid =
+        formIsValid &&
         currentPasswordController.text.trim().isNotEmpty &&
         newPasswordController.text.trim().isNotEmpty &&
         confirmPasswordController.text.trim().isNotEmpty;
@@ -145,4 +146,3 @@ class ChangePasswordController extends ChangeNotifier {
     super.dispose();
   }
 }
-

@@ -108,7 +108,7 @@ class PlatformProvider extends ChangeNotifier {
     if (bvn == null) {
       WalletNotifier().showLinkBVNSnackBar(
         context,
-        'BVN verification required to withdraw fromÂ yourÂ wallet.',
+        'BVN verification required to withdraw from your wallet.',
         'Link now',
       );
     } else {

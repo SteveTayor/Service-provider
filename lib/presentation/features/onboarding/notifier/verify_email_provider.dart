@@ -145,13 +145,13 @@ class VerifyEmailProvider extends ChangeNotifier {
           // });
           _ref.read(globalProvider.notifier).fetchProfile(context);
           _verifying = false;
-          // âœ… Dismiss OTP sheet if still open
+          // œ… Dismiss OTP sheet if still open
           if (Navigator.of(context, rootNavigator: true).canPop()) {
             Navigator.of(context, rootNavigator: true).pop();
           }
 
           context.showSuccessSnackBar(resp.message ?? 'Email verified');
-          // âœ… Navigate after dismiss
+          // œ… Navigate after dismiss
           context.pushReplacement(RouteConstants.dashboard);
           otpCtrl.clear();
 

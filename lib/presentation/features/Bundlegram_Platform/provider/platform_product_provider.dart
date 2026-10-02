@@ -267,7 +267,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
     if (force || !_isSubProductsCacheFresh(productId)) {
       _subProductsCache.remove(productId);
       _subProductsFetchedAt.remove(productId);
-      _ref.invalidate(subProductsProvider(productId)); // â† key addition
+      _ref.invalidate(subProductsProvider(productId)); // † key addition
     }
 
     // If we have fresh cache and not forced, return immediately with cached data
@@ -788,7 +788,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
             }
 
             debugPrint(
-              "âœ… Found subProduct: ${selectedSubProduct.subName} (id: ${selectedSubProduct.id})",
+              "œ… Found subProduct: ${selectedSubProduct.subName} (id: ${selectedSubProduct.id})",
             );
 
             if (selectedSubProduct != null && state.selectedProduct != null) {
@@ -1416,7 +1416,7 @@ class PlatformProductNotifier extends StateNotifier<PlatformProductState> {
         return;
       } else {
         debugPrint("Biometric authentication failed");
-        // fallback â†’ open PIN screen
+        // fallback †’ open PIN screen
       }
     }
     unawaited(

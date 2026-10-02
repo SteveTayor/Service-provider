@@ -64,25 +64,27 @@ class BecomeAgentProvider extends ChangeNotifier {
 
       if (parsedBalance < requiredAmount) {
         context.dismissDialog();
-        unawaited(Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (ctx) => FailedResultScreen(
-              title: "Transaction Failed",
-              serviceContent: "transaction",
-              errorMessage:
-                  'Your wallet balance (${parsedBalance.toCurrency()}) is less than the required â‚¦10,000.00. Please fund your wallet.',
-              onRetry: () {
-                context.pushReplacement(RouteConstants.dashboard);
-              },
+        unawaited(
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (ctx) => FailedResultScreen(
+                title: "Transaction Failed",
+                serviceContent: "transaction",
+                errorMessage:
+                    'Your wallet balance (${parsedBalance.toCurrency()}) is less than the required ‚¦10,000.00. Please fund your wallet.',
+                onRetry: () {
+                  context.pushReplacement(RouteConstants.dashboard);
+                },
+              ),
             ),
           ),
-        ));
+        );
         // unawaited(context.showPopUp(
         //   ErrorPopup(
         //     title: 'Insufficient Funds',
         //     message:
-        //         'Your wallet balance (${parsedBalance.toCurrency()}) is less than the required â‚¦10,000.00. Please fund your wallet.',
+        //         'Your wallet balance (${parsedBalance.toCurrency()}) is less than the required ‚¦10,000.00. Please fund your wallet.',
         //     onOkay: () {
         //       context.go(RouteConstants.dashboard); // Route to dashboard
         //     },
@@ -112,16 +114,18 @@ class BecomeAgentProvider extends ChangeNotifier {
         );
 
         if (didAuth) {
-          final email =
-              await _ref.read(secureStorageHelperProvider).getRememberedEmail();
+          final email = await _ref
+              .read(secureStorageHelperProvider)
+              .getRememberedEmail();
           if (email == null) {
             debugPrint("No stored account found, please login again");
             context.dismissDialog();
             return;
           }
 
-          final storedPin =
-              await _ref.read(secureStorageHelperProvider).getPin(email);
+          final storedPin = await _ref
+              .read(secureStorageHelperProvider)
+              .getPin(email);
           if (storedPin == null) {
             debugPrint("No stored PIN found, please set up your PIN");
             context.dismissDialog();
@@ -138,17 +142,19 @@ class BecomeAgentProvider extends ChangeNotifier {
         }
       }
 
-      // âŒ If not biometric or failed â†’ fallback to EnterPinScreen
+      // Œ If not biometric or failed †’ fallback to EnterPinScreen
 
       // If balance is sufficient, navigate to EnterPinScreen
       context.pop(); // Close the bottom sheet
-      unawaited(Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => EnterPinScreen(
-            onVerified: (pin) => _processMerchantRegistration(context, pin),
+      unawaited(
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EnterPinScreen(
+              onVerified: (pin) => _processMerchantRegistration(context, pin),
+            ),
           ),
         ),
-      ));
+      );
       context.dismissDialog();
       _setLoading(false);
     } catch (e) {
@@ -158,10 +164,15 @@ class BecomeAgentProvider extends ChangeNotifier {
   }
 
   Future<void> _processMerchantRegistration(
-      BuildContext context, String pin) async {
+    BuildContext context,
+    String pin,
+  ) async {
     _setLoading(true);
-    unawaited(context.showLoadingDialog(
-        message: 'Processing \nMerchant Registration...'));
+    unawaited(
+      context.showLoadingDialog(
+        message: 'Processing \nMerchant Registration...',
+      ),
+    );
     try {
       final token = await _ref.read(secureStorageHelperProvider).getAuthToken();
       if (token == null) {
@@ -198,8 +209,9 @@ class BecomeAgentProvider extends ChangeNotifier {
         },
         (BaseResponse resp) {
           if (resp.success) {
-            context
-                .showSuccessSnackBar(resp.message ?? 'Upgraded successfully');
+            context.showSuccessSnackBar(
+              resp.message ?? 'Upgraded successfully',
+            );
             _ref.read(globalProvider.notifier).fetchProfile(context);
             context.dismissDialog();
             Navigator.pushReplacement(
@@ -269,4 +281,3 @@ class BecomeAgentProvider extends ChangeNotifier {
     return "unknown";
   }
 }
-

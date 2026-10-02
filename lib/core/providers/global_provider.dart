@@ -35,12 +35,12 @@ final globalProvider = StateNotifierProvider<GlobalProvider, GlobalState>(
   ),
 );
 
-/// Returns the K transactions with the latest createdAt, sorted newestâ†’oldest.
+/// Returns the K transactions with the latest createdAt, sorted newest†’oldest.
 List<UserTransactions> _takeTopKByDate(
   List<UserTransactions> all, {
   required int k,
 }) {
-  // Min-heap ordered oldestâ†’newest
+  // Min-heap ordered oldest†’newest
   final pq = PriorityQueue<UserTransactions>(
     (a, b) => a.createdAt!.compareTo(b.createdAt!),
   );
@@ -174,10 +174,10 @@ class GlobalProvider extends StateNotifier<GlobalState> {
   //     },
   //   );
   //   if (!profileOk) {
-  //     debugPrint('[restoreSession] Token invalid â†’ fallback to email/password');
+  //     debugPrint('[restoreSession] Token invalid †’ fallback to email/password');
   //     return false;
   //   }
-  //   // Token confirmed valid â†’ proceed to other calls
+  //   // Token confirmed valid †’ proceed to other calls
   //   unawaited(fetchWalletBalance(context));
   //   unawaited(fetchBanks(context));
   //   unawaited(fetchUserBanks(context));

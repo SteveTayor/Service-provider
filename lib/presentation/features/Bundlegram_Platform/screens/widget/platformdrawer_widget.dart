@@ -163,7 +163,7 @@ class _DrawerBodyState extends ConsumerState<DrawerBody> {
         .asMap()
         .entries
         .where((entry) {
-          if (isAgent && entry.key == 8) return false;
+          if (isAgent && entry.key == 7) return false;
           return true;
         })
         .map((entry) => entry.value)

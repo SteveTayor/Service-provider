@@ -140,11 +140,12 @@ class PlatformItemWidget extends StatelessWidget {
                 child: Text(
                   title,
                   textAlign: TextAlign.center,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodyMedium!.copyWith(
                     color: AppColors.white,
                     fontSize: r.textSize(10),
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),

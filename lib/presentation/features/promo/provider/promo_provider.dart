@@ -21,8 +21,8 @@ import 'package:flutter_riverpod/legacy.dart';
 //       // const PromoModel(
 //       //   id: '1',
 //       //   code: 'LOYALTY2500',
-//       //   title: 'We are giving â‚¦2500 free bonus to our loyal customers',
-//       //   description: 'Just hit â‚¦50,000 spend this month!',
+//       //   title: 'We are giving ‚¦2500 free bonus to our loyal customers',
+//       //   description: 'Just hit ‚¦50,000 spend this month!',
 //       //   amount: 2500,
 //       //   backgroundColor: '#EEF3FF',
 //       //   textColor: '#C9DAFF',
@@ -30,7 +30,7 @@ import 'package:flutter_riverpod/legacy.dart';
 //       // const PromoModel(
 //       //   id: '2',
 //       //   code: 'WELCOME5000',
-//       //   title: 'Get â‚¦5000 free in your promo wallet as a welcome gift',
+//       //   title: 'Get ‚¦5000 free in your promo wallet as a welcome gift',
 //       //   description: 'Your first wallet top-up is all it takes!',
 //       //   amount: 5000,
 //       //   isClaimed: true,
@@ -122,8 +122,10 @@ class PromoNotifier extends StateNotifier<PromoState> {
           final promoModels = promos.map((p) => p.toPromoModel()).toList();
 
           // Optionally update rewards sum
-          final totalRewards =
-              promoModels.fold<double>(0, (sum, p) => sum + p.amount);
+          final totalRewards = promoModels.fold<double>(
+            0,
+            (sum, p) => sum + p.amount,
+          );
           state = state.copyWith(
             isLoading: false,
             availablePromos: promoModels,
@@ -150,8 +152,10 @@ class PromoNotifier extends StateNotifier<PromoState> {
         return;
       }
 
-      final result =
-          await _api.redeemAPromo(token, RedeemAPromoRequest(code: promoCode));
+      final result = await _api.redeemAPromo(
+        token,
+        RedeemAPromoRequest(code: promoCode),
+      );
 
       result.fold(
         (failure) {
@@ -177,7 +181,6 @@ class PromoNotifier extends StateNotifier<PromoState> {
 
 final promoProvider =
     StateNotifierProvider.autoDispose<PromoNotifier, PromoState>((ref) {
-  final _api = ref.read(apiServiceProvider);
-  return PromoNotifier(ref, _api);
-});
-
+      final _api = ref.read(apiServiceProvider);
+      return PromoNotifier(ref, _api);
+    });
